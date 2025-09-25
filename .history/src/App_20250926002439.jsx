@@ -1,10 +1,11 @@
-import HomePage from './pages/homePage';
+import Navbar from './components/common/Navbar';
 
 
 function App() {
   return (
     <div className="min-h-screen min-w-screen bg-gray-50">
-      <HomePage />
+      <Navbar />
+      <
       {/* Reste de votre contenu */}
     </div>
   );

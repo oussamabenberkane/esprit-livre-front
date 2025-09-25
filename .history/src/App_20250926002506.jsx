@@ -1,3 +1,4 @@
+import Navbar from './components/common/Navbar';
 import HomePage from './pages/homePage';
 
 

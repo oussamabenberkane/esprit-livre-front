@@ -1,8 +1,7 @@
 import React from 'react';
 import Navbar from '../components/common/Navbar';
 import CategoryCard from '../components/home/CategoryCard';
-import BookCard from '../components/common/BookCard'; // Adjust path as needed
-import AuthorComponent from '../components/home/author';
+import BookCard from '../components/common/bookCard'; // Adjust path as needed
 
 
 const HomePage = () => {
@@ -174,12 +173,9 @@ const HomePage = () => {
             </div>
 
             <AuthorComponent
-                authorImage="/assets/authors/camus.png"
+                authorImage=".."
                 authorName="Victor Hugo"
-                size="xl"
             />
-
-
         </div>
     );
 

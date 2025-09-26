@@ -174,9 +174,8 @@ const HomePage = () => {
             </div>
 
             <AuthorComponent
-                authorImage="/assets/authors/camus.png"
+                authorImage="../../public/assets/authors/camus.jpg"
                 authorName="Victor Hugo"
-                size="xl"
             />
 
 

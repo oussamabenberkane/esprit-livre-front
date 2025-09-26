@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '../components/common/Navbar';
-import CategoryCard from '../components/common/CategoryCard';
-import BookCard from '../components/common/BookCard'; // Adjust path as needed
+import CategoryCard from '../components/common/categoryCard';
+import BookCard from '../components/common/bookCard'; // Adjust path as needed
 
 
 const HomePage = () => {
@@ -27,7 +27,7 @@ const HomePage = () => {
             id: "2",
             title: "Où les étoiles tombent",
             author: "Cédric Sapin-Defour",
-            price: "250",
+            price: "22,50",
             coverImage: "../public/assets/books/crime.jpg",
             badge: {
                 type: "nouveaute",

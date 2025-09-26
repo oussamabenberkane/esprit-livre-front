@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '../components/common/Navbar';
-import CategoryCard from '../components/common/CategoryCard';
-import BookCard from '../components/common/BookCard'; // Adjust path as needed
+import CategoryCard from '../components/common/categoryCard';
+import BookCard from '../components/common/bookCard'; // Adjust path as needed
 
 
 const HomePage = () => {
@@ -12,7 +12,7 @@ const HomePage = () => {
             id: "1",
             title: "Les ombres du monde",
             author: "Michel Bussi",
-            price: "2000",
+            price: "23,90",
             coverImage: "../public/assets/books/ouss.jpg", // Use your local images
             badge: {
                 type: "coup-de-coeur",
@@ -27,8 +27,8 @@ const HomePage = () => {
             id: "2",
             title: "Où les étoiles tombent",
             author: "Cédric Sapin-Defour",
-            price: "250",
-            coverImage: "../public/assets/books/crime.jpg",
+            price: "22,50",
+            coverImage: "../public/assets/books/ouss.jpg",
             badge: {
                 type: "nouveaute",
                 text: "Nouveauté"

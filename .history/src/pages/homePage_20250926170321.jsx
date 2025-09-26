@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '../components/common/Navbar';
-import CategoryCard from '../components/common/CategoryCard';
-import BookCard from '../components/common/BookCard'; // Adjust path as needed
+import CategoryCard from '../components/common/categoryCard';
+import BookCard from '../components/common/bookCard'; // Adjust path as needed
 
 
 const HomePage = () => {

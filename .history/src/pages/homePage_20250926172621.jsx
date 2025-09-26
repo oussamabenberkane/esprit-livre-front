@@ -1,6 +1,6 @@
 import React from 'react';
 import Navbar from '../components/common/Navbar';
-import CategoryCard from '../components/common/CategoryCard';
+import CategoryCard from '../components/common/categoryCard';
 import BookCard from '../components/common/BookCard'; // Adjust path as needed
 
 

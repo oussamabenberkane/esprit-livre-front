@@ -124,7 +124,7 @@ const HomePage = () => {
         <div className="min-h-screen bg-gray-50">
             {/* Navigation Bar */}
             <Navbar />
-            <div className="h-20"></div>
+            <div>
                 <HeroCarousel
                     images={marketingImages}
                     currentIndex={currentSlide}
@@ -134,7 +134,7 @@ const HomePage = () => {
             </div>
 
             {/* Main Content */}
-            <main className="px-4 py-6 pt-20">
+            <main className="px-4 py-6">
                 {/* Categories Section */}
                 <div className="max-w-screen-sm overflow-hidden overflow-x-hidden">
                     {/* Greeting Section */}
@@ -148,7 +148,7 @@ const HomePage = () => {
                     </div>
 
                     {/* Categories Cards Container */}
-                    <div className="flex gap-4 overflow-x-auto ">
+                    <div className="flex gap-4 ">
                         {categories.map((category, index) => (
                             <div key={index} className="flex-shrink-0">
                                 <CategoryCard
@@ -186,6 +186,7 @@ const HomePage = () => {
                         />
                     ))}
                 </div>
+
             </div>
 
             <AuthorComponent

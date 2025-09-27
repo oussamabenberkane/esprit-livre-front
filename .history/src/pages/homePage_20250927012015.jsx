@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Navbar from '../components/common/Navbar';
 import CategoryCard from '../components/home/CategoryCard';
 import BookCard from '../components/common/BookCard'; // Adjust path as needed
@@ -11,18 +11,29 @@ const HomePage = () => {
 
     const marketingImages = [
         {
-            src: "assets/banners/banner2.png",
+            src: "/images/hero-slide1.jpg",
             alt: "Nouvelle collection automne 2025",
             overlay: "rgba(0, 0, 0, 0.3)",
             button: "Découvrir"
         },
         {
-            src: "assets/banners/banner2.png",
+            src: "/images/hero-slide2.jpg",
             alt: "Offres spéciales livres",
             overlay: "rgba(238, 0, 39, 0.2)",
             button: "Voir les offres"
         },
-
+        {
+            src: "/images/hero-slide3.jpg",
+            alt: "Auteurs recommandés",
+            overlay: "rgba(0, 65, 122, 0.3)",
+            button: "Explorer"
+        },
+        {
+            src: "/images/hero-slide4.jpg",
+            alt: "Bestsellers du mois",
+            overlay: "rgba(0, 0, 0, 0.25)",
+            button: "Acheter maintenant"
+        }
     ];
 
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -59,7 +70,21 @@ const HomePage = () => {
                 text: "en stock Cultura"
             }
         },
-
+        {
+            id: "3",
+            title: "Le Cercle des jours",
+            author: "Ken Follett",
+            price: "25,90",
+            coverImage: "/images/book3.jpg",
+            badge: {
+                type: "precommande",
+                text: "Précommande"
+            },
+            stockStatus: {
+                available: true,
+                text: "précommande - sortie le 25/09/25"
+            }
+        },
         {
             id: "4",
             title: "Finistère",
@@ -124,19 +149,13 @@ const HomePage = () => {
         <div className="min-h-screen bg-gray-50">
             {/* Navigation Bar */}
             <Navbar />
-            <div className="h-20"></div>
-                <HeroCarousel
-                    images={marketingImages}
-                    currentIndex={currentSlide}
-                    height="h-80"
-                    className="shadow-lg"
-                />
-            </div>
+
+            <HeroCarousel
 
             {/* Main Content */}
-            <main className="px-4 py-6 pt-20">
+            <main className="px-4 py-6">
                 {/* Categories Section */}
-                <div className="max-w-screen-sm overflow-hidden overflow-x-hidden">
+                <div className="max-w-md pl-4">
                     {/* Greeting Section */}
                     <div className="mb-6 text-left">
                         <h1 className="font-['Poppins'] font-bold text-[#00417a] text-[48px] mb-1">
@@ -148,7 +167,7 @@ const HomePage = () => {
                     </div>
 
                     {/* Categories Cards Container */}
-                    <div className="flex gap-4 overflow-x-auto ">
+                    <div className="flex gap-4 ">
                         {categories.map((category, index) => (
                             <div key={index} className="flex-shrink-0">
                                 <CategoryCard
@@ -163,9 +182,8 @@ const HomePage = () => {
                 </div>
             </main>
 
-
-            <div className="mt-8 px-4">
-
+            // Add this JSX after your categories section
+            <div className="mt-8">
                 <h2 className="font-['Poppins'] font-bold text-[#00417a] text-[16px] mb-4">
                     Livres recommandés
                 </h2>
@@ -195,7 +213,7 @@ const HomePage = () => {
             />
 
 
-        </div >
+        </div>
     );
 
 

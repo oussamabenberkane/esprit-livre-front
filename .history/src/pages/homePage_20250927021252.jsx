@@ -124,14 +124,7 @@ const HomePage = () => {
         <div className="min-h-screen bg-gray-50">
             {/* Navigation Bar */}
             <Navbar />
-            <div>
-                <HeroCarousel
-                    images={marketingImages}
-                    currentIndex={currentSlide}
-                    height="h-80"
-                    className="shadow-lg"
-                />
-            </div>
+
 
             {/* Main Content */}
             <main className="px-4 py-6">

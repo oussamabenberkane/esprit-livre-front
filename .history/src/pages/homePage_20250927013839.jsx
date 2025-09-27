@@ -59,7 +59,7 @@ const HomePage = () => {
                 text: "en stock Cultura"
             }
         },
-
+        
         {
             id: "4",
             title: "Finistère",
@@ -136,7 +136,7 @@ const HomePage = () => {
             {/* Main Content */}
             <main className="px-4 py-6">
                 {/* Categories Section */}
-                <div className="max-w-screen-sm overflow-hidden overflow-x-hidden">
+                <div className="max-w-md pl-4">
                     {/* Greeting Section */}
                     <div className="mb-6 text-left">
                         <h1 className="font-['Poppins'] font-bold text-[#00417a] text-[48px] mb-1">
@@ -148,7 +148,7 @@ const HomePage = () => {
                     </div>
 
                     {/* Categories Cards Container */}
-                    <div className="flex gap-4 overflow-x-auto ">
+                    <div className="flex gap-4 ">
                         {categories.map((category, index) => (
                             <div key={index} className="flex-shrink-0">
                                 <CategoryCard
@@ -164,8 +164,7 @@ const HomePage = () => {
             </main>
 
 
-            <div className="mt-8 px-4">
-
+            <div className="mt-8 ">
                 <h2 className="font-['Poppins'] font-bold text-[#00417a] text-[16px] mb-4">
                     Livres recommandés
                 </h2>
@@ -195,7 +194,7 @@ const HomePage = () => {
             />
 
 
-        </div >
+        </div>
     );
 
 

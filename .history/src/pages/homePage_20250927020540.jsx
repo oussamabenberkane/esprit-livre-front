@@ -186,6 +186,7 @@ const HomePage = () => {
                         />
                     ))}
                 </div>
+                <
             </div>
 
             <AuthorComponent

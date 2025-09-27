@@ -148,7 +148,7 @@ const HomePage = () => {
                     </div>
 
                     {/* Categories Cards Container */}
-                    <div className="flex gap-4 overflow-x-auto ">
+                    <div className="flex gap-4 ">
                         {categories.map((category, index) => (
                             <div key={index} className="flex-shrink-0">
                                 <CategoryCard
@@ -186,6 +186,7 @@ const HomePage = () => {
                         />
                     ))}
                 </div>
+
             </div>
 
             <AuthorComponent

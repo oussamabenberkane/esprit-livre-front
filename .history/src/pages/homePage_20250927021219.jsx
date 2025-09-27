@@ -186,20 +186,18 @@ const HomePage = () => {
                         />
                     ))}
                 </div>
-            </div>
-
-            <AuthorComponent
-                authorImage="/assets/authors/camus.png"
-                authorName="Victor Hugo"
-                size="xl"
-            />
+                <AuthorComponent
+                    authorImage="/assets/authors/camus.png"
+                    authorName="Victor Hugo"
+                    size="xl"
+                />
 
 
-        </div >
-    );
+            </div >
+            );
 
 
 
 };
 
-export default HomePage;
+            export default HomePage;

@@ -165,29 +165,27 @@ const HomePage = () => {
 
 
             <div className="mt-8 px-4">
-
-                <h2 className="font-['Poppins'] font-bold text-[#00417a] text-[16px] mb-4">
-                    Livres recommandés
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {books.map((book) => (
-                        <BookCard
-                            key={book.id}
-                            id={book.id}
-                            title={book.title}
-                            author={book.author}
-                            price={book.price}
-                            coverImage={book.coverImage}
-                            badge={book.badge}
-                            stockStatus={book.stockStatus}
-                            onAddToCart={handleAddToCart}
-                            onToggleFavorite={handleToggleFavorite}
-                            isFavorited={book.isFavorited}
-                        />
-                    ))}
-                </div>
-            </div>
-
+                
+                    <h2 className="font-['Poppins'] font-bold text-[#00417a] text-[16px] mb-4">
+                        Livres recommandés
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {books.map((book) => (
+                            <BookCard
+                                key={book.id}
+                                id={book.id}
+                                title={book.title}
+                                author={book.author}
+                                price={book.price}
+                                coverImage={book.coverImage}
+                                badge={book.badge}
+                                stockStatus={book.stockStatus}
+                                onAddToCart={handleAddToCart}
+                                onToggleFavorite={handleToggleFavorite}
+                                isFavorited={book.isFavorited}
+                            />
+                        ))}
+                    </div>
             <AuthorComponent
                 authorImage="/assets/authors/camus.png"
                 authorName="Victor Hugo"

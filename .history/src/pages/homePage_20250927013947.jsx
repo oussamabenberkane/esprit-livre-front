@@ -136,7 +136,7 @@ const HomePage = () => {
             {/* Main Content */}
             <main className="px-4 py-6">
                 {/* Categories Section */}
-                <div className="max-w-screen-sm overflow-hidden overflow-x-hidden">
+                <div className="max-w-md pl-4">
                     {/* Greeting Section */}
                     <div className="mb-6 text-left">
                         <h1 className="font-['Poppins'] font-bold text-[#00417a] text-[48px] mb-1">
@@ -148,7 +148,7 @@ const HomePage = () => {
                     </div>
 
                     {/* Categories Cards Container */}
-                    <div className="flex gap-4 overflow-x-auto ">
+                    <div className="flex gap-4 ">
                         {categories.map((category, index) => (
                             <div key={index} className="flex-shrink-0">
                                 <CategoryCard
@@ -164,27 +164,28 @@ const HomePage = () => {
             </main>
 
 
-            <div className="mt-8 px-4">
-
-                <h2 className="font-['Poppins'] font-bold text-[#00417a] text-[16px] mb-4">
-                    Livres recommandés
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {books.map((book) => (
-                        <BookCard
-                            key={book.id}
-                            id={book.id}
-                            title={book.title}
-                            author={book.author}
-                            price={book.price}
-                            coverImage={book.coverImage}
-                            badge={book.badge}
-                            stockStatus={book.stockStatus}
-                            onAddToCart={handleAddToCart}
-                            onToggleFavorite={handleToggleFavorite}
-                            isFavorited={book.isFavorited}
-                        />
-                    ))}
+            <div className="mt-8 px-">
+                <div className="max-w-7xl mx-auto">
+                    <h2 className="font-['Poppins'] font-bold text-[#00417a] text-[16px] mb-4">
+                        Livres recommandés
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {books.map((book) => (
+                            <BookCard
+                                key={book.id}
+                                id={book.id}
+                                title={book.title}
+                                author={book.author}
+                                price={book.price}
+                                coverImage={book.coverImage}
+                                badge={book.badge}
+                                stockStatus={book.stockStatus}
+                                onAddToCart={handleAddToCart}
+                                onToggleFavorite={handleToggleFavorite}
+                                isFavorited={book.isFavorited}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
 
@@ -195,7 +196,7 @@ const HomePage = () => {
             />
 
 
-        </div >
+        </div>
     );
 
 

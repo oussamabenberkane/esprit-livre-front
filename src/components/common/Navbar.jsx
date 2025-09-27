@@ -67,7 +67,7 @@ const Navbar = ({
     onFavoritesClick,
     onUserClick
 }) => (
-    <div className="w-full bg-blue-800 rounded-br-2xl px-6 py-3 h-20">
+    <div className="absolute top-0 left-0 right-0 max-w-full bg-blue-800 rounded-br-2xl px-6 py-3 h-20">
         <div className="flex items-center w-full h-full">
             {/* Logo */}
             <div className="flex-shrink-0">

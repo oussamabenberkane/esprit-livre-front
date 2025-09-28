@@ -5,6 +5,8 @@ import BookCard from '../components/common/BookCard'; // Adjust path as needed
 import AuthorComponent from '../components/home/author';
 import HeroCarousel from '../components/home/HeroSection';
 import ScrollNavigator from '../components/common/Navigation';
+import SeeMore from '../components/buttons/SeeMore';
+import SlideScroll from '../components/buttons/SlideScroll';
 
 
 const HomePage = () => {
@@ -20,12 +22,12 @@ const HomePage = () => {
             button: "Découvrir"
         },
         {
-            src: "/assets/banners/banner1.png", 
+            src: "/assets/banners/banner1.png",
             alt: "Offres spéciales livres",
             overlay: "rgba(0, 0, 0, 0.2)",
             button: "Nouveautés"
         },
-       
+
     ];
 
 
@@ -242,37 +244,40 @@ const HomePage = () => {
             </main>
 
             <div className="mt-8 px-4">
-    <h2 className="font-['Poppins'] font-bold text-[#00417a] text-[16px] mb-4">
-        Livres recommandés
-    </h2>
-    <ScrollNavigator
-        itemsPerView={3}
-        dotSize={8}
-        activeDotSize={12}
-        dotColor="#bfdbfe"
-        activeDotColor="#00417a"
-        fadeIntensity={0.4}
-        gap={16}
-        className="w-full"
-    >
-        {books.map((book) => (
-            <BookCard
-                key={book.id}
-                id={book.id}
-                title={book.title}
-                author={book.author}
-                price={book.price}
-                coverImage={book.coverImage}
-                badge={book.badge}
-                stockStatus={book.stockStatus}
-                onAddToCart={handleAddToCart}
-                onToggleFavorite={handleToggleFavorite}
-                isFavorited={book.isFavorited}
-            />
-        ))}
-    </ScrollNavigator>
-</div>
-
+                <div className='flex flex-row'>
+                    <h2 className="font-['Poppins'] font-bold text-[#00417a] text-[16px] mb-4">
+                        Livres recommandés
+                    </h2>
+                    <SeeMore className='absolute right-4 mb-4' />
+                </div>
+                <ScrollNavigator
+                    itemsPerView={3}
+                    dotSize={8}
+                    activeDotSize={12}
+                    dotColor="#bfdbfe"
+                    activeDotColor="#00417a"
+                    fadeIntensity={0.4}
+                    gap={16}
+                    className="w-full"
+                >
+                    {books.map((book) => (
+                        <BookCard
+                            key={book.id}
+                            id={book.id}
+                            title={book.title}
+                            author={book.author}
+                            price={book.price}
+                            coverImage={book.coverImage}
+                            badge={book.badge}
+                            stockStatus={book.stockStatus}
+                            onAddToCart={handleAddToCart}
+                            onToggleFavorite={handleToggleFavorite}
+                            isFavorited={book.isFavorited}
+                        />
+                    ))}
+                </ScrollNavigator>
+                <SlideScroll />
+            </div>
             <AuthorComponent
                 authorImage="/assets/authors/camus.png"
                 authorName="Victor Hugo"

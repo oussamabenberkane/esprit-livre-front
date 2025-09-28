@@ -4,6 +4,7 @@ import CategoryCard from '../components/home/CategoryCard';
 import BookCard from '../components/common/BookCard'; // Adjust path as needed
 import AuthorComponent from '../components/home/author';
 import HeroCarousel from '../components/home/HeroSection';
+import SeeMore from '../components/buttons/SeeMore';
 
 
 const HomePage = () => {
@@ -59,18 +60,35 @@ const HomePage = () => {
                 text: "en stock Cultura"
             }
         },
-
         {
-            id: "4",
-            title: "Finistère",
-            author: "Anne Berest",
-            price: "23,90",
-            coverImage: "/images/book4.jpg",
+            id: "3",
+            title: "Les ombres du monde",
+            author: "Michel Bussi",
+            price: "2000",
+            coverImage: "../public/assets/books/ouss.jpg", // Use your local images
+            badge: {
+                type: "coup-de-coeur",
+                text: "coup de cœur"
+            },
             stockStatus: {
                 available: true,
                 text: "en stock Cultura"
+            }
+        },
+        {
+            id: "4",
+            title: "Où les étoiles tombent",
+            author: "Cédric Sapin-Defour",
+            price: "250",
+            coverImage: "../public/assets/books/crime.jpg",
+            badge: {
+                type: "nouveaute",
+                text: "Nouveauté"
             },
-            isFavorited: true
+            stockStatus: {
+                available: true,
+                text: "en stock Cultura"
+            }
         }
     ];
 
@@ -166,10 +184,12 @@ const HomePage = () => {
 
 
             <div className="mt-8 px-4">
-
-                <h2 className="font-['Poppins'] font-bold text-[#00417a] text-[16px] mb-4">
-                    Livres recommandés
-                </h2>
+                <div className='flex flex-row'>
+                    <h2 className="font-['Poppins'] font-bold text-[#00417a] text-[16px] mb-4">
+                        Livres recommandés
+                    </h2>
+                    <SeeMore className='absolute right-4 mb-4'/>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {books.map((book) => (
                         <BookCard

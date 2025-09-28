@@ -5,6 +5,7 @@ import BookCard from '../components/common/BookCard'; // Adjust path as needed
 import AuthorComponent from '../components/home/author';
 import HeroCarousel from '../components/home/HeroSection';
 import SeeMore from '../components/buttons/SeeMore';
+import SlideScroll from '../components/buttons/SlideScroll';
 
 
 const HomePage = () => {
@@ -207,6 +208,7 @@ const HomePage = () => {
                         />
                     ))}
                 </div>
+                <SlideScroll />
             </div>
 
             <AuthorComponent

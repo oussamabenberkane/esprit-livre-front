@@ -29,8 +29,10 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  flex-direction: column;  /* Add this */
-  align-items: stretch;    /* Change from place-items: center */
+  flex-direction: column;
+  /* Add this */
+  align-items: stretch;
+  /* Change from place-items: center */
   min-width: 320px;
   min-height: 100vh;
   overflow-x: hidden;
@@ -46,10 +48,6 @@ button {
   font-family: inherit;
   cursor: pointer;
   transition: border-color 0.25s;
-}
-
-button:hover {
-  border-color: #646cff;
 }
 
 @media (prefers-color-scheme: light) {

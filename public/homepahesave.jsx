@@ -3,30 +3,9 @@ import Navbar from '../components/common/Navbar';
 import CategoryCard from '../components/home/CategoryCard';
 import BookCard from '../components/common/BookCard'; // Adjust path as needed
 import AuthorComponent from '../components/home/author';
-import HeroCarousel from '../components/home/HeroSection';
-import ScrollNavigator from '../components/common/Navigation';
 
 
 const HomePage = () => {
-
-    const [currentSlide, setCurrentSlide] = React.useState(0);
-
-
-    const heroImages = [
-        {
-            src: "/assets/banners/banner2.png",
-            alt: "Featured Books Collection",
-            overlay: "rgba(0, 65, 122, 0.3)", // Blue overlay matching your theme
-            button: "Découvrir"
-        },
-        {
-            src: "/assets/banners/banner1.png", 
-            alt: "Offres spéciales livres",
-            overlay: "rgba(0, 0, 0, 0.2)",
-            button: "Nouveautés"
-        },
-       
-    ];
 
 
     const books = [
@@ -47,85 +26,10 @@ const HomePage = () => {
         },
         {
             id: "2",
-            title: "Les ombres du monde",
-            author: "Michel Bussi",
-            price: "2000",
-            coverImage: "../public/assets/books/crime.jpg", // Use your local images
-            badge: {
-                type: "coup-de-coeur",
-                text: "coup de cœur"
-            },
-            stockStatus: {
-                available: true,
-                text: "en stock Cultura"
-            }
-        },
-        {
-            id: "3",
-            title: "Les ombres du monde",
-            author: "Michel Bussi",
-            price: "2000",
-            coverImage: "../public/assets/books/ouss.jpg", // Use your local images
-            badge: {
-                type: "coup-de-coeur",
-                text: "coup de cœur"
-            },
-            stockStatus: {
-                available: true,
-                text: "en stock Cultura"
-            }
-        },
-        {
-            id: "4",
-            title: "Les ombres du monde",
-            author: "Michel Bussi",
-            price: "2000",
-            coverImage: "../public/assets/books/crime.jpg", // Use your local images
-            badge: {
-                type: "coup-de-coeur",
-                text: "coup de cœur"
-            },
-            stockStatus: {
-                available: true,
-                text: "en stock Cultura"
-            }
-        },
-        {
-            id: "5",
-            title: "Les ombres du monde",
-            author: "Michel Bussi",
-            price: "2000",
-            coverImage: "../public/assets/books/ouss.jpg", // Use your local images
-            badge: {
-                type: "coup-de-coeur",
-                text: "coup de cœur"
-            },
-            stockStatus: {
-                available: true,
-                text: "en stock Cultura"
-            }
-        },
-        {
-            id: "6",
-            title: "Les ombres du monde",
-            author: "Michel Bussi",
-            price: "2000",
-            coverImage: "../public/assets/books/crime.jpg", // Use your local images
-            badge: {
-                type: "coup-de-coeur",
-                text: "coup de cœur"
-            },
-            stockStatus: {
-                available: true,
-                text: "en stock Cultura"
-            }
-        },
-        {
-            id: "7",
             title: "Où les étoiles tombent",
             author: "Cédric Sapin-Defour",
             price: "250",
-            coverImage: "../public/assets/books/ouss.jpg",
+            coverImage: "../public/assets/books/crime.jpg",
             badge: {
                 type: "nouveaute",
                 text: "Nouveauté"
@@ -136,11 +40,11 @@ const HomePage = () => {
             }
         },
         {
-            id: "8",
+            id: "3",
             title: "Le Cercle des jours",
             author: "Ken Follett",
             price: "25,90",
-            coverImage: "../public/assets/books/crime.jpg",
+            coverImage: "/images/book3.jpg",
             badge: {
                 type: "precommande",
                 text: "Précommande"
@@ -149,6 +53,18 @@ const HomePage = () => {
                 available: true,
                 text: "précommande - sortie le 25/09/25"
             }
+        },
+        {
+            id: "4",
+            title: "Finistère",
+            author: "Anne Berest",
+            price: "23,90",
+            coverImage: "/images/book4.jpg",
+            stockStatus: {
+                available: true,
+                text: "en stock Cultura"
+            },
+            isFavorited: true
         }
     ];
 
@@ -204,13 +120,6 @@ const HomePage = () => {
             <Navbar />
             <div className="h-20"></div>
 
-            <HeroCarousel
-                images={heroImages}
-                currentIndex={currentSlide}
-                height="h-80"
-                className="shadow-lg"
-            />
-
             {/* Main Content */}
             <main className="px-4 py-6 pt-20">
                 {/* Categories Section */}
@@ -241,37 +150,29 @@ const HomePage = () => {
                 </div>
             </main>
 
-            <div className="mt-8 px-4">
-    <h2 className="font-['Poppins'] font-bold text-[#00417a] text-[16px] mb-4">
-        Livres recommandés
-    </h2>
-    <ScrollNavigator
-        itemsPerView={3}
-        dotSize={8}
-        activeDotSize={12}
-        dotColor="#bfdbfe"
-        activeDotColor="#00417a"
-        fadeIntensity={0.4}
-        gap={16}
-        className="w-full"
-    >
-        {books.map((book) => (
-            <BookCard
-                key={book.id}
-                id={book.id}
-                title={book.title}
-                author={book.author}
-                price={book.price}
-                coverImage={book.coverImage}
-                badge={book.badge}
-                stockStatus={book.stockStatus}
-                onAddToCart={handleAddToCart}
-                onToggleFavorite={handleToggleFavorite}
-                isFavorited={book.isFavorited}
-            />
-        ))}
-    </ScrollNavigator>
-</div>
+            // Add this JSX after your categories section
+            <div className="mt-8">
+                <h2 className="font-['Poppins'] font-bold text-[#00417a] text-[16px] mb-4">
+                    Livres recommandés
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {books.map((book) => (
+                        <BookCard
+                            key={book.id}
+                            id={book.id}
+                            title={book.title}
+                            author={book.author}
+                            price={book.price}
+                            coverImage={book.coverImage}
+                            badge={book.badge}
+                            stockStatus={book.stockStatus}
+                            onAddToCart={handleAddToCart}
+                            onToggleFavorite={handleToggleFavorite}
+                            isFavorited={book.isFavorited}
+                        />
+                    ))}
+                </div>
+            </div>
 
             <AuthorComponent
                 authorImage="/assets/authors/camus.png"

@@ -124,7 +124,8 @@ const HomePage = () => {
         <div className="min-h-screen bg-gray-50">
             {/* Navigation Bar */}
             <Navbar />
-            <div className="h-20"></div>
+            <div className="h-20"> </div>
+            <div>
                 <HeroCarousel
                     images={marketingImages}
                     currentIndex={currentSlide}

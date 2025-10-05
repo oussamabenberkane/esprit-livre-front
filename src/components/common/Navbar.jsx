@@ -1,18 +1,33 @@
-import { Search, ChevronDown, ShoppingCart, Heart, User } from 'lucide-react';
-import LanguageToggle from '../animations/LanguageToggle';
+// src/components/common/Navbar.jsx
+import { useState } from 'react';
+import { Search, ShoppingCart, Heart, User, Menu } from 'lucide-react';
+import LanguageToggle from '../animations/LanguageToggle'; // Your existing component
 
+// Simple Language Toggle for Mobile/Tablet (the one I created earlier)
+const SimpleLanguageToggle = () => {
+    const [language, setLanguage] = useState('FR');
+    
+    return (
+        <button 
+            onClick={() => setLanguage(language === 'FR' ? 'EN' : 'FR')}
+            className="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg transition-colors"
+        >
+            {language}
+        </button>
+    );
+};
 
 // Logo Component
 const Logo = () => (
     <div className="flex flex-col text-white">
-        <div className="text-xl font-bold leading-tight">Esprit</div>
-        <div className="text-lg font-bold leading-tight">Livre</div>
+        <div className="text-lg md:text-xl font-bold leading-tight">Esprit</div>
+        <div className="text-base md:text-lg font-bold leading-tight">Livre</div>
     </div>
 );
 
-// Search Bar Component
-const SearchBar = ({ placeholder = "Recherchez un livre, un genre ..etc", onSearch }) => (
-    <div className="relative bg-white rounded-lg h-11 w-120 flex items-center">
+// SearchBar Component
+const SearchBar = ({ placeholder = "Recherchez...", onSearch }) => (
+    <div className="relative bg-white rounded-lg h-10 md:h-11 w-full md:w-96 flex items-center">
         <div className="absolute left-3 w-4 h-4 text-slate-500">
             <Search className="w-full h-full" />
         </div>
@@ -20,116 +35,77 @@ const SearchBar = ({ placeholder = "Recherchez un livre, un genre ..etc", onSear
             type="text"
             placeholder={placeholder}
             onChange={onSearch}
-            className="w-full h-full pl-10 pr-4 text-md text-black bg-transparent border-none outline-none placeholder:text-slate-500"
+            className="w-full h-full pl-10 pr-4 text-sm md:text-base text-black bg-transparent border-none outline-none placeholder:text-slate-500 rounded-lg"
         />
-    </div>
-);
-
-// User Actions Component
-const UserActions = ({ cartCount = 0, onCartClick, onFavoritesClick, onUserClick }) => (
-    <div className="flex items-center gap-2">
-        {/* Cart with notification */}
-        <div className="relative cursor-pointer hover:opacity-80 transition-opacity" onClick={onCartClick}>
-            <div className="w-6 h-6 text-white">
-                <ShoppingCart className="w-full h-full" />
-            </div>
-            {cartCount > 0 && (
-                <div className="absolute -top-3.5 -right-3 w-5.5 h-5.5 bg-red-500 rounded-full flex items-center justify-center">
-                    <span className="text-xs text-white font-black leading-none">{cartCount > 9 ? "+9" : cartCount}</span>
-                </div>
-            )}
-        </div>
-
-        {/* Favorites */}
-        <div
-            className="w-6 h-6 ml-2 text-white cursor-pointer hover:opacity-80 transition-opacity"
-            onClick={onFavoritesClick}
-        >
-            <Heart className="w-full h-full" />
-        </div>
-
-        {/* User Account */}
-        <div
-            className="w-6 h-6 ml-1 text-white cursor-pointer hover:opacity-80 transition-opacity"
-            onClick={onUserClick}
-        >
-            <User className="w-full h-full" />
-        </div>
     </div>
 );
 
 // Main Navbar Component
 const Navbar = ({
-    searchPlaceholder,
-    cartCount,
-    onSearch,
-    onCartClick,
-    onFavoritesClick,
-    onUserClick
-}) => (
-    <div className="absolute top-0 left-0 right-0 max-w-full bg-blue-800 rounded-br-2xl px-6 py-3 h-20">
-        <div className="flex items-center w-full h-full">
-            {/* Logo */}
-            <div className="flex-shrink-0">
+    searchPlaceholder = "Recherchez un livre...",
+    cartCount = 0,
+    onSearch = () => {},
+    onCartClick = () => {},
+    onFavoritesClick = () => {},
+    onUserClick = () => {}
+}) => {
+    return (
+        <div className="fixed top-0 left-0 right-0 bg-blue-800 rounded-br-2xl px-4 md:px-6 py-3 h-20 z-40">
+            <div className="flex items-center w-full h-full gap-4">
+                {/* Logo - Always visible */}
                 <Logo />
-            </div>
 
-            {/* Search Bar */}
-            <div className="flex-shrink-0 ml-8">
-                <SearchBar placeholder={searchPlaceholder} onSearch={onSearch} />
-            </div>
+                {/* Search Bar - Always visible but responsive width */}
+                <div className="flex-1 md:flex-initial">
+                    <SearchBar placeholder={searchPlaceholder} onSearch={onSearch} />
+                </div>
 
-            {/* Spacer */}
-            <div className="flex-1"></div>
+                {/* Desktop Spacer */}
+                <div className="hidden md:flex flex-1"></div>
 
-            {/* Language Selector */}
-            <div className="flex-shrink-0 mr-6">
-                <LanguageToggle />
-            </div>
+                {/* Language Toggle - Different components based on screen size */}
+                {/* Desktop: Use your actual LanguageToggle component */}
+                <div className="hidden lg:block">
+                    <LanguageToggle />
+                </div>
 
-            {/* User Actions */}
-            <div className="flex-shrink-0">
-                <UserActions
-                    cartCount={cartCount}
-                    onCartClick={onCartClick}
-                    onFavoritesClick={onFavoritesClick}
-                    onUserClick={onUserClick}
-                />
+                {/* Tablet/Large Mobile: Use the simple toggle */}
+                <div className="hidden md:block lg:hidden">
+                    <SimpleLanguageToggle />
+                </div>
+
+                {/* Action Icons */}
+                <div className="flex items-center gap-3">
+                    {/* Cart - Always visible */}
+                    <button onClick={onCartClick} className="relative">
+                        <ShoppingCart className="w-5 h-5 md:w-6 md:h-6 text-white hover:opacity-80 transition-opacity" />
+                        {cartCount > 0 && (
+                            <div className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                                <span className="text-xs text-white font-bold">
+                                    {cartCount > 9 ? "9+" : cartCount}
+                                </span>
+                            </div>
+                        )}
+                    </button>
+
+                    {/* Favorites - Desktop only */}
+                    <button onClick={onFavoritesClick} className="hidden md:block">
+                        <Heart className="w-6 h-6 text-white hover:opacity-80 transition-opacity" />
+                    </button>
+                    
+                    {/* User Account - Desktop only */}
+                    <button onClick={onUserClick} className="hidden md:block">
+                        <User className="w-6 h-6 text-white hover:opacity-80 transition-opacity" />
+                    </button>
+
+                    {/* Menu Icon - Mobile only */}
+                    <button className="md:hidden">
+                        <Menu className="w-6 h-6 text-white hover:opacity-80 transition-opacity" />
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
-);
-
-// Demo usage
-export default function App() {
-    const handleSearch = (e) => {
-        console.log('Search:', e.target.value);
-    };
-
-    const handleLanguageChange = () => {
-        console.log('Language selector clicked');
-    };
-
-    const handleCartClick = () => {
-        console.log('Cart clicked');
-    };
-
-    const handleFavoritesClick = () => {
-        console.log('Favorites clicked');
-    };
-
-    const handleUserClick = () => {
-        console.log('User account clicked');
-    };
-
-    return (
-        <Navbar
-            cartCount={15}
-            onSearch={handleSearch}
-            onLanguageChange={handleLanguageChange}
-            onCartClick={handleCartClick}
-            onFavoritesClick={handleFavoritesClick}
-            onUserClick={handleUserClick}
-        />
     );
-}
+};
+
+export default Navbar;

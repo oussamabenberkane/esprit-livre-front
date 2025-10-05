@@ -27,7 +27,7 @@ const SeeMore = ({
         ${className}
       `}
     >
-      <span className="font-['Poppins'] font-medium text-sm">
+      <span className="font-['Poppins'] font-medium text-fluid-small">
         {text}
       </span>
       <ChevronRight

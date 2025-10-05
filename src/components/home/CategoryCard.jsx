@@ -7,7 +7,7 @@ const CategoryCard = ({
     blurOpacity = 0.15
 }) => {
     return (
-        <div className="relative w-[150px] h-[70px] bg-gray-200 rounded-[10px] overflow-hidden cursor-pointer hover:scale-102 transition-transform duration-200">
+        <div className="relative cat-card-size bg-gray-200 rounded-[10px] overflow-hidden cursor-pointer hover:scale-102 transition-transform duration-200">
             {/* Background Image */}
             <div className="absolute inset-0">
                 <img
@@ -22,7 +22,7 @@ const CategoryCard = ({
                 className="absolute inset-0 backdrop-blur-[0.5px] backdrop-filter flex items-center justify-center"
                 style={{ backgroundColor: `rgba(51, 47, 76, ${blurOpacity})` }}
             >
-                <p className="font-['Poppins'] font-extrabold text-white text-[12px] text-center leading-[14px] px-1 max-w-full">
+                <p className="font-['Poppins'] font-extrabold text-white text-fluid-small text-center leading-[14px] px-1 max-w-full">
                     {title}
                 </p>
             </div>

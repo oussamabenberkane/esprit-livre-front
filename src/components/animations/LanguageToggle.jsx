@@ -34,7 +34,7 @@ const LanguageToggle = ({ onLanguageChange }) => {
                         duration: 0.2,
                         ease: "easeInOut"
                     }}
-                    className="text-sm font-medium text-gray-800"
+                    className="text-fluid-sm font-medium text-gray-800"
                 >
                     {getCurrentLanguageLabel()}
                 </motion.span>

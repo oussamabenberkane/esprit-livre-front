@@ -34,7 +34,7 @@ const FiltersSection = () => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -65,10 +65,10 @@ const FiltersSection = () => {
 
     const numValue = parseInt(value) || 0;
     let clampedValue = Math.max(0, Math.min(10000, numValue));
-    
+
     setFilters(prev => {
       const newPrice = { ...prev.price };
-      
+
       if (type === 'min') {
         clampedValue = Math.min(clampedValue, prev.price.max || 10000);
         newPrice.min = clampedValue;
@@ -76,7 +76,7 @@ const FiltersSection = () => {
         clampedValue = Math.max(clampedValue, prev.price.min || 0);
         newPrice.max = clampedValue;
       }
-      
+
       return {
         ...prev,
         price: newPrice
@@ -99,7 +99,7 @@ const FiltersSection = () => {
   const handleMinSliderChange = (e) => {
     const value = parseInt(e.target.value);
     const maxValue = filters.price.max || 10000;
-    const clampedValue = Math.min(value, maxValue - 100);
+    const clampedValue = Math.min(value, maxValue);
     setFilters(prev => ({
       ...prev,
       price: {
@@ -112,7 +112,7 @@ const FiltersSection = () => {
   const handleMaxSliderChange = (e) => {
     const value = parseInt(e.target.value);
     const minValue = filters.price.min || 0;
-    const clampedValue = Math.max(value, minValue + 100);
+    const clampedValue = Math.max(value, minValue);
     setFilters(prev => ({
       ...prev,
       price: {
@@ -127,7 +127,8 @@ const FiltersSection = () => {
       ...prev,
       [type]: [...prev[type], item]
     }));
-    setSearchTerms(prev => ({ ...prev, [type]: '' }));
+    // Keep the dropdown open and maintain focus by not clearing search term
+    // The input will stay focused allowing continued typing
   };
 
   const removeFilterItem = (type, item) => {
@@ -175,8 +176,8 @@ const FiltersSection = () => {
   const getFilteredOptions = (type, searchTerm) => {
     const options = mockFiltersData[type] || [];
     const selectedItems = filters[type] || [];
-    
-    return options.filter(option => 
+
+    return options.filter(option =>
       !selectedItems.includes(option) &&
       option.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -197,15 +198,15 @@ const FiltersSection = () => {
         <div className="relative px-2">
           <div className="relative h-2 mb-6">
             <div className="absolute w-full h-1 bg-gray-200 rounded-full top-1/2 -translate-y-1/2"></div>
-            
-            <div 
-              className="absolute h-1 bg-blue-600 rounded-full top-1/2 -translate-y-1/2 transition-all"
+
+            <div
+              className="absolute h-1 bg-blue-600 rounded-full top-1/2 -translate-y-1/2 transition-all pointer-events-none"
               style={{
                 left: `${((filters.price.min || 0) / 10000) * 100}%`,
                 right: `${100 - ((filters.price.max || 10000) / 10000) * 100}%`
               }}
             />
-            
+
             <input
               type="range"
               min="0"
@@ -213,10 +214,10 @@ const FiltersSection = () => {
               step="100"
               value={filters.price.min || 0}
               onChange={handleMinSliderChange}
-              className="absolute w-full h-full appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-600 [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-blue-600 [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:hover:scale-110 [&::-moz-range-thumb]:transition-transform"
-              style={{ zIndex: 5 }}
+              className="absolute w-full appearance-none bg-transparent cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-600 [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-blue-600 [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:hover:scale-110 [&::-moz-range-thumb]:transition-transform [&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:z-[5] [&::-moz-range-thumb]:relative [&::-moz-range-thumb]:z-[5]"
+              style={{ top: '50%', transform: 'translateY(-50%)', zIndex: 5 }}
             />
-            
+
             <input
               type="range"
               min="0"
@@ -224,11 +225,11 @@ const FiltersSection = () => {
               step="100"
               value={filters.price.max || 10000}
               onChange={handleMaxSliderChange}
-              className="absolute w-full h-full appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-600 [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-blue-600 [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:hover:scale-110 [&::-moz-range-thumb]:transition-transform"
-              style={{ zIndex: 4 }}
+              className="absolute w-full appearance-none bg-transparent cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-600 [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-blue-600 [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:hover:scale-110 [&::-moz-range-thumb]:transition-transform [&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:z-[4] [&::-moz-range-thumb]:relative [&::-moz-range-thumb]:z-[4]"
+              style={{ top: '50%', transform: 'translateY(-50%)', zIndex: 4 }}
             />
           </div>
-          
+
           <div className="flex items-center gap-3">
             <input
               type="text"
@@ -274,20 +275,19 @@ const FiltersSection = () => {
     const inputRef = useRef(null);
 
     return (
-      <div 
+      <div
         ref={el => filterRefs.current[type] = el}
         className="flex flex-col space-y-3 transition-all duration-300 ease-in-out"
       >
         <label className="text-sm font-semibold text-gray-800">{label}</label>
-        
+
         <div className="relative">
-          <div 
+          <div
             ref={el => dropdownRefs.current[type] = el}
-            className={`flex items-center bg-gray-50 rounded-lg border-2 transition-all duration-200 ${
-              isActive ? 'border-blue-500 shadow-md' : 'border-gray-200 hover:border-gray-300'
-            }`}
+            className={`flex items-center bg-gray-50 rounded-lg border-2 transition-all duration-200 ${isActive ? 'border-blue-500 shadow-md' : 'border-gray-200 hover:border-gray-300'
+              }`}
           >
-            <div 
+            <div
               className="flex items-center flex-1 h-11 px-3 cursor-text"
               onClick={() => {
                 if (inputRef.current) {
@@ -320,20 +320,18 @@ const FiltersSection = () => {
                 e.stopPropagation();
                 toggleDropdown(type);
               }}
-              className="h-11 px-3 hover:bg-gray-100 rounded-r-lg transition-colors flex items-center flex-shrink-0"
+              className="h-11 px-3 absolute right-1 hover:bg-gray-100 rounded-r-lg transition-colors flex items-center flex-shrink-0"
             >
-              <ChevronDown 
-                className={`w-4 h-4 text-gray-500 transform transition-transform duration-200 ${
-                  isActive ? 'rotate-180' : ''
-                }`}
+              <ChevronDown
+                className={`w-4 h-4 text-gray-500 transform transition-transform duration-200${isActive ? 'rotate-180' : ''
+                  }`}
               />
             </button>
           </div>
 
           <div
-            className={`overflow-hidden transition-all duration-300 ease-in-out ${
-              isActive ? 'max-h-64 mt-2 opacity-100' : 'max-h-0 opacity-0'
-            }`}
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${isActive ? 'max-h-64 mt-2 opacity-100' : 'max-h-0 opacity-0'
+              }`}
           >
             <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
               <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200">
@@ -347,7 +345,7 @@ const FiltersSection = () => {
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              
+
               <div className="max-h-52 overflow-y-auto">
                 {filteredOptions.length > 0 ? (
                   filteredOptions.map((option) => (
@@ -371,9 +369,8 @@ const FiltersSection = () => {
         </div>
 
         <div
-          className={`overflow-hidden transition-all duration-300 ease-in-out ${
-            selectedItems.length > 0 && !searchTerm ? 'max-h-32 opacity-100' : 'max-h-0 opacity-0'
-          }`}
+          className={`overflow-hidden transition-all duration-300 ease-in-out ${selectedItems.length > 0 && !searchTerm ? 'max-h-32 opacity-100' : 'max-h-0 opacity-0'
+            }`}
         >
           {selectedItems.length > 0 && !searchTerm && (
             <div className="flex gap-2 p-3 bg-blue-50 rounded-lg overflow-x-auto">
@@ -402,15 +399,16 @@ const FiltersSection = () => {
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      const clickedInsideDropdown = Object.values(dropdownRefs.current).some(
-        ref => ref && ref.contains(e.target)
-      );
-      
-      if (!clickedInsideDropdown && activeDropdown) {
+      if (!activeDropdown) return;
+
+      const activeDropdownRef = dropdownRefs.current[activeDropdown];
+      const clickedInsideActiveDropdown = activeDropdownRef && activeDropdownRef.contains(e.target);
+
+      if (!clickedInsideActiveDropdown) {
         setActiveDropdown(null);
       }
     };
-    
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [activeDropdown]);
@@ -430,14 +428,13 @@ const FiltersSection = () => {
 
         {isMenuOpen && (
           <>
-            <div 
+            <div
               className="fixed inset-0 bg-black/50 z-40 transition-opacity duration-300"
               onClick={() => setIsMenuOpen(false)}
             />
-            
-            <div className={`fixed left-0 top-0 h-full w-[85vw] max-w-[420px] bg-white z-50 transform transition-transform duration-300 ease-in-out shadow-2xl ${
-              isMenuOpen ? 'translate-x-0' : '-translate-x-full'
-            }`}>
+
+            <div className={`fixed left-0 top-0 h-full w-[85vw] max-w-[420px] bg-white z-50 transform transition-transform duration-300 ease-in-out shadow-2xl ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'
+              }`}>
               <div className="h-full flex flex-col">
                 <div className="flex items-center justify-between p-5 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-700">
                   <h2 className="text-lg font-semibold text-white">Filtres</h2>
@@ -465,33 +462,33 @@ const FiltersSection = () => {
                       <PriceFilter />
                     </div>
                     <div className="w-full">
-                      <FilterDropdown 
-                        type="categories" 
-                        label="Catégorie" 
+                      <FilterDropdown
+                        type="categories"
+                        label="Catégorie"
                         placeholder="Rechercher une catégorie..."
                         searchable={true}
                       />
                     </div>
                     <div className="w-full">
-                      <FilterDropdown 
-                        type="authors" 
-                        label="Auteur" 
+                      <FilterDropdown
+                        type="authors"
+                        label="Auteur"
                         placeholder="Rechercher un auteur..."
                         searchable={true}
                       />
                     </div>
                     <div className="w-full">
-                      <FilterDropdown 
-                        type="titles" 
-                        label="Titre" 
+                      <FilterDropdown
+                        type="titles"
+                        label="Titre"
                         placeholder="Rechercher un titre..."
                         searchable={true}
                       />
                     </div>
                     <div className="w-full">
-                      <FilterDropdown 
-                        type="languages" 
-                        label="Langue" 
+                      <FilterDropdown
+                        type="languages"
+                        label="Langue"
                         placeholder="Sélectionner une langue..."
                         searchable={false}
                       />
@@ -524,7 +521,7 @@ const FiltersSection = () => {
           <Filter className="w-5 h-5 text-blue-600" />
           <span className="text-base font-semibold text-gray-800">Filtres</span>
         </div>
-        
+
         {hasActiveFilters() && (
           <button
             onClick={applyFilters}
@@ -535,42 +532,42 @@ const FiltersSection = () => {
         )}
       </div>
 
-      <div className="flex items-start gap-5 flex-wrap">
-        <div className="min-w-[220px] flex-1 max-w-[280px]">
+      <div className="flex items-start gap-[clamp(0.75rem,2vw,1.25rem)] flex-wrap">
+        <div className="flex-1 min-w-[clamp(180px,20%,100%)]">
           <PriceFilter />
         </div>
 
-        <div className="min-w-[200px] flex-1 max-w-[240px]">
-          <FilterDropdown 
-            type="categories" 
-            label="Catégorie" 
+        <div className="flex-1 min-w-[clamp(160px,18%,100%)]">
+          <FilterDropdown
+            type="categories"
+            label="Catégorie"
             placeholder="Rechercher..."
             searchable={true}
           />
         </div>
 
-        <div className="min-w-[200px] flex-1 max-w-[240px]">
-          <FilterDropdown 
-            type="authors" 
-            label="Auteur" 
+        <div className="flex-1 min-w-[clamp(160px,18%,100%)]">
+          <FilterDropdown
+            type="authors"
+            label="Auteur"
             placeholder="Rechercher..."
             searchable={true}
           />
         </div>
 
-        <div className="min-w-[200px] flex-1 max-w-[240px]">
-          <FilterDropdown 
-            type="titles" 
-            label="Titre" 
+        <div className="flex-1 min-w-[clamp(160px,18%,100%)]">
+          <FilterDropdown
+            type="titles"
+            label="Titre"
             placeholder="Rechercher..."
             searchable={true}
           />
         </div>
 
-        <div className="min-w-[160px] flex-1 max-w-[200px]">
-          <FilterDropdown 
-            type="languages" 
-            label="Langue" 
+        <div className="flex-1 min-w-[clamp(140px,15%,100%)]">
+          <FilterDropdown
+            type="languages"
+            label="Langue"
             placeholder="Sélectionner..."
             searchable={false}
           />

@@ -9,7 +9,8 @@ import SeeMore from '../components/buttons/SeeMore';
 import SlideScroll from '../components/buttons/SlideScroll';
 import PaginationDots from '../components/common/PaginationDots';
 import Footer from '../components/common/Footer';
-import FloatingCartBadge from '../components/common/FloatingCartBadge'; 
+
+
 
 const HomePage = () => {
 
@@ -532,7 +533,7 @@ const HomePage = () => {
 
                             </div>
 
-                            <SeeMore />
+                            <SeeMore  />
 
                         </div>
                         <p className="font-['Poppins'] font-[550] text-[#00417a] text-fluid-small" >

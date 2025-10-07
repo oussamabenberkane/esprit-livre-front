@@ -94,3 +94,59 @@ Cards auto-wrap depending on available width.
 </div>
 
 
+
+
+what is left to do in homePage : 
+- navbar responsiveness (see with ouss for the ) ---- check (il manque le design figma + qlq retouches)
+- state management (add to cart and fav button) (azeka)
+
+
+
+to do list assagui : 
+- all books page 
+
+  
+
+
+Now I want to code the AllBooks page — here is the Figma mockup I designed for it.
+I already have the navbar, footer, and BookCard components coded, so you don’t need to touch those. I just want to focus on:
+* The filters section at the top (price, category, author, ISBN, language, and search button).
+* The flex layout for displaying the books (grid layout using the BookCard components).
+Requirements:
+* Use Tailwind CSS and follow a mobile-first approach.
+* Make everything fully responsive, scaling smoothly across breakpoints.
+* Use my locally defined Tailwind variables with clamp() for paddings, margins, font sizes, widths, and heights.
+* The overall page should have balanced horizontal padding and consistent vertical spacing between sections.
+Layout specifications from the Figma mockup:
+1. Filters Section
+   * Displayed horizontally on desktop (filters aligned in one row) and stacked vertically on mobile.
+   * Each filter (Price, Category, Author, ISBN, Language) should have consistent spacing and alignment.
+   * The search button appears to the right of the filters on desktop, and below them on mobile.
+   * The section has generous padding (use py-fluid-...).
+   * Add a subtle bottom border or separator.
+2. Books Grid
+   * On desktop: 4 cards per row with equal gaps.
+   * On tablet: 3 cards per row.
+   * On mobile: 2 cards per row (centered if uneven).
+   * Use gap-[clamp(1rem,2vw,2rem)] for consistent spacing.
+   * Cards are responsive and maintain a uniform height (use flex-wrap or grid with auto-fit / minmax).
+3. General layout
+   * Keep a max-width container for large screens (like max-w-[1400px] mx-auto).
+   * Maintain consistent spacing between filters, books grid, and footer (vertical spacing via mt-fluid-...).
+   * Background should remain clean and minimal (white or light gray).
+   * i also want to display a fixed number of cards based on the screen size, with a “See More” button to load the next page of books, and add a count subcomponent that shows the total number of books, current page, and total pages — similar to what you see on typical e-commerce websites.
+4. Typography and spacing
+   * Section title (“Frame” in the mockup) should be left-aligned and responsive (text-fluid-... font-semibold mb-fluid-...).
+   * Use subtle hover effects on cards and filters (e.g., shadow or border highlight).
+
+here is the figma mockup.
+
+i want all the code in a single jsx file with tailwind classes, no extra code, no typescript.
+
+
+
+
+
+
+
+

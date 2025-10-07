@@ -560,3 +560,17 @@ button {
   }
 
 }
+
+/* Add this at the end of your index.css file */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    max-height: 200px;
+    transform: translateY(0);
+  }
+}

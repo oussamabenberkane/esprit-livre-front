@@ -1,13 +1,18 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import AllBooks from './pages/AllBooks';
 import HomePage from './pages/homePage';
 
 
 function App() {
   return (
-    <div className="min-h-screen min-w-screen bg-gray-50">
-      <AllBooks />
-      {/* Reste de votre contenu */}
-    </div>
+    <BrowserRouter>
+      <div className="min-h-screen min-w-screen bg-gray-50">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/allbooks" element={<AllBooks />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
 

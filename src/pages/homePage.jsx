@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/common/Navbar';
 import CategoryCard from '../components/home/CategoryCard';
 import BookCard from '../components/common/BookCard'; // Adjust path as needed
@@ -13,11 +14,22 @@ import Footer from '../components/common/Footer';
 
 
 const HomePage = () => {
+    const navigate = useNavigate();
 
     // Hero carousel state (you already have this)
     const [currentSlide, setCurrentSlide] = React.useState(0);
 
     const [showFloatingBadge, setShowFloatingBadge] = useState(false);
+
+    // Navigation handler for categories
+    const handleCategoryClick = (categoryTitle) => {
+        navigate(`/allbooks?category=${encodeURIComponent(categoryTitle)}`);
+    };
+
+    // Navigation handler for authors
+    const handleAuthorClick = (authorName) => {
+        navigate(`/allbooks?author=${encodeURIComponent(authorName)}`);
+    };
 
     // Add state for categories section
     const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
@@ -533,7 +545,7 @@ const HomePage = () => {
 
                             </div>
 
-                            <SeeMore  />
+                            <SeeMore to="/allbooks" />
 
                         </div>
                         <p className="font-['Poppins'] font-[550] text-[#00417a] text-fluid-small" >
@@ -550,7 +562,11 @@ const HomePage = () => {
                                 className="flex pt-fluid-lg pl-fluid-2xl pr-fluid-lg gap-fluid-lg overflow-x-auto pb-4 scrollbar-hide"
                             >
                                 {categories.map((category, index) => (
-                                    <div key={index} className="flex-shrink-0 snap-start">
+                                    <div
+                                        key={index}
+                                        className="flex-shrink-0 snap-start cursor-pointer"
+                                        onClick={() => handleCategoryClick(category.title)}
+                                    >
                                         <CategoryCard
                                             title={category.title}
                                             imageSrc={category.imageSrc}
@@ -619,7 +635,7 @@ const HomePage = () => {
                             <h2 className="text-brand-blue text-fluid-h2 font-bold">
                                 Livres recommandés
                             </h2>
-                            <SeeMore />
+                            <SeeMore to="/allbooks" />
                         </div>
 
                         {/* Horizontal Scroll Container with negative margin */}
@@ -705,7 +721,7 @@ const HomePage = () => {
                             <p className="font-['Poppins'] font-bold text-[#00417a] text-fluid-h2" >
                                 Nos auteurs phares
                             </p>
-                            <SeeMore />
+                            <SeeMore to="/allbooks" />
 
 
                         </div>
@@ -717,7 +733,11 @@ const HomePage = () => {
                                 className="flex gap-fluid-sm pl-fluid-2xl pr-fluid-lg overflow-x-auto scrollbar-hide pt-fluid-xs pb-4"
                             >
                                 {authors.map((author, index) => (
-                                    <div key={index} className="flex-shrink-0 snap-start">
+                                    <div
+                                        key={index}
+                                        className="flex-shrink-0 snap-start cursor-pointer"
+                                        onClick={() => handleAuthorClick(author.Name)}
+                                    >
                                         <AuthorComponent
                                             authorImage={author.Image}
                                             authorName={author.Name}

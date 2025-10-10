@@ -234,9 +234,10 @@ const FilterDropdown = ({
   );
 };
 
-const FiltersSection = () => {
+const FiltersSection = ({ initialFilters }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuClosing, setIsMenuClosing] = useState(false);
   const [filters, setFilters] = useState({
     price: { min: 0, max: 10000 },
     categories: [],
@@ -255,6 +256,16 @@ const FiltersSection = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const filterRefs = useRef({});
   const dropdownRefs = useRef({});
+
+  // Apply initial filters from URL params
+  useEffect(() => {
+    if (initialFilters) {
+      setFilters(prev => ({
+        ...prev,
+        ...initialFilters
+      }));
+    }
+  }, [initialFilters]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -412,10 +423,18 @@ const FiltersSection = () => {
     setActiveDropdown(null);
   };
 
+  const handleCloseMenu = () => {
+    setIsMenuClosing(true);
+    setTimeout(() => {
+      setIsMenuOpen(false);
+      setIsMenuClosing(false);
+    }, 300); // Match animation duration
+  };
+
   const applyFilters = () => {
     console.log('Applying filters:', filters);
     if (isMobile) {
-      setIsMenuOpen(false);
+      handleCloseMenu();
     }
   };
 
@@ -460,10 +479,10 @@ const FiltersSection = () => {
   if (isMobile) {
     return (
       <>
-        <div className="flex items-center gap-2 p-4">
+        <div className="flex items-center gap-3 py-4">
           <button
             onClick={() => setIsMenuOpen(true)}
-            className="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700 px-5 py-2.5 rounded-lg transition-colors shadow-md"
+            className="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700 active:scale-95 px-6 py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
           >
             <Filter className="w-4 h-4" />
             <span className="text-sm font-medium">Filtres</span>
@@ -473,13 +492,13 @@ const FiltersSection = () => {
         {isMenuOpen && (
           <>
             <div
-              className="fixed inset-0 bg-black/50 z-40 transition-opacity duration-300"
-              onClick={() => setIsMenuOpen(false)}
+              className={`fixed inset-0 bg-black/50 z-40 ${isMenuClosing ? 'animate-fade-out' : 'animate-fade-in'}`}
+              style={{ animationDuration: '300ms' }}
+              onClick={handleCloseMenu}
             />
 
-            <div className={`fixed left-0 top-0 h-full w-[85vw] max-w-[420px] bg-white z-50 transform transition-transform duration-300 ease-in-out shadow-2xl ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'
-              }`}>
-              <div className="h-full flex flex-col">
+            <div className={`fixed left-0 top-0 h-full w-[85vw] max-w-[420px] bg-white z-50 shadow-2xl overflow-x-hidden ${isMenuClosing ? 'animate-slide-out-left' : 'animate-slide-in-left'}`}>
+              <div className="h-full flex flex-col overflow-x-hidden">
                 <div className="flex items-center justify-between p-5 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-700">
                   <h2 className="text-lg font-semibold text-white">Filtres</h2>
                   <div className="flex items-center gap-2">
@@ -492,16 +511,17 @@ const FiltersSection = () => {
                       </button>
                     )}
                     <button
-                      onClick={() => setIsMenuOpen(false)}
-                      className="text-white hover:bg-white/20 p-2 rounded-lg transition-colors"
+                      onClick={handleCloseMenu}
+                      className="text-white hover:bg-white/20 p-2 rounded-lg transition-all duration-200 active:scale-90 group"
+                      aria-label="Fermer"
                     >
-                      <X className="w-5 h-5" />
+                      <X className="w-5 h-5 group-hover:rotate-90 transition-transform duration-200" />
                     </button>
                   </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-5">
-                  <div className="space-y-6">
+                <div className="flex-1 overflow-y-auto overflow-x-hidden p-5">
+                  <div className="space-y-6 overflow-x-hidden">
                     <div className="w-full">
                       <PriceFilter
                         filters={filters}

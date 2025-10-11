@@ -5,11 +5,11 @@ import CategoryCard from '../components/home/CategoryCard';
 import BookCard from '../components/common/BookCard'; // Adjust path as needed
 import AuthorComponent from '../components/home/author';
 import HeroCarousel from '../components/home/HeroSection';
-import ScrollNavigator from '../components/common/Navigation';
 import SeeMore from '../components/buttons/SeeMore';
 import SlideScroll from '../components/buttons/SlideScroll';
 import PaginationDots from '../components/common/PaginationDots';
 import Footer from '../components/common/Footer';
+import CartConfirmationPopup from '../components/home/cartConfirmationPopup';
 
 
 
@@ -19,7 +19,9 @@ const HomePage = () => {
     // Hero carousel state (you already have this)
     const [currentSlide, setCurrentSlide] = React.useState(0);
 
-    const [showFloatingBadge, setShowFloatingBadge] = useState(false);
+    // Cart popup state
+    const [showCartPopup, setShowCartPopup] = useState(false);
+    const [selectedBook, setSelectedBook] = useState(null);
 
     // Navigation handler for categories
     const handleCategoryClick = (categoryTitle) => {
@@ -382,7 +384,11 @@ const HomePage = () => {
 
     const handleAddToCart = (bookId) => {
         console.log(`Added book ${bookId} to cart`);
-        // Add your cart logic here
+        const book = books.find(b => b.id === bookId);
+        if (book) {
+            setSelectedBook(book);
+            setShowCartPopup(true);
+        }
     };
 
     const handleToggleFavorite = (bookId, isFavorited) => {
@@ -801,6 +807,19 @@ const HomePage = () => {
             </div>
             <Footer />
 
+            {/* Cart Confirmation Popup - Single instance at page level */}
+            {selectedBook && (
+                <CartConfirmationPopup
+                    isOpen={showCartPopup}
+                    onClose={() => setShowCartPopup(false)}
+                    book={{
+                        title: selectedBook.title,
+                        author: selectedBook.author,
+                        price: selectedBook.price,
+                        coverImage: selectedBook.coverImage
+                    }}
+                />
+            )}
         </main>
     );
 

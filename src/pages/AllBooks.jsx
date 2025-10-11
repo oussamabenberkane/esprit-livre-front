@@ -2,6 +2,7 @@ import Navbar from "../components/common/Navbar"
 import Footer from "../components/common/Footer"
 import BookCard from "../components/common/BookCard"
 import FiltersSection from "../components/allbooks/FiltersSection"
+import CartConfirmationPopup from "../components/home/cartConfirmationPopup"
 import { useState, useEffect } from "react"
 import { useSearchParams } from "react-router-dom"
 
@@ -9,6 +10,8 @@ export default function AllBooks() {
     const [currentPage, setCurrentPage] = useState(1)
     const [searchParams] = useSearchParams()
     const [initialFilters, setInitialFilters] = useState(null)
+    const [showCartPopup, setShowCartPopup] = useState(false)
+    const [selectedBook, setSelectedBook] = useState(null)
 
     // Scroll to top when component mounts or params change
     useEffect(() => {
@@ -59,6 +62,11 @@ export default function AllBooks() {
 
     const handleAddToCart = (bookId) => {
         console.log(`Added book ${bookId} to cart`)
+        const book = books.find(b => b.id === bookId)
+        if (book) {
+            setSelectedBook(book)
+            setShowCartPopup(true)
+        }
     }
 
     const handleToggleFavorite = (bookId, isFavorited) => {
@@ -66,13 +74,15 @@ export default function AllBooks() {
     }
 
     return (
-        <div className="min-h-screen bg-white">
-             <section className="w-full max-w-[100vw] overflow-x-hidden"><Navbar /></section>
-
+        <main className="w-full max-w-[100vw] overflow-x-hidden">
+            <div className="min-h-screen bg-white">
+                {/* Navigation Bar */}
+                <section className="w-full max-w-[100vw] overflow-x-hidden"><Navbar /></section>
 
                 <div className="h-20"></div>
 
-            <main className="w-full container-main px-fluid-md overflow-x-hidden">
+                {/* Main Content */}
+                <div className="w-full container-main px-fluid-md">
                 {/* Page Header */}
                 <div className="mt-fluid-lg mb-fluid-lg">
                     <h1 className="text-brand-blue text-fluid-h1 font-bold mb-fluid-xxs">
@@ -173,9 +183,24 @@ export default function AllBooks() {
                         <span className="text-gray-600 font-medium">Service clientèle</span>
                     </div>
                 </div>
-            </main>
+                </div>
 
+            </div>
             <Footer />
-        </div>
+
+            {/* Cart Confirmation Popup - Single instance at page level */}
+            {selectedBook && (
+                <CartConfirmationPopup
+                    isOpen={showCartPopup}
+                    onClose={() => setShowCartPopup(false)}
+                    book={{
+                        title: selectedBook.title,
+                        author: selectedBook.author,
+                        price: selectedBook.price,
+                        coverImage: selectedBook.coverImage
+                    }}
+                />
+            )}
+        </main>
     )
 }

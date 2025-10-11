@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Heart, ShoppingCart } from 'lucide-react';
-import CartConfirmationPopup from '../home/cartConfirmationPopup';
 
 const BookCard = ({
     id,
@@ -15,7 +14,6 @@ const BookCard = ({
     isFavorited = false
 }) => {
     const [favorited, setFavorited] = useState(isFavorited);
-    const [showCartPopup, setShowCartPopup] = useState(false);
 
     const handleFavoriteClick = () => {
         setFavorited(!favorited);
@@ -28,7 +26,6 @@ const BookCard = ({
         if (onAddToCart) {
             onAddToCart(id);
         }
-        setShowCartPopup(true); // Show popup after adding to cart
     };
 
     const getBadgeStyles = (badgeType) => {
@@ -117,17 +114,6 @@ const BookCard = ({
                     Ajouter <br />au panier
                 </span>
             </button>
-            {/* Cart Confirmation Popup */}
-            <CartConfirmationPopup
-                isOpen={showCartPopup}
-                onClose={() => setShowCartPopup(false)}
-                book={{
-                    title: title,
-                    author: author,
-                    price: price,
-                    coverImage: coverImage
-                }}
-            />
 
         </div>
 

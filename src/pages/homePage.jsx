@@ -261,124 +261,283 @@ const HomePage = () => {
 
     const books = [
         {
-            id: "1",
+            id: 1,
             title: "Les ombres du monde",
-            author: "Michel Bussi",
-            price: "2000",
-            coverImage: "../public/assets/books/ouss.jpg", // Use your local images
-            badge: {
-                type: "coup-de-coeur",
-                text: "coup de cœur"
+            author: {
+                id: 1,
+                name: "Michel Bussi"
             },
-            stockStatus: {
-                available: true,
-                text: "en stock"
-            }
+            price: "2000",
+            stockQuantity: 10,
+            coverImageUrl: "../public/assets/books/ouss.jpg",
+            description: "Un thriller captivant qui vous tiendra en haleine jusqu'à la dernière page.",
+            active: true,
+            createdAt: "2025-10-07T19:56:52.198094+02:00",
+            updatedAt: null,
+            tags: [
+                {
+                    id: 1,
+                    nameEn: "Fiction",
+                    nameFr: "Fiction",
+                    type: "CATEGORY",
+                    active: true,
+                    colorHex: null
+                },
+                {
+                    id: 11,
+                    nameEn: "Bestseller",
+                    nameFr: "coup de cœur",
+                    type: "ETIQUETTE",
+                    active: true,
+                    colorHex: "#EF4444"
+                }
+            ],
+            likeCount: null,
+            isLikedByCurrentUser: false
         },
         {
-            id: "2",
+            id: 2,
             title: "Les ombres du monde",
-            author: "Michel Bussi",
-            price: "2000",
-            coverImage: "../public/assets/books/crime.jpg", // Use your local images
-            badge: {
-                type: "coup-de-coeur",
-                text: "coup de cœur"
+            author: {
+                id: 1,
+                name: "Michel Bussi"
             },
-            stockStatus: {
-                available: true,
-                text: "en stock"
-            }
+            price: "2000",
+            stockQuantity: 5,
+            coverImageUrl: "../public/assets/books/crime.jpg",
+            description: "Un thriller captivant qui vous tiendra en haleine jusqu'à la dernière page.",
+            active: true,
+            createdAt: "2025-10-07T19:56:52.198094+02:00",
+            updatedAt: null,
+            tags: [
+                {
+                    id: 1,
+                    nameEn: "Fiction",
+                    nameFr: "Fiction",
+                    type: "CATEGORY",
+                    active: true,
+                    colorHex: null
+                },
+                {
+                    id: 11,
+                    nameEn: "Bestseller",
+                    nameFr: "Précommande",
+                    type: "ETIQUETTE",
+                    active: true,
+                    colorHex: "#3B82F6"
+                }
+            ],
+            likeCount: null,
+            isLikedByCurrentUser: false
         },
         {
-            id: "3",
+            id: 3,
             title: "Les ombres du monde",
-            author: "Michel Bussi",
-            price: "2000",
-            coverImage: "../public/assets/books/ouss.jpg", // Use your local images
-            badge: {
-                type: "coup-de-coeur",
-                text: "coup de cœur"
+            author: {
+                id: 1,
+                name: "Michel Bussi"
             },
-            stockStatus: {
-                available: true,
-                text: "en stock"
-            }
+            price: "2000",
+            stockQuantity: 15,
+            coverImageUrl: "../public/assets/books/ouss.jpg",
+            description: "Un thriller captivant qui vous tiendra en haleine jusqu'à la dernière page.",
+            active: true,
+            createdAt: "2025-10-07T19:56:52.198094+02:00",
+            updatedAt: null,
+            tags: [
+                {
+                    id: 1,
+                    nameEn: "Fiction",
+                    nameFr: "Fiction",
+                    type: "CATEGORY",
+                    active: true,
+                    colorHex: null
+                },
+                {
+                    id: 12,
+                    nameEn: "New Release",
+                    nameFr: "Nouveauté",
+                    type: "ETIQUETTE",
+                    active: true,
+                    colorHex: "#10B981"
+                }
+            ],
+            likeCount: null,
+            isLikedByCurrentUser: true
         },
         {
-            id: "4",
+            id: 4,
             title: "Les ombres du monde",
-            author: "Michel Bussi",
-            price: "2000",
-            coverImage: "../public/assets/books/crime.jpg", // Use your local images
-            badge: {
-                type: "coup-de-coeur",
-                text: "coup de cœur"
+            author: {
+                id: 1,
+                name: "Michel Bussi"
             },
-            stockStatus: {
-                available: true,
-                text: "en stock"
-            }
+            price: "2000",
+            stockQuantity: 0,
+            coverImageUrl: "../public/assets/books/crime.jpg",
+            description: "Un thriller captivant qui vous tiendra en haleine jusqu'à la dernière page.",
+            active: true,
+            createdAt: "2025-10-07T19:56:52.198094+02:00",
+            updatedAt: null,
+            tags: [
+                {
+                    id: 1,
+                    nameEn: "Fiction",
+                    nameFr: "Fiction",
+                    type: "CATEGORY",
+                    active: true,
+                    colorHex: null
+                },
+                {
+                    id: 11,
+                    nameEn: "Bestseller",
+                    nameFr: "coup de cœur",
+                    type: "ETIQUETTE",
+                    active: true,
+                    colorHex: "#EF4444"
+                }
+            ],
+            likeCount: null,
+            isLikedByCurrentUser: false
         },
         {
-            id: "5",
+            id: 5,
             title: "Les ombres du monde",
-            author: "Michel Bussi",
-            price: "2000",
-            coverImage: "../public/assets/books/ouss.jpg", // Use your local images
-            badge: {
-                type: "coup-de-coeur",
-                text: "coup de cœur"
+            author: {
+                id: 1,
+                name: "Michel Bussi"
             },
-            stockStatus: {
-                available: true,
-                text: "en stock"
-            }
+            price: "2000",
+            stockQuantity: 8,
+            coverImageUrl: "../public/assets/books/ouss.jpg",
+            description: "Un thriller captivant qui vous tiendra en haleine jusqu'à la dernière page.",
+            active: true,
+            createdAt: "2025-10-07T19:56:52.198094+02:00",
+            updatedAt: null,
+            tags: [
+                {
+                    id: 1,
+                    nameEn: "Fiction",
+                    nameFr: "Fiction",
+                    type: "CATEGORY",
+                    active: true
+                },
+                {
+                    id: 12,
+                    nameEn: "New Release",
+                    nameFr: "Nouveauté",
+                    type: "ETIQUETTE",
+                    active: true,
+                    colorHex: "#10B981"
+                }
+            ],
+            likeCount: null,
+            isLikedByCurrentUser: false
         },
         {
-            id: "6",
+            id: 6,
             title: "Les ombres du monde",
-            author: "Michel Bussi",
-            price: "2000",
-            coverImage: "../public/assets/books/crime.jpg", // Use your local images
-            badge: {
-                type: "coup-de-coeur",
-                text: "coup de cœur"
+            author: {
+                id: 1,
+                name: "Michel Bussi"
             },
-            stockStatus: {
-                available: true,
-                text: "en stock"
-            }
+            price: "2000",
+            stockQuantity: 12,
+            coverImageUrl: "../public/assets/books/crime.jpg",
+            description: "Un thriller captivant qui vous tiendra en haleine jusqu'à la dernière page.",
+            active: true,
+            createdAt: "2025-10-07T19:56:52.198094+02:00",
+            updatedAt: null,
+            tags: [
+                {
+                    id: 1,
+                    nameEn: "Fiction",
+                    nameFr: "Fiction",
+                    type: "CATEGORY",
+                    active: true,
+                    colorHex: null
+                },
+                {
+                    id: 11,
+                    nameEn: "Bestseller",
+                    nameFr: "Précommande",
+                    type: "ETIQUETTE",
+                    active: true,
+                    colorHex: "#3B82F6"
+                }
+            ],
+            likeCount: null,
+            isLikedByCurrentUser: false
         },
         {
-            id: "7",
+            id: 7,
             title: "Où les étoiles tombent",
-            author: "Cédric Sapin-Defour",
-            price: "250",
-            coverImage: "../public/assets/books/ouss.jpg",
-            badge: {
-                type: "nouveaute",
-                text: "Nouveauté"
+            author: {
+                id: 2,
+                name: "Cédric Sapin-Defour"
             },
-            stockStatus: {
-                available: true,
-                text: "en stock"
-            }
+            price: "250",
+            stockQuantity: 20,
+            coverImageUrl: "../public/assets/books/ouss.jpg",
+            description: "Un roman poétique et touchant.",
+            active: true,
+            createdAt: "2025-10-08T10:30:00.000000+02:00",
+            updatedAt: null,
+            tags: [
+                {
+                    id: 2,
+                    nameEn: "Romance",
+                    nameFr: "Romance",
+                    type: "CATEGORY",
+                    active: true,
+                    colorHex: null
+                },
+                {
+                    id: 11,
+                    nameEn: "Bestseller",
+                    nameFr: "coup de cœur",
+                    type: "ETIQUETTE",
+                    active: true,
+                    colorHex: "#EF4444"
+                }
+            ],
+            likeCount: null,
+            isLikedByCurrentUser: false
         },
         {
-            id: "8",
+            id: 8,
             title: "Le Cercle des jours",
-            author: "Ken Follett",
-            price: "25,90",
-            coverImage: "../public/assets/books/crime.jpg",
-            badge: {
-                type: "precommande",
-                text: "Précommande"
+            author: {
+                id: 3,
+                name: "Ken Follett"
             },
-            stockStatus: {
-                available: true,
-                text: "précommande - sortie le 25/09/25"
-            }
+            price: "2590",
+            stockQuantity: 0,
+            coverImageUrl: "../public/assets/books/crime.jpg",
+            description: "Une épopée historique fascinante.",
+            active: true,
+            createdAt: "2025-10-09T14:15:00.000000+02:00",
+            updatedAt: null,
+            tags: [
+                {
+                    id: 3,
+                    nameEn: "Historical",
+                    nameFr: "Historique",
+                    type: "CATEGORY",
+                    active: true,
+                    colorHex: null
+                },
+                {
+                    id: 11,
+                    nameEn: "Bestseller",
+                    nameFr: "coup de cœur",
+                    type: "ETIQUETTE",
+                    active: true,
+                    colorHex: "#EF4444"
+                }
+            ],
+            likeCount: null,
+            isLikedByCurrentUser: false
         }
     ];
 
@@ -399,61 +558,97 @@ const HomePage = () => {
 
 
 
-    // Categories data matching the original design
+    // Categories data from API
     const categories = [
         {
-            title: "Développement personnel",
-            imageSrc: "/assets/categories/dev personel.png",
-            imagePosition: "center",
-            blurOpacity: 0.15
+            id: 1,
+            nameEn: "Fiction",
+            nameFr: "Fiction",
+            type: "CATEGORY",
+            active: true,
+            colorHex: null,
+            imageUrl: "/assets/categories/thriller.png"
         },
         {
-            title: "Développement personnel",
-            imageSrc: "/assets/categories/dev personel.png",
-            imagePosition: "center",
-            blurOpacity: 0.15
+            id: 2,
+            nameEn: "Philosophy",
+            nameFr: "Philosophie",
+            type: "CATEGORY",
+            active: true,
+            colorHex: null,
+            imageUrl: "/assets/categories/dev personel.png"
         },
         {
-            title: "Développement personnel",
-            imageSrc: "/assets/categories/dev personel.png",
-            imagePosition: "center",
-            blurOpacity: 0.15
+            id: 3,
+            nameEn: "Classic",
+            nameFr: "Classique",
+            type: "CATEGORY",
+            active: true,
+            colorHex: null,
+            imageUrl: "/assets/categories/histoire.png"
         },
         {
-            title: "Développement personnel",
-            imageSrc: "/assets/categories/dev personel.png",
-            imagePosition: "center",
-            blurOpacity: 0.15
+            id: 4,
+            nameEn: "Adventure",
+            nameFr: "Aventure",
+            type: "CATEGORY",
+            active: true,
+            colorHex: null,
+            imageUrl: "/assets/categories/thriller.png"
         },
         {
-            title: "Développement personnel",
-            imageSrc: "/assets/categories/dev personel.png",
-            imagePosition: "center",
-            blurOpacity: 0.15
+            id: 5,
+            nameEn: "Romance",
+            nameFr: "Romance",
+            type: "CATEGORY",
+            active: true,
+            colorHex: null,
+            imageUrl: "/assets/categories/romance.png"
         },
         {
-            title: "Romance",
-            imageSrc: "/assets/categories/romance.png",
-            imagePosition: "center",
-            blurOpacity: 0.15
+            id: 6,
+            nameEn: "Drama",
+            nameFr: "Drame",
+            type: "CATEGORY",
+            active: true,
+            colorHex: null,
+            imageUrl: "/assets/categories/thriller.png"
         },
         {
-            title: "Thriller",
-            imageSrc: "/assets/categories/thriller.png",
-            imagePosition: "center",
-            blurOpacity: 0.15
+            id: 7,
+            nameEn: "Science Fiction",
+            nameFr: "Science-Fiction",
+            type: "CATEGORY",
+            active: true,
+            colorHex: null,
+            imageUrl: "/assets/categories/thriller.png"
         },
         {
-            title: "Histoire",
-            imageSrc: "/assets/categories/histoire.png",
-            imagePosition: "center",
-            blurOpacity: 0.1
+            id: 8,
+            nameEn: "Historical",
+            nameFr: "Historique",
+            type: "CATEGORY",
+            active: true,
+            colorHex: null,
+            imageUrl: "/assets/categories/histoire.png"
         },
         {
-            title: "Enfants",
-            imageSrc: "/assets/categories/enfants.png",
-            imagePosition: "center",
-            blurOpacity: 0.1
+            id: 9,
+            nameEn: "Children's Literature",
+            nameFr: "Littérature Jeunesse",
+            type: "CATEGORY",
+            active: true,
+            colorHex: null,
+            imageUrl: "/assets/categories/enfants.png"
+        },
+        {
+            id: 10,
+            nameEn: "Existentialism",
+            nameFr: "Existentialisme",
+            type: "CATEGORY",
+            active: true,
+            colorHex: null,
+            imageUrl: "/assets/categories/dev personel.png"
         }
     ];
 
@@ -567,17 +762,15 @@ const HomePage = () => {
                                 ref={categoriesScrollRef}
                                 className="flex pt-fluid-lg pl-fluid-2xl pr-fluid-lg gap-fluid-lg overflow-x-auto pb-4 scrollbar-hide"
                             >
-                                {categories.map((category, index) => (
+                                {categories.map((category) => (
                                     <div
-                                        key={index}
+                                        key={category.id}
                                         className="flex-shrink-0 snap-start cursor-pointer"
-                                        onClick={() => handleCategoryClick(category.title)}
+                                        onClick={() => handleCategoryClick(category.nameFr)}
                                     >
                                         <CategoryCard
-                                            title={category.title}
-                                            imageSrc={category.imageSrc}
-                                            imagePosition={category.imagePosition}
-                                            blurOpacity={category.blurOpacity} />
+                                            title={category.nameFr}
+                                            imageSrc={category.imageUrl} />
                                     </div>
                                 ))}
                             </div>
@@ -650,25 +843,41 @@ const HomePage = () => {
                                 ref={booksScrollRef}
                                 className="flex pt-fluid-xs pr-fluid-lg pl-fluid-2xl gap-fluid-md overflow-x-auto scrollbar-hide pb-4"
                             >
-                                {books.map((book) => (
-                                    <div
-                                        key={book.id}
-                                        className="flex-shrink-0 snap-start book-card-width"
-                                    >
-                                        <BookCard
-                                            id={book.id}
-                                            title={book.title}
-                                            author={book.author}
-                                            price={book.price}
-                                            coverImage={book.coverImage}
-                                            badge={book.badge}
-                                            stockStatus={book.stockStatus}
-                                            onAddToCart={handleAddToCart}
-                                            onToggleFavorite={handleToggleFavorite}
-                                            isFavorited={book.isFavorited}
-                                        />
-                                    </div>
-                                ))}
+                                {books.map((book) => {
+                                    // Extract first ETIQUETTE tag for badge
+                                    const etiquetteTag = book.tags.find(tag => tag.type === "ETIQUETTE");
+                                    const badge = etiquetteTag ? {
+                                        type: etiquetteTag.nameEn.toLowerCase(),
+                                        text: etiquetteTag.nameFr,
+                                        colorHex: etiquetteTag.colorHex
+                                    } : null;
+
+                                    // Derive stock status from stockQuantity
+                                    const stockStatus = {
+                                        available: book.stockQuantity > 0,
+                                        text: book.stockQuantity > 0 ? "en stock" : "rupture de stock"
+                                    };
+
+                                    return (
+                                        <div
+                                            key={book.id}
+                                            className="flex-shrink-0 snap-start book-card-width"
+                                        >
+                                            <BookCard
+                                                id={book.id}
+                                                title={book.title}
+                                                author={book.author.name}
+                                                price={book.price}
+                                                coverImage={book.coverImageUrl}
+                                                badge={badge}
+                                                stockStatus={stockStatus}
+                                                onAddToCart={handleAddToCart}
+                                                onToggleFavorite={handleToggleFavorite}
+                                                isFavorited={book.isLikedByCurrentUser}
+                                            />
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                         <div className="flex items-center justify-between pr-fluid-lg pt-2 mt-4 mb-4">
@@ -814,9 +1023,9 @@ const HomePage = () => {
                     onClose={() => setShowCartPopup(false)}
                     book={{
                         title: selectedBook.title,
-                        author: selectedBook.author,
+                        author: selectedBook.author.name,
                         price: selectedBook.price,
-                        coverImage: selectedBook.coverImage
+                        coverImage: selectedBook.coverImageUrl
                     }}
                 />
             )}

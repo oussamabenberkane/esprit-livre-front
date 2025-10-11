@@ -28,16 +28,6 @@ const BookCard = ({
         }
     };
 
-    const getBadgeStyles = (badgeType) => {
-        const styles = {
-            "coup-de-coeur": "bg-red-500 text-white",
-            "nouveaute": "bg-green-500 text-white",
-            "precommande": "bg-blue-500 text-white",
-            "most-sold": "bg-orange-500 text-white"
-        };
-        return styles[badgeType] || "bg-gray-500 text-white";
-    };
-
     return (
         <div className="bg-white rounded-lg shadow-lg hover:shadow-lg transition-shadow duration-300 overflow-hidden group w-full book-card-height flex flex-col relative">
             {/* Book Cover Container */}
@@ -51,7 +41,10 @@ const BookCard = ({
                 </div>
                 {/* Badge */}
                 {badge && (
-                    <div className={`absolute top-0 left-0 px-3 py-2 rounded-br-2xl text-fluid-tag font-semibold ${getBadgeStyles(badge.type)}`}>
+                    <div
+                        className="absolute top-0 left-0 px-3 py-2 rounded-br-2xl text-fluid-tag font-semibold text-white"
+                        style={{ backgroundColor: badge.colorHex || '#6B7280' }}
+                    >
                         {badge.text}
                     </div>
                 )}

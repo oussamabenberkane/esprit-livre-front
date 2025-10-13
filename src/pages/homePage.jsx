@@ -2,14 +2,15 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/common/Navbar';
 import CategoryCard from '../components/home/CategoryCard';
-import BookCard from '../components/common/BookCard'; // Adjust path as needed
+import BookCard from '../components/common/BookCard';
 import AuthorComponent from '../components/home/author';
 import HeroCarousel from '../components/home/HeroSection';
 import SeeMore from '../components/buttons/SeeMore';
 import SlideScroll from '../components/buttons/SlideScroll';
 import PaginationDots from '../components/common/PaginationDots';
 import Footer from '../components/common/Footer';
-import CartConfirmationPopup from '../components/home/cartConfirmationPopup';
+import CartConfirmationPopup from '../components/common/cartConfirmationPopup';
+import { BOOKS_DATA } from '../data/booksData';
 
 
 
@@ -258,288 +259,8 @@ const HomePage = () => {
 
     ];
 
-
-    const books = [
-        {
-            id: 1,
-            title: "Les ombres du monde",
-            author: {
-                id: 1,
-                name: "Michel Bussi"
-            },
-            price: "2000",
-            stockQuantity: 10,
-            coverImageUrl: "../public/assets/books/ouss.jpg",
-            description: "Un thriller captivant qui vous tiendra en haleine jusqu'à la dernière page.",
-            active: true,
-            createdAt: "2025-10-07T19:56:52.198094+02:00",
-            updatedAt: null,
-            tags: [
-                {
-                    id: 1,
-                    nameEn: "Fiction",
-                    nameFr: "Fiction",
-                    type: "CATEGORY",
-                    active: true,
-                    colorHex: null
-                },
-                {
-                    id: 11,
-                    nameEn: "Bestseller",
-                    nameFr: "coup de cœur",
-                    type: "ETIQUETTE",
-                    active: true,
-                    colorHex: "#EF4444"
-                }
-            ],
-            likeCount: null,
-            isLikedByCurrentUser: false
-        },
-        {
-            id: 2,
-            title: "Les ombres du monde",
-            author: {
-                id: 1,
-                name: "Michel Bussi"
-            },
-            price: "2000",
-            stockQuantity: 5,
-            coverImageUrl: "../public/assets/books/crime.jpg",
-            description: "Un thriller captivant qui vous tiendra en haleine jusqu'à la dernière page.",
-            active: true,
-            createdAt: "2025-10-07T19:56:52.198094+02:00",
-            updatedAt: null,
-            tags: [
-                {
-                    id: 1,
-                    nameEn: "Fiction",
-                    nameFr: "Fiction",
-                    type: "CATEGORY",
-                    active: true,
-                    colorHex: null
-                },
-                {
-                    id: 11,
-                    nameEn: "Bestseller",
-                    nameFr: "Précommande",
-                    type: "ETIQUETTE",
-                    active: true,
-                    colorHex: "#3B82F6"
-                }
-            ],
-            likeCount: null,
-            isLikedByCurrentUser: false
-        },
-        {
-            id: 3,
-            title: "Les ombres du monde",
-            author: {
-                id: 1,
-                name: "Michel Bussi"
-            },
-            price: "2000",
-            stockQuantity: 15,
-            coverImageUrl: "../public/assets/books/ouss.jpg",
-            description: "Un thriller captivant qui vous tiendra en haleine jusqu'à la dernière page.",
-            active: true,
-            createdAt: "2025-10-07T19:56:52.198094+02:00",
-            updatedAt: null,
-            tags: [
-                {
-                    id: 1,
-                    nameEn: "Fiction",
-                    nameFr: "Fiction",
-                    type: "CATEGORY",
-                    active: true,
-                    colorHex: null
-                },
-                {
-                    id: 12,
-                    nameEn: "New Release",
-                    nameFr: "Nouveauté",
-                    type: "ETIQUETTE",
-                    active: true,
-                    colorHex: "#10B981"
-                }
-            ],
-            likeCount: null,
-            isLikedByCurrentUser: true
-        },
-        {
-            id: 4,
-            title: "Les ombres du monde",
-            author: {
-                id: 1,
-                name: "Michel Bussi"
-            },
-            price: "2000",
-            stockQuantity: 0,
-            coverImageUrl: "../public/assets/books/crime.jpg",
-            description: "Un thriller captivant qui vous tiendra en haleine jusqu'à la dernière page.",
-            active: true,
-            createdAt: "2025-10-07T19:56:52.198094+02:00",
-            updatedAt: null,
-            tags: [
-                {
-                    id: 1,
-                    nameEn: "Fiction",
-                    nameFr: "Fiction",
-                    type: "CATEGORY",
-                    active: true,
-                    colorHex: null
-                },
-                {
-                    id: 11,
-                    nameEn: "Bestseller",
-                    nameFr: "coup de cœur",
-                    type: "ETIQUETTE",
-                    active: true,
-                    colorHex: "#EF4444"
-                }
-            ],
-            likeCount: null,
-            isLikedByCurrentUser: false
-        },
-        {
-            id: 5,
-            title: "Les ombres du monde",
-            author: {
-                id: 1,
-                name: "Michel Bussi"
-            },
-            price: "2000",
-            stockQuantity: 8,
-            coverImageUrl: "../public/assets/books/ouss.jpg",
-            description: "Un thriller captivant qui vous tiendra en haleine jusqu'à la dernière page.",
-            active: true,
-            createdAt: "2025-10-07T19:56:52.198094+02:00",
-            updatedAt: null,
-            tags: [
-                {
-                    id: 1,
-                    nameEn: "Fiction",
-                    nameFr: "Fiction",
-                    type: "CATEGORY",
-                    active: true
-                },
-                {
-                    id: 12,
-                    nameEn: "New Release",
-                    nameFr: "Nouveauté",
-                    type: "ETIQUETTE",
-                    active: true,
-                    colorHex: "#10B981"
-                }
-            ],
-            likeCount: null,
-            isLikedByCurrentUser: false
-        },
-        {
-            id: 6,
-            title: "Les ombres du monde",
-            author: {
-                id: 1,
-                name: "Michel Bussi"
-            },
-            price: "2000",
-            stockQuantity: 12,
-            coverImageUrl: "../public/assets/books/crime.jpg",
-            description: "Un thriller captivant qui vous tiendra en haleine jusqu'à la dernière page.",
-            active: true,
-            createdAt: "2025-10-07T19:56:52.198094+02:00",
-            updatedAt: null,
-            tags: [
-                {
-                    id: 1,
-                    nameEn: "Fiction",
-                    nameFr: "Fiction",
-                    type: "CATEGORY",
-                    active: true,
-                    colorHex: null
-                },
-                {
-                    id: 11,
-                    nameEn: "Bestseller",
-                    nameFr: "Précommande",
-                    type: "ETIQUETTE",
-                    active: true,
-                    colorHex: "#3B82F6"
-                }
-            ],
-            likeCount: null,
-            isLikedByCurrentUser: false
-        },
-        {
-            id: 7,
-            title: "Où les étoiles tombent",
-            author: {
-                id: 2,
-                name: "Cédric Sapin-Defour"
-            },
-            price: "250",
-            stockQuantity: 20,
-            coverImageUrl: "../public/assets/books/ouss.jpg",
-            description: "Un roman poétique et touchant.",
-            active: true,
-            createdAt: "2025-10-08T10:30:00.000000+02:00",
-            updatedAt: null,
-            tags: [
-                {
-                    id: 2,
-                    nameEn: "Romance",
-                    nameFr: "Romance",
-                    type: "CATEGORY",
-                    active: true,
-                    colorHex: null
-                },
-                {
-                    id: 11,
-                    nameEn: "Bestseller",
-                    nameFr: "coup de cœur",
-                    type: "ETIQUETTE",
-                    active: true,
-                    colorHex: "#EF4444"
-                }
-            ],
-            likeCount: null,
-            isLikedByCurrentUser: false
-        },
-        {
-            id: 8,
-            title: "Le Cercle des jours",
-            author: {
-                id: 3,
-                name: "Ken Follett"
-            },
-            price: "2590",
-            stockQuantity: 0,
-            coverImageUrl: "../public/assets/books/crime.jpg",
-            description: "Une épopée historique fascinante.",
-            active: true,
-            createdAt: "2025-10-09T14:15:00.000000+02:00",
-            updatedAt: null,
-            tags: [
-                {
-                    id: 3,
-                    nameEn: "Historical",
-                    nameFr: "Historique",
-                    type: "CATEGORY",
-                    active: true,
-                    colorHex: null
-                },
-                {
-                    id: 11,
-                    nameEn: "Bestseller",
-                    nameFr: "coup de cœur",
-                    type: "ETIQUETTE",
-                    active: true,
-                    colorHex: "#EF4444"
-                }
-            ],
-            likeCount: null,
-            isLikedByCurrentUser: false
-        }
-    ];
+    // Use shared books data
+    const books = BOOKS_DATA;
 
     const handleAddToCart = (bookId) => {
         console.log(`Added book ${bookId} to cart`);
@@ -1022,6 +743,7 @@ const HomePage = () => {
                     isOpen={showCartPopup}
                     onClose={() => setShowCartPopup(false)}
                     book={{
+                        id: selectedBook.id,
                         title: selectedBook.title,
                         author: selectedBook.author.name,
                         price: selectedBook.price,

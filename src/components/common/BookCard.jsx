@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Heart, ShoppingCart } from 'lucide-react';
 
 const BookCard = ({
@@ -14,22 +15,45 @@ const BookCard = ({
     isFavorited = false
 }) => {
     const [favorited, setFavorited] = useState(isFavorited);
+    const navigate = useNavigate();
 
-    const handleFavoriteClick = () => {
+    const handleFavoriteClick = (e) => {
+        e.stopPropagation(); // Prevent card click navigation
         setFavorited(!favorited);
         if (onToggleFavorite) {
             onToggleFavorite(id, !favorited);
         }
     };
 
-    const handleAddToCartClick = () => {
+    const handleAddToCartClick = (e) => {
+        e.stopPropagation(); // Prevent card click navigation
         if (onAddToCart) {
             onAddToCart(id);
         }
     };
 
+    const handleCardClick = () => {
+        // Navigate with both URL param and state for robustness
+        navigate(`/books/${id}`, {
+            state: {
+                book: {
+                    id,
+                    title,
+                    author,
+                    price,
+                    coverImage,
+                    badge,
+                    stockStatus
+                }
+            }
+        });
+    };
+
     return (
-        <div className="bg-white rounded-lg shadow-lg hover:shadow-lg transition-shadow duration-300 overflow-hidden group w-full book-card-height flex flex-col relative">
+        <div
+            onClick={handleCardClick}
+            className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group w-full book-card-height flex flex-col relative cursor-pointer"
+        >
             {/* Book Cover Container */}
             <div className="relative pt-fluid-sm pb-auto w-full flex items-center justify-center">
                 <div className="relative book-image-height">

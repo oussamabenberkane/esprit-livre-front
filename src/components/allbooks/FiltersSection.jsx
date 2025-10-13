@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { X, Filter, Search, ChevronDown } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const mockFiltersData = {
   categories: ['Fantasie', 'Science fiction', 'Romans', 'Histoire', 'Biographie', 'Philosophie', 'Art', 'Cuisine'],
@@ -237,7 +238,6 @@ const FilterDropdown = ({
 const FiltersSection = ({ initialFilters }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isMenuClosing, setIsMenuClosing] = useState(false);
   const [filters, setFilters] = useState({
     price: { min: 0, max: 10000 },
     categories: [],
@@ -423,18 +423,10 @@ const FiltersSection = ({ initialFilters }) => {
     setActiveDropdown(null);
   };
 
-  const handleCloseMenu = () => {
-    setIsMenuClosing(true);
-    setTimeout(() => {
-      setIsMenuOpen(false);
-      setIsMenuClosing(false);
-    }, 300); // Match animation duration
-  };
-
   const applyFilters = () => {
     console.log('Applying filters:', filters);
     if (isMobile) {
-      handleCloseMenu();
+      setIsMenuOpen(false);
     }
   };
 
@@ -479,159 +471,175 @@ const FiltersSection = ({ initialFilters }) => {
   if (isMobile) {
     return (
       <>
-        <div className="flex items-center gap-3 py-4">
+        <div className="flex items-center gap-2 p-4">
           <button
             onClick={() => setIsMenuOpen(true)}
-            className="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700 active:scale-95 px-6 py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
+            className="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700 px-5 py-2.5 rounded-lg transition-colors shadow-md"
           >
             <Filter className="w-4 h-4" />
             <span className="text-sm font-medium">Filtres</span>
           </button>
         </div>
 
-        {isMenuOpen && (
-          <>
-            <div
-              className={`fixed inset-0 bg-black/50 z-40 ${isMenuClosing ? 'animate-fade-out' : 'animate-fade-in'}`}
-              style={{ animationDuration: '300ms' }}
-              onClick={handleCloseMenu}
-            />
+        <AnimatePresence>
+          {isMenuOpen && (
+            <>
+              {/* Backdrop with fade animation */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="fixed inset-0 bg-black/50 z-40"
+                onClick={() => setIsMenuOpen(false)}
+              />
 
-            <div className={`fixed left-0 top-0 h-full w-[85vw] max-w-[420px] bg-white z-50 shadow-2xl overflow-x-hidden ${isMenuClosing ? 'animate-slide-out-left' : 'animate-slide-in-left'}`}>
-              <div className="h-full flex flex-col overflow-x-hidden">
-                <div className="flex items-center justify-between p-5 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-700">
-                  <h2 className="text-lg font-semibold text-white">Filtres</h2>
-                  <div className="flex items-center gap-2">
-                    {hasActiveFilters() && (
+              {/* Side menu with slide and fade animation */}
+              <motion.div
+                initial={{ x: "-100%", opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: "-100%", opacity: 0 }}
+                transition={{
+                  type: "tween",
+                  duration: 0.35,
+                  ease: [0.4, 0, 0.2, 1], // Custom cubic-bezier for smoother exit
+                }}
+                className="fixed left-0 top-0 h-full w-[85vw] max-w-[420px] bg-white z-50 shadow-2xl"
+              >
+                <div className="h-full flex flex-col">
+                  <div className="flex items-center justify-between p-5 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-700">
+                    <h2 className="text-lg font-semibold text-white">Filtres</h2>
+                    <div className="flex items-center gap-2">
+                      {hasActiveFilters() && (
+                        <button
+                          onClick={applyFilters}
+                          className="bg-white text-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors shadow-sm"
+                        >
+                          Appliquer
+                        </button>
+                      )}
                       <button
-                        onClick={applyFilters}
-                        className="bg-white text-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors shadow-sm"
+                        onClick={() => setIsMenuOpen(false)}
+                        className="text-white hover:bg-white/20 p-2 rounded-lg transition-colors"
                       >
-                        Appliquer
+                        <X className="w-5 h-5" />
                       </button>
-                    )}
-                    <button
-                      onClick={handleCloseMenu}
-                      className="text-white hover:bg-white/20 p-2 rounded-lg transition-all duration-200 active:scale-90 group"
-                      aria-label="Fermer"
-                    >
-                      <X className="w-5 h-5 group-hover:rotate-90 transition-transform duration-200" />
-                    </button>
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex-1 overflow-y-auto overflow-x-hidden p-5">
-                  <div className="space-y-6 overflow-x-hidden">
-                    <div className="w-full">
-                      <PriceFilter
-                        filters={filters}
-                        onPriceChange={handlePriceChange}
-                        onPriceInputBlur={handlePriceInputBlur}
-                        onMinSliderChange={handleMinSliderChange}
-                        onMaxSliderChange={handleMaxSliderChange}
-                      />
-                    </div>
-                    <div className="w-full">
-                      <FilterDropdown
-                        type="categories"
-                        label="Catégorie"
-                        placeholder="Rechercher une catégorie..."
-                        searchable={true}
-                        filters={filters}
-                        searchTerms={searchTerms}
-                        activeDropdown={activeDropdown}
-                        filterRefs={filterRefs}
-                        dropdownRefs={dropdownRefs}
-                        onSearchTermChange={handleSearchTermChange}
-                        onToggleDropdown={toggleDropdown}
-                        onCloseDropdown={closeDropdown}
-                        onSetActiveDropdown={setActiveDropdown}
-                        onAddFilterItem={addFilterItem}
-                        onRemoveFilterItem={removeFilterItem}
-                        getFilteredOptions={getFilteredOptions}
-                        isMobile={true}
-                      />
-                    </div>
-                    <div className="w-full">
-                      <FilterDropdown
-                        type="authors"
-                        label="Auteur"
-                        placeholder="Rechercher un auteur..."
-                        searchable={true}
-                        filters={filters}
-                        searchTerms={searchTerms}
-                        activeDropdown={activeDropdown}
-                        filterRefs={filterRefs}
-                        dropdownRefs={dropdownRefs}
-                        onSearchTermChange={handleSearchTermChange}
-                        onToggleDropdown={toggleDropdown}
-                        onCloseDropdown={closeDropdown}
-                        onSetActiveDropdown={setActiveDropdown}
-                        onAddFilterItem={addFilterItem}
-                        onRemoveFilterItem={removeFilterItem}
-                        getFilteredOptions={getFilteredOptions}
-                        isMobile={true}
-                      />
-                    </div>
-                    <div className="w-full">
-                      <FilterDropdown
-                        type="titles"
-                        label="Titre"
-                        placeholder="Rechercher un titre..."
-                        searchable={true}
-                        filters={filters}
-                        searchTerms={searchTerms}
-                        activeDropdown={activeDropdown}
-                        filterRefs={filterRefs}
-                        dropdownRefs={dropdownRefs}
-                        onSearchTermChange={handleSearchTermChange}
-                        onToggleDropdown={toggleDropdown}
-                        onCloseDropdown={closeDropdown}
-                        onSetActiveDropdown={setActiveDropdown}
-                        onAddFilterItem={addFilterItem}
-                        onRemoveFilterItem={removeFilterItem}
-                        getFilteredOptions={getFilteredOptions}
-                        isMobile={true}
-                      />
-                    </div>
-                    <div className="w-full">
-                      <FilterDropdown
-                        type="languages"
-                        label="Langue"
-                        placeholder="Sélectionner une langue..."
-                        searchable={false}
-                        filters={filters}
-                        searchTerms={searchTerms}
-                        activeDropdown={activeDropdown}
-                        filterRefs={filterRefs}
-                        dropdownRefs={dropdownRefs}
-                        onSearchTermChange={handleSearchTermChange}
-                        onToggleDropdown={toggleDropdown}
-                        onCloseDropdown={closeDropdown}
-                        onSetActiveDropdown={setActiveDropdown}
-                        onAddFilterItem={addFilterItem}
-                        onRemoveFilterItem={removeFilterItem}
-                        getFilteredOptions={getFilteredOptions}
-                        isMobile={true}
-                      />
+                  <div className="flex-1 overflow-y-auto p-5">
+                    <div className="space-y-6">
+                      <div className="w-full">
+                        <PriceFilter
+                          filters={filters}
+                          onPriceChange={handlePriceChange}
+                          onPriceInputBlur={handlePriceInputBlur}
+                          onMinSliderChange={handleMinSliderChange}
+                          onMaxSliderChange={handleMaxSliderChange}
+                        />
+                      </div>
+                      <div className="w-full">
+                        <FilterDropdown
+                          type="categories"
+                          label="Catégorie"
+                          placeholder="Rechercher une catégorie..."
+                          searchable={true}
+                          filters={filters}
+                          searchTerms={searchTerms}
+                          activeDropdown={activeDropdown}
+                          filterRefs={filterRefs}
+                          dropdownRefs={dropdownRefs}
+                          onSearchTermChange={handleSearchTermChange}
+                          onToggleDropdown={toggleDropdown}
+                          onCloseDropdown={closeDropdown}
+                          onSetActiveDropdown={setActiveDropdown}
+                          onAddFilterItem={addFilterItem}
+                          onRemoveFilterItem={removeFilterItem}
+                          getFilteredOptions={getFilteredOptions}
+                          isMobile={true}
+                        />
+                      </div>
+                      <div className="w-full">
+                        <FilterDropdown
+                          type="authors"
+                          label="Auteur"
+                          placeholder="Rechercher un auteur..."
+                          searchable={true}
+                          filters={filters}
+                          searchTerms={searchTerms}
+                          activeDropdown={activeDropdown}
+                          filterRefs={filterRefs}
+                          dropdownRefs={dropdownRefs}
+                          onSearchTermChange={handleSearchTermChange}
+                          onToggleDropdown={toggleDropdown}
+                          onCloseDropdown={closeDropdown}
+                          onSetActiveDropdown={setActiveDropdown}
+                          onAddFilterItem={addFilterItem}
+                          onRemoveFilterItem={removeFilterItem}
+                          getFilteredOptions={getFilteredOptions}
+                          isMobile={true}
+                        />
+                      </div>
+                      <div className="w-full">
+                        <FilterDropdown
+                          type="titles"
+                          label="Titre"
+                          placeholder="Rechercher un titre..."
+                          searchable={true}
+                          filters={filters}
+                          searchTerms={searchTerms}
+                          activeDropdown={activeDropdown}
+                          filterRefs={filterRefs}
+                          dropdownRefs={dropdownRefs}
+                          onSearchTermChange={handleSearchTermChange}
+                          onToggleDropdown={toggleDropdown}
+                          onCloseDropdown={closeDropdown}
+                          onSetActiveDropdown={setActiveDropdown}
+                          onAddFilterItem={addFilterItem}
+                          onRemoveFilterItem={removeFilterItem}
+                          getFilteredOptions={getFilteredOptions}
+                          isMobile={true}
+                        />
+                      </div>
+                      <div className="w-full">
+                        <FilterDropdown
+                          type="languages"
+                          label="Langue"
+                          placeholder="Sélectionner une langue..."
+                          searchable={false}
+                          filters={filters}
+                          searchTerms={searchTerms}
+                          activeDropdown={activeDropdown}
+                          filterRefs={filterRefs}
+                          dropdownRefs={dropdownRefs}
+                          onSearchTermChange={handleSearchTermChange}
+                          onToggleDropdown={toggleDropdown}
+                          onCloseDropdown={closeDropdown}
+                          onSetActiveDropdown={setActiveDropdown}
+                          onAddFilterItem={addFilterItem}
+                          onRemoveFilterItem={removeFilterItem}
+                          getFilteredOptions={getFilteredOptions}
+                          isMobile={true}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {hasActiveFilters() && (
-                  <div className="p-5 border-t border-gray-200 bg-gray-50">
-                    <button
-                      onClick={resetFilters}
-                      className="w-full bg-red-500 text-white px-4 py-3 rounded-lg text-sm font-medium hover:bg-red-600 transition-colors shadow-md"
-                    >
-                      Réinitialiser les filtres
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </>
-        )}
+                  {hasActiveFilters() && (
+                    <div className="p-5 border-t border-gray-200 bg-gray-50">
+                      <button
+                        onClick={resetFilters}
+                        className="w-full bg-red-500 text-white px-4 py-3 rounded-lg text-sm font-medium hover:bg-red-600 transition-colors shadow-md"
+                      >
+                        Réinitialiser les filtres
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
       </>
     );
   }
@@ -727,7 +735,7 @@ const FiltersSection = ({ initialFilters }) => {
             getFilteredOptions={getFilteredOptions}
           />
         </div>
-
+ 
         <div className="flex-1 min-w-[clamp(140px,15%,100%)]">
           <FilterDropdown
             type="languages"

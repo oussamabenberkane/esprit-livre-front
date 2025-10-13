@@ -2,7 +2,8 @@ import Navbar from "../components/common/Navbar"
 import Footer from "../components/common/Footer"
 import BookCard from "../components/common/BookCard"
 import FiltersSection from "../components/allbooks/FiltersSection"
-import CartConfirmationPopup from "../components/home/cartConfirmationPopup"
+import CartConfirmationPopup from "../components/common/cartConfirmationPopup"
+import { BOOKS_DATA } from "../data/booksData"
 import { useState, useEffect } from "react"
 import { useSearchParams } from "react-router-dom"
 
@@ -35,26 +36,16 @@ export default function AllBooks() {
         }
     }, [searchParams])
 
-    // Mock data
-    const totalBooks = 150
+    // Use shared books data
+    const allBooks = BOOKS_DATA
+    const totalBooks = allBooks.length
     const booksPerPage = 12
     const totalPages = Math.ceil(totalBooks / booksPerPage)
 
-    const books = Array.from({ length: booksPerPage }, (_, i) => ({
-        id: `${i + 1}`,
-        title: "Les enfants de minuit",
-        author: "Salman Rushdie",
-        price: "2000",
-        coverImage: "../public/assets/books/ouss.jpg",
-        badge: {
-            type: "coup-de-coeur",
-            text: "coup de cœur"
-        },
-        stockStatus: {
-            available: true,
-            text: "en stock"
-        }
-    }))
+    // Get books for current page
+    const startIndex = (currentPage - 1) * booksPerPage
+    const endIndex = startIndex + booksPerPage
+    const books = allBooks.slice(startIndex, endIndex)
 
     const handleSeeMore = () => {
         setCurrentPage((prev) => Math.min(prev + 1, totalPages))
@@ -117,26 +108,42 @@ export default function AllBooks() {
                 {/* Books Grid */}
                 <section className="pb-fluid-xl">
                     <div className="flex flex-wrap gap-fluid-md justify-center">
-                        {books.map((book, index) => (
-                            <div
-                                key={book.id}
-                                className="book-card-width animate-fade-in"
-                                style={{ animationDelay: `${index * 50}ms` }}
-                            >
-                                <BookCard
-                                    id={book.id}
-                                    title={book.title}
-                                    author={book.author}
-                                    price={book.price}
-                                    coverImage={book.coverImage}
-                                    badge={book.badge}
-                                    stockStatus={book.stockStatus}
-                                    onAddToCart={handleAddToCart}
-                                    onToggleFavorite={handleToggleFavorite}
-                                    isFavorited={false}
-                                />
-                            </div>
-                        ))}
+                        {books.map((book, index) => {
+                            // Extract first ETIQUETTE tag for badge
+                            const etiquetteTag = book.tags.find(tag => tag.type === "ETIQUETTE")
+                            const badge = etiquetteTag ? {
+                                type: etiquetteTag.nameEn.toLowerCase(),
+                                text: etiquetteTag.nameFr,
+                                colorHex: etiquetteTag.colorHex
+                            } : null
+
+                            // Derive stock status from stockQuantity
+                            const stockStatus = {
+                                available: book.stockQuantity > 0,
+                                text: book.stockQuantity > 0 ? "en stock" : "rupture de stock"
+                            }
+
+                            return (
+                                <div
+                                    key={book.id}
+                                    className="book-card-width animate-fade-in"
+                                    style={{ animationDelay: `${index * 50}ms` }}
+                                >
+                                    <BookCard
+                                        id={book.id}
+                                        title={book.title}
+                                        author={book.author.name}
+                                        price={book.price}
+                                        coverImage={book.coverImageUrl}
+                                        badge={badge}
+                                        stockStatus={stockStatus}
+                                        onAddToCart={handleAddToCart}
+                                        onToggleFavorite={handleToggleFavorite}
+                                        isFavorited={book.isLikedByCurrentUser}
+                                    />
+                                </div>
+                            )
+                        })}
                     </div>
 
                     {/* See More Button */}
@@ -194,10 +201,11 @@ export default function AllBooks() {
                     isOpen={showCartPopup}
                     onClose={() => setShowCartPopup(false)}
                     book={{
+                        id: selectedBook.id,
                         title: selectedBook.title,
-                        author: selectedBook.author,
+                        author: selectedBook.author.name,
                         price: selectedBook.price,
-                        coverImage: selectedBook.coverImage
+                        coverImage: selectedBook.coverImageUrl
                     }}
                 />
             )}

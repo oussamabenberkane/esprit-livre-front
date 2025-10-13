@@ -1,6 +1,9 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import AllBooks from './pages/AllBooks';
 import HomePage from './pages/homePage';
+import AllBooks from './pages/AllBooks';
+import BookDetails from './pages/BookDetails';
+import CartCheckoutPage from './pages/CartCheckoutPage.jsx';
+import AuthPage from './pages/AuthPage.jsx';
 
 
 function App() {
@@ -8,8 +11,17 @@ function App() {
     <BrowserRouter>
       <div className="min-h-screen min-w-screen bg-gray-50">
         <Routes>
+          {/* Home page as entry point */}
           <Route path="/" element={<HomePage />} />
+
+          {/* All books catalog page */}
           <Route path="/allbooks" element={<AllBooks />} />
+
+          {/* Book details page with dynamic ID */}
+          <Route path="/books/:id" element={<BookDetails />} />
+
+          {/* Cart and checkout page */}
+          <Route path="/cart" element={<CartCheckoutPage />} />
         </Routes>
       </div>
     </BrowserRouter>

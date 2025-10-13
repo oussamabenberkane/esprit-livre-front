@@ -332,6 +332,10 @@ button {
     margin-left: var(--spacing-fluid-xl);
   }
 
+  .ml-fluid-2xl {
+    margin-left: var(--spacing-fluid-2xl)
+  }
+
   .mr-fluid-xs {
     margin-right: var(--spacing-fluid-xs);
   }
@@ -350,6 +354,10 @@ button {
 
   .mr-fluid-xl {
     margin-right: var(--spacing-fluid-xl);
+  }
+
+  .mr-fluid-2xl {
+    margin-right: var(--spacing-fluid-2xl)
   }
 
   /* Padding utilities */

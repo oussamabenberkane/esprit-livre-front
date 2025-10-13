@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, Check, X } from 'lucide-react';
 
 export default function CartConfirmationPopup({
@@ -6,7 +7,14 @@ export default function CartConfirmationPopup({
     onClose,
     book
 }) {
+    const navigate = useNavigate();
+
     if (!isOpen) return null;
+
+    const handleViewDetails = () => {
+        navigate(`/books/${book.id}`);
+        onClose(); // Close the popup after navigation
+    };
 
     return (
         <>
@@ -69,7 +77,10 @@ export default function CartConfirmationPopup({
                                     <p className="text-gray-600 text-sm mb-2">
                                         {book.author}
                                     </p>
-                                    <button className="text-blue-600 hover:underline inline-flex items-center gap-1">
+                                    <button
+                                        onClick={handleViewDetails}
+                                        className="text-blue-600 hover:underline inline-flex items-center gap-1"
+                                    >
                                         <h1 className="text-fluid-medium">Détails du livre</h1>
                                         <svg
                                             className="w-3 h-3"
@@ -104,8 +115,8 @@ export default function CartConfirmationPopup({
                     <div className="px-6 pb-6 flex gap-fluid-xl md:gap-fluid-xl">
                         <button
                             onClick={() => {
-                                // Navigate to cart
-                                console.log('Navigate to cart');
+                                navigate('/cart');
+                                onClose();
                             }}
                             className="flex-1 bg-[#1E40AF] hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
                         >

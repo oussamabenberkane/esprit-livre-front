@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Heart, ShoppingCart } from 'lucide-react';
+import { API_BASE_URL } from '../../config/api';
 
 const BookCard = ({
     id,
@@ -28,13 +29,19 @@ const BookCard = ({
         }
     };
 
+    const getImageUrl = (path) => {
+        if (!path) return '';
+        if (path.startsWith('http')) return path;
+        return `${API_BASE_URL}${path}`;
+    };
+
     return (
         <div className="bg-white rounded-lg shadow-lg hover:shadow-lg transition-shadow duration-300 overflow-hidden group w-full book-card-height flex flex-col relative">
             {/* Book Cover Container */}
             <div className="relative pt-fluid-sm pb-auto w-full flex items-center justify-center">
                 <div className="relative book-image-height">
                     <img
-                        src={coverImage}
+                        src={getImageUrl(coverImage)}
                         alt={title}
                         className="w-full max-h-[95%] object-cover group-hover:scale-105 transition-transform duration-300"
                     />

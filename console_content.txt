@@ -1,0 +1,823 @@
+[vite] connecting...
+client:827 [vite] connected.
+homePage.jsx:49 Categories Data: (10) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]0: {id: 1, nameEn: 'Fiction', nameFr: 'Fiction', type: 'CATEGORY', active: true, …}1: {id: 2, nameEn: 'Philosophy', nameFr: 'Philosophie', type: 'CATEGORY', active: true, …}2: {id: 3, nameEn: 'Classic', nameFr: 'Classique', type: 'CATEGORY', active: true, …}3: {id: 4, nameEn: 'Adventure', nameFr: 'Aventure', type: 'CATEGORY', active: true, …}4: {id: 5, nameEn: 'Romance', nameFr: 'Romance', type: 'CATEGORY', active: true, …}5: {id: 6, nameEn: 'Drama', nameFr: 'Drame', type: 'CATEGORY', active: true, …}6: {id: 7, nameEn: 'Science Fiction', nameFr: 'Science-Fiction', type: 'CATEGORY', active: true, …}7: {id: 8, nameEn: 'Historical', nameFr: 'Historique', type: 'CATEGORY', active: true, …}8: {id: 9, nameEn: "Children's Literature", nameFr: 'Littérature Jeunesse', type: 'CATEGORY', active: true, …}9: {id: 10, nameEn: 'Existentialism', nameFr: 'Existentialisme', type: 'CATEGORY', active: true, …}length: 10[[Prototype]]: Array(0)
+homePage.jsx:50 Main Display Tags Data: (3) [{…}, {…}, {…}]0: {id: 18, nameEn: 'Featured', nameFr: 'À la Une', type: 'MAIN_DISPLAY', active: true, …}1: {id: 19, nameEn: 'Popular', nameFr: 'Populaire', type: 'MAIN_DISPLAY', active: true, …}2: {id: 20, nameEn: 'Recommended', nameFr: 'Recommandé', type: 'MAIN_DISPLAY', active: true, …}length: 3[[Prototype]]: Array(0)
+homePage.jsx:51 Authors Data: (10) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]0: {id: 2, name: 'Albert Camus'}1: {id: 1, name: 'Victor Hugo'}2: {id: 4, name: 'Antoine de Saint-Exupéry'}3: {id: 3, name: 'Simone de Beauvoir'}4: {id: 5, name: 'Alexandre Dumas'}5: {id: 7, name: 'Marcel Proust'}6: {id: 6, name: 'Émile Zola'}7: {id: 9, name: 'Gustave Flaubert'}8: {id: 10, name: 'Jean-Paul Sartre'}9: {id: 8, name: 'Jules Verne'}length: 10[[Prototype]]: Array(0)
+homePage.jsx:49 Categories Data: (10) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]0: {id: 1, nameEn: 'Fiction', nameFr: 'Fiction', type: 'CATEGORY', active: true, …}1: {id: 2, nameEn: 'Philosophy', nameFr: 'Philosophie', type: 'CATEGORY', active: true, …}2: {id: 3, nameEn: 'Classic', nameFr: 'Classique', type: 'CATEGORY', active: true, …}3: {id: 4, nameEn: 'Adventure', nameFr: 'Aventure', type: 'CATEGORY', active: true, …}4: {id: 5, nameEn: 'Romance', nameFr: 'Romance', type: 'CATEGORY', active: true, …}5: {id: 6, nameEn: 'Drama', nameFr: 'Drame', type: 'CATEGORY', active: true, …}6: {id: 7, nameEn: 'Science Fiction', nameFr: 'Science-Fiction', type: 'CATEGORY', active: true, …}7: {id: 8, nameEn: 'Historical', nameFr: 'Historique', type: 'CATEGORY', active: true, …}8: {id: 9, nameEn: "Children's Literature", nameFr: 'Littérature Jeunesse', type: 'CATEGORY', active: true, …}9: {id: 10, nameEn: 'Existentialism', nameFr: 'Existentialisme', type: 'CATEGORY', active: true, …}length: 10[[Prototype]]: Array(0)
+homePage.jsx:50 Main Display Tags Data: (3) [{…}, {…}, {…}]0: {id: 18, nameEn: 'Featured', nameFr: 'À la Une', type: 'MAIN_DISPLAY', active: true, …}1: {id: 19, nameEn: 'Popular', nameFr: 'Populaire', type: 'MAIN_DISPLAY', active: true, …}2: {id: 20, nameEn: 'Recommended', nameFr: 'Recommandé', type: 'MAIN_DISPLAY', active: true, …}length: 3[[Prototype]]: Array(0)
+homePage.jsx:51 Authors Data: (10) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]0: {id: 2, name: 'Albert Camus'}1: {id: 1, name: 'Victor Hugo'}2: {id: 4, name: 'Antoine de Saint-Exupéry'}3: {id: 3, name: 'Simone de Beauvoir'}4: {id: 5, name: 'Alexandre Dumas'}5: {id: 7, name: 'Marcel Proust'}6: {id: 6, name: 'Émile Zola'}7: {id: 9, name: 'Gustave Flaubert'}8: {id: 10, name: 'Jean-Paul Sartre'}9: {id: 8, name: 'Jules Verne'}length: 10[[Prototype]]: Array(0)
+homePage.jsx:64 Books for tag À la Une: {content: Array(0), pageable: {…}, last: true, totalPages: 0, totalElements: 0, …}content: []empty: truefirst: truelast: truenumber: 0numberOfElements: 0pageable: {pageNumber: 0, pageSize: 10, sort: {…}, offset: 0, paged: true, …}size: 10sort: {empty: true, sorted: false, unsorted: true}totalElements: 0totalPages: 0[[Prototype]]: Object
+homePage.jsx:64 Books for tag À la Une: {content: Array(0), pageable: {…}, last: true, totalPages: 0, totalElements: 0, …}content: []empty: truefirst: truelast: truenumber: 0numberOfElements: 0pageable: {pageNumber: 0, pageSize: 10, sort: {…}, offset: 0, paged: true, …}size: 10sort: {empty: true, sorted: false, unsorted: true}totalElements: 0totalPages: 0[[Prototype]]: Object
+homePage.jsx:64 Books for tag Populaire: {content: Array(10), pageable: {…}, last: false, totalPages: 2, totalElements: 14, …}content: (10) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]empty: falsefirst: truelast: falsenumber: 0numberOfElements: 10pageable: {pageNumber: 0, pageSize: 10, sort: {…}, offset: 0, paged: true, …}size: 10sort: {empty: true, sorted: false, unsorted: true}totalElements: 14totalPages: 2[[Prototype]]: Object
+homePage.jsx:64 Books for tag Recommandé: {content: Array(10), pageable: {…}, last: false, totalPages: 2, totalElements: 14, …}content: (10) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]empty: falsefirst: truelast: falsenumber: 0numberOfElements: 10pageable: {pageNumber: 0, pageSize: 10, sort: {…}, offset: 0, paged: true, …}size: 10sort: {empty: true, sorted: false, unsorted: true}totalElements: 14totalPages: 2[[Prototype]]: Object
+homePage.jsx:72 Books Sections Data: (3) [{…}, {…}, {…}]0: {tag: {…}, books: Array(0)}1: {tag: {…}, books: Array(10)}2: {tag: {…}, books: Array(10)}length: 3[[Prototype]]: Array(0)
+homePage.jsx:584 Uncaught TypeError: Cannot read properties of undefined (reading 'current')
+    at homePage.jsx:584:42
+    at Object.react_stack_bottom_frame (react-dom_client.js?v=8cfd7eea:17484:20)
+    at runWithFiberInDEV (react-dom_client.js?v=8cfd7eea:1483:72)
+    at commitHookEffectListMount (react-dom_client.js?v=8cfd7eea:8458:122)
+    at commitHookPassiveMountEffects (react-dom_client.js?v=8cfd7eea:8516:60)
+    at commitPassiveMountOnFiber (react-dom_client.js?v=8cfd7eea:9885:29)
+    at recursivelyTraversePassiveMountEffects (react-dom_client.js?v=8cfd7eea:9866:13)
+    at commitPassiveMountOnFiber (react-dom_client.js?v=8cfd7eea:9982:13)
+    at recursivelyTraversePassiveMountEffects (react-dom_client.js?v=8cfd7eea:9866:13)
+    at commitPassiveMountOnFiber (react-dom_client.js?v=8cfd7eea:9982:13)
+(anonymous) @ homePage.jsx:584
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17484
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+commitHookEffectListMount @ react-dom_client.js?v=8cfd7eea:8458
+commitHookPassiveMountEffects @ react-dom_client.js?v=8cfd7eea:8516
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9885
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9879
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9879
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9879
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9879
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9879
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9879
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9897
+flushPassiveEffects @ react-dom_client.js?v=8cfd7eea:11300
+(anonymous) @ react-dom_client.js?v=8cfd7eea:11058
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<BookSection>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ homePage.jsx:467
+HomePage @ homePage.jsx:459
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<HomePage>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+App @ App.jsx:11
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<App>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ main.jsx:8Understand this error
+homePage.jsx:467 An error occurred in the <BookSection> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+defaultOnUncaughtError @ react-dom_client.js?v=8cfd7eea:6227
+logUncaughtError @ react-dom_client.js?v=8cfd7eea:6281
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+lane.callback @ react-dom_client.js?v=8cfd7eea:6309
+callCallback @ react-dom_client.js?v=8cfd7eea:4095
+commitCallbacks @ react-dom_client.js?v=8cfd7eea:4107
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1485
+commitLayoutEffectOnFiber @ react-dom_client.js?v=8cfd7eea:9027
+flushLayoutEffects @ react-dom_client.js?v=8cfd7eea:11172
+commitRoot @ react-dom_client.js?v=8cfd7eea:11078
+commitRootWhenReady @ react-dom_client.js?v=8cfd7eea:10510
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10455
+performSyncWorkOnRoot @ react-dom_client.js?v=8cfd7eea:11633
+flushSyncWorkAcrossRoots_impl @ react-dom_client.js?v=8cfd7eea:11534
+flushPassiveEffects @ react-dom_client.js?v=8cfd7eea:11309
+(anonymous) @ react-dom_client.js?v=8cfd7eea:11058
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<BookSection>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ homePage.jsx:467
+HomePage @ homePage.jsx:459
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<HomePage>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+App @ App.jsx:11
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<App>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ main.jsx:8Understand this warning
+homePage.jsx:584 Uncaught TypeError: Cannot read properties of undefined (reading 'current')
+    at homePage.jsx:584:42
+    at Object.react_stack_bottom_frame (react-dom_client.js?v=8cfd7eea:17484:20)
+    at runWithFiberInDEV (react-dom_client.js?v=8cfd7eea:1483:72)
+    at commitHookEffectListMount (react-dom_client.js?v=8cfd7eea:8458:122)
+    at commitHookPassiveMountEffects (react-dom_client.js?v=8cfd7eea:8516:60)
+    at commitPassiveMountOnFiber (react-dom_client.js?v=8cfd7eea:9885:29)
+    at recursivelyTraversePassiveMountEffects (react-dom_client.js?v=8cfd7eea:9866:13)
+    at commitPassiveMountOnFiber (react-dom_client.js?v=8cfd7eea:9982:13)
+    at recursivelyTraversePassiveMountEffects (react-dom_client.js?v=8cfd7eea:9866:13)
+    at commitPassiveMountOnFiber (react-dom_client.js?v=8cfd7eea:9982:13)
+(anonymous) @ homePage.jsx:584
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17484
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+commitHookEffectListMount @ react-dom_client.js?v=8cfd7eea:8458
+commitHookPassiveMountEffects @ react-dom_client.js?v=8cfd7eea:8516
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9885
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9879
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9879
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9879
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9879
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9879
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9879
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9897
+flushPassiveEffects @ react-dom_client.js?v=8cfd7eea:11300
+(anonymous) @ react-dom_client.js?v=8cfd7eea:11058
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<BookSection>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ homePage.jsx:467
+HomePage @ homePage.jsx:459
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<HomePage>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+App @ App.jsx:11
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<App>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ main.jsx:8Understand this error
+homePage.jsx:467 An error occurred in the <BookSection> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+defaultOnUncaughtError @ react-dom_client.js?v=8cfd7eea:6227
+logUncaughtError @ react-dom_client.js?v=8cfd7eea:6281
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+lane.callback @ react-dom_client.js?v=8cfd7eea:6309
+callCallback @ react-dom_client.js?v=8cfd7eea:4095
+commitCallbacks @ react-dom_client.js?v=8cfd7eea:4107
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1485
+commitLayoutEffectOnFiber @ react-dom_client.js?v=8cfd7eea:9027
+flushLayoutEffects @ react-dom_client.js?v=8cfd7eea:11172
+commitRoot @ react-dom_client.js?v=8cfd7eea:11078
+commitRootWhenReady @ react-dom_client.js?v=8cfd7eea:10510
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10455
+performSyncWorkOnRoot @ react-dom_client.js?v=8cfd7eea:11633
+flushSyncWorkAcrossRoots_impl @ react-dom_client.js?v=8cfd7eea:11534
+flushPassiveEffects @ react-dom_client.js?v=8cfd7eea:11309
+(anonymous) @ react-dom_client.js?v=8cfd7eea:11058
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<BookSection>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ homePage.jsx:467
+HomePage @ homePage.jsx:459
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<HomePage>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+App @ App.jsx:11
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<App>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ main.jsx:8Understand this warning
+homePage.jsx:584 Uncaught TypeError: Cannot read properties of undefined (reading 'current')
+    at homePage.jsx:584:42
+    at Object.react_stack_bottom_frame (react-dom_client.js?v=8cfd7eea:17484:20)
+    at runWithFiberInDEV (react-dom_client.js?v=8cfd7eea:1483:72)
+    at commitHookEffectListMount (react-dom_client.js?v=8cfd7eea:8458:122)
+    at commitHookPassiveMountEffects (react-dom_client.js?v=8cfd7eea:8516:60)
+    at commitPassiveMountOnFiber (react-dom_client.js?v=8cfd7eea:9885:29)
+    at recursivelyTraversePassiveMountEffects (react-dom_client.js?v=8cfd7eea:9866:13)
+    at commitPassiveMountOnFiber (react-dom_client.js?v=8cfd7eea:9982:13)
+    at recursivelyTraversePassiveMountEffects (react-dom_client.js?v=8cfd7eea:9866:13)
+    at commitPassiveMountOnFiber (react-dom_client.js?v=8cfd7eea:9982:13)
+(anonymous) @ homePage.jsx:584
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17484
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+commitHookEffectListMount @ react-dom_client.js?v=8cfd7eea:8458
+commitHookPassiveMountEffects @ react-dom_client.js?v=8cfd7eea:8516
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9885
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9879
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9879
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9879
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9879
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9879
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9879
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9982
+recursivelyTraversePassiveMountEffects @ react-dom_client.js?v=8cfd7eea:9866
+commitPassiveMountOnFiber @ react-dom_client.js?v=8cfd7eea:9897
+flushPassiveEffects @ react-dom_client.js?v=8cfd7eea:11300
+(anonymous) @ react-dom_client.js?v=8cfd7eea:11058
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<BookSection>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ homePage.jsx:467
+HomePage @ homePage.jsx:459
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<HomePage>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+App @ App.jsx:11
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<App>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ main.jsx:8Understand this error
+homePage.jsx:467 An error occurred in the <BookSection> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+defaultOnUncaughtError @ react-dom_client.js?v=8cfd7eea:6227
+logUncaughtError @ react-dom_client.js?v=8cfd7eea:6281
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+lane.callback @ react-dom_client.js?v=8cfd7eea:6309
+callCallback @ react-dom_client.js?v=8cfd7eea:4095
+commitCallbacks @ react-dom_client.js?v=8cfd7eea:4107
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1485
+commitLayoutEffectOnFiber @ react-dom_client.js?v=8cfd7eea:9027
+flushLayoutEffects @ react-dom_client.js?v=8cfd7eea:11172
+commitRoot @ react-dom_client.js?v=8cfd7eea:11078
+commitRootWhenReady @ react-dom_client.js?v=8cfd7eea:10510
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10455
+performSyncWorkOnRoot @ react-dom_client.js?v=8cfd7eea:11633
+flushSyncWorkAcrossRoots_impl @ react-dom_client.js?v=8cfd7eea:11534
+flushPassiveEffects @ react-dom_client.js?v=8cfd7eea:11309
+(anonymous) @ react-dom_client.js?v=8cfd7eea:11058
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<BookSection>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ homePage.jsx:467
+HomePage @ homePage.jsx:459
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<HomePage>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+App @ App.jsx:11
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<App>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ main.jsx:8Understand this warning
+homePage.jsx:584 Uncaught TypeError: Cannot read properties of undefined (reading 'current')
+    at homePage.jsx:584:42
+    at Object.react_stack_bottom_frame (react-dom_client.js?v=8cfd7eea:17484:20)
+    at runWithFiberInDEV (react-dom_client.js?v=8cfd7eea:1483:72)
+    at commitHookEffectListMount (react-dom_client.js?v=8cfd7eea:8458:122)
+    at commitHookPassiveMountEffects (react-dom_client.js?v=8cfd7eea:8516:60)
+    at reconnectPassiveEffects (react-dom_client.js?v=8cfd7eea:10014:13)
+    at recursivelyTraverseReconnectPassiveEffects (react-dom_client.js?v=8cfd7eea:9993:11)
+    at reconnectPassiveEffects (react-dom_client.js?v=8cfd7eea:10052:13)
+    at doubleInvokeEffectsOnFiber (react-dom_client.js?v=8cfd7eea:11459:207)
+    at runWithFiberInDEV (react-dom_client.js?v=8cfd7eea:1483:72)
+(anonymous) @ homePage.jsx:584
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17484
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+commitHookEffectListMount @ react-dom_client.js?v=8cfd7eea:8458
+commitHookPassiveMountEffects @ react-dom_client.js?v=8cfd7eea:8516
+reconnectPassiveEffects @ react-dom_client.js?v=8cfd7eea:10014
+recursivelyTraverseReconnectPassiveEffects @ react-dom_client.js?v=8cfd7eea:9993
+reconnectPassiveEffects @ react-dom_client.js?v=8cfd7eea:10052
+doubleInvokeEffectsOnFiber @ react-dom_client.js?v=8cfd7eea:11459
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11430
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+commitDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11467
+flushPassiveEffects @ react-dom_client.js?v=8cfd7eea:11307
+(anonymous) @ react-dom_client.js?v=8cfd7eea:11058
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<BookSection>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ homePage.jsx:467
+HomePage @ homePage.jsx:459
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<HomePage>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+App @ App.jsx:11
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<App>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ main.jsx:8Understand this error
+homePage.jsx:467 An error occurred in the <BookSection> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+defaultOnUncaughtError @ react-dom_client.js?v=8cfd7eea:6227
+logUncaughtError @ react-dom_client.js?v=8cfd7eea:6281
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+lane.callback @ react-dom_client.js?v=8cfd7eea:6309
+callCallback @ react-dom_client.js?v=8cfd7eea:4095
+commitCallbacks @ react-dom_client.js?v=8cfd7eea:4107
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1485
+commitLayoutEffectOnFiber @ react-dom_client.js?v=8cfd7eea:9027
+flushLayoutEffects @ react-dom_client.js?v=8cfd7eea:11172
+commitRoot @ react-dom_client.js?v=8cfd7eea:11078
+commitRootWhenReady @ react-dom_client.js?v=8cfd7eea:10510
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10455
+performSyncWorkOnRoot @ react-dom_client.js?v=8cfd7eea:11633
+flushSyncWorkAcrossRoots_impl @ react-dom_client.js?v=8cfd7eea:11534
+flushPassiveEffects @ react-dom_client.js?v=8cfd7eea:11309
+(anonymous) @ react-dom_client.js?v=8cfd7eea:11058
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<BookSection>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ homePage.jsx:467
+HomePage @ homePage.jsx:459
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<HomePage>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+App @ App.jsx:11
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<App>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ main.jsx:8Understand this warning
+homePage.jsx:584 Uncaught TypeError: Cannot read properties of undefined (reading 'current')
+    at homePage.jsx:584:42
+    at Object.react_stack_bottom_frame (react-dom_client.js?v=8cfd7eea:17484:20)
+    at runWithFiberInDEV (react-dom_client.js?v=8cfd7eea:1483:72)
+    at commitHookEffectListMount (react-dom_client.js?v=8cfd7eea:8458:122)
+    at commitHookPassiveMountEffects (react-dom_client.js?v=8cfd7eea:8516:60)
+    at reconnectPassiveEffects (react-dom_client.js?v=8cfd7eea:10014:13)
+    at recursivelyTraverseReconnectPassiveEffects (react-dom_client.js?v=8cfd7eea:9993:11)
+    at reconnectPassiveEffects (react-dom_client.js?v=8cfd7eea:10052:13)
+    at doubleInvokeEffectsOnFiber (react-dom_client.js?v=8cfd7eea:11459:207)
+    at runWithFiberInDEV (react-dom_client.js?v=8cfd7eea:1483:72)
+(anonymous) @ homePage.jsx:584
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17484
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+commitHookEffectListMount @ react-dom_client.js?v=8cfd7eea:8458
+commitHookPassiveMountEffects @ react-dom_client.js?v=8cfd7eea:8516
+reconnectPassiveEffects @ react-dom_client.js?v=8cfd7eea:10014
+recursivelyTraverseReconnectPassiveEffects @ react-dom_client.js?v=8cfd7eea:9993
+reconnectPassiveEffects @ react-dom_client.js?v=8cfd7eea:10052
+doubleInvokeEffectsOnFiber @ react-dom_client.js?v=8cfd7eea:11459
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11430
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+commitDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11467
+flushPassiveEffects @ react-dom_client.js?v=8cfd7eea:11307
+(anonymous) @ react-dom_client.js?v=8cfd7eea:11058
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<BookSection>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ homePage.jsx:467
+HomePage @ homePage.jsx:459
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<HomePage>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+App @ App.jsx:11
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<App>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ main.jsx:8Understand this error
+homePage.jsx:467 An error occurred in the <BookSection> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+defaultOnUncaughtError @ react-dom_client.js?v=8cfd7eea:6227
+logUncaughtError @ react-dom_client.js?v=8cfd7eea:6281
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+lane.callback @ react-dom_client.js?v=8cfd7eea:6309
+callCallback @ react-dom_client.js?v=8cfd7eea:4095
+commitCallbacks @ react-dom_client.js?v=8cfd7eea:4107
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1485
+commitLayoutEffectOnFiber @ react-dom_client.js?v=8cfd7eea:9027
+flushLayoutEffects @ react-dom_client.js?v=8cfd7eea:11172
+commitRoot @ react-dom_client.js?v=8cfd7eea:11078
+commitRootWhenReady @ react-dom_client.js?v=8cfd7eea:10510
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10455
+performSyncWorkOnRoot @ react-dom_client.js?v=8cfd7eea:11633
+flushSyncWorkAcrossRoots_impl @ react-dom_client.js?v=8cfd7eea:11534
+flushPassiveEffects @ react-dom_client.js?v=8cfd7eea:11309
+(anonymous) @ react-dom_client.js?v=8cfd7eea:11058
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<BookSection>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ homePage.jsx:467
+HomePage @ homePage.jsx:459
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<HomePage>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+App @ App.jsx:11
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<App>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ main.jsx:8Understand this warning
+homePage.jsx:584 Uncaught TypeError: Cannot read properties of undefined (reading 'current')
+    at homePage.jsx:584:42
+    at Object.react_stack_bottom_frame (react-dom_client.js?v=8cfd7eea:17484:20)
+    at runWithFiberInDEV (react-dom_client.js?v=8cfd7eea:1483:72)
+    at commitHookEffectListMount (react-dom_client.js?v=8cfd7eea:8458:122)
+    at commitHookPassiveMountEffects (react-dom_client.js?v=8cfd7eea:8516:60)
+    at reconnectPassiveEffects (react-dom_client.js?v=8cfd7eea:10014:13)
+    at recursivelyTraverseReconnectPassiveEffects (react-dom_client.js?v=8cfd7eea:9993:11)
+    at reconnectPassiveEffects (react-dom_client.js?v=8cfd7eea:10052:13)
+    at doubleInvokeEffectsOnFiber (react-dom_client.js?v=8cfd7eea:11459:207)
+    at runWithFiberInDEV (react-dom_client.js?v=8cfd7eea:1483:72)
+(anonymous) @ homePage.jsx:584
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17484
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+commitHookEffectListMount @ react-dom_client.js?v=8cfd7eea:8458
+commitHookPassiveMountEffects @ react-dom_client.js?v=8cfd7eea:8516
+reconnectPassiveEffects @ react-dom_client.js?v=8cfd7eea:10014
+recursivelyTraverseReconnectPassiveEffects @ react-dom_client.js?v=8cfd7eea:9993
+reconnectPassiveEffects @ react-dom_client.js?v=8cfd7eea:10052
+doubleInvokeEffectsOnFiber @ react-dom_client.js?v=8cfd7eea:11459
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11430
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+recursivelyTraverseAndDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11436
+commitDoubleInvokeEffectsInDEV @ react-dom_client.js?v=8cfd7eea:11467
+flushPassiveEffects @ react-dom_client.js?v=8cfd7eea:11307
+(anonymous) @ react-dom_client.js?v=8cfd7eea:11058
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<BookSection>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ homePage.jsx:467
+HomePage @ homePage.jsx:459
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<HomePage>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+App @ App.jsx:11
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<App>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ main.jsx:8Understand this error
+homePage.jsx:467 An error occurred in the <BookSection> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+defaultOnUncaughtError @ react-dom_client.js?v=8cfd7eea:6227
+logUncaughtError @ react-dom_client.js?v=8cfd7eea:6281
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+lane.callback @ react-dom_client.js?v=8cfd7eea:6309
+callCallback @ react-dom_client.js?v=8cfd7eea:4095
+commitCallbacks @ react-dom_client.js?v=8cfd7eea:4107
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1485
+commitLayoutEffectOnFiber @ react-dom_client.js?v=8cfd7eea:9027
+flushLayoutEffects @ react-dom_client.js?v=8cfd7eea:11172
+commitRoot @ react-dom_client.js?v=8cfd7eea:11078
+commitRootWhenReady @ react-dom_client.js?v=8cfd7eea:10510
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10455
+performSyncWorkOnRoot @ react-dom_client.js?v=8cfd7eea:11633
+flushSyncWorkAcrossRoots_impl @ react-dom_client.js?v=8cfd7eea:11534
+flushPassiveEffects @ react-dom_client.js?v=8cfd7eea:11309
+(anonymous) @ react-dom_client.js?v=8cfd7eea:11058
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<BookSection>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ homePage.jsx:467
+HomePage @ homePage.jsx:459
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<HomePage>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+App @ App.jsx:11
+react_stack_bottom_frame @ react-dom_client.js?v=8cfd7eea:17422
+renderWithHooksAgain @ react-dom_client.js?v=8cfd7eea:4279
+renderWithHooks @ react-dom_client.js?v=8cfd7eea:4215
+updateFunctionComponent @ react-dom_client.js?v=8cfd7eea:6617
+beginWork @ react-dom_client.js?v=8cfd7eea:7652
+runWithFiberInDEV @ react-dom_client.js?v=8cfd7eea:1483
+performUnitOfWork @ react-dom_client.js?v=8cfd7eea:10866
+workLoopSync @ react-dom_client.js?v=8cfd7eea:10726
+renderRootSync @ react-dom_client.js?v=8cfd7eea:10709
+performWorkOnRoot @ react-dom_client.js?v=8cfd7eea:10328
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=8cfd7eea:11621
+performWorkUntilDeadline @ react-dom_client.js?v=8cfd7eea:34
+<App>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=8cfd7eea:248
+(anonymous) @ main.jsx:8Understand this warning
+homePage.jsx:64 Books for tag Recommandé: {content: Array(10), pageable: {…}, last: false, totalPages: 2, totalElements: 14, …}content: (10) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]empty: falsefirst: truelast: falsenumber: 0numberOfElements: 10pageable: {pageNumber: 0, pageSize: 10, sort: {…}, offset: 0, paged: true, …}size: 10sort: {empty: true, sorted: false, unsorted: true}totalElements: 14totalPages: 2[[Prototype]]: Object
+homePage.jsx:64 Books for tag Populaire: {content: Array(10), pageable: {…}, last: false, totalPages: 2, totalElements: 14, …}content: (10) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]empty: falsefirst: truelast: falsenumber: 0numberOfElements: 10pageable: {pageNumber: 0, pageSize: 10, sort: {…}, offset: 0, paged: true, …}size: 10sort: {empty: true, sorted: false, unsorted: true}totalElements: 14totalPages: 2[[Prototype]]: Object
+homePage.jsx:72 Books Sections Data: (3) [{…}, {…}, {…}]0: {tag: {…}, books: Array(0)}1: {tag: {…}, books: Array(10)}2: {tag: {…}, books: Array(10)}books: (10) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]tag: {id: 20, nameEn: 'Recommended', nameFr: 'Recommandé', type: 'MAIN_DISPLAY', active: true, …}[[Prototype]]: Objectlength: 3[[Prototype]]: Array(0)at: ƒ at()concat: ƒ concat()constructor: ƒ Array()copyWithin: ƒ copyWithin()entries: ƒ entries()every: ƒ every()fill: ƒ fill()filter: ƒ filter()find: ƒ find()findIndex: ƒ findIndex()findLast: ƒ findLast()findLastIndex: ƒ findLastIndex()flat: ƒ flat()flatMap: ƒ flatMap()forEach: ƒ forEach()includes: ƒ includes()indexOf: ƒ indexOf()join: ƒ join()keys: ƒ keys()lastIndexOf: ƒ lastIndexOf()length: 0map: ƒ map()pop: ƒ pop()push: ƒ push()reduce: ƒ reduce()reduceRight: ƒ reduceRight()reverse: ƒ reverse()shift: ƒ shift()slice: ƒ slice()some: ƒ some()sort: ƒ sort()splice: ƒ splice()toLocaleString: ƒ toLocaleString()toReversed: ƒ toReversed()toSorted: ƒ toSorted()toSpliced: ƒ toSpliced()toString: ƒ toString()unshift: ƒ unshift()values: ƒ values()with: ƒ with()Symbol(Symbol.iterator): ƒ values()Symbol(Symbol.unscopables): {at: true, copyWithin: true, entries: true, fill: true, find: true, …}[[Prototype]]: Object

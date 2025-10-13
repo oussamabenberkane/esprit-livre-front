@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/common/Navbar';
 import CategoryCard from '../components/home/CategoryCard';
-import BookCard from '../components/common/BookCard'; // Adjust path as needed
+import BookCard from '../components/common/BookCard';
 import AuthorComponent from '../components/home/author';
 import HeroCarousel from '../components/home/HeroSection';
 import SeeMore from '../components/buttons/SeeMore';
@@ -10,18 +10,72 @@ import SlideScroll from '../components/buttons/SlideScroll';
 import PaginationDots from '../components/common/PaginationDots';
 import Footer from '../components/common/Footer';
 import CartConfirmationPopup from '../components/home/cartConfirmationPopup';
-
-
+import LoadingFallback from '../components/common/LoadingFallback';
+import { fetchCategories, fetchMainDisplayTags, fetchBooksByMainDisplay, fetchTopAuthors } from '../services/api';
 
 const HomePage = () => {
     const navigate = useNavigate();
 
-    // Hero carousel state (you already have this)
+    // Hero carousel state
     const [currentSlide, setCurrentSlide] = React.useState(0);
 
     // Cart popup state
     const [showCartPopup, setShowCartPopup] = useState(false);
     const [selectedBook, setSelectedBook] = useState(null);
+
+    // API data state
+    const [categories, setCategories] = useState([]);
+    const [booksSections, setBooksSections] = useState([]); // Array of {tag, books} objects
+    const [authors, setAuthors] = useState([]);
+
+    // Loading and error states
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // Fetch data on mount
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                setIsLoading(true);
+                setError(null);
+
+                // Fetch all data in parallel
+                const [categoriesData, mainDisplayTagsData, authorsData] = await Promise.all([
+                    fetchCategories(),
+                    fetchMainDisplayTags(0, 3),
+                    fetchTopAuthors()
+                ]);
+
+                // Extract content arrays if paginated
+                const categoriesArray = categoriesData.content || categoriesData || [];
+                const mainDisplayTagsArray = mainDisplayTagsData.content || mainDisplayTagsData || [];
+                const authorsArray = authorsData.content || authorsData || [];
+
+                setCategories(categoriesArray);
+                setAuthors(authorsArray);
+
+                // Fetch books for each MAIN_DISPLAY tag
+                const booksSectionsPromises = mainDisplayTagsArray.map(async (tag) => {
+                    const booksData = await fetchBooksByMainDisplay(tag.id, 0, 10);
+                    return {
+                        tag,
+                        books: booksData.content || booksData || []
+                    };
+                });
+
+                const booksSectionsData = await Promise.all(booksSectionsPromises);
+                setBooksSections(booksSectionsData);
+
+                setIsLoading(false);
+            } catch (err) {
+                console.error('Error loading data:', err);
+                setError(err.message || 'Une erreur est survenue lors du chargement des données');
+                setIsLoading(false);
+            }
+        };
+
+        loadData();
+    }, []);
 
     // Navigation handler for categories
     const handleCategoryClick = (categoryTitle) => {
@@ -36,123 +90,72 @@ const HomePage = () => {
     // Add state for categories section
     const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
 
-    // Add state for books section
-    const [currentBookIndex, setCurrentBookIndex] = useState(0);
-
     // Add state for authors section
     const [currentAuthorIndex, setCurrentAuthorIndex] = useState(0);
 
+    // Scroll refs and states
     const authorsScrollRef = useRef(null);
     const [canScrollAuthorsLeft, setCanScrollAuthorsLeft] = useState(false);
     const [canScrollAuthorsRight, setCanScrollAuthorsRight] = useState(true);
+
     const categoriesScrollRef = useRef(null);
     const [canScrollCategoriesLeft, setCanScrollCategoriesLeft] = useState(false);
     const [canScrollCategoriesRight, setCanScrollCategoriesRight] = useState(true);
 
-    const booksScrollRef = useRef(null);
-    const [canScrollBooksLeft, setCanScrollBooksLeft] = useState(false);
-    const [canScrollBooksRight, setCanScrollBooksRight] = useState(true);
+    // State for each book section (3 MAIN_DISPLAY sections)
+    const [booksSectionsScrollState, setBooksSectionsScrollState] = useState([]);
 
-    const checkBooksScrollPosition = () => {
-        const container = booksScrollRef.current;
-        if (container) {
-            const scrollLeft = container.scrollLeft;
-            const maxScroll = container.scrollWidth - container.clientWidth;
+    // Refs for book sections
+    const booksSectionsRefs = useRef([]);
 
-            setCanScrollBooksLeft(scrollLeft > 0);
-            setCanScrollBooksRight(scrollLeft < maxScroll - 10);
-
-            // If at the very end, set to last index
-            if (scrollLeft >= maxScroll - 5) {
-                setCurrentBookIndex(books.length - 1);
-            }
-            // If at the very start, set to first index
-            else if (scrollLeft <= 5) {
-                setCurrentBookIndex(0);
-            }
-            // Otherwise, calculate based on center
-            else {
-                const itemWidth = container.firstChild?.offsetWidth || 0;
-                const gap = parseFloat(getComputedStyle(container).gap) || 0;
-                const containerCenter = scrollLeft + (container.clientWidth / 2);
-
-                // Calculate which item is centered
-                let activeIndex = Math.round((containerCenter - (itemWidth / 2)) / (itemWidth + gap));
-
-                // Clamp between 0 and last index
-                activeIndex = Math.max(0, Math.min(activeIndex, books.length - 1));
-
-                setCurrentBookIndex(activeIndex);
-            }
-        }
-    };
-
-    // Update scrollBooks function
-    const scrollBooks = (direction) => {
-        const container = booksScrollRef.current;
-        if (container) {
-            const itemWidth = container.firstChild?.offsetWidth || 0;
-            const gap = parseFloat(getComputedStyle(container).gap) || 0;
-
-            const scrollAmount = itemWidth + gap;
-            container.scrollBy({
-                left: direction === 'left' ? -scrollAmount : scrollAmount,
-                behavior: 'smooth'
-            });
-        }
-    };
-
-
+    // Initialize scroll state for book sections when data loads
     useEffect(() => {
-        const booksContainer = booksScrollRef.current;
-        if (booksContainer) {
-            checkBooksScrollPosition();
-            booksContainer.addEventListener('scroll', checkBooksScrollPosition);
-            return () => booksContainer.removeEventListener('scroll', checkBooksScrollPosition);
-        }
-    }, []);
+        if (booksSections.length > 0) {
+            // Initialize refs array - create new refs if they don't exist
+            booksSectionsRefs.current = booksSections.map((_, i) =>
+                booksSectionsRefs.current[i] || { current: null }
+            );
 
+            setBooksSectionsScrollState(
+                booksSections.map(() => ({
+                    currentIndex: 0,
+                    canScrollLeft: false,
+                    canScrollRight: true
+                }))
+            );
+        }
+    }, [booksSections]);
+
+    // Categories scroll functions
     const checkCategoriesScrollPosition = () => {
         const container = categoriesScrollRef.current;
-        if (container) {
+        if (container && categories.length > 0) {
             const scrollLeft = container.scrollLeft;
             const maxScroll = container.scrollWidth - container.clientWidth;
 
             setCanScrollCategoriesLeft(scrollLeft > 0);
             setCanScrollCategoriesRight(scrollLeft < maxScroll - 10);
 
-            // If at the very end, set to last index
             if (scrollLeft >= maxScroll - 5) {
                 setCurrentCategoryIndex(categories.length - 1);
-            }
-            // If at the very start, set to first index
-            else if (scrollLeft <= 5) {
+            } else if (scrollLeft <= 5) {
                 setCurrentCategoryIndex(0);
-            }
-            // Otherwise, calculate based on center
-            else {
+            } else {
                 const itemWidth = container.firstChild?.offsetWidth || 0;
                 const gap = parseFloat(getComputedStyle(container).gap) || 0;
                 const containerCenter = scrollLeft + (container.clientWidth / 2);
-
-                // Calculate which item is centered
                 let activeIndex = Math.round((containerCenter - (itemWidth / 2)) / (itemWidth + gap));
-
-                // Clamp between 0 and last index
                 activeIndex = Math.max(0, Math.min(activeIndex, categories.length - 1));
-
                 setCurrentCategoryIndex(activeIndex);
             }
         }
     };
 
-    // Update scrollCategories function
     const scrollCategories = (direction) => {
         const container = categoriesScrollRef.current;
         if (container) {
             const itemWidth = container.firstChild?.offsetWidth || 0;
             const gap = parseFloat(getComputedStyle(container).gap) || 0;
-
             const scrollAmount = itemWidth + gap;
             container.scrollBy({
                 left: direction === 'left' ? -scrollAmount : scrollAmount,
@@ -161,48 +164,36 @@ const HomePage = () => {
         }
     };
 
-    // Add scroll check function
+    // Authors scroll functions
     const checkAuthorsScrollPosition = () => {
         const container = authorsScrollRef.current;
-        if (container) {
+        if (container && authors.length > 0) {
             const scrollLeft = container.scrollLeft;
             const maxScroll = container.scrollWidth - container.clientWidth;
 
             setCanScrollAuthorsLeft(scrollLeft > 0);
             setCanScrollAuthorsRight(scrollLeft < maxScroll - 10);
 
-            // If at the very end, set to last index
             if (scrollLeft >= maxScroll - 5) {
                 setCurrentAuthorIndex(authors.length - 1);
-            }
-            // If at the very start, set to first index
-            else if (scrollLeft <= 5) {
+            } else if (scrollLeft <= 5) {
                 setCurrentAuthorIndex(0);
-            }
-            // Otherwise, calculate based on center
-            else {
+            } else {
                 const itemWidth = container.firstChild?.offsetWidth || 0;
                 const gap = parseFloat(getComputedStyle(container).gap) || 0;
                 const containerCenter = scrollLeft + (container.clientWidth / 2);
-
-                // Calculate which item is centered
                 let activeIndex = Math.round((containerCenter - (itemWidth / 2)) / (itemWidth + gap));
-
-                // Clamp between 0 and last index
                 activeIndex = Math.max(0, Math.min(activeIndex, authors.length - 1));
-
                 setCurrentAuthorIndex(activeIndex);
             }
         }
     };
 
-    // Update scrollAuthors function
     const scrollAuthors = (direction) => {
         const container = authorsScrollRef.current;
         if (container) {
             const itemWidth = container.firstChild?.offsetWidth || 0;
             const gap = parseFloat(getComputedStyle(container).gap) || 0;
-
             const scrollAmount = itemWidth + gap;
             container.scrollBy({
                 left: direction === 'left' ? -scrollAmount : scrollAmount,
@@ -211,16 +202,58 @@ const HomePage = () => {
         }
     };
 
-    // Add useEffect for scroll listener
-    useEffect(() => {
-        const container = authorsScrollRef.current;
-        if (container) {
-            checkAuthorsScrollPosition();
-            container.addEventListener('scroll', checkAuthorsScrollPosition);
-            return () => container.removeEventListener('scroll', checkAuthorsScrollPosition);
-        }
-    }, []);
+    // Books section scroll functions (dynamic for each section)
+    const createBooksScrollCheck = (sectionIndex, scrollRef) => {
+        return () => {
+            const container = scrollRef.current;
+            if (container && booksSections[sectionIndex]?.books.length > 0) {
+                const scrollLeft = container.scrollLeft;
+                const maxScroll = container.scrollWidth - container.clientWidth;
+                const books = booksSections[sectionIndex].books;
 
+                const canScrollLeft = scrollLeft > 0;
+                const canScrollRight = scrollLeft < maxScroll - 10;
+
+                let currentIndex = 0;
+                if (scrollLeft >= maxScroll - 5) {
+                    currentIndex = books.length - 1;
+                } else if (scrollLeft <= 5) {
+                    currentIndex = 0;
+                } else {
+                    const itemWidth = container.firstChild?.offsetWidth || 0;
+                    const gap = parseFloat(getComputedStyle(container).gap) || 0;
+                    const containerCenter = scrollLeft + (container.clientWidth / 2);
+                    currentIndex = Math.round((containerCenter - (itemWidth / 2)) / (itemWidth + gap));
+                    currentIndex = Math.max(0, Math.min(currentIndex, books.length - 1));
+                }
+
+                setBooksSectionsScrollState(prev => {
+                    const newState = [...prev];
+                    newState[sectionIndex] = {
+                        currentIndex,
+                        canScrollLeft,
+                        canScrollRight
+                    };
+                    return newState;
+                });
+            }
+        };
+    };
+
+    const scrollBooksSection = (scrollRef, direction) => {
+        const container = scrollRef.current;
+        if (container) {
+            const itemWidth = container.firstChild?.offsetWidth || 0;
+            const gap = parseFloat(getComputedStyle(container).gap) || 0;
+            const scrollAmount = itemWidth + gap;
+            container.scrollBy({
+                left: direction === 'left' ? -scrollAmount : scrollAmount,
+                behavior: 'smooth'
+            });
+        }
+    };
+
+    // Add scroll listeners
     useEffect(() => {
         const categoriesContainer = categoriesScrollRef.current;
         if (categoriesContainer) {
@@ -228,25 +261,32 @@ const HomePage = () => {
             categoriesContainer.addEventListener('scroll', checkCategoriesScrollPosition);
             return () => categoriesContainer.removeEventListener('scroll', checkCategoriesScrollPosition);
         }
-    }, []);
+    }, [categories]);
+
+    useEffect(() => {
+        const authorsContainer = authorsScrollRef.current;
+        if (authorsContainer) {
+            checkAuthorsScrollPosition();
+            authorsContainer.addEventListener('scroll', checkAuthorsScrollPosition);
+            return () => authorsContainer.removeEventListener('scroll', checkAuthorsScrollPosition);
+        }
+    }, [authors]);
 
     useEffect(() => {
         const handleResize = () => {
-            // Recalculate active indices on resize
             checkCategoriesScrollPosition();
-            checkBooksScrollPosition();
             checkAuthorsScrollPosition();
         };
 
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
-    }, []);
+    }, [categories, authors]);
 
     const heroImages = [
         {
             src: "/assets/banners/banner2.png",
             alt: "Featured Books Collection",
-            overlay: "rgba(0, 65, 122, 0.3)", // Blue overlay matching your theme
+            overlay: "rgba(0, 65, 122, 0.3)",
             button: "Découvrir"
         },
         {
@@ -255,297 +295,19 @@ const HomePage = () => {
             overlay: "rgba(0, 0, 0, 0.2)",
             button: "Nouveautés"
         },
-
-    ];
-
-
-    const books = [
-        {
-            id: 1,
-            title: "Les ombres du monde",
-            author: {
-                id: 1,
-                name: "Michel Bussi"
-            },
-            price: "2000",
-            stockQuantity: 10,
-            coverImageUrl: "../public/assets/books/ouss.jpg",
-            description: "Un thriller captivant qui vous tiendra en haleine jusqu'à la dernière page.",
-            active: true,
-            createdAt: "2025-10-07T19:56:52.198094+02:00",
-            updatedAt: null,
-            tags: [
-                {
-                    id: 1,
-                    nameEn: "Fiction",
-                    nameFr: "Fiction",
-                    type: "CATEGORY",
-                    active: true,
-                    colorHex: null
-                },
-                {
-                    id: 11,
-                    nameEn: "Bestseller",
-                    nameFr: "coup de cœur",
-                    type: "ETIQUETTE",
-                    active: true,
-                    colorHex: "#EF4444"
-                }
-            ],
-            likeCount: null,
-            isLikedByCurrentUser: false
-        },
-        {
-            id: 2,
-            title: "Les ombres du monde",
-            author: {
-                id: 1,
-                name: "Michel Bussi"
-            },
-            price: "2000",
-            stockQuantity: 5,
-            coverImageUrl: "../public/assets/books/crime.jpg",
-            description: "Un thriller captivant qui vous tiendra en haleine jusqu'à la dernière page.",
-            active: true,
-            createdAt: "2025-10-07T19:56:52.198094+02:00",
-            updatedAt: null,
-            tags: [
-                {
-                    id: 1,
-                    nameEn: "Fiction",
-                    nameFr: "Fiction",
-                    type: "CATEGORY",
-                    active: true,
-                    colorHex: null
-                },
-                {
-                    id: 11,
-                    nameEn: "Bestseller",
-                    nameFr: "Précommande",
-                    type: "ETIQUETTE",
-                    active: true,
-                    colorHex: "#3B82F6"
-                }
-            ],
-            likeCount: null,
-            isLikedByCurrentUser: false
-        },
-        {
-            id: 3,
-            title: "Les ombres du monde",
-            author: {
-                id: 1,
-                name: "Michel Bussi"
-            },
-            price: "2000",
-            stockQuantity: 15,
-            coverImageUrl: "../public/assets/books/ouss.jpg",
-            description: "Un thriller captivant qui vous tiendra en haleine jusqu'à la dernière page.",
-            active: true,
-            createdAt: "2025-10-07T19:56:52.198094+02:00",
-            updatedAt: null,
-            tags: [
-                {
-                    id: 1,
-                    nameEn: "Fiction",
-                    nameFr: "Fiction",
-                    type: "CATEGORY",
-                    active: true,
-                    colorHex: null
-                },
-                {
-                    id: 12,
-                    nameEn: "New Release",
-                    nameFr: "Nouveauté",
-                    type: "ETIQUETTE",
-                    active: true,
-                    colorHex: "#10B981"
-                }
-            ],
-            likeCount: null,
-            isLikedByCurrentUser: true
-        },
-        {
-            id: 4,
-            title: "Les ombres du monde",
-            author: {
-                id: 1,
-                name: "Michel Bussi"
-            },
-            price: "2000",
-            stockQuantity: 0,
-            coverImageUrl: "../public/assets/books/crime.jpg",
-            description: "Un thriller captivant qui vous tiendra en haleine jusqu'à la dernière page.",
-            active: true,
-            createdAt: "2025-10-07T19:56:52.198094+02:00",
-            updatedAt: null,
-            tags: [
-                {
-                    id: 1,
-                    nameEn: "Fiction",
-                    nameFr: "Fiction",
-                    type: "CATEGORY",
-                    active: true,
-                    colorHex: null
-                },
-                {
-                    id: 11,
-                    nameEn: "Bestseller",
-                    nameFr: "coup de cœur",
-                    type: "ETIQUETTE",
-                    active: true,
-                    colorHex: "#EF4444"
-                }
-            ],
-            likeCount: null,
-            isLikedByCurrentUser: false
-        },
-        {
-            id: 5,
-            title: "Les ombres du monde",
-            author: {
-                id: 1,
-                name: "Michel Bussi"
-            },
-            price: "2000",
-            stockQuantity: 8,
-            coverImageUrl: "../public/assets/books/ouss.jpg",
-            description: "Un thriller captivant qui vous tiendra en haleine jusqu'à la dernière page.",
-            active: true,
-            createdAt: "2025-10-07T19:56:52.198094+02:00",
-            updatedAt: null,
-            tags: [
-                {
-                    id: 1,
-                    nameEn: "Fiction",
-                    nameFr: "Fiction",
-                    type: "CATEGORY",
-                    active: true
-                },
-                {
-                    id: 12,
-                    nameEn: "New Release",
-                    nameFr: "Nouveauté",
-                    type: "ETIQUETTE",
-                    active: true,
-                    colorHex: "#10B981"
-                }
-            ],
-            likeCount: null,
-            isLikedByCurrentUser: false
-        },
-        {
-            id: 6,
-            title: "Les ombres du monde",
-            author: {
-                id: 1,
-                name: "Michel Bussi"
-            },
-            price: "2000",
-            stockQuantity: 12,
-            coverImageUrl: "../public/assets/books/crime.jpg",
-            description: "Un thriller captivant qui vous tiendra en haleine jusqu'à la dernière page.",
-            active: true,
-            createdAt: "2025-10-07T19:56:52.198094+02:00",
-            updatedAt: null,
-            tags: [
-                {
-                    id: 1,
-                    nameEn: "Fiction",
-                    nameFr: "Fiction",
-                    type: "CATEGORY",
-                    active: true,
-                    colorHex: null
-                },
-                {
-                    id: 11,
-                    nameEn: "Bestseller",
-                    nameFr: "Précommande",
-                    type: "ETIQUETTE",
-                    active: true,
-                    colorHex: "#3B82F6"
-                }
-            ],
-            likeCount: null,
-            isLikedByCurrentUser: false
-        },
-        {
-            id: 7,
-            title: "Où les étoiles tombent",
-            author: {
-                id: 2,
-                name: "Cédric Sapin-Defour"
-            },
-            price: "250",
-            stockQuantity: 20,
-            coverImageUrl: "../public/assets/books/ouss.jpg",
-            description: "Un roman poétique et touchant.",
-            active: true,
-            createdAt: "2025-10-08T10:30:00.000000+02:00",
-            updatedAt: null,
-            tags: [
-                {
-                    id: 2,
-                    nameEn: "Romance",
-                    nameFr: "Romance",
-                    type: "CATEGORY",
-                    active: true,
-                    colorHex: null
-                },
-                {
-                    id: 11,
-                    nameEn: "Bestseller",
-                    nameFr: "coup de cœur",
-                    type: "ETIQUETTE",
-                    active: true,
-                    colorHex: "#EF4444"
-                }
-            ],
-            likeCount: null,
-            isLikedByCurrentUser: false
-        },
-        {
-            id: 8,
-            title: "Le Cercle des jours",
-            author: {
-                id: 3,
-                name: "Ken Follett"
-            },
-            price: "2590",
-            stockQuantity: 0,
-            coverImageUrl: "../public/assets/books/crime.jpg",
-            description: "Une épopée historique fascinante.",
-            active: true,
-            createdAt: "2025-10-09T14:15:00.000000+02:00",
-            updatedAt: null,
-            tags: [
-                {
-                    id: 3,
-                    nameEn: "Historical",
-                    nameFr: "Historique",
-                    type: "CATEGORY",
-                    active: true,
-                    colorHex: null
-                },
-                {
-                    id: 11,
-                    nameEn: "Bestseller",
-                    nameFr: "coup de cœur",
-                    type: "ETIQUETTE",
-                    active: true,
-                    colorHex: "#EF4444"
-                }
-            ],
-            likeCount: null,
-            isLikedByCurrentUser: false
-        }
     ];
 
     const handleAddToCart = (bookId) => {
         console.log(`Added book ${bookId} to cart`);
-        const book = books.find(b => b.id === bookId);
-        if (book) {
-            setSelectedBook(book);
+        // Search in all booksSections
+        let foundBook = null;
+        for (const section of booksSections) {
+            foundBook = section.books.find(b => b.id === bookId);
+            if (foundBook) break;
+        }
+
+        if (foundBook) {
+            setSelectedBook(foundBook);
             setShowCartPopup(true);
         }
     };
@@ -555,162 +317,43 @@ const HomePage = () => {
         // Add your favorite logic here
     };
 
+    // Show loading state
+    if (isLoading) {
+        return (
+            <main className="w-full max-w-[100vw] overflow-x-hidden">
+                <div className="min-h-screen bg-white">
+                    <section className="w-full max-w-[100vw] overflow-x-hidden">
+                        <Navbar />
+                    </section>
+                    <div className="h-20"></div>
+                    <LoadingFallback message="Chargement des données..." />
+                </div>
+            </main>
+        );
+    }
 
-
-
-    // Categories data from API
-    const categories = [
-        {
-            id: 1,
-            nameEn: "Fiction",
-            nameFr: "Fiction",
-            type: "CATEGORY",
-            active: true,
-            colorHex: null,
-            imageUrl: "/assets/categories/thriller.png"
-        },
-        {
-            id: 2,
-            nameEn: "Philosophy",
-            nameFr: "Philosophie",
-            type: "CATEGORY",
-            active: true,
-            colorHex: null,
-            imageUrl: "/assets/categories/dev personel.png"
-        },
-        {
-            id: 3,
-            nameEn: "Classic",
-            nameFr: "Classique",
-            type: "CATEGORY",
-            active: true,
-            colorHex: null,
-            imageUrl: "/assets/categories/histoire.png"
-        },
-        {
-            id: 4,
-            nameEn: "Adventure",
-            nameFr: "Aventure",
-            type: "CATEGORY",
-            active: true,
-            colorHex: null,
-            imageUrl: "/assets/categories/thriller.png"
-        },
-        {
-            id: 5,
-            nameEn: "Romance",
-            nameFr: "Romance",
-            type: "CATEGORY",
-            active: true,
-            colorHex: null,
-            imageUrl: "/assets/categories/romance.png"
-        },
-        {
-            id: 6,
-            nameEn: "Drama",
-            nameFr: "Drame",
-            type: "CATEGORY",
-            active: true,
-            colorHex: null,
-            imageUrl: "/assets/categories/thriller.png"
-        },
-        {
-            id: 7,
-            nameEn: "Science Fiction",
-            nameFr: "Science-Fiction",
-            type: "CATEGORY",
-            active: true,
-            colorHex: null,
-            imageUrl: "/assets/categories/thriller.png"
-        },
-        {
-            id: 8,
-            nameEn: "Historical",
-            nameFr: "Historique",
-            type: "CATEGORY",
-            active: true,
-            colorHex: null,
-            imageUrl: "/assets/categories/histoire.png"
-        },
-        {
-            id: 9,
-            nameEn: "Children's Literature",
-            nameFr: "Littérature Jeunesse",
-            type: "CATEGORY",
-            active: true,
-            colorHex: null,
-            imageUrl: "/assets/categories/enfants.png"
-        },
-        {
-            id: 10,
-            nameEn: "Existentialism",
-            nameFr: "Existentialisme",
-            type: "CATEGORY",
-            active: true,
-            colorHex: null,
-            imageUrl: "/assets/categories/dev personel.png"
-        }
-    ];
-
-
-    const authors = [
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        },
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        },
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        },
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        },
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        },
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        },
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        },
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        },
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        },
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        },
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        },
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        }
-    ]
+    // Show error state
+    if (error) {
+        return (
+            <main className="w-full max-w-[100vw] overflow-x-hidden">
+                <div className="min-h-screen bg-white">
+                    <section className="w-full max-w-[100vw] overflow-x-hidden">
+                        <Navbar />
+                    </section>
+                    <div className="h-20"></div>
+                    <LoadingFallback message={`Erreur: ${error}`} />
+                </div>
+            </main>
+        );
+    }
 
     return (
-
         <main className="w-full max-w-[100vw] overflow-x-hidden">
             <div className="min-h-screen bg-white">
                 {/* Navigation Bar */}
-                <section className="w-full max-w-[100vw] overflow-x-hidden"><Navbar /></section>
-
+                <section className="w-full max-w-[100vw] overflow-x-hidden">
+                    <Navbar />
+                </section>
 
                 <div className="h-20"></div>
 
@@ -731,33 +374,22 @@ const HomePage = () => {
                     </div>
                 </section>
 
-                {/* Main Content */}
-
-
+                {/* Categories Section */}
                 <section className="w-full section-spacing">
-                    {/* Categories Section */}
                     <div className="container-main container-padding2xl-left-only">
-                        {/* Greeting Section */}
                         <div className="flex items-center justify-between pr-fluid-lg">
                             <div>
                                 <h1 className="font-['Poppins'] font-bold text-[#00417a] text-fluid-h1to2 mb-0">
                                     Bonjour
                                 </h1>
-
                             </div>
-
                             <SeeMore to="/allbooks" />
-
                         </div>
-                        <p className="font-['Poppins'] font-[550] text-[#00417a] text-fluid-small" >
+                        <p className="font-['Poppins'] font-[550] text-[#00417a] text-fluid-small">
                             Choisissez parmis les catégories suivantes
                         </p>
 
-
-
-                        <div
-                            className="relative -ml-fluid-2xl" // Negative left margin to extend left
-                        >
+                        <div className="relative -ml-fluid-2xl">
                             <div
                                 ref={categoriesScrollRef}
                                 className="flex pt-fluid-lg pl-fluid-2xl pr-fluid-lg gap-fluid-lg overflow-x-auto pb-4 scrollbar-hide"
@@ -770,7 +402,8 @@ const HomePage = () => {
                                     >
                                         <CategoryCard
                                             title={category.nameFr}
-                                            imageSrc={category.imageUrl} />
+                                            imageSrc={category.imageUrl}
+                                        />
                                     </div>
                                 ))}
                             </div>
@@ -788,19 +421,13 @@ const HomePage = () => {
                                         if (container) {
                                             const itemWidth = container.firstChild?.offsetWidth || 0;
                                             const gap = parseFloat(getComputedStyle(container).gap) || 0;
-
                                             let scrollAmount;
 
-                                            // First dot: scroll to start
                                             if (index === 0) {
                                                 scrollAmount = 0;
-                                            }
-                                            // Last dot: scroll to end
-                                            else if (index === categories.length - 1) {
+                                            } else if (index === categories.length - 1) {
                                                 scrollAmount = container.scrollWidth - container.clientWidth;
-                                            }
-                                            // Middle dots: center the item
-                                            else {
+                                            } else {
                                                 const itemPosition = index * (itemWidth + gap);
                                                 const centerOffset = (container.clientWidth - itemWidth) / 2;
                                                 scrollAmount = itemPosition - centerOffset;
@@ -824,123 +451,43 @@ const HomePage = () => {
                     </div>
                 </section>
 
+                {/* Dynamic MAIN_DISPLAY Sections */}
+                {booksSections.map((section, sectionIndex) => {
+                    // Ensure ref exists for this section
+                    if (!booksSectionsRefs.current[sectionIndex]) {
+                        booksSectionsRefs.current[sectionIndex] = { current: null };
+                    }
 
+                    const scrollState = booksSectionsScrollState[sectionIndex] || {
+                        currentIndex: 0,
+                        canScrollLeft: false,
+                        canScrollRight: true
+                    };
 
+                    return (
+                        <BookSection
+                            key={section.tag.id}
+                            section={section}
+                            sectionIndex={sectionIndex}
+                            booksScrollRef={booksSectionsRefs.current[sectionIndex]}
+                            scrollState={scrollState}
+                            createBooksScrollCheck={createBooksScrollCheck}
+                            scrollBooksSection={scrollBooksSection}
+                            handleAddToCart={handleAddToCart}
+                            handleToggleFavorite={handleToggleFavorite}
+                        />
+                    );
+                })}
+
+                {/* Authors Section */}
                 <section className="w-full section-spacing">
                     <div className="container-main container-padding2xl-left-only">
-
-                        {/* Header */}
-                        <div className="flex justify-between items-center mb-fluid-sm pr-fluid-lg">
-                            <h2 className="text-brand-blue text-fluid-h2 font-bold">
-                                Livres recommandés
-                            </h2>
-                            <SeeMore to="/allbooks" />
-                        </div>
-
-                        {/* Horizontal Scroll Container with negative margin */}
-                        <div className="relative -ml-fluid-2xl">
-                            <div
-                                ref={booksScrollRef}
-                                className="flex pt-fluid-xs pr-fluid-lg pl-fluid-2xl gap-fluid-md overflow-x-auto scrollbar-hide pb-4"
-                            >
-                                {books.map((book) => {
-                                    // Extract first ETIQUETTE tag for badge
-                                    const etiquetteTag = book.tags.find(tag => tag.type === "ETIQUETTE");
-                                    const badge = etiquetteTag ? {
-                                        type: etiquetteTag.nameEn.toLowerCase(),
-                                        text: etiquetteTag.nameFr,
-                                        colorHex: etiquetteTag.colorHex
-                                    } : null;
-
-                                    // Derive stock status from stockQuantity
-                                    const stockStatus = {
-                                        available: book.stockQuantity > 0,
-                                        text: book.stockQuantity > 0 ? "en stock" : "rupture de stock"
-                                    };
-
-                                    return (
-                                        <div
-                                            key={book.id}
-                                            className="flex-shrink-0 snap-start book-card-width"
-                                        >
-                                            <BookCard
-                                                id={book.id}
-                                                title={book.title}
-                                                author={book.author.name}
-                                                price={book.price}
-                                                coverImage={book.coverImageUrl}
-                                                badge={badge}
-                                                stockStatus={stockStatus}
-                                                onAddToCart={handleAddToCart}
-                                                onToggleFavorite={handleToggleFavorite}
-                                                isFavorited={book.isLikedByCurrentUser}
-                                            />
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                        <div className="flex items-center justify-between pr-fluid-lg pt-2 mt-4 mb-4">
-                            <div className="flex-1"></div>
-
-                            <div className="flex-1 flex justify-center">
-                                <PaginationDots
-                                    totalDots={books.length}
-                                    currentIndex={currentBookIndex}
-                                    onDotClick={(index) => {
-                                        const container = booksScrollRef.current;
-                                        if (container) {
-                                            const itemWidth = container.firstChild?.offsetWidth || 0;
-                                            const gap = parseFloat(getComputedStyle(container).gap) || 0;
-
-                                            let scrollAmount;
-
-                                            // First dot: scroll to start
-                                            if (index === 0) {
-                                                scrollAmount = 0;
-                                            }
-                                            // Last dot: scroll to end
-                                            else if (index === books.length - 1) {
-                                                scrollAmount = container.scrollWidth - container.clientWidth;
-                                            }
-                                            // Middle dots: center the item
-                                            else {
-                                                const itemPosition = index * (itemWidth + gap);
-                                                const centerOffset = (container.clientWidth - itemWidth) / 2;
-                                                scrollAmount = itemPosition - centerOffset;
-                                            }
-
-                                            container.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-                                        }
-                                    }}
-                                />
-                            </div>
-
-                            <div className="flex-1 flex justify-end">
-                                <SlideScroll
-                                    onPrevious={() => scrollBooks('left')}
-                                    onNext={() => scrollBooks('right')}
-                                    canScrollLeft={canScrollBooksLeft}
-                                    canScrollRight={canScrollBooksRight}
-                                />
-                            </div>
-                        </div>
-
-                    </div>
-                </section>
-
-                <section className="w-full section-spacing">
-                    <div className="container-main container-padding2xl-left-only">
-
                         <div className="mb-fluid-md flex items-center justify-between pr-fluid-lg">
-                            <p className="font-['Poppins'] font-bold text-[#00417a] text-fluid-h2" >
+                            <p className="font-['Poppins'] font-bold text-[#00417a] text-fluid-h2">
                                 Nos auteurs phares
                             </p>
                             <SeeMore to="/allbooks" />
-
-
                         </div>
-
 
                         <div className="relative -ml-fluid-2xl">
                             <div
@@ -951,11 +498,11 @@ const HomePage = () => {
                                     <div
                                         key={index}
                                         className="flex-shrink-0 snap-start cursor-pointer"
-                                        onClick={() => handleAuthorClick(author.Name)}
+                                        onClick={() => handleAuthorClick(author.name)}
                                     >
                                         <AuthorComponent
-                                            authorImage={author.Image}
-                                            authorName={author.Name}
+                                            authorImage={author.imageUrl}
+                                            authorName={author.name}
                                         />
                                     </div>
                                 ))}
@@ -974,19 +521,13 @@ const HomePage = () => {
                                         if (container) {
                                             const itemWidth = container.firstChild?.offsetWidth || 0;
                                             const gap = parseFloat(getComputedStyle(container).gap) || 0;
-
                                             let scrollAmount;
 
-                                            // First dot: scroll to start
                                             if (index === 0) {
                                                 scrollAmount = 0;
-                                            }
-                                            // Last dot: scroll to end
-                                            else if (index === authors.length - 1) {
+                                            } else if (index === authors.length - 1) {
                                                 scrollAmount = container.scrollWidth - container.clientWidth;
-                                            }
-                                            // Middle dots: center the item
-                                            else {
+                                            } else {
                                                 const itemPosition = index * (itemWidth + gap);
                                                 const centerOffset = (container.clientWidth - itemWidth) / 2;
                                                 scrollAmount = itemPosition - centerOffset;
@@ -1007,16 +548,12 @@ const HomePage = () => {
                                 />
                             </div>
                         </div>
-
-
                     </div>
                 </section>
-
-
             </div>
             <Footer />
 
-            {/* Cart Confirmation Popup - Single instance at page level */}
+            {/* Cart Confirmation Popup */}
             {selectedBook && (
                 <CartConfirmationPopup
                     isOpen={showCartPopup}
@@ -1031,9 +568,122 @@ const HomePage = () => {
             )}
         </main>
     );
+};
 
+// Separate component for book sections to properly handle refs
+const BookSection = ({
+    section,
+    sectionIndex,
+    booksScrollRef,
+    scrollState,
+    createBooksScrollCheck,
+    scrollBooksSection,
+    handleAddToCart,
+    handleToggleFavorite
+}) => {
+    useEffect(() => {
+        const container = booksScrollRef.current;
+        if (container) {
+            const checkScroll = createBooksScrollCheck(sectionIndex, booksScrollRef);
+            checkScroll();
+            container.addEventListener('scroll', checkScroll);
+            return () => container.removeEventListener('scroll', checkScroll);
+        }
+    }, [section.books, sectionIndex, booksScrollRef, createBooksScrollCheck]);
 
+    return (
+        <section className="w-full section-spacing">
+            <div className="container-main container-padding2xl-left-only">
+                <div className="flex justify-between items-center mb-fluid-sm pr-fluid-lg">
+                    <h2 className="text-brand-blue text-fluid-h2 font-bold">
+                        {section.tag.nameFr}
+                    </h2>
+                    <SeeMore to="/allbooks" />
+                </div>
 
+                <div className="relative -ml-fluid-2xl">
+                    <div
+                        ref={booksScrollRef}
+                        className="flex pt-fluid-xs pr-fluid-lg pl-fluid-2xl gap-fluid-md overflow-x-auto scrollbar-hide pb-4"
+                    >
+                        {section.books.map((book) => {
+                            const etiquetteTag = book.tags.find(tag => tag.type === "ETIQUETTE");
+                            const badge = etiquetteTag ? {
+                                type: etiquetteTag.nameEn.toLowerCase(),
+                                text: etiquetteTag.nameFr,
+                                colorHex: etiquetteTag.colorHex
+                            } : null;
+
+                            const stockStatus = {
+                                available: book.stockQuantity > 0,
+                                text: book.stockQuantity > 0 ? "en stock" : "rupture de stock"
+                            };
+
+                            return (
+                                <div
+                                    key={book.id}
+                                    className="flex-shrink-0 snap-start book-card-width"
+                                >
+                                    <BookCard
+                                        id={book.id}
+                                        title={book.title}
+                                        author={book.author.name}
+                                        price={book.price}
+                                        coverImage={book.coverImageUrl}
+                                        badge={badge}
+                                        stockStatus={stockStatus}
+                                        onAddToCart={handleAddToCart}
+                                        onToggleFavorite={handleToggleFavorite}
+                                        isFavorited={book.isLikedByCurrentUser}
+                                    />
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                <div className="flex items-center justify-between pr-fluid-lg pt-2 mt-4 mb-4">
+                    <div className="flex-1"></div>
+
+                    <div className="flex-1 flex justify-center">
+                        <PaginationDots
+                            totalDots={section.books.length}
+                            currentIndex={scrollState.currentIndex}
+                            onDotClick={(index) => {
+                                const container = booksScrollRef.current;
+                                if (container) {
+                                    const itemWidth = container.firstChild?.offsetWidth || 0;
+                                    const gap = parseFloat(getComputedStyle(container).gap) || 0;
+                                    let scrollAmount;
+
+                                    if (index === 0) {
+                                        scrollAmount = 0;
+                                    } else if (index === section.books.length - 1) {
+                                        scrollAmount = container.scrollWidth - container.clientWidth;
+                                    } else {
+                                        const itemPosition = index * (itemWidth + gap);
+                                        const centerOffset = (container.clientWidth - itemWidth) / 2;
+                                        scrollAmount = itemPosition - centerOffset;
+                                    }
+
+                                    container.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+                                }
+                            }}
+                        />
+                    </div>
+
+                    <div className="flex-1 flex justify-end">
+                        <SlideScroll
+                            onPrevious={() => scrollBooksSection(booksScrollRef, 'left')}
+                            onNext={() => scrollBooksSection(booksScrollRef, 'right')}
+                            canScrollLeft={scrollState.canScrollLeft}
+                            canScrollRight={scrollState.canScrollRight}
+                        />
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
 };
 
 export default HomePage;

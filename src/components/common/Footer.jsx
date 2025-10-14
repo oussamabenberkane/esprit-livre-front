@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
 
 export default function Footer() {
@@ -51,12 +52,12 @@ export default function Footer() {
                                 </a>
                             </li>
                             <li>
-                                <a
-                                    href="#"
-                                    className="text-gray-600 text-fluid-small hover:text-[#FFFFFF] transition-colors"
+                                <Link
+                                    to="/team"
+                                    className="text-gray-600 text-fluid-small hover:text-[#1E40AF] transition-colors"
                                 >
-                                    Notre équipes
-                                </a>
+                                    Notre équipe
+                                </Link>
                             </li>
                         </ul>
                     </div>
@@ -66,8 +67,8 @@ export default function Footer() {
                         <h3 className="text-fluid-h3 font-semibold text-gray-800 mb-4">
                             Service clients
                         </h3>
-                        <a
-                            href="#"
+                        <Link
+                            to="/service-client"
                             className="inline-flex items-center gap-2"
                         >
                             <h3 className="text-fluid-small text-[#1E40AF] hover:text-blue-700 transition-colors font-medium"> Accéder à la page Service Client</h3>
@@ -84,7 +85,7 @@ export default function Footer() {
                                     d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
                                 />
                             </svg>
-                        </a>
+                        </Link>
                     </div>
                 </div>
 

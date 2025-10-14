@@ -8,9 +8,9 @@ import BottomSheet from './BottomSheet';
 // Simple Language Toggle for Mobile/Tablet (the one I created earlier)
 const SimpleLanguageToggle = () => {
     const [language, setLanguage] = useState('FR');
-    
+
     return (
-        <button 
+        <button
             onClick={() => setLanguage(language === 'FR' ? 'EN' : 'FR')}
             className="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg transition-colors"
         >
@@ -21,10 +21,12 @@ const SimpleLanguageToggle = () => {
 
 // Logo Component
 const Logo = () => (
-    <div className="flex flex-col text-white">
-        <div className="text-lg md:text-xl font-bold leading-tight">Esprit</div>
-        <div className="text-base md:text-lg font-bold leading-tight">Livre</div>
-    </div>
+    <a href='/'>
+        <div className="flex flex-col text-white">
+            <div className="text-lg md:text-xl font-bold leading-tight">Esprit</div>
+            <div className="text-base md:text-lg font-bold leading-tight">Livre</div>
+        </div>
+    </a>
 );
 
 // SearchBar Component
@@ -46,10 +48,10 @@ const SearchBar = ({ placeholder = "Recherchez...", onSearch }) => (
 const Navbar = ({
     searchPlaceholder = "Recherchez un livre...",
     cartCount = 0,
-    onSearch = () => {},
+    onSearch = () => { },
     onCartClick,
-    onFavoritesClick = () => {},
-    onUserClick = () => {}
+    onFavoritesClick = () => { },
+    onUserClick = () => { }
 }) => {
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
     const navigate = useNavigate();

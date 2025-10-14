@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import { motion, AnimatePresence, useMotionValue } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Home, BookOpen, Heart, User } from 'lucide-react';
 
 export default function BottomSheet({ isOpen, onClose, LanguageToggle }) {
+  const navigate = useNavigate();
+
   const menuItems = [
-    { icon: Home, label: 'Accueil', labelEn: 'Home' },
-    { icon: BookOpen, label: 'Livres', labelEn: 'Books' },
-    { icon: Heart, label: 'Favoris', labelEn: 'Favorites' },
-    { icon: User, label: 'Profil', labelEn: 'Profile' }
+    { icon: Home, label: 'Accueil', labelEn: 'Home', path: '/' },
+    { icon: BookOpen, label: 'Livres', labelEn: 'Books', path: '/allbooks' },
+    { icon: Heart, label: 'Favoris', labelEn: 'Favorites', path: '/' },
+    { icon: User, label: 'Profil', labelEn: 'Profile', path: '/' }
   ];
 
   const y = useMotionValue(0);
@@ -67,7 +70,10 @@ export default function BottomSheet({ isOpen, onClose, LanguageToggle }) {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      onClick={onClose}
+                      onClick={() => {
+                        navigate(item.path);
+                        onClose();
+                      }}
                       className="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-blue-50 active:bg-blue-100 transition-colors group"
                     >
                       <div className="w-6 h-6 text-blue-800 group-hover:text-blue-600 transition-colors">

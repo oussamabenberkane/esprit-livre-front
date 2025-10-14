@@ -7,6 +7,8 @@ import AuthPage from './pages/AuthPage.jsx';
 import Profile from './pages/profile.jsx';
 import Orders from './components/profil/Orders.jsx';
 import Favorites from './components/profil/Favorites.jsx';
+import TeamPage from './pages/TeamPage';
+import ServiceClientPage from './pages/ServiceClientPage';
 
 function App() {
   return (
@@ -24,6 +26,12 @@ function App() {
 
           {/* Cart and checkout page */}
           <Route path="/cart" element={<CartCheckoutPage />} />
+
+          {/* Team page */}
+          <Route path="/team" element={<TeamPage />} />
+
+          {/* Service Client page */}
+          <Route path="/service-client" element={<ServiceClientPage />} />
         </Routes>
       </div>
     </BrowserRouter>

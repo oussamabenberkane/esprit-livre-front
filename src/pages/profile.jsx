@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ArrowLeft, Edit2, Heart, Package, LogOut, User, Home, MapPin } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, Edit2, Heart, Package, LogOut, User, Home, MapPin, ChevronDown } from 'lucide-react';
 
 // Algerian Wilaya data
 const wilayaData = {
@@ -14,6 +15,7 @@ const wilayaData = {
 };
 
 export default function Profile() {
+  const navigate = useNavigate();
   const [userData, setUserData] = useState({
     name: "Ahmed Benali",
     email: "ahmed.benali@email.com",
@@ -37,19 +39,17 @@ export default function Profile() {
       .slice(0, 2);
   };
 
-  // Placeholder functions
+  // Navigation functions
   const handleBack = () => {
-    console.log('Navigate back');
+    navigate(-1);
   };
 
   const handleEditEmail = () => {
     setIsEditingEmail(!isEditingEmail);
-    console.log('Edit email');
   };
 
   const handleEditPhone = () => {
     setIsEditingPhone(!isEditingPhone);
-    console.log('Edit phone');
   };
 
   const handleWilayaChange = (e) => {
@@ -59,16 +59,18 @@ export default function Profile() {
   };
 
   const navigateToFavorites = () => {
-    console.log('Navigate to Favorites');
+    navigate('/favorites');
   };
 
   const navigateToOrders = () => {
-    console.log('Navigate to Orders');
+    navigate('/orders');
   };
 
   const handleLogout = () => {
+    // TODO: Add actual logout logic
     console.log('User logged out');
     alert('Logged out successfully');
+    navigate('/');
   };
 
   return (
@@ -160,34 +162,44 @@ export default function Profile() {
             {/* Wilaya */}
             <div className="p-4 bg-gray-50 rounded-lg">
               <label className="block text-sm text-gray-600 mb-2">Wilaya</label>
-              <select
-                value={userData.wilaya}
-                onChange={handleWilayaChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-sm"
-              >
-                {Object.keys(wilayaData).map((wilaya) => (
-                  <option key={wilaya} value={wilaya}>
-                    {wilaya}
-                  </option>
-                ))}
-              </select>
+              <div className="relative">
+                <select
+                  value={userData.wilaya}
+                  onChange={handleWilayaChange}
+                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-sm appearance-none"
+                >
+                  {Object.keys(wilayaData).map((wilaya) => (
+                    <option key={wilaya} value={wilaya}>
+                      {wilaya}
+                    </option>
+                  ))}
+                </select>
+
+                {/* Custom dropdown arrow */}
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+              </div>
             </div>
 
             {/* City */}
             <div className="p-4 bg-gray-50 rounded-lg">
               <label className="block text-sm text-gray-600 mb-2">Commune</label>
-              <select
-                value={userData.city}
-                onChange={(e) => setUserData({ ...userData, city: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-sm"
-              >
-                <option value="">Sélectionnez une commune</option>
-                {availableCities.map((city) => (
-                  <option key={city} value={city}>
-                    {city}
-                  </option>
-                ))}
-              </select>
+              <div className="relative">
+                <select
+                  value={userData.city}
+                  onChange={(e) => setUserData({ ...userData, city: e.target.value })}
+                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-sm appearance-none"
+                >
+                  <option value="">Sélectionnez une commune</option>
+                  {availableCities.map((city) => (
+                    <option key={city} value={city}>
+                      {city}
+                    </option>
+                  ))}
+                </select>
+
+                {/* Custom dropdown arrow */}
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+              </div>
             </div>
           </div>
         </div>
@@ -200,37 +212,31 @@ export default function Profile() {
             {/* Home Delivery Option */}
             <button
               onClick={() => setShippingPreference("home")}
-              className={`w-full p-4 rounded-lg border-2 transition-all ${
-                shippingPreference === "home"
+              className={`w-full p-4 rounded-lg border-2 transition-all ${shippingPreference === "home"
                   ? "border-blue-500 bg-blue-50"
                   : "border-gray-200 bg-gray-50 hover:border-gray-300"
-              }`}
+                }`}
             >
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                  shippingPreference === "home" ? "bg-blue-100" : "bg-gray-100"
-                }`}>
-                  <Home className={`w-5 h-5 ${
-                    shippingPreference === "home" ? "text-blue-600" : "text-gray-600"
-                  }`} />
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${shippingPreference === "home" ? "bg-blue-100" : "bg-gray-100"
+                  }`}>
+                  <Home className={`w-5 h-5 ${shippingPreference === "home" ? "text-blue-600" : "text-gray-600"
+                    }`} />
                 </div>
                 <div className="text-left flex-1">
-                  <h3 className={`font-medium ${
-                    shippingPreference === "home" ? "text-blue-900" : "text-gray-800"
-                  }`}>
+                  <h3 className={`font-medium ${shippingPreference === "home" ? "text-blue-900" : "text-gray-800"
+                    }`}>
                     Livraison à domicile
                   </h3>
-                  <p className={`text-sm ${
-                    shippingPreference === "home" ? "text-blue-600" : "text-gray-500"
-                  }`}>
+                  <p className={`text-sm ${shippingPreference === "home" ? "text-blue-600" : "text-gray-500"
+                    }`}>
                     Recevez vos livres directement chez vous
                   </p>
                 </div>
-                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                  shippingPreference === "home"
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${shippingPreference === "home"
                     ? "border-blue-500 bg-blue-500"
                     : "border-gray-300"
-                }`}>
+                  }`}>
                   {shippingPreference === "home" && (
                     <div className="w-2 h-2 rounded-full bg-white"></div>
                   )}
@@ -241,37 +247,31 @@ export default function Profile() {
             {/* Pickup Point Option */}
             <button
               onClick={() => setShippingPreference("pickup")}
-              className={`w-full p-4 rounded-lg border-2 transition-all ${
-                shippingPreference === "pickup"
+              className={`w-full p-4 rounded-lg border-2 transition-all ${shippingPreference === "pickup"
                   ? "border-blue-500 bg-blue-50"
                   : "border-gray-200 bg-gray-50 hover:border-gray-300"
-              }`}
+                }`}
             >
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                  shippingPreference === "pickup" ? "bg-blue-100" : "bg-gray-100"
-                }`}>
-                  <MapPin className={`w-5 h-5 ${
-                    shippingPreference === "pickup" ? "text-blue-600" : "text-gray-600"
-                  }`} />
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${shippingPreference === "pickup" ? "bg-blue-100" : "bg-gray-100"
+                  }`}>
+                  <MapPin className={`w-5 h-5 ${shippingPreference === "pickup" ? "text-blue-600" : "text-gray-600"
+                    }`} />
                 </div>
                 <div className="text-left flex-1">
-                  <h3 className={`font-medium ${
-                    shippingPreference === "pickup" ? "text-blue-900" : "text-gray-800"
-                  }`}>
+                  <h3 className={`font-medium ${shippingPreference === "pickup" ? "text-blue-900" : "text-gray-800"
+                    }`}>
                     Point de relais
                   </h3>
-                  <p className={`text-sm ${
-                    shippingPreference === "pickup" ? "text-blue-600" : "text-gray-500"
-                  }`}>
+                  <p className={`text-sm ${shippingPreference === "pickup" ? "text-blue-600" : "text-gray-500"
+                    }`}>
                     Retirez votre colis au point relais le plus proche
                   </p>
                 </div>
-                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                  shippingPreference === "pickup"
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${shippingPreference === "pickup"
                     ? "border-blue-500 bg-blue-500"
                     : "border-gray-300"
-                }`}>
+                  }`}>
                   {shippingPreference === "pickup" && (
                     <div className="w-2 h-2 rounded-full bg-white"></div>
                   )}

@@ -1,9 +1,11 @@
 Ouss:
-1. select icon hard code
-2. On click footer item focus on page
-3. Sending email
+  select icon hard code: Done
+  On click footer item focus on page: pending
+  Sending email: pending
+  i18n: pending
 
 Yani:
+
 - add shipping pref to checkout --- neki --- tura
 - i18n --- neki --- juste apres
 - state management --- neki ---- apres

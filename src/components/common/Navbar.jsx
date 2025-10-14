@@ -49,9 +49,7 @@ const Navbar = ({
     searchPlaceholder = "Recherchez un livre...",
     cartCount = 0,
     onSearch = () => { },
-    onCartClick,
-    onFavoritesClick = () => { },
-    onUserClick = () => { }
+    onCartClick
 }) => {
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
     const navigate = useNavigate();
@@ -63,6 +61,16 @@ const Navbar = ({
         } else {
             navigate('/cart');
         }
+    };
+
+    // Default favorites click handler - navigate to favorites page
+    const handleFavoritesClick = () => {
+        navigate('/favorites');
+    };
+
+    // Default user click handler - navigate to profile page
+    const handleUserClick = () => {
+        navigate('/profile');
     };
 
     return (
@@ -106,12 +114,12 @@ const Navbar = ({
                         </button>
 
                         {/* Favorites - Desktop only */}
-                        <button onClick={onFavoritesClick} className="hidden md:block">
+                        <button onClick={handleFavoritesClick} className="hidden md:block">
                             <Heart className="w-6 h-6 text-white hover:opacity-80 transition-opacity" />
                         </button>
 
                         {/* User Account - Desktop only */}
-                        <button onClick={onUserClick} className="hidden md:block">
+                        <button onClick={handleUserClick} className="hidden md:block">
                             <User className="w-6 h-6 text-white hover:opacity-80 transition-opacity" />
                         </button>
 

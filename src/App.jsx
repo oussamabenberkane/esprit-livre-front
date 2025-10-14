@@ -16,7 +16,7 @@ function App() {
       <div className="min-h-screen min-w-screen bg-gray-50">
         <Routes>
           {/* Home page as entry point */}
-          <Route path="/" element={<Favorites/>} />
+          <Route path="/" element={<HomePage />} />
 
           {/* All books catalog page */}
           <Route path="/allbooks" element={<AllBooks />} />
@@ -26,6 +26,12 @@ function App() {
 
           {/* Cart and checkout page */}
           <Route path="/cart" element={<CartCheckoutPage />} />
+
+          {/* Favorites page */}
+          <Route path="/favorites" element={<Favorites />} />
+
+          {/* Profile page */}
+          <Route path="/profile" element={<Profile />} />
 
           {/* Team page */}
           <Route path="/team" element={<TeamPage />} />

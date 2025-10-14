@@ -306,22 +306,27 @@ export default function ServiceClientPage() {
                   <label htmlFor="subject" className="block text-fluid-body font-medium text-gray-700 mb-2">
                     Sujet
                   </label>
-                  <select
-                    id="subject"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-fluid-small"
-                    required
-                  >
-                    <option value="">Sélectionnez un sujet</option>
-                    <option value="commande">Question sur une commande</option>
-                    <option value="livraison">Problème de livraison</option>
-                    <option value="retour">Retour ou remboursement</option>
-                    <option value="produit">Question sur un produit</option>
-                    <option value="compte">Problème de compte</option>
-                    <option value="autre">Autre</option>
-                  </select>
+                  <div className="relative">
+                    <select
+                      id="subject"
+                      name="subject"
+                      value={formData.subject}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-fluid-small bg-white appearance-none"
+                      required
+                    >
+                      <option value="">Sélectionnez un sujet</option>
+                      <option value="commande">Question sur une commande</option>
+                      <option value="livraison">Problème de livraison</option>
+                      <option value="retour">Retour ou remboursement</option>
+                      <option value="produit">Question sur un produit</option>
+                      <option value="compte">Problème de compte</option>
+                      <option value="autre">Autre</option>
+                    </select>
+
+                    {/* Custom dropdown arrow */}
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+                  </div>
                 </div>
 
                 <div>

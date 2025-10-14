@@ -9,8 +9,8 @@ export default function BottomSheet({ isOpen, onClose, LanguageToggle }) {
   const menuItems = [
     { icon: Home, label: 'Accueil', labelEn: 'Home', path: '/' },
     { icon: BookOpen, label: 'Livres', labelEn: 'Books', path: '/allbooks' },
-    { icon: Heart, label: 'Favoris', labelEn: 'Favorites', path: '/' },
-    { icon: User, label: 'Profil', labelEn: 'Profile', path: '/' }
+    { icon: Heart, label: 'Favoris', labelEn: 'Favorites', path: '/favorites' },
+    { icon: User, label: 'Profil', labelEn: 'Profile', path: '/profile' }
   ];
 
   const y = useMotionValue(0);

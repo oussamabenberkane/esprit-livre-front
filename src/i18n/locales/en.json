@@ -1,0 +1,230 @@
+{
+  "navbar": {
+    "searchPlaceholder": "Search for a book...",
+    "language": {
+      "fr": "FR",
+      "en": "EN"
+    }
+  },
+  "bookCard": {
+    "addToCart": "Add to\ncart",
+    "currency": "DZD",
+    "stockStatus": {
+      "inStock": "in stock",
+      "outOfStock": "out of stock"
+    }
+  },
+  "allBooks": {
+    "pageTitle": "All Books",
+    "pageSubtitle": "Discover our complete collection of books",
+    "resultsTitle": "Results",
+    "resultsCount": "{{start}} - {{end}} of {{total}} books",
+    "page": "Page {{current}}/{{total}}",
+    "seeMore": "See more",
+    "endOfResults": "✓ You have reached the end of results",
+    "digitalLibrary": "Digital Library",
+    "customerService": "Customer Service"
+  },
+  "filters": {
+    "heading": "Filters",
+    "apply": "Apply filters",
+    "applyMobile": "Apply",
+    "reset": "Reset filters",
+    "price": {
+      "label": "Price",
+      "min": "Min",
+      "max": "Max",
+      "currency": "DZD"
+    },
+    "category": {
+      "label": "Category",
+      "placeholder": "Search for a category...",
+      "placeholderShort": "Search..."
+    },
+    "author": {
+      "label": "Author",
+      "placeholder": "Search for an author...",
+      "placeholderShort": "Search..."
+    },
+    "bookTitle": {
+      "label": "Title",
+      "placeholder": "Search for a title...",
+      "placeholderShort": "Search..."
+    },
+    "language": {
+      "label": "Language",
+      "placeholder": "Select a language...",
+      "placeholderShort": "Select..."
+    },
+    "resultsCount": "{{count}} result",
+    "resultsCount_plural": "{{count}} results",
+    "noResults": "No results found"
+  },
+  "footer": {
+    "socialNetworks": "Social Networks",
+    "whoAreWe": {
+      "title": "Who Are We?",
+      "about": "About",
+      "team": "Our Team"
+    },
+    "customerService": {
+      "title": "Customer Service",
+      "link": "Go to Customer Service Page"
+    },
+    "copyright": "© {{year}} All rights reserved"
+  },
+  "bottomSheet": {
+    "menu": {
+      "home": "Home",
+      "books": "Books",
+      "favorites": "Favorites",
+      "profile": "Profile"
+    }
+  },
+  "cartPopup": {
+    "title": "Item added to cart",
+    "close": "Close",
+    "bookDetails": "Book details",
+    "currency": "DZD",
+    "viewCart": "View cart",
+    "remove": "Remove"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "seeMore": "See more"
+  },
+  "homePage": {
+    "greeting": "Hello",
+    "categoriesSubtitle": "Choose from the following categories",
+    "recommendedBooks": "Recommended Books",
+    "featuredAuthors": "Our Featured Authors",
+    "hero": {
+      "discover": "Discover",
+      "newReleases": "New Releases"
+    }
+  },
+  "floatingCartBadge": {
+    "close": "Close",
+    "itemAdded": "{{count}} item added",
+    "itemsAdded": "{{count}} items added",
+    "cart": "cart →",
+    "dragToClose": "Drag to close",
+    "dragToDelete": "Drag here to delete"
+  },
+  "bookDetails": {
+    "loading": "Loading...",
+    "notFound": "Book not found",
+    "notFoundMessage": "The book you are looking for does not exist or has been deleted.",
+    "backToHome": "Back to home",
+    "back": "Back",
+    "author": "author:",
+    "soldBy": "Sold and shipped by {{seller}}",
+    "condition": "Condition: {{condition}}",
+    "inStock": "in stock",
+    "estimatedDelivery": "Estimated delivery: {{date}}",
+    "addToCart": "Add to cart",
+    "viewFullDescription": "View full description",
+    "fullDescription": "Full Description",
+    "recommendations": "Recommendations:"
+  },
+  "cart": {
+    "title": "Cart ({{count}} item)",
+    "title_plural": "Cart ({{count}} items)",
+    "empty": "Your cart is empty",
+    "continueShop": "Continue shopping",
+    "bookDetails": "Book details",
+    "delete": "Delete",
+    "subtotal": "Subtotal:",
+    "shipping": "Shipping:",
+    "estimatedDelivery": "Estimated delivery:",
+    "total": "Total:",
+    "proceedToCheckout": "Proceed to checkout",
+    "formTitle": "Please fill in your personal information",
+    "fullName": "Full name",
+    "fullNamePlaceholder": "Enter your full name",
+    "email": "Email",
+    "emailPlaceholder": "example@email.com",
+    "emailError": "Please enter a valid email address",
+    "phone": "Phone number",
+    "phonePlaceholder": "0555 00 00 00",
+    "phoneError": "Number must contain 10 digits (e.g. 0555 00 00 00)",
+    "wilaya": "Wilaya",
+    "wilayaPlaceholder": "Select your wilaya",
+    "city": "City",
+    "cityPlaceholder": "Select your city",
+    "shippingMethod": "Shipping method",
+    "homeDelivery": "Home delivery",
+    "homeDeliveryDesc": "Receive your books directly at home",
+    "pickupPoint": "Pickup point",
+    "pickupPointDesc": "Pick up your package at the nearest pickup point",
+    "finalizeOrder": "Finalize order",
+    "deliveryDays": "2–4 days"
+  },
+  "customerService": {
+    "title": "Customer Service",
+    "subtitle": "We're here to help. Check our FAQ or contact us directly.",
+    "email": "Email",
+    "phone": "Phone",
+    "hours": "Hours",
+    "hoursValue": "Mon-Fri: 9am-6pm",
+    "faqTitle": "Frequently Asked Questions",
+    "contactTitle": "Contact Us",
+    "formName": "Full name",
+    "formNamePlaceholder": "Your name",
+    "formEmail": "Email",
+    "formEmailPlaceholder": "your.email@example.com",
+    "formSubject": "Subject",
+    "formSubjectPlaceholder": "Select a subject",
+    "formSubjectOrder": "Question about an order",
+    "formSubjectDelivery": "Delivery problem",
+    "formSubjectReturn": "Return or refund",
+    "formSubjectProduct": "Question about a product",
+    "formSubjectAccount": "Account problem",
+    "formSubjectOther": "Other",
+    "formMessage": "Message",
+    "formMessagePlaceholder": "Describe your request...",
+    "formSubmit": "Send message",
+    "formSuccess": "Your message has been sent successfully! We will respond as soon as possible.",
+    "formError": "Please fill in all form fields.",
+    "responseTime": "Response time:",
+    "responseTimeValue": "We typically respond within 24 business hours."
+  },
+  "team": {
+    "title": "Our Team",
+    "subtitle": "Meet the passionate people who bring Esprit Livre to life",
+    "missionTitle": "Our Mission",
+    "missionText": "At Esprit Livre, we want to make reading and books \"cool\" and desirable again in the age of short attention span content. Why? Because reading develops concentration, nourishes the mind and improves well-being. We unite creativity, technology and passion to build a platform that makes people want to read, discover and share books as a true lifestyle."
+  },
+  "profile": {
+    "back": "Back",
+    "memberSince": "Member since 2024",
+    "personalInfo": "Personal information",
+    "email": "Email",
+    "phone": "Phone",
+    "edit": "Edit",
+    "wilaya": "Wilaya",
+    "city": "City",
+    "cityPlaceholder": "Select a city",
+    "shippingPreference": "Shipping preference",
+    "homeDelivery": "Home delivery",
+    "homeDeliveryDesc": "Receive your books directly at home",
+    "pickupPoint": "Pickup point",
+    "pickupPointDesc": "Pick up your package at the nearest pickup point",
+    "myFavorites": "My Favorites",
+    "favoritesSaved": "Saved books",
+    "myOrders": "My Orders",
+    "ordersHistory": "Order history",
+    "logout": "Log out"
+  },
+  "favorites": {
+    "title": "My Favorites",
+    "back": "Back",
+    "count": "{{count}} book",
+    "count_plural": "{{count}} books",
+    "emptyTitle": "No favorites",
+    "emptyMessage": "You haven't added any books to your favorites yet",
+    "discoverBooks": "Discover books"
+  }
+}

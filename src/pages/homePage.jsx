@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Navbar from '../components/common/Navbar';
 import CategoryCard from '../components/home/CategoryCard';
 import BookCard from '../components/common/BookCard';
@@ -16,6 +17,7 @@ import { BOOKS_DATA } from '../data/booksData';
 
 
 const HomePage = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
     // Hero carousel state (you already have this)
@@ -253,13 +255,13 @@ const HomePage = () => {
             src: "/assets/banners/banner2.png",
             alt: "Featured Books Collection",
             overlay: "rgba(0, 65, 122, 0.3)", // Blue overlay matching your theme
-            button: "Découvrir"
+            button: t('homePage.hero.discover')
         },
         {
             src: "/assets/banners/banner1.png",
             alt: "Offres spéciales livres",
             overlay: "rgba(0, 0, 0, 0.2)",
-            button: "Nouveautés"
+            button: t('homePage.hero.newReleases')
         },
 
     ];
@@ -475,7 +477,7 @@ const HomePage = () => {
                         <div className="flex items-center justify-between pr-fluid-lg">
                             <div>
                                 <h1 className="font-['Poppins'] font-bold text-[#00417a] text-fluid-h1to2 mb-0">
-                                    Bonjour
+                                    {t('homePage.greeting')}
                                 </h1>
 
                             </div>
@@ -484,7 +486,7 @@ const HomePage = () => {
 
                         </div>
                         <p className="font-['Poppins'] font-[550] text-[#00417a] text-fluid-small" >
-                            Choisissez parmis les catégories suivantes
+                            {t('homePage.categoriesSubtitle')}
                         </p>
 
 
@@ -566,7 +568,7 @@ const HomePage = () => {
                         {/* Header */}
                         <div className="flex justify-between items-center mb-fluid-sm pr-fluid-lg">
                             <h2 className="text-brand-blue text-fluid-h2 font-bold">
-                                Livres recommandés
+                                {t('homePage.recommendedBooks')}
                             </h2>
                             <SeeMore to="/allbooks" />
                         </div>
@@ -589,7 +591,7 @@ const HomePage = () => {
                                     // Derive stock status from stockQuantity
                                     const stockStatus = {
                                         available: book.stockQuantity > 0,
-                                        text: book.stockQuantity > 0 ? "en stock" : "rupture de stock"
+                                        text: book.stockQuantity > 0 ? t('bookCard.stockStatus.inStock') : t('bookCard.stockStatus.outOfStock')
                                     };
 
                                     return (
@@ -668,7 +670,7 @@ const HomePage = () => {
 
                         <div className="mb-fluid-md flex items-center justify-between pr-fluid-lg">
                             <p className="font-['Poppins'] font-bold text-[#00417a] text-fluid-h2" >
-                                Nos auteurs phares
+                                {t('homePage.featuredAuthors')}
                             </p>
                             <SeeMore to="/allbooks" />
 

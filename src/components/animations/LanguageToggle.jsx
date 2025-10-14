@@ -1,13 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const LanguageToggle = ({ onLanguageChange }) => {
-    const [currentLang, setCurrentLang] = useState('fr');
+    const { i18n } = useTranslation();
+    const [currentLang, setCurrentLang] = useState(i18n.language || 'fr');
+
+    // Sync state with i18n language
+    useEffect(() => {
+        setCurrentLang(i18n.language);
+    }, [i18n.language]);
 
     const handleToggle = () => {
         const newLang = currentLang === 'fr' ? 'en' : 'fr';
         setCurrentLang(newLang);
+        i18n.changeLanguage(newLang);
         if (onLanguageChange) {
             onLanguageChange(newLang);
         }

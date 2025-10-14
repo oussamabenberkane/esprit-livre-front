@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Heart } from 'lucide-react';
 import BookCard from '../common/BookCard';
 import CartConfirmationPopup from '../common/cartConfirmationPopup';
@@ -7,6 +8,7 @@ import FloatingCartBadge from '../common/FloatingCartBadge';
 import { BOOKS_DATA } from '../../data/booksData';
 
 export default function Favorites() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   // Filter books that are liked by the current user from BOOKS_DATA
@@ -28,7 +30,7 @@ export default function Favorites() {
   }, []);
 
   const handleBack = () => {
-    console.log('Navigate back to profile');
+    navigate(-1);
   };
 
   const handleAddToCart = (bookId) => {
@@ -66,15 +68,15 @@ export default function Favorites() {
             className="flex items-center gap-2 mb-4 hover:opacity-80 transition-opacity"
           >
             <ArrowLeft className="w-5 h-5" />
-            <span className="text-sm">Retour</span>
+            <span className="text-sm">{t('favorites.back')}</span>
           </button>
 
           <div className="flex items-center gap-3">
             <Heart className="w-7 h-7" fill="currentColor" />
             <div>
-              <h1 className="text-2xl">Mes Favoris</h1>
+              <h1 className="text-2xl">{t('favorites.title')}</h1>
               <p className="text-blue-100 text-sm">
-                {favoriteBooks.length} {favoriteBooks.length > 1 ? 'livres' : 'livre'}
+                {favoriteBooks.length === 1 ? t('favorites.count', { count: favoriteBooks.length }) : t('favorites.count_plural', { count: favoriteBooks.length })}
               </p>
             </div>
           </div>
@@ -96,7 +98,7 @@ export default function Favorites() {
 
               const stockStatus = {
                 available: book.stockQuantity > 0,
-                text: book.stockQuantity > 0 ? "en stock" : "rupture de stock"
+                text: book.stockQuantity > 0 ? t('bookCard.stockStatus.inStock') : t('bookCard.stockStatus.outOfStock')
               };
 
               return (
@@ -127,15 +129,15 @@ export default function Favorites() {
             <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
               <Heart className="w-12 h-12 text-gray-400" />
             </div>
-            <h2 className="text-xl text-gray-800 mb-2">Aucun favori</h2>
+            <h2 className="text-xl text-gray-800 mb-2">{t('favorites.emptyTitle')}</h2>
             <p className="text-gray-500 text-center max-w-md mb-6">
-              Vous n'avez pas encore ajouté de livres à vos favoris
+              {t('favorites.emptyMessage')}
             </p>
             <button
               onClick={handleBack}
               className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
             >
-              Découvrir des livres
+              {t('favorites.discoverBooks')}
             </button>
           </div>
         )}

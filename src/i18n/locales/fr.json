@@ -1,0 +1,230 @@
+{
+  "navbar": {
+    "searchPlaceholder": "Recherchez un livre...",
+    "language": {
+      "fr": "FR",
+      "en": "EN"
+    }
+  },
+  "bookCard": {
+    "addToCart": "Ajouter\nau panier",
+    "currency": "DZD",
+    "stockStatus": {
+      "inStock": "en stock",
+      "outOfStock": "rupture de stock"
+    }
+  },
+  "allBooks": {
+    "pageTitle": "Tous les livres",
+    "pageSubtitle": "Découvrez notre collection complète de livres",
+    "resultsTitle": "Résultats",
+    "resultsCount": "{{start}} - {{end}} sur {{total}} livres",
+    "page": "Page {{current}}/{{total}}",
+    "seeMore": "Voir plus",
+    "endOfResults": "✓ Vous avez atteint la fin des résultats",
+    "digitalLibrary": "Bibliothèque numérique",
+    "customerService": "Service clientèle"
+  },
+  "filters": {
+    "heading": "Filtres",
+    "apply": "Appliquer les filtres",
+    "applyMobile": "Appliquer",
+    "reset": "Réinitialiser les filtres",
+    "price": {
+      "label": "Prix",
+      "min": "Min",
+      "max": "Max",
+      "currency": "DZD"
+    },
+    "category": {
+      "label": "Catégorie",
+      "placeholder": "Rechercher une catégorie...",
+      "placeholderShort": "Rechercher..."
+    },
+    "author": {
+      "label": "Auteur",
+      "placeholder": "Rechercher un auteur...",
+      "placeholderShort": "Rechercher..."
+    },
+    "bookTitle": {
+      "label": "Titre",
+      "placeholder": "Rechercher un titre...",
+      "placeholderShort": "Rechercher..."
+    },
+    "language": {
+      "label": "Langue",
+      "placeholder": "Sélectionner une langue...",
+      "placeholderShort": "Sélectionner..."
+    },
+    "resultsCount": "{{count}} résultat",
+    "resultsCount_plural": "{{count}} résultats",
+    "noResults": "Aucun résultat trouvé"
+  },
+  "footer": {
+    "socialNetworks": "Réseaux sociaux",
+    "whoAreWe": {
+      "title": "Qui sommes-nous ?",
+      "about": "À propos",
+      "team": "Notre équipe"
+    },
+    "customerService": {
+      "title": "Service clients",
+      "link": "Accéder à la page Service Client"
+    },
+    "copyright": "© {{year}} Tous droits réservés"
+  },
+  "bottomSheet": {
+    "menu": {
+      "home": "Accueil",
+      "books": "Livres",
+      "favorites": "Favoris",
+      "profile": "Profil"
+    }
+  },
+  "cartPopup": {
+    "title": "Élément ajouté au panier",
+    "close": "Fermer",
+    "bookDetails": "Détails du livre",
+    "currency": "DZD",
+    "viewCart": "Voir le panier",
+    "remove": "Retirer"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "retry": "Réessayer",
+    "seeMore": "Voir plus"
+  },
+  "homePage": {
+    "greeting": "Bonjour",
+    "categoriesSubtitle": "Choisissez parmis les catégories suivantes",
+    "recommendedBooks": "Livres recommandés",
+    "featuredAuthors": "Nos auteurs phares",
+    "hero": {
+      "discover": "Découvrir",
+      "newReleases": "Nouveautés"
+    }
+  },
+  "floatingCartBadge": {
+    "close": "Fermer",
+    "itemAdded": "{{count}} article ajouté",
+    "itemsAdded": "{{count}} articles ajoutés",
+    "cart": "panier →",
+    "dragToClose": "Glissez pour fermer",
+    "dragToDelete": "Glissez ici pour supprimer"
+  },
+  "bookDetails": {
+    "loading": "Chargement...",
+    "notFound": "Livre introuvable",
+    "notFoundMessage": "Le livre que vous recherchez n'existe pas ou a été supprimé.",
+    "backToHome": "Retour à l'accueil",
+    "back": "Retour",
+    "author": "auteur :",
+    "soldBy": "Vendu et expedié par {{seller}}",
+    "condition": "Etat : {{condition}}",
+    "inStock": "en stock",
+    "estimatedDelivery": "Livraison estimé pour le : {{date}}",
+    "addToCart": "Ajouter au panier",
+    "viewFullDescription": "Voir la description complète",
+    "fullDescription": "Description complète",
+    "recommendations": "Recommandations :"
+  },
+  "cart": {
+    "title": "Panier ({{count}} article)",
+    "title_plural": "Panier ({{count}} articles)",
+    "empty": "Votre panier est vide",
+    "continueShop": "Continuer mes achats",
+    "bookDetails": "Détails du livre",
+    "delete": "Supprimer",
+    "subtotal": "Sous-total :",
+    "shipping": "Frais de livraison :",
+    "estimatedDelivery": "Livraison estimée :",
+    "total": "Total à payer :",
+    "proceedToCheckout": "Passer à la confirmation",
+    "formTitle": "Veuillez renseigner vos informations personnelles",
+    "fullName": "Nom complet",
+    "fullNamePlaceholder": "Entrez votre nom complet",
+    "email": "Email",
+    "emailPlaceholder": "exemple@email.com",
+    "emailError": "Veuillez entrer une adresse email valide",
+    "phone": "Numéro de téléphone",
+    "phonePlaceholder": "0555 00 00 00",
+    "phoneError": "Le numéro doit contenir 10 chiffres (ex: 0555 00 00 00)",
+    "wilaya": "Wilaya",
+    "wilayaPlaceholder": "Sélectionnez votre wilaya",
+    "city": "Commune",
+    "cityPlaceholder": "Sélectionnez votre commune",
+    "shippingMethod": "Mode de livraison",
+    "homeDelivery": "Livraison à domicile",
+    "homeDeliveryDesc": "Recevez vos livres directement chez vous",
+    "pickupPoint": "Point de relais",
+    "pickupPointDesc": "Retirez votre colis au point relais le plus proche",
+    "finalizeOrder": "Finaliser la commande",
+    "deliveryDays": "2–4 jours"
+  },
+  "customerService": {
+    "title": "Service Client",
+    "subtitle": "Nous sommes là pour vous aider. Consultez notre FAQ ou contactez-nous directement.",
+    "email": "Email",
+    "phone": "Téléphone",
+    "hours": "Horaires",
+    "hoursValue": "Lun-Ven: 9h-18h",
+    "faqTitle": "Questions Fréquentes",
+    "contactTitle": "Contactez-nous",
+    "formName": "Nom complet",
+    "formNamePlaceholder": "Votre nom",
+    "formEmail": "Email",
+    "formEmailPlaceholder": "votre.email@exemple.fr",
+    "formSubject": "Sujet",
+    "formSubjectPlaceholder": "Sélectionnez un sujet",
+    "formSubjectOrder": "Question sur une commande",
+    "formSubjectDelivery": "Problème de livraison",
+    "formSubjectReturn": "Retour ou remboursement",
+    "formSubjectProduct": "Question sur un produit",
+    "formSubjectAccount": "Problème de compte",
+    "formSubjectOther": "Autre",
+    "formMessage": "Message",
+    "formMessagePlaceholder": "Décrivez votre demande...",
+    "formSubmit": "Envoyer le message",
+    "formSuccess": "Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.",
+    "formError": "Veuillez remplir tous les champs du formulaire.",
+    "responseTime": "Temps de réponse:",
+    "responseTimeValue": "Nous répondons généralement sous 24 heures ouvrables."
+  },
+  "team": {
+    "title": "Notre Équipe",
+    "subtitle": "Rencontrez les personnes passionnées qui font vivre Esprit Livre",
+    "missionTitle": "Notre Mission",
+    "missionText": "Chez Esprit Livre, nous voulons rendre la lecture et les livres à nouveau \"cool\" et désirables à l'ère des contenus à courte durée d'attention. Pourquoi ? Parce que lire développe la concentration, nourrit l'esprit et améliore le bien-être. Nous unissons créativité, technologie et passion pour bâtir une plateforme qui donne envie de lire, de découvrir et de partager des livres comme un véritable style de vie."
+  },
+  "profile": {
+    "back": "Retour",
+    "memberSince": "Membre depuis 2024",
+    "personalInfo": "Informations personnelles",
+    "email": "Email",
+    "phone": "Téléphone",
+    "edit": "Modifier",
+    "wilaya": "Wilaya",
+    "city": "Commune",
+    "cityPlaceholder": "Sélectionnez une commune",
+    "shippingPreference": "Préférence de livraison",
+    "homeDelivery": "Livraison à domicile",
+    "homeDeliveryDesc": "Recevez vos livres directement chez vous",
+    "pickupPoint": "Point de relais",
+    "pickupPointDesc": "Retirez votre colis au point relais le plus proche",
+    "myFavorites": "Mes Favoris",
+    "favoritesSaved": "Livres sauvegardés",
+    "myOrders": "Mes Commandes",
+    "ordersHistory": "Historique d'achats",
+    "logout": "Se déconnecter"
+  },
+  "favorites": {
+    "title": "Mes Favoris",
+    "back": "Retour",
+    "count": "{{count}} livre",
+    "count_plural": "{{count}} livres",
+    "emptyTitle": "Aucun favori",
+    "emptyMessage": "Vous n'avez pas encore ajouté de livres à vos favoris",
+    "discoverBooks": "Découvrir des livres"
+  }
+}

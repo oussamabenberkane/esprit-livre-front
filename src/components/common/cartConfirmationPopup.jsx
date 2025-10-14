@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ShoppingCart, Check, X } from 'lucide-react';
 
 export default function CartConfirmationPopup({
@@ -7,6 +8,7 @@ export default function CartConfirmationPopup({
     onClose,
     book
 }) {
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
     if (!isOpen) return null;
@@ -42,7 +44,7 @@ export default function CartConfirmationPopup({
                                 </div>
                             </div>
                             <h3 className="font-semibold text-gray-900 text-fluid-h2 lg:text-fluid-lg">
-                                Élément ajouté au panier
+                                {t('cartPopup.title')}
                             </h3>
                         </div>
 
@@ -50,7 +52,7 @@ export default function CartConfirmationPopup({
                         <button
                             onClick={onClose}
                             className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
-                            aria-label="Fermer"
+                            aria-label={t('cartPopup.close')}
                         >
                             <X className="w-5 h-5 text-gray-600" />
                         </button>
@@ -81,7 +83,7 @@ export default function CartConfirmationPopup({
                                         onClick={handleViewDetails}
                                         className="text-blue-600 hover:underline inline-flex items-center gap-1"
                                     >
-                                        <h1 className="text-fluid-medium">Détails du livre</h1>
+                                        <h1 className="text-fluid-medium">{t('cartPopup.bookDetails')}</h1>
                                         <svg
                                             className="w-3 h-3"
                                             fill="none"
@@ -105,7 +107,7 @@ export default function CartConfirmationPopup({
                                     {book.price}
                                 </p>
                                 <p className="text-gray-500 text-sm">
-                                    DZD
+                                    {t('cartPopup.currency')}
                                 </p>
                             </div>
                         </div>
@@ -121,7 +123,7 @@ export default function CartConfirmationPopup({
                             className="flex-1 bg-[#1E40AF] hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
                         >
                             <ShoppingCart className="w-5 h-5" />
-                            <h1 className="text-fluid-small">Voir le panier</h1>
+                            <h1 className="text-fluid-small">{t('cartPopup.viewCart')}</h1>
                         </button>
                         <button
                             onClick={() => {
@@ -131,7 +133,7 @@ export default function CartConfirmationPopup({
                             }}
                             className="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium py-fluid-tiny px-fluid-sm rounded-lg transition-colors"
                         >
-                            <h1 className="text-fluid-medium">Retirer</h1>
+                            <h1 className="text-fluid-medium">{t('cartPopup.remove')}</h1>
                         </button>
                     </div>
                 </div>

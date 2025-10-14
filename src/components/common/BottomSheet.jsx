@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import { motion, AnimatePresence, useMotionValue } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Home, BookOpen, Heart, User } from 'lucide-react';
 
 export default function BottomSheet({ isOpen, onClose, LanguageToggle }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const menuItems = [
-    { icon: Home, label: 'Accueil', labelEn: 'Home', path: '/' },
-    { icon: BookOpen, label: 'Livres', labelEn: 'Books', path: '/allbooks' },
-    { icon: Heart, label: 'Favoris', labelEn: 'Favorites', path: '/favorites' },
-    { icon: User, label: 'Profil', labelEn: 'Profile', path: '/profile' }
+    { icon: Home, labelKey: 'bottomSheet.menu.home', path: '/' },
+    { icon: BookOpen, labelKey: 'bottomSheet.menu.books', path: '/allbooks' },
+    { icon: Heart, labelKey: 'bottomSheet.menu.favorites', path: '/favorites' },
+    { icon: User, labelKey: 'bottomSheet.menu.profile', path: '/profile' }
   ];
 
   const y = useMotionValue(0);
@@ -66,7 +68,7 @@ export default function BottomSheet({ isOpen, onClose, LanguageToggle }) {
                   const Icon = item.icon;
                   return (
                     <motion.button
-                      key={item.label}
+                      key={item.labelKey}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.05 }}
@@ -80,7 +82,7 @@ export default function BottomSheet({ isOpen, onClose, LanguageToggle }) {
                         <Icon className="w-full h-full" strokeWidth={2} />
                       </div>
                       <span className="text-gray-800 group-hover:text-blue-800 transition-colors">
-                        {item.label}
+                        {t(item.labelKey)}
                       </span>
                     </motion.button>
                   );

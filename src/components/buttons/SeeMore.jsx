@@ -1,15 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ChevronRight } from 'lucide-react';
 
 const SeeMore = ({
-  text = "Voir tout",
+  text,
   onClick,
   to,
   className = "",
   textColor = "text-gray-600",
   hoverTextColor = "hover:text-black"
 }) => {
+  const { t } = useTranslation();
+  const displayText = text || t('common.seeMore');
   const commonClasses = `
     group
     flex
@@ -29,7 +32,7 @@ const SeeMore = ({
   const content = (
     <>
       <span className="font-['Poppins'] font-medium text-fluid-small">
-        {text}
+        {displayText}
       </span>
       <ChevronRight
         className="w-4 h-4 transition-transform duration-300 ease-in-out group-hover:translate-x-1"

@@ -1,17 +1,24 @@
 // src/components/common/Navbar.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Search, ShoppingCart, Heart, User, Menu } from 'lucide-react';
 import LanguageToggle from '../animations/LanguageToggle'; // Your existing component
 import BottomSheet from './BottomSheet';
 
 // Simple Language Toggle for Mobile/Tablet (the one I created earlier)
 const SimpleLanguageToggle = () => {
-    const [language, setLanguage] = useState('FR');
+    const { i18n } = useTranslation();
+    const language = i18n.language?.toUpperCase() || 'FR';
+
+    const handleToggle = () => {
+        const newLang = i18n.language === 'fr' ? 'en' : 'fr';
+        i18n.changeLanguage(newLang);
+    };
 
     return (
         <button
-            onClick={() => setLanguage(language === 'FR' ? 'EN' : 'FR')}
+            onClick={handleToggle}
             className="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg transition-colors"
         >
             {language}
@@ -46,13 +53,17 @@ const SearchBar = ({ placeholder = "Recherchez...", onSearch }) => (
 
 // Main Navbar Component
 const Navbar = ({
-    searchPlaceholder = "Recherchez un livre...",
+    searchPlaceholder,
     cartCount = 0,
     onSearch = () => { },
     onCartClick
 }) => {
+    const { t } = useTranslation();
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
     const navigate = useNavigate();
+
+    // Use translation if no custom placeholder is provided
+    const placeholder = searchPlaceholder || t('navbar.searchPlaceholder');
 
     // Default cart click handler - navigate to cart page
     const handleCartClick = () => {
@@ -82,7 +93,7 @@ const Navbar = ({
 
                     {/* Search Bar - Always visible but responsive width */}
                     <div className="flex-1 md:flex-initial">
-                        <SearchBar placeholder={searchPlaceholder} onSearch={onSearch} />
+                        <SearchBar placeholder={placeholder} onSearch={onSearch} />
                     </div>
 
                     {/* Desktop Spacer */}

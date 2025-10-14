@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, Filter, Search, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -11,9 +12,11 @@ const mockFiltersData = {
 
 // Extracted PriceFilter component
 const PriceFilter = ({ filters, onPriceChange, onPriceInputBlur, onMinSliderChange, onMaxSliderChange }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-col space-y-4">
-      <label className="text-sm font-semibold text-gray-800">Prix</label>
+      <label className="text-sm font-semibold text-gray-800">{t('filters.price.label')}</label>
       <div className="w-[90%] mx-auto">
         <div className="relative h-2 mb-6">
           <div className="absolute w-full h-1 bg-gray-200 rounded-full top-1/2 -translate-y-1/2 left-0 right-0"></div>
@@ -62,7 +65,7 @@ const PriceFilter = ({ filters, onPriceChange, onPriceInputBlur, onMinSliderChan
             }}
             onBlur={() => onPriceInputBlur('min')}
             className="flex-1 min-w-0 h-10 px-2 text-sm bg-gray-50 rounded-lg border border-gray-200 text-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            placeholder="Min"
+            placeholder={t('filters.price.min')}
           />
           <span className="text-sm text-gray-500 font-medium flex-shrink-0">-</span>
           <input
@@ -77,9 +80,9 @@ const PriceFilter = ({ filters, onPriceChange, onPriceInputBlur, onMinSliderChan
             }}
             onBlur={() => onPriceInputBlur('max')}
             className="flex-1 min-w-0 h-10 px-2 text-sm bg-gray-50 rounded-lg border border-gray-200 text-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            placeholder="Max"
+            placeholder={t('filters.price.max')}
           />
-          <span className="text-sm text-gray-700 font-semibold whitespace-nowrap flex-shrink-0">DZD</span>
+          <span className="text-sm text-gray-700 font-semibold whitespace-nowrap flex-shrink-0">{t('filters.price.currency')}</span>
         </div>
       </div>
     </div>
@@ -106,6 +109,7 @@ const FilterDropdown = ({
   getFilteredOptions,
   isMobile = false
 }) => {
+  const { t } = useTranslation();
   const isActive = activeDropdown === type;
   const selectedItems = filters[type] || [];
   const searchTerm = searchTerms[type] || '';
@@ -174,7 +178,7 @@ const FilterDropdown = ({
           <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
             <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200">
               <span className="text-xs font-medium text-gray-600">
-                {filteredOptions.length} résultat{filteredOptions.length !== 1 ? 's' : ''}
+                {t('filters.resultsCount', { count: filteredOptions.length })}
               </span>
               <button
                 onClick={onCloseDropdown}
@@ -198,7 +202,7 @@ const FilterDropdown = ({
                 ))
               ) : (
                 <div className="px-4 py-6 text-sm text-gray-500 text-center">
-                  Aucun résultat trouvé
+                  {t('filters.noResults')}
                 </div>
               )}
             </div>
@@ -236,6 +240,7 @@ const FilterDropdown = ({
 };
 
 const FiltersSection = ({ initialFilters }) => {
+  const { t } = useTranslation();
   const [isMobile, setIsMobile] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [filters, setFilters] = useState({
@@ -478,7 +483,7 @@ const FiltersSection = ({ initialFilters }) => {
             className="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700 px-5 py-2.5 rounded-lg transition-colors shadow-md"
           >
             <Filter className="w-4 h-4" />
-            <span className="text-sm font-medium">Filtres</span>
+            <span className="text-sm font-medium">{t('filters.heading')}</span>
           </button>
         </div>
 
@@ -509,14 +514,14 @@ const FiltersSection = ({ initialFilters }) => {
               >
                 <div className="h-full flex flex-col">
                   <div className="flex items-center justify-between p-5 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-700">
-                    <h2 className="text-lg font-semibold text-white">Filtres</h2>
+                    <h2 className="text-lg font-semibold text-white">{t('filters.heading')}</h2>
                     <div className="flex items-center gap-2">
                       {hasActiveFilters() && (
                         <button
                           onClick={applyFilters}
                           className="bg-white text-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors shadow-sm"
                         >
-                          Appliquer
+                          {t('filters.applyMobile')}
                         </button>
                       )}
                       <button
@@ -542,8 +547,8 @@ const FiltersSection = ({ initialFilters }) => {
                       <div className="w-full">
                         <FilterDropdown
                           type="categories"
-                          label="Catégorie"
-                          placeholder="Rechercher une catégorie..."
+                          label={t('filters.category.label')}
+                          placeholder={t('filters.category.placeholder')}
                           searchable={true}
                           filters={filters}
                           searchTerms={searchTerms}
@@ -563,8 +568,8 @@ const FiltersSection = ({ initialFilters }) => {
                       <div className="w-full">
                         <FilterDropdown
                           type="authors"
-                          label="Auteur"
-                          placeholder="Rechercher un auteur..."
+                          label={t('filters.author.label')}
+                          placeholder={t('filters.author.placeholder')}
                           searchable={true}
                           filters={filters}
                           searchTerms={searchTerms}
@@ -584,8 +589,8 @@ const FiltersSection = ({ initialFilters }) => {
                       <div className="w-full">
                         <FilterDropdown
                           type="titles"
-                          label="Titre"
-                          placeholder="Rechercher un titre..."
+                          label={t('filters.bookTitle.label')}
+                          placeholder={t('filters.bookTitle.placeholder')}
                           searchable={true}
                           filters={filters}
                           searchTerms={searchTerms}
@@ -605,8 +610,8 @@ const FiltersSection = ({ initialFilters }) => {
                       <div className="w-full">
                         <FilterDropdown
                           type="languages"
-                          label="Langue"
-                          placeholder="Sélectionner une langue..."
+                          label={t('filters.language.label')}
+                          placeholder={t('filters.language.placeholder')}
                           searchable={false}
                           filters={filters}
                           searchTerms={searchTerms}
@@ -632,7 +637,7 @@ const FiltersSection = ({ initialFilters }) => {
                         onClick={resetFilters}
                         className="w-full bg-red-500 text-white px-4 py-3 rounded-lg text-sm font-medium hover:bg-red-600 transition-colors shadow-md"
                       >
-                        Réinitialiser les filtres
+                        {t('filters.reset')}
                       </button>
                     </div>
                   )}
@@ -650,7 +655,7 @@ const FiltersSection = ({ initialFilters }) => {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Filter className="w-5 h-5 text-blue-600" />
-          <span className="text-base font-semibold text-gray-800">Filtres</span>
+          <span className="text-base font-semibold text-gray-800">{t('filters.heading')}</span>
         </div>
 
         {hasActiveFilters() && (
@@ -658,7 +663,7 @@ const FiltersSection = ({ initialFilters }) => {
             onClick={applyFilters}
             className="bg-blue-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg"
           >
-            Appliquer les filtres
+            {t('filters.apply')}
           </button>
         )}
       </div>
@@ -677,8 +682,8 @@ const FiltersSection = ({ initialFilters }) => {
         <div className="flex-1 min-w-[clamp(160px,18%,100%)]">
           <FilterDropdown
             type="categories"
-            label="Catégorie"
-            placeholder="Rechercher..."
+            label={t('filters.category.label')}
+            placeholder={t('filters.category.placeholderShort')}
             searchable={true}
             filters={filters}
             searchTerms={searchTerms}
@@ -698,8 +703,8 @@ const FiltersSection = ({ initialFilters }) => {
         <div className="flex-1 min-w-[clamp(160px,18%,100%)]">
           <FilterDropdown
             type="authors"
-            label="Auteur"
-            placeholder="Rechercher..."
+            label={t('filters.author.label')}
+            placeholder={t('filters.author.placeholderShort')}
             searchable={true}
             filters={filters}
             searchTerms={searchTerms}
@@ -719,8 +724,8 @@ const FiltersSection = ({ initialFilters }) => {
         <div className="flex-1 min-w-[clamp(160px,18%,100%)]">
           <FilterDropdown
             type="titles"
-            label="Titre"
-            placeholder="Rechercher..."
+            label={t('filters.bookTitle.label')}
+            placeholder={t('filters.bookTitle.placeholderShort')}
             searchable={true}
             filters={filters}
             searchTerms={searchTerms}
@@ -740,8 +745,8 @@ const FiltersSection = ({ initialFilters }) => {
         <div className="flex-1 min-w-[clamp(140px,15%,100%)]">
           <FilterDropdown
             type="languages"
-            label="Langue"
-            placeholder="Sélectionner..."
+            label={t('filters.language.label')}
+            placeholder={t('filters.language.placeholderShort')}
             searchable={false}
             filters={filters}
             searchTerms={searchTerms}
@@ -765,7 +770,7 @@ const FiltersSection = ({ initialFilters }) => {
             onClick={resetFilters}
             className="bg-red-500 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-red-600 transition-colors shadow-md hover:shadow-lg"
           >
-            Réinitialiser les filtres
+            {t('filters.reset')}
           </button>
         </div>
       )}

@@ -7,8 +7,10 @@ import FloatingCartBadge from "../components/common/FloatingCartBadge"
 import { BOOKS_DATA } from "../data/booksData"
 import { useState, useEffect } from "react"
 import { useSearchParams, useNavigate } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 
 export default function AllBooks() {
+    const { t } = useTranslation()
     const navigate = useNavigate()
     const [currentPage, setCurrentPage] = useState(1)
     const [searchParams] = useSearchParams()
@@ -91,10 +93,10 @@ export default function AllBooks() {
                 {/* Page Header */}
                 <div className="mt-fluid-lg mb-fluid-lg">
                     <h1 className="text-brand-blue text-fluid-h1 font-bold mb-fluid-xxs">
-                        Tous les livres
+                        {t('allBooks.pageTitle')}
                     </h1>
                     <p className="font-['Poppins'] font-[550] text-brand-blue text-fluid-small">
-                        Découvrez notre collection complète de livres
+                        {t('allBooks.pageSubtitle')}
                     </p>
                 </div>
 
@@ -107,13 +109,17 @@ export default function AllBooks() {
                 <div className="mb-fluid-lg">
                     <div className="flex items-center justify-between flex-wrap gap-2">
                         <h2 className="text-brand-blue text-fluid-h1to2 font-['poppins'] font-semibold">
-                            Résultats
+                            {t('allBooks.resultsTitle')}
                         </h2>
                         <div className="text-fluid-small text-gray-600">
-                            {(currentPage - 1) * booksPerPage + 1} - {Math.min(currentPage * booksPerPage, totalBooks)} sur {totalBooks} livres
+                            {t('allBooks.resultsCount', {
+                                start: (currentPage - 1) * booksPerPage + 1,
+                                end: Math.min(currentPage * booksPerPage, totalBooks),
+                                total: totalBooks
+                            })}
                             <span className="hidden sm:inline ml-2 text-gray-400">•</span>
                             <span className="hidden sm:inline ml-2">
-                                Page {currentPage}/{totalPages}
+                                {t('allBooks.page', { current: currentPage, total: totalPages })}
                             </span>
                         </div>
                     </div>
@@ -134,7 +140,7 @@ export default function AllBooks() {
                             // Derive stock status from stockQuantity
                             const stockStatus = {
                                 available: book.stockQuantity > 0,
-                                text: book.stockQuantity > 0 ? "en stock" : "rupture de stock"
+                                text: book.stockQuantity > 0 ? t('bookCard.stockStatus.inStock') : t('bookCard.stockStatus.outOfStock')
                             }
 
                             return (
@@ -167,7 +173,7 @@ export default function AllBooks() {
                                 onClick={handleSeeMore}
                                 className="px-10 py-3 bg-blue-600 text-white rounded-lg text-fluid-small font-medium hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-md"
                             >
-                                Voir plus
+                                {t('allBooks.seeMore')}
                             </button>
                         </div>
                     )}
@@ -176,7 +182,7 @@ export default function AllBooks() {
                     {currentPage >= totalPages && (
                         <div className="text-center text-gray-500 text-fluid-small mt-fluid-xl animate-fade-in">
                             <div className="inline-block px-6 py-3 bg-gray-50 rounded-lg border border-gray-200">
-                                ✓ Vous avez atteint la fin des résultats
+                                {t('allBooks.endOfResults')}
                             </div>
                         </div>
                     )}
@@ -184,7 +190,7 @@ export default function AllBooks() {
 
                 {/* Bottom Navigation */}
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-4 py-fluid-lg border-t border-gray-200 text-fluid-small">
-                    <div className="text-gray-600 font-medium">Bibliothèque numérique</div>
+                    <div className="text-gray-600 font-medium">{t('allBooks.digitalLibrary')}</div>
                     <div className="flex items-center gap-6 flex-wrap justify-center">
                         <div className="flex gap-2">
                             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => (
@@ -201,7 +207,7 @@ export default function AllBooks() {
                                 </button>
                             ))}
                         </div>
-                        <span className="text-gray-600 font-medium">Service clientèle</span>
+                        <span className="text-gray-600 font-medium">{t('allBooks.customerService')}</span>
                     </div>
                 </div>
                 </div>

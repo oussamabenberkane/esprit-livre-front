@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ShoppingCart, CheckCircle2, ChevronDown } from 'lucide-react';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
@@ -12,6 +13,7 @@ import FloatingCartBadge from '../components/common/FloatingCartBadge';
 import { BOOKS_DATA } from '../data/booksData';
 
 const BookDetails = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const { id } = useParams(); // Get book ID from URL
 
@@ -227,7 +229,7 @@ const BookDetails = () => {
                     <div className="flex items-center justify-center min-h-[60vh]">
                         <div className="text-center">
                             <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#00417a] mx-auto mb-4"></div>
-                            <p className="font-['Poppins'] text-[#626e82] text-fluid-body">Chargement...</p>
+                            <p className="font-['Poppins'] text-[#626e82] text-fluid-body">{t('bookDetails.loading')}</p>
                         </div>
                     </div>
                     <Footer />
@@ -248,16 +250,16 @@ const BookDetails = () => {
                     <div className="flex items-center justify-center min-h-[60vh]">
                         <div className="text-center">
                             <h1 className="font-['Poppins'] font-bold text-[#1c2d55] text-fluid-h1 mb-4">
-                                Livre introuvable
+                                {t('bookDetails.notFound')}
                             </h1>
                             <p className="font-['Poppins'] text-[#626e82] text-fluid-body mb-6">
-                                Le livre que vous recherchez n'existe pas ou a été supprimé.
+                                {t('bookDetails.notFoundMessage')}
                             </p>
                             <button
                                 onClick={() => navigate('/')}
                                 className="bg-[#00417a] hover:bg-[#003460] text-white font-['Poppins'] font-semibold px-6 py-3 rounded-md transition-colors"
                             >
-                                Retour à l'accueil
+                                {t('bookDetails.backToHome')}
                             </button>
                         </div>
                     </div>
@@ -297,7 +299,7 @@ const BookDetails = () => {
 
                         {/* Author */}
                         <p className="font-['Poppins'] font-semibold text-[#626e82] text-fluid-small mb-fluid-md">
-                            auteur : {book.author.name}
+                            {t('bookDetails.author')} {book.author.name}
                         </p>
 
                         {/* Book Image */}
@@ -334,25 +336,25 @@ const BookDetails = () => {
                             <div className="border border-[#c9cfd8] rounded-md p-fluid-sm">
                                 {/* Seller */}
                                 <p className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-medium md:text-fluid-medium mb-fluid-xxs">
-                                    Vendu et expedié par {book.seller}
+                                    {t('bookDetails.soldBy', { seller: book.seller })}
                                 </p>
 
                                 {/* Condition */}
                                 <p className="font-['Poppins'] font-semibold lg:font-bold text-[#1c2d55] text-fluid-small mb-fluid-sm">
-                                    Etat : {book.condition}
+                                    {t('bookDetails.condition', { condition: book.condition })}
                                 </p>
 
                                 {/* Stock Status */}
                                 <div className="flex items-center gap-1 mb-fluid-xs">
                                     <CheckCircle2 className="w-3 h-3 text-[#198919]" />
                                     <span className="font-['Poppins'] font-bold text-[#198919] text-fluid-tag">
-                                        en stock
+                                        {t('bookDetails.inStock')}
                                     </span>
                                 </div>
 
                                 {/* Delivery Estimate */}
                                 <p className="font-['Poppins'] font-semibold text-[#626e82] text-fluid-small mb-fluid-md">
-                                    Livraison estimé pour le : {book.estimatedDelivery}
+                                    {t('bookDetails.estimatedDelivery', { date: book.estimatedDelivery })}
                                 </p>
 
                                 {/* Add to Cart Button */}
@@ -360,7 +362,7 @@ const BookDetails = () => {
                                     onClick={handleAddMainBookToCart}
                                     className="w-[85%] mx-auto bg-[#ee0027] hover:bg-[#d00022] text-white font-['Poppins'] font-extrabold text-fluid-vsmall rounded-md py-2 px-4 flex items-center justify-center gap-2 transition-colors"
                                 >
-                                    <span>Ajouter au panier</span>
+                                    <span>{t('bookDetails.addToCart')}</span>
                                     <ShoppingCart className="w-4 h-4" />
                                 </button>
                             </div>
@@ -370,7 +372,7 @@ const BookDetails = () => {
                                 onClick={handleToggleDescription}
                                 className="font-['Poppins'] font-medium text-[#626e82] text-fluid-vsmall hover:text-[#1c2d55] transition-colors inline-flex items-center gap-1"
                             >
-                                <span><h1 className="text-fluid-body">Voir la description complète</h1></span>
+                                <span><h1 className="text-fluid-body">{t('bookDetails.viewFullDescription')}</h1></span>
                                 <ChevronDown className={`w-6 h-6 transition-transform duration-300 ${showFullDescription ? 'rotate-180' : ''}`} />
                             </button>
                         </div>
@@ -395,7 +397,7 @@ const BookDetails = () => {
 
                             {/* Author */}
                             <p className="font-['Poppins'] font-normal text-[#626e82] text-fluid-small mb-fluid-md">
-                                auteur : {book.author.name}
+                                {t('bookDetails.author')} {book.author.name}
                             </p>
 
                             {/* Horizontal Layout with Equal Left Margins */}
@@ -415,7 +417,7 @@ const BookDetails = () => {
                                         onClick={handleToggleDescription}
                                         className="font-['Poppins'] font-medium text-[#626e82] text-fluid-vsmall hover:text-[#1c2d55] transition-colors inline-flex items-center gap-1"
                                     >
-                                        <span><h1 className='text-fluid-h3'>Voir la description complète</h1></span>
+                                        <span><h1 className='text-fluid-h3'>{t('bookDetails.viewFullDescription')}</h1></span>
                                         <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${showFullDescription ? 'rotate-180' : ''}`} />
                                     </button>
                                 </div>
@@ -444,25 +446,25 @@ const BookDetails = () => {
                                         <div>
                                             {/* Seller */}
                                             <p className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-medium mb-fluid-xxs">
-                                                Vendu et expedié par {book.seller}
+                                                {t('bookDetails.soldBy', { seller: book.seller })}
                                             </p>
 
                                             {/* Condition */}
                                             <p className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-small mb-fluid-md">
-                                                Etat : {book.condition}
+                                                {t('bookDetails.condition', { condition: book.condition })}
                                             </p>
 
                                             {/* Stock Status */}
                                             <div className="flex items-center gap-1 mb-fluid-xxs">
                                                 <CheckCircle2 className="w-3 h-3 text-[#198919]" />
                                                 <span className="font-['Poppins'] font-bold text-[#198919] text-fluid-vsmall">
-                                                    en stock
+                                                    {t('bookDetails.inStock')}
                                                 </span>
                                             </div>
 
                                             {/* Delivery Estimate */}
                                             <p className="font-['Poppins'] font-semibold text-[#626e82] text-fluid-small mb-fluid-md">
-                                                Livraison estimé pour le : {book.estimatedDelivery}
+                                                {t('bookDetails.estimatedDelivery', { date: book.estimatedDelivery })}
                                             </p>
                                         </div>
 
@@ -471,7 +473,7 @@ const BookDetails = () => {
                                             onClick={handleAddMainBookToCart}
                                             className="w-[85%] mx-auto bg-[#ee0027] hover:bg-[#d00022] text-white font-['Poppins'] font-extrabold text-fluid-vsmall rounded-md py-2 px-4 flex items-center justify-center gap-2 transition-colors mb-fluid-sm mt-auto"
                                         >
-                                            <span>Ajouter au panier</span>
+                                            <span>{t('bookDetails.addToCart')}</span>
                                             <ShoppingCart className="w-4 h-4" />
                                         </button>
                                     </div>
@@ -495,7 +497,7 @@ const BookDetails = () => {
                             <div className="md:hidden container-main container-padding">
                                 <div className="bg-gray-50 rounded-md p-fluid-md border border-gray-200 shadow-sm">
                                     <h3 className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-h3 mb-fluid-sm">
-                                        Description complète
+                                        {t('bookDetails.fullDescription')}
                                     </h3>
                                     <p className="font-['Poppins'] font-normal text-[#626e82] text-fluid-small leading-relaxed whitespace-pre-line">
                                         {book.description}
@@ -509,7 +511,7 @@ const BookDetails = () => {
                                     <div className="max-w-5xl ml-fluid-2xl">
                                         <div className="bg-gray-50 rounded-md p-fluid-md border border-gray-200 shadow-sm">
                                             <h3 className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-h3 mb-fluid-sm">
-                                                Description complète
+                                                {t('bookDetails.fullDescription')}
                                             </h3>
                                             <p className="font-['Poppins'] font-normal text-[#626e82] text-fluid-small leading-relaxed whitespace-pre-line">
                                                 {book.description}
@@ -529,7 +531,7 @@ const BookDetails = () => {
                         {/* Header */}
                         <div className="flex justify-between items-center mb-fluid-sm pr-fluid-lg">
                             <h2 className="text-brand-blue text-fluid-h2 font-bold">
-                                Recommandations :
+                                {t('bookDetails.recommendations')}
                             </h2>
                             <SeeMore to="/allbooks" />
                         </div>
@@ -550,7 +552,7 @@ const BookDetails = () => {
 
                                     const stockStatus = {
                                         available: recommendedBook.stockQuantity > 0,
-                                        text: recommendedBook.stockQuantity > 0 ? "en stock" : "rupture de stock"
+                                        text: recommendedBook.stockQuantity > 0 ? t('bookCard.stockStatus.inStock') : t('bookCard.stockStatus.outOfStock')
                                     };
 
                                     return (

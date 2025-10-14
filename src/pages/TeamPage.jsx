@@ -1,10 +1,12 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Mail, Linkedin, Github } from 'lucide-react';
 import { useState } from 'react';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 
 export default function TeamPage() {
+  const { t } = useTranslation();
   const [imageErrors, setImageErrors] = useState({});
 
   const teamMembers = [
@@ -70,10 +72,10 @@ export default function TeamPage() {
           className="max-w-7xl mx-auto text-center"
         >
           <h1 className="text-fluid-hero font-bold text-gray-900 mb-4">
-            Notre Équipe
+            {t('team.title')}
           </h1>
           <p className="text-fluid-h3 text-gray-600 max-w-2xl mx-auto">
-            Rencontrez les personnes passionnées qui font vivre Esprit Livre
+            {t('team.subtitle')}
           </p>
         </motion.div>
       </div>
@@ -165,12 +167,10 @@ export default function TeamPage() {
       >
         <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 text-center">
           <h2 className="text-fluid-h2 font-bold text-gray-900 mb-4">
-            Notre Mission
+            {t('team.missionTitle')}
           </h2>
           <p className="text-fluid-body text-gray-600 leading-relaxed">
-            Chez Esprit Livre, nous voulons rendre la lecture et les livres à nouveau “cool” et désirables à l’ère des contenus à courte durée d’attention.
-            Pourquoi ? Parce que lire développe la concentration, nourrit l’esprit et améliore le bien-être.
-            Nous unissons créativité, technologie et passion pour bâtir une plateforme qui donne envie de lire, de découvrir et de partager des livres comme un véritable style de vie.
+            {t('team.missionText')}
           </p>
         </div>
       </motion.div>

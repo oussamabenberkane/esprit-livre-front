@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Edit2, Heart, Package, LogOut, User, Home, MapPin, ChevronDown } from 'lucide-react';
 
 // Algerian Wilaya data
@@ -15,6 +16,7 @@ const wilayaData = {
 };
 
 export default function Profile() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [userData, setUserData] = useState({
     name: "Ahmed Benali",
@@ -84,7 +86,7 @@ export default function Profile() {
             className="flex items-center gap-2 mb-6 hover:opacity-80 transition-opacity"
           >
             <ArrowLeft className="w-5 h-5" />
-            <span className="text-sm">Retour</span>
+            <span className="text-sm">{t('profile.back')}</span>
           </button>
 
           {/* User Info */}
@@ -97,7 +99,7 @@ export default function Profile() {
             {/* Name */}
             <div>
               <h1 className="text-2xl mb-1">{userData.name}</h1>
-              <p className="text-blue-100 text-sm">Membre depuis 2024</p>
+              <p className="text-blue-100 text-sm">{t('profile.memberSince')}</p>
             </div>
           </div>
         </div>
@@ -107,18 +109,18 @@ export default function Profile() {
       <div className="max-w-2xl mx-auto px-4 -mt-16">
         {/* Personal Information Card */}
         <div className="bg-white rounded-xl shadow-md p-6 mb-4">
-          <h2 className="text-lg text-gray-800 mb-4">Informations personnelles</h2>
+          <h2 className="text-lg text-gray-800 mb-4">{t('profile.personalInfo')}</h2>
 
           {/* Email */}
           <div className="mb-4 p-4 bg-gray-50 rounded-lg">
             <div className="flex items-center justify-between mb-2">
-              <label className="text-sm text-gray-600">Email</label>
+              <label className="text-sm text-gray-600">{t('profile.email')}</label>
               <button
                 onClick={handleEditEmail}
                 className="flex items-center gap-1 text-blue-600 hover:text-blue-700 transition-colors text-sm"
               >
                 <Edit2 className="w-4 h-4" />
-                <span>Modifier</span>
+                <span>{t('profile.edit')}</span>
               </button>
             </div>
             {isEditingEmail ? (
@@ -136,13 +138,13 @@ export default function Profile() {
           {/* Phone */}
           <div className="mb-4 p-4 bg-gray-50 rounded-lg">
             <div className="flex items-center justify-between mb-2">
-              <label className="text-sm text-gray-600">Téléphone</label>
+              <label className="text-sm text-gray-600">{t('profile.phone')}</label>
               <button
                 onClick={handleEditPhone}
                 className="flex items-center gap-1 text-blue-600 hover:text-blue-700 transition-colors text-sm"
               >
                 <Edit2 className="w-4 h-4" />
-                <span>Modifier</span>
+                <span>{t('profile.edit')}</span>
               </button>
             </div>
             {isEditingPhone ? (
@@ -161,7 +163,7 @@ export default function Profile() {
           <div className="space-y-4">
             {/* Wilaya */}
             <div className="p-4 bg-gray-50 rounded-lg">
-              <label className="block text-sm text-gray-600 mb-2">Wilaya</label>
+              <label className="block text-sm text-gray-600 mb-2">{t('profile.wilaya')}</label>
               <div className="relative">
                 <select
                   value={userData.wilaya}
@@ -182,14 +184,14 @@ export default function Profile() {
 
             {/* City */}
             <div className="p-4 bg-gray-50 rounded-lg">
-              <label className="block text-sm text-gray-600 mb-2">Commune</label>
+              <label className="block text-sm text-gray-600 mb-2">{t('profile.city')}</label>
               <div className="relative">
                 <select
                   value={userData.city}
                   onChange={(e) => setUserData({ ...userData, city: e.target.value })}
                   className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-sm appearance-none"
                 >
-                  <option value="">Sélectionnez une commune</option>
+                  <option value="">{t('profile.cityPlaceholder')}</option>
                   {availableCities.map((city) => (
                     <option key={city} value={city}>
                       {city}
@@ -206,7 +208,7 @@ export default function Profile() {
 
         {/* Shipping Preference Card */}
         <div className="bg-white rounded-xl shadow-md p-6 mb-4">
-          <h2 className="text-lg text-gray-800 mb-4">Préférence de livraison</h2>
+          <h2 className="text-lg text-gray-800 mb-4">{t('profile.shippingPreference')}</h2>
 
           <div className="space-y-3">
             {/* Home Delivery Option */}
@@ -226,11 +228,11 @@ export default function Profile() {
                 <div className="text-left flex-1">
                   <h3 className={`font-medium ${shippingPreference === "home" ? "text-blue-900" : "text-gray-800"
                     }`}>
-                    Livraison à domicile
+                    {t('profile.homeDelivery')}
                   </h3>
                   <p className={`text-sm ${shippingPreference === "home" ? "text-blue-600" : "text-gray-500"
                     }`}>
-                    Recevez vos livres directement chez vous
+                    {t('profile.homeDeliveryDesc')}
                   </p>
                 </div>
                 <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${shippingPreference === "home"
@@ -261,11 +263,11 @@ export default function Profile() {
                 <div className="text-left flex-1">
                   <h3 className={`font-medium ${shippingPreference === "pickup" ? "text-blue-900" : "text-gray-800"
                     }`}>
-                    Point de relais
+                    {t('profile.pickupPoint')}
                   </h3>
                   <p className={`text-sm ${shippingPreference === "pickup" ? "text-blue-600" : "text-gray-500"
                     }`}>
-                    Retirez votre colis au point relais le plus proche
+                    {t('profile.pickupPointDesc')}
                   </p>
                 </div>
                 <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${shippingPreference === "pickup"
@@ -293,8 +295,8 @@ export default function Profile() {
                 <Heart className="w-5 h-5 text-red-600" />
               </div>
               <div className="text-left">
-                <h3 className="text-gray-800">Mes Favoris</h3>
-                <p className="text-sm text-gray-500">Livres sauvegardés</p>
+                <h3 className="text-gray-800">{t('profile.myFavorites')}</h3>
+                <p className="text-sm text-gray-500">{t('profile.favoritesSaved')}</p>
               </div>
             </div>
             <ArrowLeft className="w-5 h-5 text-gray-400 rotate-180" />
@@ -310,8 +312,8 @@ export default function Profile() {
                 <Package className="w-5 h-5 text-blue-600" />
               </div>
               <div className="text-left">
-                <h3 className="text-gray-800">Mes Commandes</h3>
-                <p className="text-sm text-gray-500">Historique d'achats</p>
+                <h3 className="text-gray-800">{t('profile.myOrders')}</h3>
+                <p className="text-sm text-gray-500">{t('profile.ordersHistory')}</p>
               </div>
             </div>
             <ArrowLeft className="w-5 h-5 text-gray-400 rotate-180" />
@@ -325,7 +327,7 @@ export default function Profile() {
             className="flex items-center gap-2 px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all"
           >
             <LogOut className="w-5 h-5" />
-            <span>Se déconnecter</span>
+            <span>{t('profile.logout')}</span>
           </button>
         </div>
       </div>

@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Mail, Phone, Clock, Send } from 'lucide-react';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 
 export default function ServiceClientPage() {
+  const { t } = useTranslation();
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -141,7 +143,7 @@ export default function ServiceClientPage() {
             transition={{ duration: 0.6 }}
             className="text-fluid-hero font-bold text-gray-900 mb-4"
           >
-            Service Client
+            {t('customerService.title')}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: -20 }}
@@ -149,7 +151,7 @@ export default function ServiceClientPage() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-fluid-h3 text-gray-600 max-w-2xl mx-auto"
           >
-            Nous sommes là pour vous aider. Consultez notre FAQ ou contactez-nous directement.
+            {t('customerService.subtitle')}
           </motion.p>
         </div>
       </div>
@@ -167,7 +169,7 @@ export default function ServiceClientPage() {
             className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer group"
           >
             <Mail className="w-8 h-8 text-blue-600 mx-auto mb-3 group-hover:text-blue-700 transition-colors" />
-            <h3 className="text-fluid-body font-semibold text-gray-900 mb-2">Email</h3>
+            <h3 className="text-fluid-body font-semibold text-gray-900 mb-2">{t('customerService.email')}</h3>
             <p className="text-fluid-small text-blue-600 group-hover:text-blue-800 transition-colors">
               contact@espritlivre.fr
             </p>
@@ -177,15 +179,15 @@ export default function ServiceClientPage() {
             className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer group"
           >
             <Phone className="w-8 h-8 text-blue-600 mx-auto mb-3 group-hover:text-blue-700 transition-colors" />
-            <h3 className="text-fluid-body font-semibold text-gray-900 mb-2">Téléphone</h3>
+            <h3 className="text-fluid-body font-semibold text-gray-900 mb-2">{t('customerService.phone')}</h3>
             <p className="text-fluid-small text-blue-600 group-hover:text-blue-800 transition-colors">
               01 23 45 67 89
             </p>
           </a>
           <div className="bg-white rounded-xl shadow-md p-6 text-center">
             <Clock className="w-8 h-8 text-blue-600 mx-auto mb-3" />
-            <h3 className="text-fluid-body font-semibold text-gray-900 mb-2">Horaires</h3>
-            <p className="text-fluid-small text-gray-600">Lun-Ven: 9h-18h</p>
+            <h3 className="text-fluid-body font-semibold text-gray-900 mb-2">{t('customerService.hours')}</h3>
+            <p className="text-fluid-small text-gray-600">{t('customerService.hoursValue')}</p>
           </div>
         </div>
       </motion.div>
@@ -201,7 +203,7 @@ export default function ServiceClientPage() {
             transition={{ duration: 0.6, delay: 0.3 }}
           >
             <h2 className="text-fluid-h2 font-bold text-gray-900 mb-6">
-              Questions Fréquentes
+              {t('customerService.faqTitle')}
             </h2>
 
             <div className="space-y-6">
@@ -265,14 +267,14 @@ export default function ServiceClientPage() {
             transition={{ duration: 0.6, delay: 0.4 }}
           >
             <h2 className="text-fluid-h2 font-bold text-gray-900 mb-6">
-              Contactez-nous
+              {t('customerService.contactTitle')}
             </h2>
 
             <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-md p-8">
               <div className="space-y-5">
                 <div>
                   <label htmlFor="name" className="block text-fluid-body font-medium text-gray-700 mb-2">
-                    Nom complet
+                    {t('customerService.formName')}
                   </label>
                   <input
                     type="text"
@@ -281,14 +283,14 @@ export default function ServiceClientPage() {
                     value={formData.name}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-fluid-small"
-                    placeholder="Votre nom"
+                    placeholder={t('customerService.formNamePlaceholder')}
                     required
                   />
                 </div>
 
                 <div>
                   <label htmlFor="email" className="block text-fluid-body font-medium text-gray-700 mb-2">
-                    Email
+                    {t('customerService.formEmail')}
                   </label>
                   <input
                     type="email"
@@ -297,14 +299,14 @@ export default function ServiceClientPage() {
                     value={formData.email}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-fluid-small"
-                    placeholder="votre.email@exemple.fr"
+                    placeholder={t('customerService.formEmailPlaceholder')}
                     required
                   />
                 </div>
 
                 <div>
                   <label htmlFor="subject" className="block text-fluid-body font-medium text-gray-700 mb-2">
-                    Sujet
+                    {t('customerService.formSubject')}
                   </label>
                   <div className="relative">
                     <select
@@ -315,13 +317,13 @@ export default function ServiceClientPage() {
                       className="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-fluid-small bg-white appearance-none"
                       required
                     >
-                      <option value="">Sélectionnez un sujet</option>
-                      <option value="commande">Question sur une commande</option>
-                      <option value="livraison">Problème de livraison</option>
-                      <option value="retour">Retour ou remboursement</option>
-                      <option value="produit">Question sur un produit</option>
-                      <option value="compte">Problème de compte</option>
-                      <option value="autre">Autre</option>
+                      <option value="">{t('customerService.formSubjectPlaceholder')}</option>
+                      <option value="commande">{t('customerService.formSubjectOrder')}</option>
+                      <option value="livraison">{t('customerService.formSubjectDelivery')}</option>
+                      <option value="retour">{t('customerService.formSubjectReturn')}</option>
+                      <option value="produit">{t('customerService.formSubjectProduct')}</option>
+                      <option value="compte">{t('customerService.formSubjectAccount')}</option>
+                      <option value="autre">{t('customerService.formSubjectOther')}</option>
                     </select>
 
                     {/* Custom dropdown arrow */}
@@ -331,7 +333,7 @@ export default function ServiceClientPage() {
 
                 <div>
                   <label htmlFor="message" className="block text-fluid-body font-medium text-gray-700 mb-2">
-                    Message
+                    {t('customerService.formMessage')}
                   </label>
                   <textarea
                     id="message"
@@ -340,7 +342,7 @@ export default function ServiceClientPage() {
                     onChange={handleInputChange}
                     rows="6"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-fluid-small resize-none"
-                    placeholder="Décrivez votre demande..."
+                    placeholder={t('customerService.formMessagePlaceholder')}
                     required
                   />
                 </div>
@@ -350,7 +352,7 @@ export default function ServiceClientPage() {
                   className="w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 text-fluid-body"
                 >
                   <Send className="w-5 h-5" />
-                  Envoyer le message
+                  {t('customerService.formSubmit')}
                 </button>
 
                 {/* Status Messages */}
@@ -362,7 +364,7 @@ export default function ServiceClientPage() {
                       exit={{ opacity: 0 }}
                       className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-fluid-small"
                     >
-                      Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.
+                      {t('customerService.formSuccess')}
                     </motion.div>
                   )}
                   {formStatus === 'error' && (
@@ -372,7 +374,7 @@ export default function ServiceClientPage() {
                       exit={{ opacity: 0 }}
                       className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-fluid-small"
                     >
-                      Veuillez remplir tous les champs du formulaire.
+                      {t('customerService.formError')}
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -382,7 +384,7 @@ export default function ServiceClientPage() {
             {/* Response Time Notice */}
             <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
               <p className="text-fluid-small text-blue-900">
-                <span className="font-semibold">Temps de réponse:</span> Nous répondons généralement sous 24 heures ouvrables.
+                <span className="font-semibold">{t('customerService.responseTime')}</span> {t('customerService.responseTimeValue')}
               </p>
             </div>
           </motion.div>

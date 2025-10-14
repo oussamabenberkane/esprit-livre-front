@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Heart, ShoppingCart } from 'lucide-react';
 
 const BookCard = ({
@@ -14,6 +15,7 @@ const BookCard = ({
     onToggleFavorite,
     isFavorited = false
 }) => {
+    const { t } = useTranslation();
     const [favorited, setFavorited] = useState(isFavorited);
     const navigate = useNavigate();
 
@@ -113,7 +115,7 @@ const BookCard = ({
                 <div className="flex items-end justify-between mt-auto">
                     {/* Price */}
                     <span className="text-fluid-small md:text-fluid-price font-bold text-[#00417a]">
-                        {price} <span className="text-fluid-vsmall md:text-fluid-small font-bold">DZD</span>
+                        {price} <span className="text-fluid-vsmall md:text-fluid-small font-bold">{t('bookCard.currency')}</span>
                     </span>
 
 
@@ -127,8 +129,8 @@ const BookCard = ({
                 onClick={handleAddToCartClick}
                 className="bg-[#EE0027] absolute bottom-0 mb-0 right-0 text-white px-4 py-3 rounded-tl-xl rounded-br-sm hover:bg-[#d4183d] transition-colors button-card-size flex items-center justify-center flex-shrink-0"
             >
-                <span className="text-fluid-vsmall  font-semibold whitespace-nowrap">
-                    Ajouter <br />au panier
+                <span className="text-fluid-vsmall font-semibold whitespace-nowrap" style={{ whiteSpace: 'pre-line' }}>
+                    {t('bookCard.addToCart')}
                 </span>
             </button>
 

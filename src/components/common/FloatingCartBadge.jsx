@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ShoppingCart, X, Trash2 } from 'lucide-react';
 
 export default function FloatingCartBadge({
@@ -7,6 +8,7 @@ export default function FloatingCartBadge({
   onGoToCart,
   itemCount = 1
 }) {
+  const { t } = useTranslation();
   const [isDragging, setIsDragging] = useState(false);
   const [showDeleteZone, setShowDeleteZone] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -227,7 +229,7 @@ export default function FloatingCartBadge({
             <Trash2 className="w-6 h-6 md:w-8 md:h-8 text-white" />
           </div>
           <p className="text-center text-xs md:text-sm font-medium text-gray-700 mt-1">
-            Glissez ici pour supprimer
+            {t('floatingCartBadge.dragToDelete')}
           </p>
         </div>
       )}
@@ -256,7 +258,7 @@ export default function FloatingCartBadge({
           <button
             onClick={onDismiss}
             className="absolute top-0.5 right-0.5 md:top-2 md:right-2 w-5 h-5 md:w-6 md:h-6 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors"
-            aria-label="Fermer"
+            aria-label={t('floatingCartBadge.close')}
           >
             <X className="w-3 h-3 md:w-4 md:h-4" />
           </button>
@@ -268,13 +270,16 @@ export default function FloatingCartBadge({
             </div>
             <div className="flex-1">
               <p className="font-semibold text-[10px] md:text-sm leading-tight md:leading-normal">
-                {itemCount} {itemCount === 1 ? 'article ajouté' : 'articles ajoutés'}
+                {itemCount === 1
+                  ? t('floatingCartBadge.itemAdded', { count: itemCount })
+                  : t('floatingCartBadge.itemsAdded', { count: itemCount })
+                }
               </p>
               <button
                 onClick={onGoToCart}
                 className="text-[9px] md:text-xs underline hover:no-underline mt-0 md:mt-1 block"
               >
-                panier →
+                {t('floatingCartBadge.cart')}
               </button>
             </div>
           </div>
@@ -282,7 +287,7 @@ export default function FloatingCartBadge({
           {/* Drag hint (only visible when not dragging on desktop) */}
           {!isDragging && (
             <div className="hidden md:block absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-gray-600 whitespace-nowrap opacity-70">
-              Glissez pour fermer
+              {t('floatingCartBadge.dragToClose')}
             </div>
           )}
         </div>

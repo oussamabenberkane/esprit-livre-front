@@ -10,6 +10,7 @@ import SlideScroll from '../components/buttons/SlideScroll';
 import PaginationDots from '../components/common/PaginationDots';
 import Footer from '../components/common/Footer';
 import CartConfirmationPopup from '../components/common/cartConfirmationPopup';
+import FloatingCartBadge from '../components/common/FloatingCartBadge';
 import { BOOKS_DATA } from '../data/booksData';
 
 
@@ -23,6 +24,10 @@ const HomePage = () => {
     // Cart popup state
     const [showCartPopup, setShowCartPopup] = useState(false);
     const [selectedBook, setSelectedBook] = useState(null);
+
+    // Floating cart badge state
+    const [showFloatingBadge, setShowFloatingBadge] = useState(false);
+    const [cartItemCount, setCartItemCount] = useState(0);
 
     // Navigation handler for categories
     const handleCategoryClick = (categoryTitle) => {
@@ -268,7 +273,15 @@ const HomePage = () => {
         if (book) {
             setSelectedBook(book);
             setShowCartPopup(true);
+            // Increment cart count
+            setCartItemCount(prev => prev + 1);
         }
+    };
+
+    const handleClosePopup = () => {
+        setShowCartPopup(false);
+        // Show floating badge after popup closes
+        setShowFloatingBadge(true);
     };
 
     const handleToggleFavorite = (bookId, isFavorited) => {
@@ -741,7 +754,7 @@ const HomePage = () => {
             {selectedBook && (
                 <CartConfirmationPopup
                     isOpen={showCartPopup}
-                    onClose={() => setShowCartPopup(false)}
+                    onClose={handleClosePopup}
                     book={{
                         id: selectedBook.id,
                         title: selectedBook.title,
@@ -751,6 +764,14 @@ const HomePage = () => {
                     }}
                 />
             )}
+
+            {/* Floating Cart Badge - Shows after popup is dismissed */}
+            <FloatingCartBadge
+                isVisible={showFloatingBadge}
+                onDismiss={() => setShowFloatingBadge(false)}
+                onGoToCart={() => navigate('/cart')}
+                itemCount={cartItemCount}
+            />
         </main>
     );
 

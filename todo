@@ -1,6 +1,13 @@
-1. Book card animation: remove book cover animation on hover keep other animations
+- add shipping pref to checkout --- neki --- tura
+- i18n --- neki --- juste apres
+- state management --- neki ---- apres
+- email(verified or not) state with a popup if not --- neki ---- apres
 
 
 
-for today : 
-- get started with the layout and responsiveness of each component 
+bugs : 
+- booksCard : image sezes on iphones!! --- check it
+
+
+
+

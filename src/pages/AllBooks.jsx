@@ -3,16 +3,22 @@ import Footer from "../components/common/Footer"
 import BookCard from "../components/common/BookCard"
 import FiltersSection from "../components/allbooks/FiltersSection"
 import CartConfirmationPopup from "../components/common/cartConfirmationPopup"
+import FloatingCartBadge from "../components/common/FloatingCartBadge"
 import { BOOKS_DATA } from "../data/booksData"
 import { useState, useEffect } from "react"
-import { useSearchParams } from "react-router-dom"
+import { useSearchParams, useNavigate } from "react-router-dom"
 
 export default function AllBooks() {
+    const navigate = useNavigate()
     const [currentPage, setCurrentPage] = useState(1)
     const [searchParams] = useSearchParams()
     const [initialFilters, setInitialFilters] = useState(null)
     const [showCartPopup, setShowCartPopup] = useState(false)
     const [selectedBook, setSelectedBook] = useState(null)
+
+    // Floating cart badge state
+    const [showFloatingBadge, setShowFloatingBadge] = useState(false)
+    const [cartItemCount, setCartItemCount] = useState(0)
 
     // Scroll to top when component mounts or params change
     useEffect(() => {
@@ -57,7 +63,15 @@ export default function AllBooks() {
         if (book) {
             setSelectedBook(book)
             setShowCartPopup(true)
+            // Increment cart count
+            setCartItemCount(prev => prev + 1)
         }
+    }
+
+    const handleClosePopup = () => {
+        setShowCartPopup(false)
+        // Show floating badge after popup closes
+        setShowFloatingBadge(true)
     }
 
     const handleToggleFavorite = (bookId, isFavorited) => {
@@ -199,7 +213,7 @@ export default function AllBooks() {
             {selectedBook && (
                 <CartConfirmationPopup
                     isOpen={showCartPopup}
-                    onClose={() => setShowCartPopup(false)}
+                    onClose={handleClosePopup}
                     book={{
                         id: selectedBook.id,
                         title: selectedBook.title,
@@ -209,6 +223,14 @@ export default function AllBooks() {
                     }}
                 />
             )}
+
+            {/* Floating Cart Badge - Shows after popup is dismissed */}
+            <FloatingCartBadge
+                isVisible={showFloatingBadge}
+                onDismiss={() => setShowFloatingBadge(false)}
+                onGoToCart={() => navigate('/cart')}
+                itemCount={cartItemCount}
+            />
         </main>
     )
 }

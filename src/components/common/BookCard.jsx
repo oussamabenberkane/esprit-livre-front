@@ -56,11 +56,11 @@ const BookCard = ({
         >
             {/* Book Cover Container */}
             <div className="relative pt-fluid-sm pb-auto w-full flex items-center justify-center">
-                <div className="relative book-image-height">
+                <div className="relative book-image-height w-full px-2">
                     <img
                         src={coverImage}
                         alt={title}
-                        className="w-full max-h-[95%] object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                     />
                 </div>
                 {/* Badge */}
@@ -88,7 +88,7 @@ const BookCard = ({
             </div>
 
             {/* Book Info */}
-            <div className="px-fluid-xs sm:px-fluid-sm pb-fluid-md relative flex flex-col gap-fluid-tiny sm:gap-fluid-xs md:gap-fluid-sm ">
+            <div className="px-fluid-xs mt-fluid-xs sm:px-fluid-sm pb-fluid-md relative flex flex-col gap-fluid-tiny sm:gap-fluid-xs md:gap-fluid-sm ">
                 {/* Title */}
                 <h3 className="font-bold text-[#00417a] leading-none sm:leading-normal text-fluid-h3 min-[450px]:text-fluid-h2 line-clamp-2 hover:text-blue-600 transition-colors cursor-pointer">
                     {title}

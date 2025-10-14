@@ -384,8 +384,9 @@ const FiltersSection = ({ initialFilters }) => {
       ...prev,
       [type]: [...prev[type], item]
     }));
-    // Keep the dropdown open and maintain focus by not clearing search term
-    // The input will stay focused allowing continued typing
+    // Clear the search term when a filter is selected
+    setSearchTerms(prev => ({ ...prev, [type]: '' }));
+    // Keep the dropdown open for continued selection
   };
 
   const removeFilterItem = (type, item) => {

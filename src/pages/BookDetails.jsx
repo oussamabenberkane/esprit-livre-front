@@ -8,6 +8,7 @@ import SlideScroll from '../components/buttons/SlideScroll';
 import PaginationDots from '../components/common/PaginationDots';
 import SeeMore from '../components/buttons/SeeMore';
 import CartConfirmationPopup from '../components/common/cartConfirmationPopup';
+import FloatingCartBadge from '../components/common/FloatingCartBadge';
 import { BOOKS_DATA } from '../data/booksData';
 
 const BookDetails = () => {
@@ -56,6 +57,10 @@ const BookDetails = () => {
     // Cart popup state
     const [showCartPopup, setShowCartPopup] = useState(false);
     const [selectedBook, setSelectedBook] = useState(null);
+
+    // Floating cart badge state
+    const [showFloatingBadge, setShowFloatingBadge] = useState(false);
+    const [cartItemCount, setCartItemCount] = useState(0);
 
     // Recommended books - exclude current book (backend will provide this later)
     const [recommendedBooks, setRecommendedBooks] = useState([]);
@@ -146,7 +151,15 @@ const BookDetails = () => {
         if (bookToAdd) {
             setSelectedBook(bookToAdd);
             setShowCartPopup(true);
+            // Increment cart count
+            setCartItemCount(prev => prev + 1);
         }
+    };
+
+    const handleClosePopup = () => {
+        setShowCartPopup(false);
+        // Show floating badge after popup closes
+        setShowFloatingBadge(true);
     };
 
     const handleToggleFavorite = (bookId, isFavorited) => {
@@ -161,6 +174,8 @@ const BookDetails = () => {
         console.log(`Added main book ${book.id} to cart`);
         setSelectedBook(book);
         setShowCartPopup(true);
+        // Increment cart count
+        setCartItemCount(prev => prev + 1);
     };
 
     const handleToggleDescription = () => {
@@ -611,7 +626,7 @@ const BookDetails = () => {
             {selectedBook && (
                 <CartConfirmationPopup
                     isOpen={showCartPopup}
-                    onClose={() => setShowCartPopup(false)}
+                    onClose={handleClosePopup}
                     book={{
                         id: selectedBook.id,
                         title: selectedBook.title,
@@ -621,6 +636,14 @@ const BookDetails = () => {
                     }}
                 />
             )}
+
+            {/* Floating Cart Badge - Shows after popup is dismissed */}
+            <FloatingCartBadge
+                isVisible={showFloatingBadge}
+                onDismiss={() => setShowFloatingBadge(false)}
+                onGoToCart={() => navigate('/cart')}
+                itemCount={cartItemCount}
+            />
         </main>
     );
 };

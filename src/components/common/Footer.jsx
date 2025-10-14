@@ -58,14 +58,6 @@ export default function Footer() {
                                     Notre équipes
                                 </a>
                             </li>
-                            <li>
-                                <a
-                                    href="#"
-                                    className="text-gray-600 text-fluid-small hover:text-[#1E40AF] transition-colors"
-                                >
-                                    Carrières
-                                </a>
-                            </li>
                         </ul>
                     </div>
 

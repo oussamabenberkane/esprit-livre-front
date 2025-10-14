@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Minus, Plus, Trash2, ExternalLink, ShoppingBag, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Minus, Plus, Trash2, ExternalLink, ShoppingBag, ChevronDown, Home, MapPin } from 'lucide-react';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 
@@ -193,7 +193,52 @@ function CheckoutForm({ onSubmit }) {
     city: ''
   });
 
+  const [validationErrors, setValidationErrors] = useState({
+    email: '',
+    phone: ''
+  });
+
   const [availableCities, setAvailableCities] = useState([]);
+  const [shippingPreference, setShippingPreference] = useState("home"); // "home" or "pickup"
+
+  // Email validation
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Phone validation (Algerian format: 10 digits starting with 0)
+  const validatePhone = (phone) => {
+    const phoneRegex = /^0[5-7][0-9]{8}$/;
+    return phoneRegex.test(phone.replace(/\s/g, ''));
+  };
+
+  const handleEmailChange = (e) => {
+    const email = e.target.value;
+    setFormData({ ...formData, email });
+
+    if (email && !validateEmail(email)) {
+      setValidationErrors(prev => ({ ...prev, email: 'Veuillez entrer une adresse email valide' }));
+    } else {
+      setValidationErrors(prev => ({ ...prev, email: '' }));
+    }
+  };
+
+  const handlePhoneChange = (e) => {
+    const phone = e.target.value;
+    // Only allow digits and spaces
+    const sanitized = phone.replace(/[^\d\s]/g, '');
+    setFormData({ ...formData, phone: sanitized });
+
+    if (phone && !validatePhone(sanitized)) {
+      setValidationErrors(prev => ({
+        ...prev,
+        phone: 'Le numéro doit contenir 10 chiffres (ex: 0555 00 00 00)'
+      }));
+    } else {
+      setValidationErrors(prev => ({ ...prev, phone: '' }));
+    }
+  };
 
   const handleWilayaChange = (e) => {
     const selectedWilaya = e.target.value;
@@ -203,7 +248,26 @@ function CheckoutForm({ onSubmit }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+
+    // Final validation before submit
+    const isEmailValid = validateEmail(formData.email);
+    const isPhoneValid = validatePhone(formData.phone);
+
+    if (!isEmailValid) {
+      setValidationErrors(prev => ({ ...prev, email: 'Veuillez entrer une adresse email valide' }));
+    }
+
+    if (!isPhoneValid) {
+      setValidationErrors(prev => ({
+        ...prev,
+        phone: 'Le numéro doit contenir 10 chiffres (ex: 0555 00 00 00)'
+      }));
+    }
+
+    // Only submit if all validations pass
+    if (isEmailValid && isPhoneValid) {
+      onSubmit(formData);
+    }
   };
 
   return (
@@ -242,10 +306,17 @@ function CheckoutForm({ onSubmit }) {
             type="email"
             required
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+            onChange={handleEmailChange}
+            className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition-all ${
+              validationErrors.email
+                ? 'border-red-500 focus:ring-red-500'
+                : 'border-neutral-200 focus:ring-emerald-500'
+            }`}
             placeholder="exemple@email.com"
           />
+          {validationErrors.email && (
+            <p className="mt-1 text-sm text-red-500">{validationErrors.email}</p>
+          )}
         </div>
 
         {/* Phone */}
@@ -257,10 +328,18 @@ function CheckoutForm({ onSubmit }) {
             type="tel"
             required
             value={formData.phone}
-            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-            className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+            onChange={handlePhoneChange}
+            className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition-all ${
+              validationErrors.phone
+                ? 'border-red-500 focus:ring-red-500'
+                : 'border-neutral-200 focus:ring-emerald-500'
+            }`}
             placeholder="0555 00 00 00"
+            maxLength="14"
           />
+          {validationErrors.phone && (
+            <p className="mt-1 text-sm text-red-500">{validationErrors.phone}</p>
+          )}
         </div>
 
         {/* Wilaya */}
@@ -308,6 +387,98 @@ function CheckoutForm({ onSubmit }) {
           <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
         </div>
 
+        {/* Shipping Preference */}
+        <div className="mt-6">
+          <label className="block text-[#353535] text-fluid-medium font-[500] mb-3">
+            Mode de livraison
+          </label>
+
+          <div className="space-y-3">
+            {/* Home Delivery Option */}
+            <button
+              type="button"
+              onClick={() => setShippingPreference("home")}
+              className={`w-full p-3 md:p-4 rounded-lg border-2 transition-all ${
+                shippingPreference === "home"
+                  ? "border-emerald-500 bg-emerald-50"
+                  : "border-neutral-200 bg-gray-50 hover:border-neutral-300"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  shippingPreference === "home" ? "bg-emerald-100" : "bg-gray-100"
+                }`}>
+                  <Home className={`w-5 h-5 ${
+                    shippingPreference === "home" ? "text-emerald-600" : "text-gray-600"
+                  }`} />
+                </div>
+                <div className="text-left flex-1">
+                  <h3 className={`font-medium text-sm md:text-base ${
+                    shippingPreference === "home" ? "text-emerald-900" : "text-gray-800"
+                  }`}>
+                    Livraison à domicile
+                  </h3>
+                  <p className={`text-xs md:text-sm ${
+                    shippingPreference === "home" ? "text-emerald-600" : "text-gray-500"
+                  }`}>
+                    Recevez vos livres directement chez vous
+                  </p>
+                </div>
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                  shippingPreference === "home"
+                    ? "border-emerald-500 bg-emerald-500"
+                    : "border-gray-300"
+                }`}>
+                  {shippingPreference === "home" && (
+                    <div className="w-2 h-2 rounded-full bg-white"></div>
+                  )}
+                </div>
+              </div>
+            </button>
+
+            {/* Pickup Point Option */}
+            <button
+              type="button"
+              onClick={() => setShippingPreference("pickup")}
+              className={`w-full p-3 md:p-4 rounded-lg border-2 transition-all ${
+                shippingPreference === "pickup"
+                  ? "border-emerald-500 bg-emerald-50"
+                  : "border-neutral-200 bg-gray-50 hover:border-neutral-300"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  shippingPreference === "pickup" ? "bg-emerald-100" : "bg-gray-100"
+                }`}>
+                  <MapPin className={`w-5 h-5 ${
+                    shippingPreference === "pickup" ? "text-emerald-600" : "text-gray-600"
+                  }`} />
+                </div>
+                <div className="text-left flex-1">
+                  <h3 className={`font-medium text-sm md:text-base ${
+                    shippingPreference === "pickup" ? "text-emerald-900" : "text-gray-800"
+                  }`}>
+                    Point de relais
+                  </h3>
+                  <p className={`text-xs md:text-sm ${
+                    shippingPreference === "pickup" ? "text-emerald-600" : "text-gray-500"
+                  }`}>
+                    Retirez votre colis au point relais le plus proche
+                  </p>
+                </div>
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                  shippingPreference === "pickup"
+                    ? "border-emerald-500 bg-emerald-500"
+                    : "border-gray-300"
+                }`}>
+                  {shippingPreference === "pickup" && (
+                    <div className="w-2 h-2 rounded-full bg-white"></div>
+                  )}
+                </div>
+              </div>
+            </button>
+          </div>
+        </div>
 
         {/* Submit Button */}
         <motion.button

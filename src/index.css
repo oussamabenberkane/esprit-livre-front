@@ -38,7 +38,7 @@ main {
   --card-min-width: 140px;
   --card-max-width: 220px;
   --card-width: clamp(var(--card-min-width), calc(140px + (100vw - 320px) * 0.1), var(--card-max-width));
-  --card-height: clamp(250px, calc(var(--card-width) * 1.8), 400px);
+  --card-height: clamp(260px, calc(var(--card-width) * 1.8), 400px);
 
   /* CardCategory dimensions */
   --cat-min-width: 100px;

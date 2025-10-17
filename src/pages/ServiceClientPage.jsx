@@ -16,85 +16,86 @@ export default function ServiceClientPage() {
   });
   const [formStatus, setFormStatus] = useState(''); // 'success' or 'error'
 
+  // Build FAQ data from i18n
   const faqData = [
     {
-      category: 'Commandes',
+      category: t('customerService.faq.orders.category'),
       questions: [
         {
-          question: 'Comment passer une commande ?',
-          answer: 'Pour passer une commande, parcourez notre catalogue, ajoutez les livres à votre panier, puis cliquez sur l\'icône panier pour procéder au paiement. Suivez les étapes pour finaliser votre achat.'
+          question: t('customerService.faq.orders.q1.question'),
+          answer: t('customerService.faq.orders.q1.answer')
         },
         {
-          question: 'Puis-je modifier ou annuler ma commande ?',
-          answer: 'Vous pouvez modifier ou annuler votre commande dans les 24 heures suivant sa validation. Contactez-nous rapidement par email ou téléphone avec votre numéro de commande.'
+          question: t('customerService.faq.orders.q2.question'),
+          answer: t('customerService.faq.orders.q2.answer')
         },
         {
-          question: 'Comment suivre ma commande ?',
-          answer: 'Connectez-vous à votre compte et accédez à la page "Historique de commandes". Dans la section "Commandes en cours", vous pouvez suivre le statut de votre commande en temps réel.'
+          question: t('customerService.faq.orders.q3.question'),
+          answer: t('customerService.faq.orders.q3.answer')
         }
       ]
     },
     {
-      category: 'Livraison',
+      category: t('customerService.faq.delivery.category'),
       questions: [
         {
-          question: 'Quels sont les délais de livraison ?',
-          answer: 'Les délais de livraison varient entre 2 à 5 jours ouvrables.'
+          question: t('customerService.faq.delivery.q1.question'),
+          answer: t('customerService.faq.delivery.q1.answer')
         },
         {
-          question: 'Quels sont les frais de livraison ?',
-          answer: 'La livraison est gratuite pour toute commande supérieure à 7000DA. En dessous, les frais de port sont de 400DA.'
+          question: t('customerService.faq.delivery.q2.question'),
+          answer: t('customerService.faq.delivery.q2.answer')
         }
       ]
     },
     {
-      category: 'Retours & Remboursements',
+      category: t('customerService.faq.returns.category'),
       questions: [
         {
-          question: 'Quelle est votre politique de retour ?',
-          answer: 'Vous disposez de 3 jours après réception pour retourner un article en parfait état. Les frais de retour sont à votre charge sauf en cas de produit défectueux.'
+          question: t('customerService.faq.returns.q1.question'),
+          answer: t('customerService.faq.returns.q1.answer')
         },
         {
-          question: 'Comment effectuer un retour ?',
-          answer: 'Contactez notre service client pour obtenir une autorisation de retour. Renvoyez l\'article dans son emballage d\'origine avec la facture. Le remboursement intervient sous 2 jours après réception.'
+          question: t('customerService.faq.returns.q2.question'),
+          answer: t('customerService.faq.returns.q2.answer')
         },
         {
-          question: 'Puis-je échanger un livre ?',
-          answer: 'Oui, les échanges sont possibles dans les mêmes conditions que les retours. Précisez le livre souhaité en échange lors de votre demande.'
+          question: t('customerService.faq.returns.q3.question'),
+          answer: t('customerService.faq.returns.q3.answer')
         }
       ]
     },
     {
-      category: 'Compte & Paiement',
+      category: t('customerService.faq.account.category'),
       questions: [
         {
-          question: 'Comment créer un compte ?',
-          answer: 'Cliquez sur l\'icône utilisateur en haut de la page et suivez les instructions pour créer votre compte. Vous bénéficierez d\'un suivi de commandes et d\'offres exclusives.'
+          question: t('customerService.faq.account.q1.question'),
+          answer: t('customerService.faq.account.q1.answer')
         },
         {
-          question: 'Quels sont les avantages d\'avoir un compte ?',
-          answer: 'Avec un compte, vous pouvez consulter l\'historique de vos commandes et suivre leur statut en temps réel, ajouter des livres à vos favoris, et bénéficier de réductions exclusives réservées à nos membres.'
+          question: t('customerService.faq.account.q2.question'),
+          answer: t('customerService.faq.account.q2.answer')
         },
         {
-          question: 'Quels moyens de paiement acceptez-vous ?',
-          answer: 'Nous acceptons les cartes CIB et el-dhahabia.'
+          question: t('customerService.faq.account.q3.question'),
+          answer: t('customerService.faq.account.q3.answer')
         }
       ]
     },
     {
-      category: 'Produits',
+      category: t('customerService.faq.products.category'),
       questions: [
         {
-          question: 'Les livres sont-ils neufs ?',
-          answer: 'Tous nos livres sont neufs et proviennent directement des éditeurs ou distributeurs officiels. Nous garantissons la qualité de nos produits.'
+          question: t('customerService.faq.products.q1.question'),
+          answer: t('customerService.faq.products.q1.answer')
         },
         {
-          question: 'Proposez-vous des livres numériques ?',
-          answer: 'Actuellement, nous nous concentrons sur les livres physiques. Les livres numériques seront bientôt disponibles sur notre plateforme.'
+          question: t('customerService.faq.products.q2.question'),
+          answer: t('customerService.faq.products.q2.answer')
         },
         {
-          question: 'Comment fonctionnent les précommandes ?',
-          answer: 'Les précommandes vous permettent de réserver un livre avant sa sortie. Vous ne serez débité qu\'à l\'expédition, et vous recevrez le livre dès sa disponibilité.'
+          question: t('customerService.faq.products.q3.question'),
+          answer: t('customerService.faq.products.q3.answer')
         }
       ]
     }

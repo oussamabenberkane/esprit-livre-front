@@ -190,7 +190,80 @@
     "formSuccess": "Your message has been sent successfully! We will respond as soon as possible.",
     "formError": "Please fill in all form fields.",
     "responseTime": "Response time:",
-    "responseTimeValue": "We typically respond within 24 business hours."
+    "responseTimeValue": "We typically respond within 24 business hours.",
+    "faq": {
+      "orders": {
+        "category": "Orders",
+        "q1": {
+          "question": "How do I place an order?",
+          "answer": "To place an order, browse our catalog, add books to your cart, then click the cart icon to proceed to checkout. Follow the steps to finalize your purchase."
+        },
+        "q2": {
+          "question": "Can I modify or cancel my order?",
+          "answer": "You can modify or cancel your order within 24 hours of validation. Contact us quickly by email or phone with your order number."
+        },
+        "q3": {
+          "question": "How do I track my order?",
+          "answer": "Log in to your account and access the \"Order History\" page. In the \"Current Orders\" section, you can track your order status in real time."
+        }
+      },
+      "delivery": {
+        "category": "Delivery",
+        "q1": {
+          "question": "What are the delivery times?",
+          "answer": "Delivery times vary between 2 to 5 business days."
+        },
+        "q2": {
+          "question": "What are the shipping costs?",
+          "answer": "Delivery is free for any order over 7000DA. Below that, shipping costs are 400DA."
+        }
+      },
+      "returns": {
+        "category": "Returns & Refunds",
+        "q1": {
+          "question": "What is your return policy?",
+          "answer": "You have 3 days after receipt to return an item in perfect condition. Return costs are your responsibility unless the product is defective."
+        },
+        "q2": {
+          "question": "How do I make a return?",
+          "answer": "Contact our customer service to obtain a return authorization. Return the item in its original packaging with the invoice. Refund occurs within 2 days after receipt."
+        },
+        "q3": {
+          "question": "Can I exchange a book?",
+          "answer": "Yes, exchanges are possible under the same conditions as returns. Specify the desired book in exchange when making your request."
+        }
+      },
+      "account": {
+        "category": "Account & Payment",
+        "q1": {
+          "question": "How do I create an account?",
+          "answer": "Click the user icon at the top of the page and follow the instructions to create your account. You will benefit from order tracking and exclusive offers."
+        },
+        "q2": {
+          "question": "What are the benefits of having an account?",
+          "answer": "With an account, you can view your order history and track their status in real time, add books to your favorites, and benefit from exclusive discounts reserved for our members."
+        },
+        "q3": {
+          "question": "What payment methods do you accept?",
+          "answer": "We accept CIB and el-dhahabia cards."
+        }
+      },
+      "products": {
+        "category": "Products",
+        "q1": {
+          "question": "Are the books new?",
+          "answer": "All our books are new and come directly from official publishers or distributors. We guarantee the quality of our products."
+        },
+        "q2": {
+          "question": "Do you offer digital books?",
+          "answer": "Currently, we focus on physical books. Digital books will soon be available on our platform."
+        },
+        "q3": {
+          "question": "How do pre-orders work?",
+          "answer": "Pre-orders allow you to reserve a book before its release. You will only be charged upon shipment, and you will receive the book as soon as it is available."
+        }
+      }
+    }
   },
   "team": {
     "title": "Our Team",

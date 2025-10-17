@@ -186,6 +186,7 @@
     "formMessage": "Message",
     "formMessagePlaceholder": "Décrivez votre demande...",
     "formSubmit": "Envoyer le message",
+    "formSubmitting": "Envoi en cours...",
     "formSuccess": "Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.",
     "formError": "Veuillez remplir tous les champs du formulaire.",
     "responseTime": "Temps de réponse:",

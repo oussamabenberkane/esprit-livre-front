@@ -186,6 +186,7 @@
     "formMessage": "Message",
     "formMessagePlaceholder": "Describe your request...",
     "formSubmit": "Send message",
+    "formSubmitting": "Sending...",
     "formSuccess": "Your message has been sent successfully! We will respond as soon as possible.",
     "formError": "Please fill in all form fields.",
     "responseTime": "Response time:",

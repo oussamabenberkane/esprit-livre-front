@@ -109,7 +109,7 @@ export default function ServiceClientPage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Basic validation
@@ -119,15 +119,44 @@ export default function ServiceClientPage() {
       return;
     }
 
-    // Simulate form submission
-    console.log('Form submitted:', formData);
-    setFormStatus('success');
+    // Set loading state
+    setFormStatus('loading');
 
-    // Reset form
-    setFormData({ name: '', email: '', subject: '', message: '' });
+    try {
+      const response = await fetch('http://localhost:8080/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-    // Clear success message after 5 seconds
-    setTimeout(() => setFormStatus(''), 5000);
+      // Check if response is JSON before parsing
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        console.error('Non-JSON response received:', response.status);
+        setFormStatus('error');
+        setTimeout(() => setFormStatus(''), 3000);
+        return;
+      }
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setFormStatus('success');
+        // Reset form on success
+        setFormData({ name: '', email: '', subject: '', message: '' });
+        // Clear success message after 5 seconds
+        setTimeout(() => setFormStatus(''), 5000);
+      } else {
+        setFormStatus('error');
+        setTimeout(() => setFormStatus(''), 3000);
+      }
+    } catch (error) {
+      console.error('Error submitting contact form:', error);
+      setFormStatus('error');
+      setTimeout(() => setFormStatus(''), 3000);
+    }
   };
 
   return (
@@ -349,10 +378,20 @@ export default function ServiceClientPage() {
 
                 <button
                   type="submit"
-                  className="w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 text-fluid-body"
+                  disabled={formStatus === 'loading'}
+                  className="w-full bg-blue-800 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 text-fluid-body"
                 >
-                  <Send className="w-5 h-5" />
-                  {t('customerService.formSubmit')}
+                  {formStatus === 'loading' ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      {t('customerService.formSubmitting') || 'Envoi en cours...'}
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-5 h-5" />
+                      {t('customerService.formSubmit')}
+                    </>
+                  )}
                 </button>
 
                 {/* Status Messages */}

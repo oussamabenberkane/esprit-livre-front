@@ -9,7 +9,10 @@
       "Bash(netstat:*)",
       "Bash(findstr:*)",
       "Bash(npm run lint)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Read(//c/work/Esprit Livre/el-api/src/main/resources/templates/mail/**)",
+      "Read(//c/work/Esprit Livre/el-api/src/main/java/**)",
+      "Read(//c/work/Esprit Livre/el-api/**)"
     ],
     "deny": [],
     "ask": []

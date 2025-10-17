@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Mail, Linkedin, Github } from 'lucide-react';
+import { Mail, Linkedin, Github, Instagram } from 'lucide-react';
 import { useState } from 'react';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
@@ -14,27 +14,52 @@ export default function TeamPage() {
       name: 'Lhadi Talentikit',
       role: 'Propriétaire / Visionnaire',
       image: '/assets/team/lhadi.jpg',
-      description: 'Leader guidant la mission d’Esprit Livre pour rendre la lecture accessible.',
-      color: 'from-blue-500 to-blue-700'
+      description: 'Leader guidant la mission d\'Esprit Livre pour rendre la lecture accessible.',
+      color: 'from-blue-500 to-blue-700',
+      portfolioUrl: null,
+      contacts: {
+        email: 'haditlkt@gmail.com',
+        instagram: 'https://instagram.com/haditlkt',
+        linkedin: null,
+        github: null
+      }
     },
     {
       name: 'Oussama Benberkane',
       role: 'Développeur Backend',
       image: '/assets/team/ouss.jpg',
       description: 'Conçoit des systèmes backend fiables et évolutifs qui propulsent notre plateforme.',
-      color: 'from-purple-500 to-purple-700'
+      color: 'from-purple-500 to-purple-700',
+      portfolioUrl: 'https://oussamabenberkane.com',
+      contacts: {
+        email: 'oussamabenberkane.pro@gmail.com',
+        linkedin: 'https://linkedin.com/in/oussama-benberkane',
+        github: 'https://github.com/oussamabenberkane'
+      }
     },
     {
-      name: 'Yani Farhaten',
+      name: 'Yani Ferhaten',
       role: 'Développeur Frontend',
       image: '/assets/team/yani.jpg',
       description: 'Crée des interfaces modernes, intuitives et agréables pour nos utilisateurs.',
-      color: 'from-teal-500 to-teal-700'
+      color: 'from-teal-500 to-teal-700',
+      portfolioUrl: 'https://yaniferhaten.com',
+      contacts: {
+        email: 'ferhatenyani19@gmail.com',
+        linkedin: 'https://linkedin.com/in/yani-ferhaten',
+        github: 'https://github.com/yaniferhaten'
+      }
     }
   ];
 
   const handleImageError = (memberName) => {
     setImageErrors(prev => ({ ...prev, [memberName]: true }));
+  };
+
+  const handleCardClick = (portfolioUrl) => {
+    if (portfolioUrl) {
+      window.open(portfolioUrl, '_blank', 'noopener,noreferrer');
+    }
   };
 
   const containerVariants = {
@@ -95,7 +120,10 @@ export default function TeamPage() {
               whileHover={{ y: -10 }}
               className="group"
             >
-              <div className="bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl">
+              <div
+                className={`bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl ${member.portfolioUrl ? 'cursor-pointer' : ''}`}
+                onClick={() => handleCardClick(member.portfolioUrl)}
+              >
                 {/* Image Container with Gradient Overlay */}
                 <div className="relative h-80 overflow-hidden">
                   <div className={`absolute inset-0 bg-gradient-to-br ${member.color} opacity-20 group-hover:opacity-30 transition-opacity duration-300`} />
@@ -130,26 +158,55 @@ export default function TeamPage() {
                     {member.description}
                   </p>
 
-                  {/* Social Links (Optional - can be removed or customized) */}
-                  <div className="flex justify-center gap-4">
-                    <button
-                      className="p-2 rounded-full bg-gray-100 hover:bg-blue-100 transition-colors duration-300 group/btn"
-                      aria-label="Email"
-                    >
-                      <Mail className="w-5 h-5 text-gray-600 group-hover/btn:text-blue-600" />
-                    </button>
-                    <button
-                      className="p-2 rounded-full bg-gray-100 hover:bg-blue-100 transition-colors duration-300 group/btn"
-                      aria-label="LinkedIn"
-                    >
-                      <Linkedin className="w-5 h-5 text-gray-600 group-hover/btn:text-blue-600" />
-                    </button>
-                    <button
-                      className="p-2 rounded-full bg-gray-100 hover:bg-blue-100 transition-colors duration-300 group/btn"
-                      aria-label="GitHub"
-                    >
-                      <Github className="w-5 h-5 text-gray-600 group-hover/btn:text-blue-600" />
-                    </button>
+                  {/* Social Links */}
+                  <div className="flex justify-center gap-4" onClick={(e) => e.stopPropagation()}>
+                    {/* Email */}
+                    {member.contacts.email && (
+                      <a
+                        href={`mailto:${member.contacts.email}`}
+                        className="p-2 rounded-full bg-gray-100 hover:bg-blue-100 transition-colors duration-300 group/btn"
+                        aria-label="Email"
+                      >
+                        <Mail className="w-5 h-5 text-gray-600 group-hover/btn:text-blue-600" />
+                      </a>
+                    )}
+
+                    {/* LinkedIn */}
+                    {member.contacts.linkedin && (
+                      <a
+                        href={member.contacts.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 rounded-full bg-gray-100 hover:bg-blue-100 transition-colors duration-300 group/btn"
+                        aria-label="LinkedIn"
+                      >
+                        <Linkedin className="w-5 h-5 text-gray-600 group-hover/btn:text-blue-600" />
+                      </a>
+                    )}
+
+                    {/* GitHub or Instagram */}
+                    {member.contacts.github && (
+                      <a
+                        href={member.contacts.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 rounded-full bg-gray-100 hover:bg-blue-100 transition-colors duration-300 group/btn"
+                        aria-label="GitHub"
+                      >
+                        <Github className="w-5 h-5 text-gray-600 group-hover/btn:text-blue-600" />
+                      </a>
+                    )}
+                    {member.contacts.instagram && (
+                      <a
+                        href={member.contacts.instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 rounded-full bg-gray-100 hover:bg-blue-100 transition-colors duration-300 group/btn"
+                        aria-label="Instagram"
+                      >
+                        <Instagram className="w-5 h-5 text-gray-600 group-hover/btn:text-blue-600" />
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>

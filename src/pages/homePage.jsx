@@ -12,7 +12,7 @@ import PaginationDots from '../components/common/PaginationDots';
 import Footer from '../components/common/Footer';
 import CartConfirmationPopup from '../components/common/cartConfirmationPopup';
 import FloatingCartBadge from '../components/common/FloatingCartBadge';
-import { fetchCategories, fetchMainDisplays, fetchBooksByMainDisplay } from '../services/tagsService';
+import { fetchCategories, fetchMainDisplays, fetchBooksByMainDisplay, fetchTopAuthors } from '../services/tagsService';
 
 
 // MainDisplayCarousel component for rendering individual carousels
@@ -216,6 +216,8 @@ const HomePage = () => {
 
     // Add state for authors section
     const [currentAuthorIndex, setCurrentAuthorIndex] = useState(0);
+    const [authors, setAuthors] = useState([]);
+    const [authorsLoading, setAuthorsLoading] = useState(true);
 
     const authorsScrollRef = useRef(null);
     const [canScrollAuthorsLeft, setCanScrollAuthorsLeft] = useState(false);
@@ -331,7 +333,7 @@ const HomePage = () => {
             container.addEventListener('scroll', checkAuthorsScrollPosition);
             return () => container.removeEventListener('scroll', checkAuthorsScrollPosition);
         }
-    }, []);
+    }, [authors.length]);
 
     useEffect(() => {
         const categoriesContainer = categoriesScrollRef.current;
@@ -340,7 +342,7 @@ const HomePage = () => {
             categoriesContainer.addEventListener('scroll', checkCategoriesScrollPosition);
             return () => categoriesContainer.removeEventListener('scroll', checkCategoriesScrollPosition);
         }
-    }, []);
+    }, [categories.length]);
 
     useEffect(() => {
         const handleResize = () => {
@@ -475,56 +477,23 @@ const HomePage = () => {
     };
 
 
-    const authors = [
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        },
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        },
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        },
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        },
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        },
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        },
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        },
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        },
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        },
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        },
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        },
-        {
-            Image: "/assets/authors/camus.png",
-            Name: "Victor Hugo"
-        }
-    ]
+    // Fetch authors from API on component mount
+    useEffect(() => {
+        const loadAuthors = async () => {
+            try {
+                setAuthorsLoading(true);
+                const data = await fetchTopAuthors(10);
+                setAuthors(data);
+            } catch (error) {
+                console.error('Failed to load authors:', error);
+                setAuthors([]);
+            } finally {
+                setAuthorsLoading(false);
+            }
+        };
+
+        loadAuthors();
+    }, []);
 
     return (
 
@@ -710,18 +679,31 @@ const HomePage = () => {
                                 ref={authorsScrollRef}
                                 className="flex gap-fluid-sm pl-fluid-2xl pr-fluid-lg overflow-x-auto scrollbar-hide pt-fluid-xs pb-4"
                             >
-                                {authors.map((author, index) => (
-                                    <div
-                                        key={index}
-                                        className="flex-shrink-0 snap-start cursor-pointer"
-                                        onClick={() => handleAuthorClick(author.Name)}
-                                    >
-                                        <AuthorComponent
-                                            authorImage={author.Image}
-                                            authorName={author.Name}
-                                        />
+                                {authorsLoading ? (
+                                    // Loading state
+                                    <div className="flex-1 flex justify-center items-center py-fluid-lg">
+                                        <p className="text-brand-blue">{t('common.loading')}</p>
                                     </div>
-                                ))}
+                                ) : authors.length === 0 ? (
+                                    // Empty state
+                                    <div className="flex-1 flex justify-center items-center py-fluid-lg">
+                                        <p className="text-brand-blue">{t('common.noData')}</p>
+                                    </div>
+                                ) : (
+                                    // Authors list
+                                    authors.map((author) => (
+                                        <div
+                                            key={author.id}
+                                            className="flex-shrink-0 snap-start cursor-pointer"
+                                            onClick={() => handleAuthorClick(author.name)}
+                                        >
+                                            <AuthorComponent
+                                                authorImage={author.profilePictureUrl}
+                                                authorName={author.name}
+                                            />
+                                        </div>
+                                    ))
+                                )}
                             </div>
                         </div>
 

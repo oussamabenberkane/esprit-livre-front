@@ -1,6 +1,6 @@
 // Tags/Categories API Service
 
-const API_BASE_URL = 'https://violet-spiders-pick.loca.lt';
+const API_BASE_URL = 'https://six-lions-find.loca.lt';
 
 /**
  * Fetch tags by type
@@ -97,6 +97,36 @@ export const fetchBooksByMainDisplay = async (mainDisplayId, page = 0, size = 10
     return [];
   } catch (error) {
     console.error('Error fetching books:', error);
+    throw error;
+  }
+};
+
+/**
+ * Fetch top authors
+ * @param {number} limit - Maximum number of authors to fetch (default 10)
+ * @returns {Promise<Array>} Array of top authors
+ */
+export const fetchTopAuthors = async (limit = 10) => {
+  try {
+    const params = new URLSearchParams({
+      size: limit.toString()
+    });
+
+    const response = await fetch(`${API_BASE_URL}/api/authors/top?${params.toString()}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch authors: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching top authors:', error);
     throw error;
   }
 };

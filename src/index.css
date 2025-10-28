@@ -16,6 +16,12 @@ main {
   overflow-x: hidden;
 }
 
+@media (min-width: 480px) and (max-width: 766px) {
+  .marginx-md {
+    margin-right: 10px;
+  }
+}
+
 /* Define custom properties first */
 @theme {
   /* Only CSS custom properties (--variables) allowed here */
@@ -41,10 +47,10 @@ main {
   --card-height: clamp(260px, calc(var(--card-width) * 1.8), 400px);
 
   /* CardCategory dimensions */
-  --cat-min-width: 100px;
-  --cat-max-width: 170px;
-  --cat-width: clamp(var(--cat-min-width), calc(100px + (100vw - 320px) * 0.0875), var(--cat-max-width));
-  --cat-height: clamp(50px, calc(var(--cat-width) * 0.5), 85px);
+  --cat-min-width: 140px;
+  --cat-max-width: 230px;
+  --cat-width: clamp(var(--cat-min-width), calc(140px + (100vw - 320px) * 0.0875), var(--cat-max-width));
+  --cat-height: clamp(75px, calc(var(--cat-width) * 0.5), 120px);
 
   /* Author card - fully rounded (circle/pill shape) */
   --author-card-size: clamp(100px, 15vw, 140px);
@@ -54,8 +60,8 @@ main {
   --image-height: calc(var(--image-width) * 1.33);
 
   /* Button dimensions */
-  --button-width: clamp(50px, 10vw, 80px);
-  --button-height: clamp(30px, 7vw, 50px);
+  --button-width: clamp(65px, 12vw, 95px);
+  --button-height: clamp(35px, 7vw, 50px);
 
   /*hero height */
   --hero-height: clamp(240px, 30vw, 350px);

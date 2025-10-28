@@ -11,8 +11,8 @@ export default function TeamPage() {
 
   const teamMembers = [
     {
-      name: 'Lhadi Talentikit',
-      role: 'Propriétaire / Visionnaire',
+      name: t('team.members.lhadi.name'),
+      role: t('team.members.lhadi.role'),
       image: '/assets/team/lhadi.jpg',
       description: 'Leader guidant la mission d\'Esprit Livre pour rendre la lecture accessible.',
       color: 'from-blue-500 to-blue-700',
@@ -25,8 +25,8 @@ export default function TeamPage() {
       }
     },
     {
-      name: 'Oussama Benberkane',
-      role: 'Développeur Backend',
+      name: t('team.members.oussama.name'),
+      role: t('team.members.oussama.role'),
       image: '/assets/team/ouss.jpg',
       description: 'Conçoit des systèmes backend fiables et évolutifs qui propulsent notre plateforme.',
       color: 'from-purple-500 to-purple-700',
@@ -88,8 +88,8 @@ export default function TeamPage() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
       <Navbar />
 
-      {/* Hero Section */}
-      <div className="pt-32 pb-16 px-fluid-2xl">
+      {/* Hero Section - Extra padding on mobile for navbar */}
+      <div className="pt-36 md:pt-32 pb-16 px-fluid-2xl">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}

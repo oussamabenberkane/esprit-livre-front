@@ -16,6 +16,7 @@ export const BOOKS_DATA = [
         estimatedDelivery: "27/09/2025",
         condition: "neuf",
         seller: "Esprit Livre",
+        language: "French",
         active: true,
         createdAt: "2025-10-07T19:56:52.198094+02:00",
         updatedAt: null,
@@ -54,6 +55,7 @@ export const BOOKS_DATA = [
         estimatedDelivery: "28/09/2025",
         condition: "neuf",
         seller: "Esprit Livre",
+        language: "French",
         active: true,
         createdAt: "2025-10-07T19:56:52.198094+02:00",
         updatedAt: null,
@@ -92,6 +94,7 @@ export const BOOKS_DATA = [
         estimatedDelivery: "25/09/2025",
         condition: "neuf",
         seller: "Esprit Livre",
+        language: "Arabic",
         active: true,
         createdAt: "2025-10-08T10:30:00.000000+02:00",
         updatedAt: null,
@@ -130,6 +133,7 @@ export const BOOKS_DATA = [
         estimatedDelivery: "05/10/2025",
         condition: "neuf",
         seller: "Esprit Livre",
+        language: "English",
         active: true,
         createdAt: "2025-10-09T14:15:00.000000+02:00",
         updatedAt: null,
@@ -168,6 +172,7 @@ export const BOOKS_DATA = [
         estimatedDelivery: "22/09/2025",
         condition: "neuf",
         seller: "Esprit Livre",
+        language: "French",
         active: true,
         createdAt: "2025-10-10T09:45:00.000000+02:00",
         updatedAt: null,
@@ -206,6 +211,7 @@ export const BOOKS_DATA = [
         estimatedDelivery: "30/09/2025",
         condition: "neuf",
         seller: "Esprit Livre",
+        language: "Arabic",
         active: true,
         createdAt: "2025-10-11T11:20:00.000000+02:00",
         updatedAt: null,
@@ -244,6 +250,7 @@ export const BOOKS_DATA = [
         estimatedDelivery: "24/09/2025",
         condition: "neuf",
         seller: "Esprit Livre",
+        language: "English",
         active: true,
         createdAt: "2025-10-12T08:00:00.000000+02:00",
         updatedAt: null,
@@ -282,6 +289,7 @@ export const BOOKS_DATA = [
         estimatedDelivery: "20/09/2025",
         condition: "neuf",
         seller: "Esprit Livre",
+        language: "Arabic",
         active: true,
         createdAt: "2025-10-13T15:30:00.000000+02:00",
         updatedAt: null,
@@ -307,6 +315,26 @@ export const BOOKS_DATA = [
         isLikedByCurrentUser: false
     }
 ];
+
+// Helper function to get language code (abbreviated)
+export const getLanguageCode = (language) => {
+    const languageMap = {
+        'French': 'fr',
+        'English': 'eng',
+        'Arabic': 'arb'
+    };
+    return languageMap[language] || language.toLowerCase();
+};
+
+// Helper function to get full language name
+export const getFullLanguageName = (language) => {
+    const languageMap = {
+        'French': 'Français',
+        'English': 'English',
+        'Arabic': 'عربية'
+    };
+    return languageMap[language] || language;
+};
 
 // Helper function to get book by ID
 export const getBookById = (id) => {

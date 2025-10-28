@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence, useMotionValue } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Home, BookOpen, Heart, User } from 'lucide-react';
+import { Home, BookOpen, Heart, User, Package } from 'lucide-react';
 
 export default function BottomSheet({ isOpen, onClose, LanguageToggle }) {
   const navigate = useNavigate();
@@ -11,6 +11,7 @@ export default function BottomSheet({ isOpen, onClose, LanguageToggle }) {
   const menuItems = [
     { icon: Home, labelKey: 'bottomSheet.menu.home', path: '/' },
     { icon: BookOpen, labelKey: 'bottomSheet.menu.books', path: '/allbooks' },
+    { icon: Package, labelKey: 'bottomSheet.menu.packs', path: '/packs' },
     { icon: Heart, labelKey: 'bottomSheet.menu.favorites', path: '/favorites' },
     { icon: User, labelKey: 'bottomSheet.menu.profile', path: '/profile' }
   ];
@@ -100,7 +101,7 @@ export default function BottomSheet({ isOpen, onClose, LanguageToggle }) {
                   transition={{ delay: menuItems.length * 0.05 }}
                   className="flex justify-center"
                 >
-                  <LanguageToggle />
+                  <LanguageToggle className="bg-[#2563eb] text-white font-medium py-3 px-6 rounded-xl shadow-sm hover:shadow-md" />
                 </motion.div>
               )}
             </div>

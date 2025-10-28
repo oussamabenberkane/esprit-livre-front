@@ -607,6 +607,7 @@ const HomePage = () => {
                                                 coverImage={book.coverImageUrl}
                                                 badge={badge}
                                                 stockStatus={stockStatus}
+                                                language={book.language}
                                                 onAddToCart={handleAddToCart}
                                                 onToggleFavorite={handleToggleFavorite}
                                                 isFavorited={book.isLikedByCurrentUser}
@@ -762,7 +763,8 @@ const HomePage = () => {
                         title: selectedBook.title,
                         author: selectedBook.author.name,
                         price: selectedBook.price,
-                        coverImage: selectedBook.coverImageUrl
+                        coverImage: selectedBook.coverImageUrl,
+                        language: selectedBook.language
                     }}
                 />
             )}

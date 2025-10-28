@@ -20,6 +20,7 @@ export default function ServiceClientPage() {
   const faqData = [
     {
       category: t('customerService.faq.orders.category'),
+      category: t('customerService.faq.orders.category'),
       questions: [
         {
           question: t('customerService.faq.orders.q1.question'),
@@ -37,6 +38,7 @@ export default function ServiceClientPage() {
     },
     {
       category: t('customerService.faq.delivery.category'),
+      category: t('customerService.faq.delivery.category'),
       questions: [
         {
           question: t('customerService.faq.delivery.q1.question'),
@@ -49,6 +51,7 @@ export default function ServiceClientPage() {
       ]
     },
     {
+      category: t('customerService.faq.returns.category'),
       category: t('customerService.faq.returns.category'),
       questions: [
         {
@@ -67,6 +70,7 @@ export default function ServiceClientPage() {
     },
     {
       category: t('customerService.faq.account.category'),
+      category: t('customerService.faq.account.category'),
       questions: [
         {
           question: t('customerService.faq.account.q1.question'),
@@ -83,6 +87,7 @@ export default function ServiceClientPage() {
       ]
     },
     {
+      category: t('customerService.faq.products.category'),
       category: t('customerService.faq.products.category'),
       questions: [
         {
@@ -164,8 +169,8 @@ export default function ServiceClientPage() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
       <Navbar />
 
-      {/* Hero Section */}
-      <div className="pt-32 pb-12 px-fluid-2xl">
+      {/* Hero Section - Extra padding on mobile for navbar */}
+      <div className="pt-36 md:pt-32 pb-12 px-fluid-2xl">
         <div className="max-w-4xl mx-auto text-center">
           <motion.h1
             initial={{ opacity: 0, y: -20 }}

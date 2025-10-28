@@ -6,10 +6,16 @@ import BookCard from '../common/BookCard';
 import CartConfirmationPopup from '../common/cartConfirmationPopup';
 import FloatingCartBadge from '../common/FloatingCartBadge';
 import { BOOKS_DATA } from '../../data/booksData';
+import { useScrollToTop } from '../../hooks/useScrollToTop';
+import Navbar from '../common/Navbar';
+import Footer from '../common/Footer';
 
 export default function Favorites() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  // Scroll to top when page loads
+  useScrollToTop();
 
   // Filter books that are liked by the current user from BOOKS_DATA
   const [favoriteBooks, setFavoriteBooks] = useState([]);
@@ -59,9 +65,18 @@ export default function Favorites() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-gradient-to-b from-blue-500 to-blue-600 text-white pt-8 pb-6 px-4 sticky top-0 z-10 shadow-md">
+    <main className="w-full max-w-[100vw] overflow-x-hidden">
+      <div className="min-h-screen bg-gray-50">
+        {/* Navigation Bar */}
+        <section className="w-full max-w-[100vw] overflow-x-hidden">
+          <Navbar />
+        </section>
+
+        {/* Spacer for fixed navbar - larger on mobile for two-line navbar */}
+        <div className="h-28 md:h-20"></div>
+
+        {/* Header */}
+        <div className="bg-gradient-to-b from-blue-500 to-blue-600 text-white pt-8 pb-6 px-4 shadow-md">
         <div className="max-w-6xl mx-auto">
           <button
             onClick={handleBack}
@@ -115,6 +130,7 @@ export default function Favorites() {
                     coverImage={book.coverImageUrl}
                     badge={badge}
                     stockStatus={stockStatus}
+                    language={book.language}
                     onAddToCart={handleAddToCart}
                     onToggleFavorite={handleToggleFavorite}
                     isFavorited={true}
@@ -153,7 +169,8 @@ export default function Favorites() {
             title: selectedBook.title,
             author: selectedBook.author.name,
             price: selectedBook.price,
-            coverImage: selectedBook.coverImageUrl
+            coverImage: selectedBook.coverImageUrl,
+            language: selectedBook.language
           }}
         />
       )}
@@ -165,6 +182,8 @@ export default function Favorites() {
         onGoToCart={() => navigate('/cart')}
         itemCount={cartItemCount}
       />
-    </div>
+      </div>
+      <Footer />
+    </main>
   );
 }

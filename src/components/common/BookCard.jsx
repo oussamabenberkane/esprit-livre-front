@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Heart, ShoppingCart } from 'lucide-react';
+import { getLanguageCode, getFullLanguageName } from '../../data/booksData';
 
 const BookCard = ({
     id,
@@ -11,6 +12,7 @@ const BookCard = ({
     coverImage,
     badge = null,
     stockStatus = { available: true, text: "en stock" },
+    language = null,
     onAddToCart,
     onToggleFavorite,
     isFavorited = false
@@ -45,7 +47,8 @@ const BookCard = ({
                     price,
                     coverImage,
                     badge,
-                    stockStatus
+                    stockStatus,
+                    language
                 }
             }
         });
@@ -64,6 +67,13 @@ const BookCard = ({
                         alt={title}
                         className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                     />
+
+                    {/* Language Tag */}
+                    {language && (
+                        <div className="absolute bottom-0 right-1 px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded shadow-sm z-10">
+                            {getLanguageCode(language)}
+                        </div>
+                    )}
                 </div>
                 {/* Badge */}
                 {badge && (
@@ -103,11 +113,20 @@ const BookCard = ({
 
                 {/* Stock Status */}
                 <div className="text-fluid-tag font-bold mb-auto">
-                    <span className={`inline-flex items-center ${stockStatus.available ? 'text-green-600' : 'text-red-600'
+                    <span className={`inline-flex items-center ${
+                        stockStatus.available
+                            ? 'text-green-600'
+                            : 'text-blue-600'
                         }`}>
-                        <span className={`w-2 h-2 rounded-full mr-1 ${stockStatus.available ? 'bg-green-600' : 'bg-red-600'
+                        <span className={`w-2 h-2 rounded-full mr-1 ${
+                            stockStatus.available
+                                ? 'bg-green-600'
+                                : 'bg-blue-600'
                             }`}></span>
-                        {stockStatus.text}
+                        {stockStatus.available
+                            ? t('bookCard.stockStatus.inStock')
+                            : t('bookCard.stockStatus.preorder')
+                        }
                     </span>
                 </div>
 
@@ -129,7 +148,7 @@ const BookCard = ({
                 onClick={handleAddToCartClick}
                 className="bg-[#EE0027] absolute bottom-0 mb-0 right-0 text-white px-4 py-3 rounded-tl-xl rounded-br-sm hover:bg-[#d4183d] transition-colors button-card-size flex items-center justify-center flex-shrink-0"
             >
-                <span className="text-fluid-vsmall font-semibold whitespace-nowrap" style={{ whiteSpace: 'pre-line' }}>
+                <span className="text-fluid-vsmall font-semibold text-center leading-tight" style={{ whiteSpace: 'pre-line' }}>
                     {t('bookCard.addToCart')}
                 </span>
             </button>

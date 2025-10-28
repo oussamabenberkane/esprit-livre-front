@@ -30,8 +30,8 @@ const SimpleLanguageToggle = () => {
 const Logo = () => (
     <a href='/'>
         <div className="flex flex-col text-white">
-            <div className="text-lg md:text-xl font-bold leading-tight">Esprit</div>
-            <div className="text-base md:text-lg font-bold leading-tight">Livre</div>
+            <div className="text-base md:text-xl font-bold leading-tight">Esprit</div>
+            <div className="text-sm md:text-lg font-bold leading-tight">Livre</div>
         </div>
     </a>
 );
@@ -86,7 +86,8 @@ const Navbar = ({
 
     return (
         <>
-            <div className="fixed top-0 left-0 right-0 bg-blue-800 rounded-br-2xl px-4 md:px-6 py-3 h-20 z-40">
+            {/* Desktop and Tablet Navbar */}
+            <div className="hidden md:block fixed top-0 left-0 right-0 bg-blue-800 rounded-br-2xl px-4 md:px-6 py-3 h-20 z-40">
                 <div className="flex items-center w-full h-full gap-4">
                     {/* Logo - Always visible */}
                     <Logo />
@@ -133,14 +134,61 @@ const Navbar = ({
                         <button onClick={handleUserClick} className="hidden md:block">
                             <User className="w-6 h-6 text-white hover:opacity-80 transition-opacity" />
                         </button>
+                    </div>
+                </div>
+            </div>
 
-                        {/* Menu Icon - Mobile only */}
+            {/* Mobile Navbar */}
+            <div className="md:hidden fixed top-0 left-0 right-0 bg-blue-800 rounded-br-2xl px-4 py-2 z-40">
+                {/* First Line: Menu, Logo, Sign In, Profile, Cart */}
+                <div className="flex items-center justify-between h-12 mb-2">
+                    {/* Left side: Menu + Logo */}
+                    <div className="flex items-center gap-3">
+                        {/* Menu Icon */}
                         <button
                             onClick={() => setIsBottomSheetOpen(true)}
-                            className="md:hidden"
+                            className="flex-shrink-0"
                         >
-                            <Menu className="w-6 h-6 text-white hover:opacity-80 transition-opacity" />
+                            <Menu className="w-8 h-8 text-white hover:opacity-80 transition-opacity" />
                         </button>
+
+                        {/* Logo */}
+                        <Logo />
+                    </div>
+
+                    {/* Right side: Sign In, Profile, Cart */}
+                    <div className="flex items-center gap-2">
+                        {/* Sign In Button */}
+                        <button
+                            onClick={() => navigate('/auth')}
+                            className="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg transition-colors text-sm font-medium"
+                        >
+                            {t('navbar.signIn')}
+                        </button>
+
+                        {/* User Profile Icon */}
+                        <button onClick={handleUserClick} className="flex-shrink-0">
+                            <User className="w-7 h-7 text-white hover:opacity-80 transition-opacity" />
+                        </button>
+
+                        {/* Cart Icon */}
+                        <button onClick={handleCartClick} className="relative flex-shrink-0">
+                            <ShoppingCart className="w-7 h- text-white hover:opacity-80 transition-opacity" />
+                            {cartCount > 0 && (
+                                <div className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                                    <span className="text-xs text-white font-bold">
+                                        {cartCount > 9 ? "9+" : cartCount}
+                                    </span>
+                                </div>
+                            )}
+                        </button>
+                    </div>
+                </div>
+
+                {/* Second Line: Search Bar */}
+                <div className="pb-2">
+                    <div className="w-[100%]">
+                        <SearchBar placeholder={placeholder} onSearch={onSearch} />
                     </div>
                 </div>
             </div>

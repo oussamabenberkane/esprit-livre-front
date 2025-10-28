@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-const LanguageToggle = ({ onLanguageChange }) => {
+const LanguageToggle = ({ onLanguageChange, className = '' }) => {
     const { i18n } = useTranslation();
     const [currentLang, setCurrentLang] = useState(i18n.language || 'fr');
 
@@ -30,7 +30,7 @@ const LanguageToggle = ({ onLanguageChange }) => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleToggle}
-            className="relative bg-white rounded-md px-4 py-2.5 min-w-[130px] flex items-center justify-between cursor-pointer border-none outline-none focus:outline-none hover:bg-gray-50 transition-colors  overflow-hidden"
+            className={`relative rounded-md px-4 py-2.5 min-w-[130px] flex items-center justify-between cursor-pointer border-none outline-none focus:outline-none transition-colors overflow-hidden ${className || 'bg-white hover:bg-gray-50'}`}
         >
             <AnimatePresence mode="wait">
                 <motion.span
@@ -42,7 +42,7 @@ const LanguageToggle = ({ onLanguageChange }) => {
                         duration: 0.2,
                         ease: "easeInOut"
                     }}
-                    className="text-fluid-sm font-medium text-gray-800"
+                    className={`text-fluid-sm font-medium ${className ? 'text-current' : 'text-gray-800'}`}
                 >
                     {getCurrentLanguageLabel()}
                 </motion.span>

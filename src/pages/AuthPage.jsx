@@ -1,10 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
+import { isAuthenticated } from '../services/authService';
 
 export default function AuthPage() {
   const [currentView, setCurrentView] = useState('signin'); // 'signin' or 'signup'
+  const navigate = useNavigate();
+
+  // Redirect to home if already authenticated
+  useEffect(() => {
+    if (isAuthenticated()) {
+      navigate('/', { replace: true });
+    }
+  }, [navigate]);
 
   return (
     <AnimatePresence mode="wait">

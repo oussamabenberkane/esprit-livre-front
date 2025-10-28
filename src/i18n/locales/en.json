@@ -1,6 +1,7 @@
 {
   "navbar": {
     "searchPlaceholder": "Search for a book...",
+    "signIn": "Sign in",
     "language": {
       "fr": "FR",
       "en": "EN"
@@ -11,7 +12,8 @@
     "currency": "DZD",
     "stockStatus": {
       "inStock": "in stock",
-      "outOfStock": "out of stock"
+      "outOfStock": "out of stock",
+      "preorder": "Pre-order"
     }
   },
   "allBooks": {
@@ -77,6 +79,7 @@
     "menu": {
       "home": "Home",
       "books": "Books",
+      "packs": "Packs",
       "favorites": "Favorites",
       "profile": "Profile"
     }
@@ -157,8 +160,10 @@
     "shippingMethod": "Shipping method",
     "homeDelivery": "Home delivery",
     "homeDeliveryDesc": "Receive your books directly at home",
+    "homeAddressPlaceholder": "Enter your exact address (street, building, apartment)",
     "pickupPoint": "Pickup point",
     "pickupPointDesc": "Pick up your package at the nearest pickup point",
+    "selectProvider": "Select a pickup provider",
     "finalizeOrder": "Finalize order",
     "deliveryDays": "2–4 days"
   },
@@ -269,7 +274,24 @@
     "title": "Our Team",
     "subtitle": "Meet the passionate people who bring Esprit Livre to life",
     "missionTitle": "Our Mission",
-    "missionText": "At Esprit Livre, we want to make reading and books \"cool\" and desirable again in the age of short attention span content. Why? Because reading develops concentration, nourishes the mind and improves well-being. We unite creativity, technology and passion to build a platform that makes people want to read, discover and share books as a true lifestyle."
+    "missionText": "At Esprit Livre, we want to make reading and books \"cool\" and desirable again in the age of short attention span content. Why? Because reading develops concentration, nourishes the mind and improves well-being. We unite creativity, technology and passion to build a platform that makes people want to read, discover and share books as a true lifestyle.",
+    "members": {
+      "lhadi": {
+        "name": "Lhadi Talentikit",
+        "role": "Owner / Visionary",
+        "description": "Leader guiding Esprit Livre's mission to make reading accessible."
+      },
+      "oussama": {
+        "name": "Oussama Benberkane",
+        "role": "Backend Developer",
+        "description": "Designs reliable and scalable backend systems that power our platform."
+      },
+      "yani": {
+        "name": "Yani Farhaten",
+        "role": "Frontend Developer",
+        "description": "Creates modern, intuitive and enjoyable interfaces for our users."
+      }
+    }
   },
   "profile": {
     "back": "Back",
@@ -284,8 +306,10 @@
     "shippingPreference": "Shipping preference",
     "homeDelivery": "Home delivery",
     "homeDeliveryDesc": "Receive your books directly at home",
+    "homeAddressPlaceholder": "Enter your exact address (street, building, apartment)",
     "pickupPoint": "Pickup point",
     "pickupPointDesc": "Pick up your package at the nearest pickup point",
+    "selectProvider": "Select a pickup provider",
     "myFavorites": "My Favorites",
     "favoritesSaved": "Saved books",
     "myOrders": "My Orders",
@@ -300,5 +324,41 @@
     "emptyTitle": "No favorites",
     "emptyMessage": "You haven't added any books to your favorites yet",
     "discoverBooks": "Discover books"
+  },
+  "orders": {
+    "title": "My Orders",
+    "back": "Back",
+    "count": "{{count}} order",
+    "count_plural": "{{count}} orders",
+    "currentOrders": "Current Orders",
+    "orderHistory": "History",
+    "viewDetails": "View details",
+    "hideDetails": "Hide",
+    "currency": "DZD",
+    "emptyTitle": "No orders",
+    "emptyMessage": "You haven't placed any orders yet 📦",
+    "startShopping": "Start shopping",
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    }
+  },
+  "packCard": {
+    "addToCart": "Add to cart",
+    "currency": "DZD",
+    "booksIncluded": "Books included",
+    "save": "Save",
+    "books": "books"
+  },
+  "packsPage": {
+    "title": "Promotional Packs",
+    "subtitle": "Discover our special offers and save on your book purchases",
+    "searchPlaceholder": "Search for a pack...",
+    "packsFound": "packs found",
+    "noPacksFound": "No packs found",
+    "tryDifferentSearch": "Try a different search or adjust your filters"
   }
 }

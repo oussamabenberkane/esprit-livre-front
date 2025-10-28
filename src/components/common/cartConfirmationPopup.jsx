@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ShoppingCart, Check, X } from 'lucide-react';
+import { getLanguageCode } from '../../data/booksData';
 
 export default function CartConfirmationPopup({
     isOpen,
@@ -10,6 +11,31 @@ export default function CartConfirmationPopup({
 }) {
     const { t } = useTranslation();
     const navigate = useNavigate();
+
+    // Prevent body scroll when popup is open
+    useEffect(() => {
+        if (isOpen) {
+            // Save current scroll position
+            const scrollY = window.scrollY;
+
+            // Prevent scrolling
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.top = `-${scrollY}px`;
+            document.body.style.width = '100%';
+
+            return () => {
+                // Restore scrolling
+                document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.top = '';
+                document.body.style.width = '';
+
+                // Restore scroll position
+                window.scrollTo(0, scrollY);
+            };
+        }
+    }, [isOpen]);
 
     if (!isOpen) return null;
 
@@ -106,9 +132,14 @@ export default function CartConfirmationPopup({
                                 <p className="font-bold text-gray-900 text-fluid-lg">
                                     {book.price}
                                 </p>
-                                <p className="text-gray-500 text-sm">
+                                <p className="text-gray-500 text-sm mb-1">
                                     {t('cartPopup.currency')}
                                 </p>
+                                {book.language && (
+                                    <span className="inline-block px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
+                                        {getLanguageCode(book.language)}
+                                    </span>
+                                )}
                             </div>
                         </div>
                     </div>

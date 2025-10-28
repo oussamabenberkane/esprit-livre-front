@@ -1,17 +1,19 @@
 {
   "navbar": {
     "searchPlaceholder": "Recherchez un livre...",
+    "signIn": "Se connecter",
     "language": {
       "fr": "FR",
       "en": "EN"
     }
   },
   "bookCard": {
-    "addToCart": "Ajouter\nau panier",
+    "addToCart": "Ajouter\nau\u00A0panier",
     "currency": "DZD",
     "stockStatus": {
       "inStock": "en stock",
-      "outOfStock": "rupture de stock"
+      "outOfStock": "rupture de stock",
+      "preorder": "Précommander"
     }
   },
   "allBooks": {
@@ -77,6 +79,7 @@
     "menu": {
       "home": "Accueil",
       "books": "Livres",
+      "packs": "Packs",
       "favorites": "Favoris",
       "profile": "Profil"
     }
@@ -157,8 +160,10 @@
     "shippingMethod": "Mode de livraison",
     "homeDelivery": "Livraison à domicile",
     "homeDeliveryDesc": "Recevez vos livres directement chez vous",
+    "homeAddressPlaceholder": "Entrez votre adresse exacte (rue, immeuble, appartement)",
     "pickupPoint": "Point de relais",
     "pickupPointDesc": "Retirez votre colis au point relais le plus proche",
+    "selectProvider": "Sélectionnez un point de relais",
     "finalizeOrder": "Finaliser la commande",
     "deliveryDays": "2–4 jours"
   },
@@ -269,7 +274,24 @@
     "title": "Notre Équipe",
     "subtitle": "Rencontrez les personnes passionnées qui font vivre Esprit Livre",
     "missionTitle": "Notre Mission",
-    "missionText": "Chez Esprit Livre, nous voulons rendre la lecture et les livres à nouveau \"cool\" et désirables à l'ère des contenus à courte durée d'attention. Pourquoi ? Parce que lire développe la concentration, nourrit l'esprit et améliore le bien-être. Nous unissons créativité, technologie et passion pour bâtir une plateforme qui donne envie de lire, de découvrir et de partager des livres comme un véritable style de vie."
+    "missionText": "Chez Esprit Livre, nous voulons rendre la lecture et les livres à nouveau \"cool\" et désirables à l'ère des contenus à courte durée d'attention. Pourquoi ? Parce que lire développe la concentration, nourrit l'esprit et améliore le bien-être. Nous unissons créativité, technologie et passion pour bâtir une plateforme qui donne envie de lire, de découvrir et de partager des livres comme un véritable style de vie.",
+    "members": {
+      "lhadi": {
+        "name": "Lhadi Talentikit",
+        "role": "Propriétaire / Visionnaire",
+        "description": "Leader guidant la mission d'Esprit Livre pour rendre la lecture accessible."
+      },
+      "oussama": {
+        "name": "Oussama Benberkane",
+        "role": "Développeur Backend",
+        "description": "Conçoit des systèmes backend fiables et évolutifs qui propulsent notre plateforme."
+      },
+      "yani": {
+        "name": "Yani Farhaten",
+        "role": "Développeur Frontend",
+        "description": "Crée des interfaces modernes, intuitives et agréables pour nos utilisateurs."
+      }
+    }
   },
   "profile": {
     "back": "Retour",
@@ -284,8 +306,10 @@
     "shippingPreference": "Préférence de livraison",
     "homeDelivery": "Livraison à domicile",
     "homeDeliveryDesc": "Recevez vos livres directement chez vous",
+    "homeAddressPlaceholder": "Entrez votre adresse exacte (rue, immeuble, appartement)",
     "pickupPoint": "Point de relais",
     "pickupPointDesc": "Retirez votre colis au point relais le plus proche",
+    "selectProvider": "Sélectionnez un point de relais",
     "myFavorites": "Mes Favoris",
     "favoritesSaved": "Livres sauvegardés",
     "myOrders": "Mes Commandes",
@@ -300,5 +324,41 @@
     "emptyTitle": "Aucun favori",
     "emptyMessage": "Vous n'avez pas encore ajouté de livres à vos favoris",
     "discoverBooks": "Découvrir des livres"
+  },
+  "orders": {
+    "title": "Mes Commandes",
+    "back": "Retour",
+    "count": "{{count}} commande",
+    "count_plural": "{{count}} commandes",
+    "currentOrders": "Commandes en cours",
+    "orderHistory": "Historique",
+    "viewDetails": "Voir les détails",
+    "hideDetails": "Masquer",
+    "currency": "DZD",
+    "emptyTitle": "Aucune commande",
+    "emptyMessage": "Vous n'avez pas encore passé de commande 📦",
+    "startShopping": "Commencer mes achats",
+    "status": {
+      "pending": "En attente",
+      "confirmed": "Confirmée",
+      "shipped": "Expédiée",
+      "delivered": "Livrée",
+      "cancelled": "Annulée"
+    }
+  },
+  "packCard": {
+    "addToCart": "Ajouter au panier",
+    "currency": "DZD",
+    "booksIncluded": "Livres inclus",
+    "save": "Économisez",
+    "books": "livres"
+  },
+  "packsPage": {
+    "title": "Packs Promotionnels",
+    "subtitle": "Découvrez nos offres spéciales et économisez sur vos achats de livres",
+    "searchPlaceholder": "Rechercher un pack...",
+    "packsFound": "packs trouvés",
+    "noPacksFound": "Aucun pack trouvé",
+    "tryDifferentSearch": "Essayez une recherche différente ou ajustez vos filtres"
   }
 }

@@ -86,10 +86,11 @@ export default function AllBooks() {
                 {/* Navigation Bar */}
                 <section className="w-full max-w-[100vw] overflow-x-hidden"><Navbar /></section>
 
-                <div className="h-20"></div>
+                {/* Responsive spacing for navbar - taller on mobile due to two-line layout */}
+                <div className="h-28 md:h-20"></div>
 
                 {/* Main Content */}
-                <div className="w-full container-main px-fluid-md">
+                <div className="w-full container-main px-fluid-md overflow-x-hidden">
                 {/* Page Header */}
                 <div className="mt-fluid-lg mb-fluid-lg">
                     <h1 className="text-brand-blue text-fluid-h1 font-bold mb-fluid-xxs">
@@ -101,7 +102,7 @@ export default function AllBooks() {
                 </div>
 
                 {/* Filters Section */}
-                <div className="mb-fluid-md">
+                <div className="mb-fluid-md overflow-x-hidden">
                     <FiltersSection initialFilters={initialFilters} />
                 </div>
 
@@ -157,6 +158,7 @@ export default function AllBooks() {
                                         coverImage={book.coverImageUrl}
                                         badge={badge}
                                         stockStatus={stockStatus}
+                                        language={book.language}
                                         onAddToCart={handleAddToCart}
                                         onToggleFavorite={handleToggleFavorite}
                                         isFavorited={book.isLikedByCurrentUser}
@@ -225,7 +227,8 @@ export default function AllBooks() {
                         title: selectedBook.title,
                         author: selectedBook.author.name,
                         price: selectedBook.price,
-                        coverImage: selectedBook.coverImageUrl
+                        coverImage: selectedBook.coverImageUrl,
+                        language: selectedBook.language
                     }}
                 />
             )}

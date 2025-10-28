@@ -7,7 +7,7 @@ const mockFiltersData = {
   categories: ['Fantasie', 'Science fiction', 'Romans', 'Histoire', 'Biographie', 'Philosophie', 'Art', 'Cuisine'],
   authors: ['Albert Camus', 'Dostoïevski', 'Victor Hugo', 'Marcel Proust', 'Simone de Beauvoir', 'Jean-Paul Sartre'],
   titles: ['L\'Étranger', 'Crime et Châtiment', 'Les Misérables', 'À la recherche du temps perdu', 'Le Deuxième Sexe'],
-  languages: ['Français', 'Anglais', 'Arabe', 'Espagnol', 'Italien', 'Allemand']
+  languages: ['Français', 'English', 'العربية']
 };
 
 // Extracted PriceFilter component
@@ -215,17 +215,17 @@ const FilterDropdown = ({
           }`}
       >
         {selectedItems.length > 0 && !searchTerm && (
-          <div className="flex gap-2 p-3 bg-blue-50 rounded-lg overflow-x-auto">
-            <div className="flex gap-2 flex-nowrap">
+          <div className="p-3 bg-blue-50 rounded-lg overflow-x-hidden">
+            <div className="flex gap-2 flex-wrap">
               {selectedItems.map((item) => (
                 <div
                   key={item}
                   className="flex items-center bg-white px-3 py-1.5 rounded-full text-sm whitespace-nowrap flex-shrink-0 shadow-sm border border-blue-200"
                 >
-                  <span className="mr-2 text-gray-700">{item}</span>
+                  <span className="mr-2 text-gray-700 truncate max-w-[150px]">{item}</span>
                   <button
                     onClick={() => onRemoveFilterItem(type, item)}
-                    className="text-gray-400 hover:text-red-500 transition-colors"
+                    className="text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
@@ -281,6 +281,42 @@ const FiltersSection = ({ initialFilters }) => {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Prevent body scroll and horizontal overflow when mobile menu is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      // Store original styles
+      const originalBodyOverflow = document.body.style.overflow;
+      const originalBodyOverflowX = document.body.style.overflowX;
+      const originalHtmlOverflow = document.documentElement.style.overflow;
+      const originalBodyPosition = document.body.style.position;
+      const originalBodyWidth = document.body.style.width;
+
+      // Get current scroll position
+      const scrollY = window.scrollY;
+
+      // Lock body and html
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+      document.body.style.overflowX = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+
+      // Cleanup function
+      return () => {
+        document.body.style.position = originalBodyPosition;
+        document.body.style.top = '';
+        document.body.style.width = originalBodyWidth;
+        document.body.style.overflow = originalBodyOverflow;
+        document.body.style.overflowX = originalBodyOverflowX;
+        document.documentElement.style.overflow = originalHtmlOverflow;
+
+        // Restore scroll position
+        window.scrollTo(0, scrollY);
+      };
+    }
+  }, [isMenuOpen]);
 
   useEffect(() => {
     if (isMobile && activeDropdown && filterRefs.current[activeDropdown]) {
@@ -474,6 +510,33 @@ const FiltersSection = ({ initialFilters }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [activeDropdown]);
 
+  // Smooth scroll to bottom with padding when dropdown opens on desktop
+  useEffect(() => {
+    if (!isMobile && activeDropdown && dropdownRefs.current[activeDropdown]) {
+      setTimeout(() => {
+        const dropdownElement = dropdownRefs.current[activeDropdown];
+        if (dropdownElement) {
+          const dropdownRect = dropdownElement.getBoundingClientRect();
+          const viewportHeight = window.innerHeight;
+
+          // Calculate the bottom position of the dropdown (including the options menu)
+          const dropdownBottom = dropdownRect.bottom + 260; // 260px is approximate max-height of dropdown menu
+
+          // If dropdown extends beyond viewport, scroll to show it
+          if (dropdownBottom > viewportHeight) {
+            const extraPadding = 40; // Extra padding at the bottom
+            const scrollAmount = dropdownBottom - viewportHeight + extraPadding;
+
+            window.scrollBy({
+              top: scrollAmount,
+              behavior: 'smooth'
+            });
+          }
+        }
+      }, 100); // Small delay to allow dropdown to render
+    }
+  }, [activeDropdown, isMobile]);
+
   if (isMobile) {
     return (
       <>
@@ -510,32 +573,32 @@ const FiltersSection = ({ initialFilters }) => {
                   duration: 0.35,
                   ease: [0.4, 0, 0.2, 1], // Custom cubic-bezier for smoother exit
                 }}
-                className="fixed left-0 top-0 h-full w-[85vw] max-w-[420px] bg-white z-50 shadow-2xl"
+                className="fixed left-0 top-0 h-full w-[85vw] max-w-[420px] bg-white z-50 shadow-2xl overflow-x-hidden"
               >
-                <div className="h-full flex flex-col">
-                  <div className="flex items-center justify-between p-5 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-700">
-                    <h2 className="text-lg font-semibold text-white">{t('filters.heading')}</h2>
-                    <div className="flex items-center gap-2">
+                <div className="h-full flex flex-col overflow-x-hidden">
+                  <div className="flex items-center justify-between p-5 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-700 flex-shrink-0">
+                    <h2 className="text-lg font-semibold text-white truncate">{t('filters.heading')}</h2>
+                    <div className="flex items-center gap-2 flex-shrink-0">
                       {hasActiveFilters() && (
                         <button
                           onClick={applyFilters}
-                          className="bg-white text-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors shadow-sm"
+                          className="bg-white text-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors shadow-sm whitespace-nowrap"
                         >
                           {t('filters.applyMobile')}
                         </button>
                       )}
                       <button
                         onClick={() => setIsMenuOpen(false)}
-                        className="text-white hover:bg-white/20 p-2 rounded-lg transition-colors"
+                        className="text-white hover:bg-white/20 p-2 rounded-lg transition-colors flex-shrink-0"
                       >
                         <X className="w-5 h-5" />
                       </button>
                     </div>
                   </div>
 
-                  <div className="flex-1 overflow-y-auto p-5">
-                    <div className="space-y-6">
-                      <div className="w-full">
+                  <div className="flex-1 overflow-y-auto overflow-x-hidden p-5">
+                    <div className="space-y-6 overflow-x-hidden max-w-full">
+                      <div className="w-full min-w-0">
                         <PriceFilter
                           filters={filters}
                           onPriceChange={handlePriceChange}
@@ -544,7 +607,7 @@ const FiltersSection = ({ initialFilters }) => {
                           onMaxSliderChange={handleMaxSliderChange}
                         />
                       </div>
-                      <div className="w-full">
+                      <div className="w-full min-w-0">
                         <FilterDropdown
                           type="categories"
                           label={t('filters.category.label')}
@@ -565,7 +628,7 @@ const FiltersSection = ({ initialFilters }) => {
                           isMobile={true}
                         />
                       </div>
-                      <div className="w-full">
+                      <div className="w-full min-w-0">
                         <FilterDropdown
                           type="authors"
                           label={t('filters.author.label')}
@@ -586,7 +649,7 @@ const FiltersSection = ({ initialFilters }) => {
                           isMobile={true}
                         />
                       </div>
-                      <div className="w-full">
+                      <div className="w-full min-w-0">
                         <FilterDropdown
                           type="titles"
                           label={t('filters.bookTitle.label')}
@@ -607,7 +670,7 @@ const FiltersSection = ({ initialFilters }) => {
                           isMobile={true}
                         />
                       </div>
-                      <div className="w-full">
+                      <div className="w-full min-w-0">
                         <FilterDropdown
                           type="languages"
                           label={t('filters.language.label')}
@@ -658,14 +721,20 @@ const FiltersSection = ({ initialFilters }) => {
           <span className="text-base font-semibold text-gray-800">{t('filters.heading')}</span>
         </div>
 
-        {hasActiveFilters() && (
-          <button
-            onClick={applyFilters}
-            className="bg-blue-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg"
-          >
-            {t('filters.apply')}
-          </button>
-        )}
+        <AnimatePresence>
+          {hasActiveFilters() && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8, x: 20 }}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              exit={{ opacity: 0, scale: 0.8, x: 20 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              onClick={applyFilters}
+              className="bg-blue-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg"
+            >
+              {t('filters.apply')}
+            </motion.button>
+          )}
+        </AnimatePresence>
       </div>
 
       <div className="flex items-start gap-[clamp(0.75rem,2vw,1.25rem)] flex-wrap">
@@ -764,16 +833,28 @@ const FiltersSection = ({ initialFilters }) => {
         </div>
       </div>
 
-      {hasActiveFilters() && (
-        <div className="mt-6 pt-6 border-t border-gray-200">
-          <button
-            onClick={resetFilters}
-            className="bg-red-500 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-red-600 transition-colors shadow-md hover:shadow-lg"
+      <AnimatePresence>
+        {hasActiveFilters() && (
+          <motion.div
+            initial={{ opacity: 0, height: 0, marginTop: 0 }}
+            animate={{ opacity: 1, height: "auto", marginTop: "1.5rem" }}
+            exit={{ opacity: 0, height: 0, marginTop: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="pt-6 border-t border-gray-200 overflow-hidden"
           >
-            {t('filters.reset')}
-          </button>
-        </div>
-      )}
+            <motion.button
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2, delay: 0.1 }}
+              onClick={resetFilters}
+              className="bg-red-500 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-red-600 transition-colors shadow-md hover:shadow-lg"
+            >
+              {t('filters.reset')}
+            </motion.button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

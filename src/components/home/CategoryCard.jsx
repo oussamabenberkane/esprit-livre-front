@@ -20,7 +20,7 @@ const CategoryCard = ({
                 className="absolute inset-0 backdrop-blur-[0.5px] backdrop-filter flex items-center justify-center"
                 style={{ backgroundColor: 'rgba(51, 47, 76, 0.15)' }}
             >
-                <p className="font-['Poppins'] font-extrabold text-white text-fluid-small text-center leading-[14px] px-1 max-w-full">
+                <p className="font-['Poppins'] font-bold text-white text-fluid-h3 text-center leading-[14px] px-1 max-w-full">
                     {title}
                 </p>
             </div>

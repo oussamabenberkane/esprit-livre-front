@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Minus, Plus, Trash2, ExternalLink, ShoppingBag, ChevronDown, Home, MapPin } from 'lucide-react';
+import { ArrowLeft, Minus, Plus, Trash2, ExternalLink, ShoppingBag, ChevronDown, Home, MapPin, Truck, X, Search } from 'lucide-react';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
+import { useScrollToTop } from '../hooks/useScrollToTop';
+import { getLanguageCode, getFullLanguageName } from '../data/booksData';
 
 
 // Mock cart data
@@ -15,6 +17,7 @@ const initialCartData = [
     author: "Saneh Sangsuk",
     price: 2600,
     quantity: 1,
+    language: "French",
     image: "https://images.unsplash.com/photo-1661936901394-a993c79303c7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxib29rJTIwY292ZXIlMjBmaWN0aW9ufGVufDF8fHx8MTc2MDM0NjMzNnww&ixlib=rb-4.1.0&q=80&w=400"
   },
   {
@@ -23,6 +26,7 @@ const initialCartData = [
     author: "J.R.R Tolkien",
     price: 2100,
     quantity: 1,
+    language: "English",
     image: "https://images.unsplash.com/photo-1620647885779-064b00c4c139?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxib29rJTIwY292ZXIlMjBub3ZlbHxlbnwxfHx8fDE3NjAzNDYzMzd8MA&ixlib=rb-4.1.0&q=80&w=400"
   }
 ];
@@ -63,15 +67,28 @@ function CartItem({ item, onUpdateQuantity, onRemove }) {
       <div className="flex-1 flex flex-col justify-between min-w-0">
         <div>
           <div className="flex flex-row justify-between">
-            <h1 className="font-[550] text-fluid-h3 mb-fluid-small">{item.title}</h1>
+            <div className="flex flex-col gap-1">
+              <h1 className="font-[550] text-fluid-h3 mb-fluid-small">{item.title}</h1>
+            </div>
             {/* Price */}
-            <div className="text-right ml-2">
-              <span className="text-black text-fluid-h3 font-bold">{item.price * item.quantity}</span>
-              <span className="text-fluid-medium font-semibold text-gray-600 ml-1">DZD</span>
+            <div className="text-right ml-2 flex flex-col items-end gap-1">
+              <div>
+                <span className="text-black text-fluid-h3 font-bold">{item.price * item.quantity}</span>
+                <span className="text-fluid-medium font-semibold text-gray-600 ml-1">DZD</span>
+              </div>
+              {item.language && (
+                <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
+                  <span className="hidden sm:inline">{getFullLanguageName(item.language)}</span>
+                  <span className="inline sm:hidden">{getLanguageCode(item.language)}</span>
+                </span>
+              )}
             </div>
           </div>
           <h1 className="text-[#717192] text-fluid-medium font-[400] md:text-fluid-small mb-fluid-xs">{item.author}</h1>
-          <button className="flex items-center gap-1 text-[#626e82] text-xs hover:text-blue-600 transition-colors">
+          <button
+            onClick={() => window.location.href = `/book/${item.id}`}
+            className="flex items-center gap-1 text-[#626e82] text-xs hover:text-blue-600 transition-colors"
+          >
             <span><h1 className="text-fluid-medium">{t('cart.bookDetails')}</h1></span>
             <ExternalLink className="w-4 h-3" />
           </button>
@@ -198,11 +215,73 @@ function CheckoutForm({ onSubmit }) {
 
   const [validationErrors, setValidationErrors] = useState({
     email: '',
-    phone: ''
+    phone: '',
+    wilaya: '',
+    city: ''
   });
 
   const [availableCities, setAvailableCities] = useState([]);
   const [shippingPreference, setShippingPreference] = useState("home"); // "home" or "pickup"
+  const [homeAddress, setHomeAddress] = useState("");
+  const [pickupProvider, setPickupProvider] = useState("");
+
+  // Dropdown states
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const [wilayaSearch, setWilayaSearch] = useState("");
+  const [citySearch, setCitySearch] = useState("");
+  const dropdownRefs = useRef({});
+  const wilayaInputRef = useRef(null);
+  const cityInputRef = useRef(null);
+
+  const pickupProviders = ["Yalidine", "ZRexpress"];
+
+  // Click outside to close dropdowns
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!openDropdown) return;
+      const activeDropdownRef = dropdownRefs.current[openDropdown];
+      if (activeDropdownRef && !activeDropdownRef.contains(e.target)) {
+        setOpenDropdown(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [openDropdown]);
+
+  // Filter functions
+  const getFilteredWilayas = () => {
+    return Object.keys(wilayaData).filter(wilaya =>
+      wilaya.toLowerCase().includes(wilayaSearch.toLowerCase())
+    );
+  };
+
+  const getFilteredCities = () => {
+    return availableCities.filter(city =>
+      city.toLowerCase().includes(citySearch.toLowerCase())
+    );
+  };
+
+  const handleWilayaSelect = (wilaya) => {
+    setFormData({ ...formData, wilaya, city: '' });
+    setAvailableCities(wilayaData[wilaya] || []);
+    setWilayaSearch("");
+    setOpenDropdown(null);
+    // Clear wilaya validation error when selected
+    setValidationErrors(prev => ({ ...prev, wilaya: '' }));
+  };
+
+  const handleCitySelect = (city) => {
+    setFormData({ ...formData, city });
+    setCitySearch("");
+    setOpenDropdown(null);
+    // Clear city validation error when selected
+    setValidationErrors(prev => ({ ...prev, city: '' }));
+  };
+
+  const handleProviderSelect = (provider) => {
+    setPickupProvider(provider);
+    setOpenDropdown(null);
+  };
 
   // Email validation
   const validateEmail = (email) => {
@@ -220,7 +299,8 @@ function CheckoutForm({ onSubmit }) {
     const email = e.target.value;
     setFormData({ ...formData, email });
 
-    if (email && !validateEmail(email)) {
+    // Only validate if email is not empty
+    if (email.trim() !== '' && !validateEmail(email)) {
       setValidationErrors(prev => ({ ...prev, email: t('cart.emailError') }));
     } else {
       setValidationErrors(prev => ({ ...prev, email: '' }));
@@ -243,32 +323,44 @@ function CheckoutForm({ onSubmit }) {
     }
   };
 
-  const handleWilayaChange = (e) => {
-    const selectedWilaya = e.target.value;
-    setFormData({ ...formData, wilaya: selectedWilaya, city: '' });
-    setAvailableCities(wilayaData[selectedWilaya] || []);
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
     // Final validation before submit
-    const isEmailValid = validateEmail(formData.email);
+    // Email is optional - only validate if provided
+    const isEmailValid = formData.email.trim() === '' || validateEmail(formData.email);
     const isPhoneValid = validatePhone(formData.phone);
+    const isWilayaValid = formData.wilaya.trim() !== '';
+    const isCityValid = formData.city.trim() !== '';
 
-    if (!isEmailValid) {
-      setValidationErrors(prev => ({ ...prev, email: t('cart.emailError') }));
+    // Reset validation errors
+    let errors = {
+      email: '',
+      phone: '',
+      wilaya: '',
+      city: ''
+    };
+
+    if (formData.email.trim() !== '' && !isEmailValid) {
+      errors.email = t('cart.emailError');
     }
 
     if (!isPhoneValid) {
-      setValidationErrors(prev => ({
-        ...prev,
-        phone: t('cart.phoneError')
-      }));
+      errors.phone = t('cart.phoneError');
     }
 
+    if (!isWilayaValid) {
+      errors.wilaya = 'Please enter this field';
+    }
+
+    if (!isCityValid) {
+      errors.city = 'Please enter this field';
+    }
+
+    setValidationErrors(errors);
+
     // Only submit if all validations pass
-    if (isEmailValid && isPhoneValid) {
+    if (isEmailValid && isPhoneValid && isWilayaValid && isCityValid) {
       onSubmit(formData);
     }
   };
@@ -280,7 +372,7 @@ function CheckoutForm({ onSubmit }) {
       transition={{ delay: 0.3 }}
       className="bg-white border border-neutral-200 rounded-lg p-4 md:p-6 mt-8"
     >
-      <h2 className="text-black text-fluid-h3 font-[550] text-center mt-fluid-md mb-6">
+      <h2 className="text-black text-fluid-h2 font-[550] text-center mt-fluid-md mb-6">
         {t('cart.formTitle')}
       </h2>
 
@@ -295,31 +387,9 @@ function CheckoutForm({ onSubmit }) {
             required
             value={formData.fullName}
             onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-            className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+            className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-fluid-small"
             placeholder={t('cart.fullNamePlaceholder')}
           />
-        </div>
-
-        {/* Email */}
-        <div>
-          <label className="block text-[#353535] text-fluid-medium font-[500] mb-2">
-            {t('cart.email')}
-          </label>
-          <input
-            type="email"
-            required
-            value={formData.email}
-            onChange={handleEmailChange}
-            className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition-all ${
-              validationErrors.email
-                ? 'border-red-500 focus:ring-red-500'
-                : 'border-neutral-200 focus:ring-emerald-500'
-            }`}
-            placeholder={t('cart.emailPlaceholder')}
-          />
-          {validationErrors.email && (
-            <p className="mt-1 text-sm text-red-500">{validationErrors.email}</p>
-          )}
         </div>
 
         {/* Phone */}
@@ -332,18 +402,39 @@ function CheckoutForm({ onSubmit }) {
             required
             value={formData.phone}
             onChange={handlePhoneChange}
-            className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition-all ${
-              validationErrors.phone
+            className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition-all text-fluid-small ${validationErrors.phone
                 ? 'border-red-500 focus:ring-red-500'
                 : 'border-neutral-200 focus:ring-emerald-500'
-            }`}
+              }`}
             placeholder={t('cart.phonePlaceholder')}
             maxLength="14"
           />
           {validationErrors.phone && (
-            <p className="mt-1 text-sm text-red-500">{validationErrors.phone}</p>
+            <p className="mt-1 text-fluid-xs text-red-500">{validationErrors.phone}</p>
           )}
         </div>
+
+        {/* Email */}
+        <div>
+          <label className="block text-[#353535] text-fluid-medium font-[500] mb-2">
+            {t('cart.email')} <span className="text-gray-400 text-xs">({t('cart.optional') || 'Optionnel'})</span>
+          </label>
+          <input
+            type="email"
+            value={formData.email}
+            onChange={handleEmailChange}
+            className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition-all text-fluid-small ${validationErrors.email
+                ? 'border-red-500 focus:ring-red-500'
+                : 'border-neutral-200 focus:ring-emerald-500'
+              }`}
+            placeholder={t('cart.emailPlaceholder')}
+          />
+          {validationErrors.email && (
+            <p className="mt-1 text-fluid-xs text-red-500">{validationErrors.email}</p>
+          )}
+        </div>
+
+
 
         {/* Wilaya */}
         <div>
@@ -351,24 +442,100 @@ function CheckoutForm({ onSubmit }) {
             {t('cart.wilaya')}
           </label>
 
-          <div className="relative">
-            <select
-              required
-              value={formData.wilaya}
-              onChange={handleWilayaChange}
-              className="w-full px-4 py-2.5 pr-10 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all bg-white appearance-none"
+          <div className="relative" ref={el => dropdownRefs.current['wilaya'] = el}>
+            <div
+              className={`flex items-center bg-white rounded-lg border-2 transition-all duration-200 ${
+                validationErrors.wilaya
+                  ? 'border-red-500'
+                  : openDropdown === 'wilaya' ? 'border-emerald-500 shadow-md' : 'border-neutral-200 hover:border-neutral-300'
+                }`}
             >
-              <option value="">{t('cart.wilayaPlaceholder')}</option>
-              {Object.keys(wilayaData).map((wilaya) => (
-                <option key={wilaya} value={wilaya}>
-                  {wilaya}
-                </option>
-              ))}
-            </select>
+              <div
+                className="flex items-center flex-1 min-w-0 h-11 px-2.5 sm:px-3 cursor-text"
+                onClick={() => {
+                  if (wilayaInputRef.current) {
+                    wilayaInputRef.current.focus();
+                  }
+                  if (openDropdown !== 'wilaya') {
+                    setOpenDropdown('wilaya');
+                  }
+                }}
+              >
+                <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 mr-1.5 sm:mr-2 flex-shrink-0" />
+                <input
+                  ref={wilayaInputRef}
+                  type="text"
+                  value={wilayaSearch}
+                  onChange={(e) => setWilayaSearch(e.target.value)}
+                  onFocus={() => {
+                    setOpenDropdown('wilaya');
+                  }}
+                  placeholder={formData.wilaya || t('cart.wilayaPlaceholder')}
+                  className={`flex-1 min-w-0 bg-transparent border-0 outline-none text-fluid-small cursor-text ${formData.wilaya ? 'text-gray-700 placeholder-gray-700 font-medium' : 'text-gray-400 placeholder-gray-400'
+                    }`}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setOpenDropdown(openDropdown === 'wilaya' ? null : 'wilaya');
+                }}
+                className="h-11 px-2 sm:px-3 hover:bg-gray-100 rounded-r-lg transition-colors flex items-center justify-center flex-shrink-0"
+              >
+                <ChevronDown
+                  className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-500 transform transition-transform duration-200 ${openDropdown === 'wilaya' ? 'rotate-180' : ''
+                    }`}
+                />
+              </button>
+            </div>
 
-            {/* Custom dropdown arrow */}
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+            <AnimatePresence>
+              {openDropdown === 'wilaya' && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10, height: 0 }}
+                  animate={{ opacity: 1, y: 0, height: 'auto' }}
+                  exit={{ opacity: 0, y: -10, height: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute top-full left-0 right-0 z-50 mt-2 overflow-hidden"
+                >
+                  <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                    <div className="flex items-center justify-between px-3 sm:px-4 py-2 bg-gray-50 border-b border-gray-200">
+                      <span className="text-fluid-xs font-medium text-gray-600">
+                        {getFilteredWilayas().length} {getFilteredWilayas().length === 1 ? 'résultat' : 'résultats'}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setOpenDropdown(null)}
+                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <div className="max-h-52 overflow-y-auto">
+                      {getFilteredWilayas().map((wilaya) => (
+                        <button
+                          type="button"
+                          key={wilaya}
+                          onClick={() => handleWilayaSelect(wilaya)}
+                          className={`w-full text-left px-3 sm:px-4 py-2.5 sm:py-3 text-fluid-small hover:bg-emerald-50 transition-colors flex items-center border-b border-gray-100 last:border-b-0 ${formData.wilaya === wilaya ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700'
+                            }`}
+                        >
+                          <div className={`w-3 h-3 border-2 rounded-full mr-2 sm:mr-3 flex-shrink-0 ${formData.wilaya === wilaya ? 'border-emerald-500 bg-emerald-500' : 'border-gray-300'
+                            }`}></div>
+                          <span className="font-medium truncate">{wilaya}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
+          {validationErrors.wilaya && (
+            <p className="mt-1 text-fluid-xs text-red-500">{validationErrors.wilaya}</p>
+          )}
         </div>
 
         {/* City/Commune */}
@@ -377,23 +544,114 @@ function CheckoutForm({ onSubmit }) {
             {t('cart.city')}
           </label>
 
-          <div className="relative">
-            <select
-              required
-              value={formData.city}
-              onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-              disabled={!formData.wilaya}
-              className="w-full px-4 py-2.5 pr-10 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all bg-white disabled:bg-gray-100 disabled:cursor-not-allowed appearance-none"
+          <div className="relative" ref={el => dropdownRefs.current['city'] = el}>
+            <div
+              className={`flex items-center bg-white rounded-lg border-2 transition-all duration-200 ${
+                !formData.wilaya ? 'bg-gray-100 cursor-not-allowed' :
+                validationErrors.city ? 'border-red-500' :
+                openDropdown === 'city' ? 'border-emerald-500 shadow-md' : 'border-neutral-200 hover:border-neutral-300'
+                }`}
             >
-              <option value="">{t('cart.cityPlaceholder')}</option>
-              {availableCities.map((city) => (
-                <option key={city} value={city}>
-                  {city}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+              <div
+                className={`flex items-center flex-1 min-w-0 h-11 px-2.5 sm:px-3 ${formData.wilaya ? 'cursor-text' : 'cursor-not-allowed'}`}
+                onClick={() => {
+                  if (!formData.wilaya) return;
+                  if (cityInputRef.current) {
+                    cityInputRef.current.focus();
+                  }
+                  if (openDropdown !== 'city') {
+                    setOpenDropdown('city');
+                  }
+                }}
+              >
+                <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 mr-1.5 sm:mr-2 flex-shrink-0" />
+                <input
+                  ref={cityInputRef}
+                  type="text"
+                  value={citySearch}
+                  onChange={(e) => setCitySearch(e.target.value)}
+                  onFocus={() => {
+                    if (formData.wilaya) {
+                      setOpenDropdown('city');
+                    }
+                  }}
+                  disabled={!formData.wilaya}
+                  placeholder={formData.city || t('cart.cityPlaceholder')}
+                  className={`flex-1 min-w-0 bg-transparent border-0 outline-none text-fluid-small cursor-text disabled:cursor-not-allowed ${formData.city ? 'text-gray-700 placeholder-gray-700 font-medium' : 'text-gray-400 placeholder-gray-400'
+                    }`}
+                />
+              </div>
+              <button
+                type="button"
+                disabled={!formData.wilaya}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (formData.wilaya) {
+                    setOpenDropdown(openDropdown === 'city' ? null : 'city');
+                  }
+                }}
+                className={`h-11 px-2 sm:px-3 rounded-r-lg transition-colors flex items-center justify-center flex-shrink-0 ${formData.wilaya ? 'hover:bg-gray-100' : 'cursor-not-allowed'
+                  }`}
+              >
+                <ChevronDown
+                  className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-500 transform transition-transform duration-200 ${openDropdown === 'city' ? 'rotate-180' : ''
+                    }`}
+                />
+              </button>
+            </div>
+
+            <AnimatePresence>
+              {openDropdown === 'city' && formData.wilaya && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10, height: 0 }}
+                  animate={{ opacity: 1, y: 0, height: 'auto' }}
+                  exit={{ opacity: 0, y: -10, height: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute top-full left-0 right-0 z-50 mt-2 overflow-hidden"
+                >
+                  <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                    <div className="flex items-center justify-between px-3 sm:px-4 py-2 bg-gray-50 border-b border-gray-200">
+                      <span className="text-fluid-xs font-medium text-gray-600">
+                        {getFilteredCities().length} {getFilteredCities().length === 1 ? 'résultat' : 'résultats'}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setOpenDropdown(null)}
+                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <div className="max-h-52 overflow-y-auto">
+                      {getFilteredCities().length > 0 ? (
+                        getFilteredCities().map((city) => (
+                          <button
+                            type="button"
+                            key={city}
+                            onClick={() => handleCitySelect(city)}
+                            className={`w-full text-left px-3 sm:px-4 py-2.5 sm:py-3 text-fluid-small hover:bg-emerald-50 transition-colors flex items-center border-b border-gray-100 last:border-b-0 ${formData.city === city ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700'
+                              }`}
+                          >
+                            <div className={`w-3 h-3 border-2 rounded-full mr-2 sm:mr-3 flex-shrink-0 ${formData.city === city ? 'border-emerald-500 bg-emerald-500' : 'border-gray-300'
+                              }`}></div>
+                            <span className="font-medium truncate">{city}</span>
+                          </button>
+                        ))
+                      ) : (
+                        <div className="px-3 sm:px-4 py-6 text-fluid-small text-gray-500 text-center">
+                          Aucun résultat
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
+          {validationErrors.city && (
+            <p className="mt-1 text-fluid-xs text-red-500">{validationErrors.city}</p>
+          )}
         </div>
 
         {/* Shipping Preference */}
@@ -404,88 +662,195 @@ function CheckoutForm({ onSubmit }) {
 
           <div className="space-y-3">
             {/* Home Delivery Option */}
-            <button
-              type="button"
-              onClick={() => setShippingPreference("home")}
-              className={`w-full p-3 md:p-4 rounded-lg border-2 transition-all ${
-                shippingPreference === "home"
-                  ? "border-emerald-500 bg-emerald-50"
-                  : "border-neutral-200 bg-gray-50 hover:border-neutral-300"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                  shippingPreference === "home" ? "bg-emerald-100" : "bg-gray-100"
-                }`}>
-                  <Home className={`w-5 h-5 ${
-                    shippingPreference === "home" ? "text-emerald-600" : "text-gray-600"
-                  }`} />
+            <div>
+              <button
+                type="button"
+                onClick={() => setShippingPreference("home")}
+                className={`w-full p-3 md:p-4 rounded-lg border-2 transition-all ${shippingPreference === "home"
+                    ? "border-emerald-500 bg-emerald-50"
+                    : "border-neutral-200 bg-gray-50 hover:border-neutral-300"
+                  }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${shippingPreference === "home" ? "bg-emerald-100" : "bg-gray-100"
+                    }`}>
+                    <Home className={`w-5 h-5 ${shippingPreference === "home" ? "text-emerald-600" : "text-gray-600"
+                      }`} />
+                  </div>
+                  <div className="text-left flex-1">
+                    <h3 className={`font-medium text-fluid-small ${shippingPreference === "home" ? "text-emerald-900" : "text-gray-800"
+                      }`}>
+                      {t('cart.homeDelivery')}
+                    </h3>
+                    <p className={`text-fluid-xs ${shippingPreference === "home" ? "text-emerald-600" : "text-gray-500"
+                      }`}>
+                      {t('cart.homeDeliveryDesc')}
+                    </p>
+                  </div>
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${shippingPreference === "home"
+                      ? "border-emerald-500 bg-emerald-500"
+                      : "border-gray-300"
+                    }`}>
+                    {shippingPreference === "home" && (
+                      <div className="w-2 h-2 rounded-full bg-white"></div>
+                    )}
+                  </div>
                 </div>
-                <div className="text-left flex-1">
-                  <h3 className={`font-medium text-sm md:text-base ${
-                    shippingPreference === "home" ? "text-emerald-900" : "text-gray-800"
-                  }`}>
-                    {t('cart.homeDelivery')}
-                  </h3>
-                  <p className={`text-xs md:text-sm ${
-                    shippingPreference === "home" ? "text-emerald-600" : "text-gray-500"
-                  }`}>
-                    {t('cart.homeDeliveryDesc')}
-                  </p>
-                </div>
-                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                  shippingPreference === "home"
-                    ? "border-emerald-500 bg-emerald-500"
-                    : "border-gray-300"
-                }`}>
-                  {shippingPreference === "home" && (
-                    <div className="w-2 h-2 rounded-full bg-white"></div>
-                  )}
-                </div>
-              </div>
-            </button>
+              </button>
+
+              {/* Home Address Input - Appears when Home Delivery is selected */}
+              <AnimatePresence>
+                {shippingPreference === "home" && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0, y: -10 }}
+                    animate={{ opacity: 1, height: "auto", y: 0 }}
+                    exit={{ opacity: 0, height: 0, y: -10 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="overflow-hidden"
+                  >
+                    <div className="mt-3 px-3 md:px-4">
+                      <div className="relative">
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500 pointer-events-none">
+                          <Home className="w-4 h-4" />
+                        </div>
+                        <input
+                          type="text"
+                          value={homeAddress}
+                          onChange={(e) => setHomeAddress(e.target.value)}
+                          placeholder={t('cart.homeAddressPlaceholder')}
+                          className="w-full pl-10 pr-4 py-2.5 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white text-fluid-small transition-all placeholder:text-gray-400"
+                        />
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
             {/* Pickup Point Option */}
-            <button
-              type="button"
-              onClick={() => setShippingPreference("pickup")}
-              className={`w-full p-3 md:p-4 rounded-lg border-2 transition-all ${
-                shippingPreference === "pickup"
-                  ? "border-emerald-500 bg-emerald-50"
-                  : "border-neutral-200 bg-gray-50 hover:border-neutral-300"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                  shippingPreference === "pickup" ? "bg-emerald-100" : "bg-gray-100"
-                }`}>
-                  <MapPin className={`w-5 h-5 ${
-                    shippingPreference === "pickup" ? "text-emerald-600" : "text-gray-600"
-                  }`} />
+            <div>
+              <button
+                type="button"
+                onClick={() => setShippingPreference("pickup")}
+                className={`w-full p-3 md:p-4 rounded-lg border-2 transition-all ${shippingPreference === "pickup"
+                    ? "border-emerald-500 bg-emerald-50"
+                    : "border-neutral-200 bg-gray-50 hover:border-neutral-300"
+                  }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${shippingPreference === "pickup" ? "bg-emerald-100" : "bg-gray-100"
+                    }`}>
+                    <MapPin className={`w-5 h-5 ${shippingPreference === "pickup" ? "text-emerald-600" : "text-gray-600"
+                      }`} />
+                  </div>
+                  <div className="text-left flex-1">
+                    <h3 className={`font-medium text-fluid-small ${shippingPreference === "pickup" ? "text-emerald-900" : "text-gray-800"
+                      }`}>
+                      {t('cart.pickupPoint')}
+                    </h3>
+                    <p className={`text-fluid-xs ${shippingPreference === "pickup" ? "text-emerald-600" : "text-gray-500"
+                      }`}>
+                      {t('cart.pickupPointDesc')}
+                    </p>
+                  </div>
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${shippingPreference === "pickup"
+                      ? "border-emerald-500 bg-emerald-500"
+                      : "border-gray-300"
+                    }`}>
+                    {shippingPreference === "pickup" && (
+                      <div className="w-2 h-2 rounded-full bg-white"></div>
+                    )}
+                  </div>
                 </div>
-                <div className="text-left flex-1">
-                  <h3 className={`font-medium text-sm md:text-base ${
-                    shippingPreference === "pickup" ? "text-emerald-900" : "text-gray-800"
-                  }`}>
-                    {t('cart.pickupPoint')}
-                  </h3>
-                  <p className={`text-xs md:text-sm ${
-                    shippingPreference === "pickup" ? "text-emerald-600" : "text-gray-500"
-                  }`}>
-                    {t('cart.pickupPointDesc')}
-                  </p>
-                </div>
-                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                  shippingPreference === "pickup"
-                    ? "border-emerald-500 bg-emerald-500"
-                    : "border-gray-300"
-                }`}>
-                  {shippingPreference === "pickup" && (
-                    <div className="w-2 h-2 rounded-full bg-white"></div>
-                  )}
-                </div>
-              </div>
-            </button>
+              </button>
+
+              {/* Pickup Provider Select - Appears when Pickup Point is selected */}
+              <AnimatePresence>
+                {shippingPreference === "pickup" && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                  >
+                    <div className="mt-3 px-3 md:px-4">
+                      <div className="relative" ref={el => dropdownRefs.current['provider'] = el}>
+                        <div className={`flex items-center bg-white rounded-lg border-2 transition-all duration-200 ${openDropdown === 'provider' ? 'border-emerald-500 shadow-md' : 'border-neutral-200 hover:border-emerald-400'
+                          }`}>
+                          <div
+                            className="flex items-center flex-1 min-w-0 h-11 px-2.5 sm:px-3 cursor-pointer"
+                            onClick={() => {
+                              setOpenDropdown(openDropdown === 'provider' ? null : 'provider');
+                            }}
+                          >
+                            <Truck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-500 mr-1.5 sm:mr-2 flex-shrink-0" />
+                            <span className={`text-fluid-small truncate ${pickupProvider ? 'text-gray-700 font-medium' : 'text-gray-400'}`}>
+                              {pickupProvider || t('cart.selectProvider')}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setOpenDropdown(openDropdown === 'provider' ? null : 'provider');
+                            }}
+                            className="h-11 px-2 sm:px-3 hover:bg-gray-100 rounded-r-lg transition-colors flex items-center justify-center flex-shrink-0"
+                          >
+                            <ChevronDown
+                              className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-500 transform transition-transform duration-200 ${openDropdown === 'provider' ? 'rotate-180' : ''
+                                }`}
+                            />
+                          </button>
+                        </div>
+
+                        <AnimatePresence>
+                          {openDropdown === 'provider' && (
+                            <motion.div
+                              initial={{ opacity: 0, y: -10, height: 0 }}
+                              animate={{ opacity: 1, y: 0, height: 'auto' }}
+                              exit={{ opacity: 0, y: -10, height: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="absolute top-full left-0 right-0 z-50 mt-2 overflow-hidden"
+                            >
+                              <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                                <div className="flex items-center justify-between px-3 sm:px-4 py-2 bg-gray-50 border-b border-gray-200">
+                                  <span className="text-fluid-xs font-medium text-gray-600">
+                                    {pickupProviders.length} {pickupProviders.length === 1 ? 'option' : 'options'}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() => setOpenDropdown(null)}
+                                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </button>
+                                </div>
+                                <div className="max-h-52 overflow-y-auto">
+                                  {pickupProviders.map((provider) => (
+                                    <button
+                                      type="button"
+                                      key={provider}
+                                      onClick={() => handleProviderSelect(provider)}
+                                      className={`w-full text-left px-3 sm:px-4 py-2.5 sm:py-3 text-fluid-small hover:bg-emerald-50 transition-colors flex items-center border-b border-gray-100 last:border-b-0 ${pickupProvider === provider ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700'
+                                        }`}
+                                    >
+                                      <div className={`w-3 h-3 border-2 rounded-full mr-2 sm:mr-3 flex-shrink-0 ${pickupProvider === provider ? 'border-emerald-500 bg-emerald-500' : 'border-gray-300'
+                                        }`}></div>
+                                      <span className="font-medium truncate">{provider}</span>
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
 
@@ -509,6 +874,9 @@ export default function CartCheckoutPage() {
   const [cartItems, setCartItems] = useState(initialCartData);
   const [showCheckout, setShowCheckout] = useState(false);
   const navigate = useNavigate();
+
+  // Scroll to top when page loads
+  useScrollToTop();
 
   const shippingFee = 700;
 
@@ -550,7 +918,8 @@ export default function CartCheckoutPage() {
           <Navbar cartCount={cartItems.length} />
         </section>
 
-        <div className="h-20"></div>
+        {/* Responsive spacing for navbar - taller on mobile due to two-line layout */}
+        <div className="h-28 md:h-20"></div>
 
         <div className="max-w-4xl mx-auto px-4 py-6 md:py-8">
           {/* Back to Shopping Link */}
@@ -564,53 +933,53 @@ export default function CartCheckoutPage() {
             <span><h1 className="text-fluid-h2 font-[500] ">{t('cart.continueShop')}</h1></span>
           </motion.button>
 
-        {/* Cart Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white border border-neutral-200 rounded-lg p-4 md:p-6 shadow-sm"
-        >
-          {/* Cart Header */}
-          <div className="flex items-center gap-2 mb-6">
-            <ShoppingBag className="w-5 h-5 md:w-6 md:h-6 text-black" />
-            <h1 className="text-black font-[500]">
-              {cartItems.length === 1 ? t('cart.title', { count: cartItems.length }) : t('cart.title_plural', { count: cartItems.length })}
-            </h1>
-          </div>
+          {/* Cart Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white border border-neutral-200 rounded-lg p-4 md:p-6 shadow-sm"
+          >
+            {/* Cart Header */}
+            <div className="flex items-center gap-2 mb-6">
+              <ShoppingBag className="w-5 h-5 md:w-6 md:h-6 text-black" />
+              <h1 className="text-black font-[500]">
+                {cartItems.length === 1 ? t('cart.title', { count: cartItems.length }) : t('cart.title_plural', { count: cartItems.length })}
+              </h1>
+            </div>
 
-          {/* Cart Items */}
-          <AnimatePresence mode="popLayout">
-            {cartItems.length > 0 ? (
-              <div className="space-y-2">
-                {cartItems.map((item) => (
-                  <CartItem
-                    key={item.id}
-                    item={item}
-                    onUpdateQuantity={handleUpdateQuantity}
-                    onRemove={handleRemoveItem}
-                  />
-                ))}
-              </div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center py-12 text-gray-500"
-              >
-                {t('cart.empty')}
-              </motion.div>
+            {/* Cart Items */}
+            <AnimatePresence mode="popLayout">
+              {cartItems.length > 0 ? (
+                <div className="space-y-2">
+                  {cartItems.map((item) => (
+                    <CartItem
+                      key={item.id}
+                      item={item}
+                      onUpdateQuantity={handleUpdateQuantity}
+                      onRemove={handleRemoveItem}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-center py-12 text-gray-500"
+                >
+                  {t('cart.empty')}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Cart Summary */}
+            {cartItems.length > 0 && (
+              <CartSummary
+                subtotal={subtotal}
+                shipping={shippingFee}
+                onProceed={handleProceedToCheckout}
+              />
             )}
-          </AnimatePresence>
-
-          {/* Cart Summary */}
-          {cartItems.length > 0 && (
-            <CartSummary
-              subtotal={subtotal}
-              shipping={shippingFee}
-              onProceed={handleProceedToCheckout}
-            />
-          )}
-        </motion.div>
+          </motion.div>
 
           {/* Checkout Form Section */}
           <div id="checkout-section">

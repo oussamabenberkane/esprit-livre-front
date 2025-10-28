@@ -1,10 +1,41 @@
 import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import GoogleAuthButton from '../components/buttons/GoogleAuthButton';
+import { loginWithPassword } from '../services/authService';
 
 export default function SignIn({ onSwitchToSignUp }) {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Temporary password grant authentication
+  // TODO: Replace with Google OAuth later
+  const handleTemporarySignIn = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Hardcoded credentials for testing (as requested)
+      await loginWithPassword('admin', 'admin');
+
+      console.log('Authentication successful!');
+
+      // Navigate to home page after successful login
+      navigate('/');
+    } catch (err) {
+      console.error('Sign in error:', err);
+      setError(err.message || 'Authentication failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleGoogleSignIn = () => {
     console.log('Google Sign In clicked - Backend integration needed');
     // This is where your backend partner will integrate the Google OAuth
+    // For now, use temporary password grant
+    handleTemporarySignIn();
   };
 
   return (
@@ -54,6 +85,17 @@ export default function SignIn({ onSwitchToSignUp }) {
             <p className="text-gray-500 text-sm">Welcome back! Please sign in to continue</p>
           </motion.div>
 
+          {/* Error Message */}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg"
+            >
+              <p className="text-red-600 text-sm text-center">{error}</p>
+            </motion.div>
+          )}
+
           {/* Google Sign In Button */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -61,9 +103,10 @@ export default function SignIn({ onSwitchToSignUp }) {
             transition={{ delay: 0.3, duration: 0.4 }}
             className="mb-6"
           >
-            <GoogleAuthButton 
-              text="Continue with Google" 
+            <GoogleAuthButton
+              text={loading ? "Signing in..." : "Continue with Google"}
               onClick={handleGoogleSignIn}
+              disabled={loading}
             />
           </motion.div>
 

@@ -18,7 +18,7 @@ function App() {
       <div className="min-h-screen min-w-screen bg-gray-50">
         <Routes>
           {/* Home page as entry point - Accessible to both guests and authenticated users */}
-          <Route path="/" element={<PacksPromotionnels />} />
+          <Route path="/" element={<HomePage />} />
           
 
            {/* auth page */}

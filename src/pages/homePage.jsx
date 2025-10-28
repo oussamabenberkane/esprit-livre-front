@@ -13,6 +13,7 @@ import Footer from '../components/common/Footer';
 import CartConfirmationPopup from '../components/common/cartConfirmationPopup';
 import FloatingCartBadge from '../components/common/FloatingCartBadge';
 import { BOOKS_DATA } from '../data/booksData';
+import { fetchCategories } from '../services/tagsService';
 
 
 
@@ -43,6 +44,8 @@ const HomePage = () => {
 
     // Add state for categories section
     const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
+    const [categories, setCategories] = useState([]);
+    const [categoriesLoading, setCategoriesLoading] = useState(true);
 
     // Add state for books section
     const [currentBookIndex, setCurrentBookIndex] = useState(0);
@@ -294,99 +297,24 @@ const HomePage = () => {
 
 
 
-    // Categories data from API
-    const categories = [
-        {
-            id: 1,
-            nameEn: "Fiction",
-            nameFr: "Fiction",
-            type: "CATEGORY",
-            active: true,
-            colorHex: null,
-            imageUrl: "/assets/categories/thriller.png"
-        },
-        {
-            id: 2,
-            nameEn: "Philosophy",
-            nameFr: "Philosophie",
-            type: "CATEGORY",
-            active: true,
-            colorHex: null,
-            imageUrl: "/assets/categories/dev personel.png"
-        },
-        {
-            id: 3,
-            nameEn: "Classic",
-            nameFr: "Classique",
-            type: "CATEGORY",
-            active: true,
-            colorHex: null,
-            imageUrl: "/assets/categories/histoire.png"
-        },
-        {
-            id: 4,
-            nameEn: "Adventure",
-            nameFr: "Aventure",
-            type: "CATEGORY",
-            active: true,
-            colorHex: null,
-            imageUrl: "/assets/categories/thriller.png"
-        },
-        {
-            id: 5,
-            nameEn: "Romance",
-            nameFr: "Romance",
-            type: "CATEGORY",
-            active: true,
-            colorHex: null,
-            imageUrl: "/assets/categories/romance.png"
-        },
-        {
-            id: 6,
-            nameEn: "Drama",
-            nameFr: "Drame",
-            type: "CATEGORY",
-            active: true,
-            colorHex: null,
-            imageUrl: "/assets/categories/thriller.png"
-        },
-        {
-            id: 7,
-            nameEn: "Science Fiction",
-            nameFr: "Science-Fiction",
-            type: "CATEGORY",
-            active: true,
-            colorHex: null,
-            imageUrl: "/assets/categories/thriller.png"
-        },
-        {
-            id: 8,
-            nameEn: "Historical",
-            nameFr: "Historique",
-            type: "CATEGORY",
-            active: true,
-            colorHex: null,
-            imageUrl: "/assets/categories/histoire.png"
-        },
-        {
-            id: 9,
-            nameEn: "Children's Literature",
-            nameFr: "Littérature Jeunesse",
-            type: "CATEGORY",
-            active: true,
-            colorHex: null,
-            imageUrl: "/assets/categories/enfants.png"
-        },
-        {
-            id: 10,
-            nameEn: "Existentialism",
-            nameFr: "Existentialisme",
-            type: "CATEGORY",
-            active: true,
-            colorHex: null,
-            imageUrl: "/assets/categories/dev personel.png"
-        }
-    ];
+    // Fetch categories from API on component mount
+    useEffect(() => {
+        const loadCategories = async () => {
+            try {
+                setCategoriesLoading(true);
+                const data = await fetchCategories(10);
+                setCategories(data);
+            } catch (error) {
+                console.error('Failed to load categories:', error);
+                // Keep empty array on error
+                setCategories([]);
+            } finally {
+                setCategoriesLoading(false);
+            }
+        };
+
+        loadCategories();
+    }, []);
 
 
     const authors = [
@@ -498,17 +426,30 @@ const HomePage = () => {
                                 ref={categoriesScrollRef}
                                 className="flex pt-fluid-lg pl-fluid-2xl pr-fluid-lg gap-fluid-lg overflow-x-auto pb-4 scrollbar-hide"
                             >
-                                {categories.map((category) => (
-                                    <div
-                                        key={category.id}
-                                        className="flex-shrink-0 snap-start cursor-pointer"
-                                        onClick={() => handleCategoryClick(category.nameFr)}
-                                    >
-                                        <CategoryCard
-                                            title={category.nameFr}
-                                            imageSrc={category.imageUrl} />
+                                {categoriesLoading ? (
+                                    // Loading state
+                                    <div className="flex-1 flex justify-center items-center py-fluid-lg">
+                                        <p className="text-brand-blue">{t('common.loading')}</p>
                                     </div>
-                                ))}
+                                ) : categories.length === 0 ? (
+                                    // Empty state
+                                    <div className="flex-1 flex justify-center items-center py-fluid-lg">
+                                        <p className="text-brand-blue">{t('common.noData')}</p>
+                                    </div>
+                                ) : (
+                                    // Categories list
+                                    categories.map((category) => (
+                                        <div
+                                            key={category.id}
+                                            className="flex-shrink-0 snap-start cursor-pointer"
+                                            onClick={() => handleCategoryClick(category.nameFr || category.nameEn)}
+                                        >
+                                            <CategoryCard
+                                                title={category.nameFr || category.nameEn}
+                                                imageSrc={category.imageUrl} />
+                                        </div>
+                                    ))
+                                )}
                             </div>
                         </div>
 
@@ -520,6 +461,7 @@ const HomePage = () => {
                                     totalDots={categories.length}
                                     currentIndex={currentCategoryIndex}
                                     onDotClick={(index) => {
+                                        setCurrentCategoryIndex(index);
                                         const container = categoriesScrollRef.current;
                                         if (container) {
                                             const itemWidth = container.firstChild?.offsetWidth || 0;
@@ -625,6 +567,7 @@ const HomePage = () => {
                                     totalDots={books.length}
                                     currentIndex={currentBookIndex}
                                     onDotClick={(index) => {
+                                        setCurrentBookIndex(index);
                                         const container = booksScrollRef.current;
                                         if (container) {
                                             const itemWidth = container.firstChild?.offsetWidth || 0;
@@ -707,6 +650,7 @@ const HomePage = () => {
                                     totalDots={authors.length}
                                     currentIndex={currentAuthorIndex}
                                     onDotClick={(index) => {
+                                        setCurrentAuthorIndex(index);
                                         const container = authorsScrollRef.current;
                                         if (container) {
                                             const itemWidth = container.firstChild?.offsetWidth || 0;

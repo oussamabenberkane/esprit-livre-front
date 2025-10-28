@@ -68,12 +68,7 @@ const BookCard = ({
                         className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                     />
 
-                    {/* Language Tag */}
-                    {language && (
-                        <div className="absolute bottom-0 right-1 px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded shadow-sm z-10">
-                            {getLanguageCode(language)}
-                        </div>
-                    )}
+                    
                 </div>
                 {/* Badge */}
                 {badge && (

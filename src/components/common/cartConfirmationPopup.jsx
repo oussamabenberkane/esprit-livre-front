@@ -7,7 +7,8 @@ import { getLanguageCode } from '../../data/booksData';
 export default function CartConfirmationPopup({
     isOpen,
     onClose,
-    book
+    book,
+    packBooks = [] // Array of books if this is a pack
 }) {
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -102,28 +103,53 @@ export default function CartConfirmationPopup({
                                     <h4 className="font-semibold text-gray-900 text-fluid-lg mb-1 line-clamp-2">
                                         {book.title}
                                     </h4>
-                                    <p className="text-gray-600 text-sm mb-2">
-                                        {book.author}
-                                    </p>
-                                    <button
-                                        onClick={handleViewDetails}
-                                        className="text-blue-600 hover:underline inline-flex items-center gap-1"
-                                    >
-                                        <h1 className="text-fluid-medium">{t('cartPopup.bookDetails')}</h1>
-                                        <svg
-                                            className="w-3 h-3"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                                            />
-                                        </svg>
-                                    </button>
+                                    {!book.isPack ? (
+                                        <>
+                                            <p className="text-gray-600 text-sm mb-2">
+                                                {book.author}
+                                            </p>
+                                            <button
+                                                onClick={handleViewDetails}
+                                                className="text-blue-600 hover:underline inline-flex items-center gap-1"
+                                            >
+                                                <h1 className="text-fluid-medium">{t('cartPopup.bookDetails')}</h1>
+                                                <svg
+                                                    className="w-3 h-3"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={2}
+                                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <p className="text-gray-600 text-sm mb-2">
+                                                {book.author}
+                                            </p>
+                                            {/* Book Titles Carousel - Only for packs, positioned below title */}
+                                            {packBooks.length > 0 && (
+                                                <div className="mt-2">
+                                                    <div className="flex gap-1.5 overflow-x-auto scrollbar-hide py-1.5">
+                                                        {packBooks.map((packBook, index) => (
+                                                            <span
+                                                                key={index}
+                                                                className="text-fluid-vsmall md:text-fluid-small bg-blue-50 text-[#00417a] px-3 py-1 rounded-md whitespace-nowrap flex-shrink-0 font-medium"
+                                                            >
+                                                                {packBook.title}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
                                 </div>
                             </div>
 

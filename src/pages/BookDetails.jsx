@@ -5,12 +5,16 @@ import { ChevronLeft, ShoppingCart, CheckCircle2, ChevronDown } from 'lucide-rea
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import BookCard from '../components/common/BookCard';
+import PackCard from '../components/common/PackCard';
+import PackBooksPopup from '../components/common/PackBooksPopup';
 import SlideScroll from '../components/buttons/SlideScroll';
 import PaginationDots from '../components/common/PaginationDots';
 import SeeMore from '../components/buttons/SeeMore';
 import CartConfirmationPopup from '../components/common/cartConfirmationPopup';
 import FloatingCartBadge from '../components/common/FloatingCartBadge';
 import { BOOKS_DATA, getLanguageCode } from '../data/booksData';
+import { getRecommendedPacksForBook } from '../services/bookPackService';
+import { getBooksByIds } from '../services/bookService';
 
 const BookDetails = () => {
     const { t } = useTranslation();
@@ -74,6 +78,98 @@ const BookDetails = () => {
         setRecommendedBooks(books);
     }, [id]);
 
+    // Pack recommendations state
+    const [recommendedPacks, setRecommendedPacks] = useState([]);
+    const [currentPackIndex, setCurrentPackIndex] = useState(0);
+    const packsScrollRef = useRef(null);
+    const [canScrollPacksLeft, setCanScrollPacksLeft] = useState(false);
+    const [canScrollPacksRight, setCanScrollPacksRight] = useState(true);
+    const [packsLoading, setPacksLoading] = useState(true);
+
+    // Fetch pack recommendations for the current book
+    useEffect(() => {
+        const fetchPacks = async () => {
+            // Don't fetch if no book is loaded
+            if (!book?.id) {
+                setRecommendedPacks([]);
+                setPacksLoading(false);
+                return;
+            }
+
+            try {
+                setPacksLoading(true);
+
+                // Fetch recommended packs for the current book
+                const response = await getRecommendedPacksForBook(book.id, {
+                    page: 0,
+                    size: 8
+                });
+                const packsData = response.content || response;
+
+                // For each pack, fetch the full book details
+                const packsWithBooks = await Promise.all(
+                    packsData.map(async (pack) => {
+                        try {
+                            const bookIds = pack.books || [];
+
+                            // Skip fetching if no books in pack
+                            if (bookIds.length === 0) {
+                                return {
+                                    ...pack,
+                                    books: [],
+                                    originalPrice: parseFloat(pack.price) || 0,
+                                    packPrice: parseFloat(pack.price) || 0,
+                                    packImage: pack.coverImageUrl || null
+                                };
+                            }
+
+                            // Fetch full details for all books in the pack
+                            const booksDetails = await getBooksByIds(bookIds);
+
+                            // Calculate original price from individual book prices
+                            const originalPrice = booksDetails.reduce((sum, book) => {
+                                return sum + (parseFloat(book.price) || 0);
+                            }, 0);
+
+                            return {
+                                ...pack,
+                                books: booksDetails.map(book => ({
+                                    id: book.id,
+                                    title: book.title,
+                                    author: book.author?.name || 'Unknown',
+                                    price: parseFloat(book.price) || 0,
+                                    coverImage: book.coverImageUrl
+                                })),
+                                originalPrice: originalPrice,
+                                packPrice: parseFloat(pack.price) || 0,
+                                packImage: pack.coverImageUrl || null
+                            };
+                        } catch (err) {
+                            console.error(`Error fetching books for pack ${pack.id}:`, err);
+                            // Return pack with minimal data if book fetching fails
+                            return {
+                                ...pack,
+                                books: [],
+                                originalPrice: parseFloat(pack.price) || 0,
+                                packPrice: parseFloat(pack.price) || 0,
+                                packImage: pack.coverImageUrl || null
+                            };
+                        }
+                    })
+                );
+
+                setRecommendedPacks(packsWithBooks);
+            } catch (err) {
+                console.error('Error fetching recommended packs:', err);
+                setRecommendedPacks([]);
+            } finally {
+                setPacksLoading(false);
+            }
+        };
+
+        fetchPacks();
+    }, [book?.id]); // Re-fetch when the book ID changes
+
     // Scroll handlers
     const checkBooksScrollPosition = () => {
         const container = booksScrollRef.current;
@@ -123,6 +219,47 @@ const BookDetails = () => {
         }
     };
 
+    // Pack scroll handlers
+    const checkPacksScrollPosition = () => {
+        const container = packsScrollRef.current;
+        if (!container || recommendedPacks.length === 0) return;
+
+        const scrollLeft = container.scrollLeft;
+        const maxScroll = container.scrollWidth - container.clientWidth;
+
+        setCanScrollPacksLeft(scrollLeft > 0);
+        setCanScrollPacksRight(scrollLeft < maxScroll - 10);
+
+        if (scrollLeft >= maxScroll - 5) {
+            setCurrentPackIndex(recommendedPacks.length - 1);
+        } else if (scrollLeft <= 5) {
+            setCurrentPackIndex(0);
+        } else {
+            const itemWidth = container.firstChild?.offsetWidth || 0;
+            const gap = parseFloat(getComputedStyle(container).gap) || 0;
+            const containerCenter = scrollLeft + (container.clientWidth / 2);
+
+            let activeIndex = Math.round((containerCenter - (itemWidth / 2)) / (itemWidth + gap));
+            activeIndex = Math.max(0, Math.min(activeIndex, recommendedPacks.length - 1));
+
+            setCurrentPackIndex(activeIndex);
+        }
+    };
+
+    const scrollPacks = (direction) => {
+        const container = packsScrollRef.current;
+        if (container) {
+            const itemWidth = container.firstChild?.offsetWidth || 0;
+            const gap = parseFloat(getComputedStyle(container).gap) || 0;
+
+            const scrollAmount = itemWidth + gap;
+            container.scrollBy({
+                left: direction === 'left' ? -scrollAmount : scrollAmount,
+                behavior: 'smooth'
+            });
+        }
+    };
+
     // Setup scroll listeners when recommended books are loaded
     useEffect(() => {
         if (recommendedBooks.length === 0) return;
@@ -147,6 +284,30 @@ const BookDetails = () => {
         }
     }, [recommendedBooks]);
 
+    // Setup scroll listeners for packs when loaded
+    useEffect(() => {
+        if (recommendedPacks.length === 0) return;
+
+        setCurrentPackIndex(0);
+        if (packsScrollRef.current) {
+            packsScrollRef.current.scrollLeft = 0;
+        }
+
+        const packsContainer = packsScrollRef.current;
+        if (packsContainer) {
+            checkPacksScrollPosition();
+            packsContainer.addEventListener('scroll', checkPacksScrollPosition);
+
+            const handleResize = () => checkPacksScrollPosition();
+            window.addEventListener('resize', handleResize);
+
+            return () => {
+                packsContainer.removeEventListener('scroll', checkPacksScrollPosition);
+                window.removeEventListener('resize', handleResize);
+            };
+        }
+    }, [recommendedPacks]);
+
     const handleAddToCart = (bookId) => {
         console.log(`Added book ${bookId} to cart`);
         const bookToAdd = recommendedBooks.find(b => b.id === bookId);
@@ -155,6 +316,7 @@ const BookDetails = () => {
                 ...bookToAdd,
                 coverImage: bookToAdd.coverImageUrl
             });
+            setPackBooks([]); // Clear pack books for regular books
             setShowCartPopup(true);
             // Increment cart count
             setCartItemCount(prev => prev + 1);
@@ -171,6 +333,30 @@ const BookDetails = () => {
         console.log(`Book ${bookId} favorited: ${isFavorited}`);
     };
 
+    // Pack books for popup (store separately from selectedBook)
+    const [packBooks, setPackBooks] = useState([]);
+
+    const handleAddPackToCart = (packId) => {
+        const pack = recommendedPacks.find(p => p.id === packId);
+        if (pack) {
+            // Convert pack to book-like format for the popup
+            const packAsBook = {
+                id: pack.id,
+                title: pack.title,
+                author: `${pack.books.length} ${t('packCard.books')}`,
+                price: pack.packPrice,
+                coverImage: pack.books[0]?.coverImage || pack.packImage || 'https://picsum.photos/seed/default/400/600',
+                language: null,
+                isPack: true
+            };
+
+            setSelectedBook(packAsBook);
+            setPackBooks(pack.books); // Store the books array for the popup
+            setShowCartPopup(true);
+            setCartItemCount(prev => prev + 1);
+        }
+    };
+
     const handleBackClick = () => {
         navigate(-1);
     };
@@ -181,6 +367,7 @@ const BookDetails = () => {
             ...book,
             coverImage: book.coverImageUrl
         });
+        setPackBooks([]); // Clear pack books for regular books
         setShowCartPopup(true);
         // Increment cart count
         setCartItemCount(prev => prev + 1);
@@ -641,6 +828,90 @@ const BookDetails = () => {
                         </div>
                     </div>
                 </section>
+
+                {/* Pack Recommendations Section */}
+                {!packsLoading && recommendedPacks.length > 0 && (
+                    <section className="w-full section-spacing bg-white">
+                        <div className="container-main container-padding2xl-left-only">
+
+                            {/* Header */}
+                            <div className="flex justify-between items-center mb-fluid-sm pr-fluid-lg">
+                                <h2 className="text-brand-blue text-fluid-h2 font-bold">
+                                    {t('bookDetails.packRecommendations')}
+                                </h2>
+                                <SeeMore to="/packs" />
+                            </div>
+
+                            {/* Horizontal Scroll Container with negative margin */}
+                            <div className="relative -ml-fluid-2xl">
+                                <div
+                                    ref={packsScrollRef}
+                                    className="flex pt-fluid-xs pr-fluid-lg pl-fluid-2xl gap-fluid-md overflow-x-auto scrollbar-hide pb-4"
+                                >
+                                    {recommendedPacks.map((pack) => (
+                                        <div
+                                            key={pack.id}
+                                            className="flex-shrink-0 snap-start"
+                                            style={{ width: 'clamp(280px, 45vw, 500px)' }}
+                                        >
+                                            <PackCard
+                                                id={pack.id}
+                                                title={pack.title}
+                                                description={pack.description}
+                                                originalPrice={pack.originalPrice}
+                                                packPrice={pack.packPrice}
+                                                packImage={pack.packImage}
+                                                books={pack.books}
+                                                onAddToCart={handleAddPackToCart}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Pagination Controls */}
+                            <div className="flex items-center justify-between pr-fluid-lg pt-2 mt-4 mb-4">
+                                <div className="flex-1"></div>
+
+                                <div className="flex-1 flex justify-center">
+                                    <PaginationDots
+                                        totalDots={recommendedPacks.length}
+                                        currentIndex={currentPackIndex}
+                                        onDotClick={(index) => {
+                                            const container = packsScrollRef.current;
+                                            if (container) {
+                                                const itemWidth = container.firstChild?.offsetWidth || 0;
+                                                const gap = parseFloat(getComputedStyle(container).gap) || 0;
+
+                                                let scrollAmount;
+                                                if (index === 0) {
+                                                    scrollAmount = 0;
+                                                } else if (index === recommendedPacks.length - 1) {
+                                                    scrollAmount = container.scrollWidth - container.clientWidth;
+                                                } else {
+                                                    const itemPosition = index * (itemWidth + gap);
+                                                    const centerOffset = (container.clientWidth - itemWidth) / 2;
+                                                    scrollAmount = itemPosition - centerOffset;
+                                                }
+
+                                                container.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+                                            }
+                                        }}
+                                    />
+                                </div>
+
+                                <div className="flex-1 flex justify-end">
+                                    <SlideScroll
+                                        onPrevious={() => scrollPacks('left')}
+                                        onNext={() => scrollPacks('right')}
+                                        canScrollLeft={canScrollPacksLeft}
+                                        canScrollRight={canScrollPacksRight}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                )}
             </div>
 
             <Footer />
@@ -650,7 +921,7 @@ const BookDetails = () => {
                 <CartConfirmationPopup
                     isOpen={showCartPopup}
                     onClose={handleClosePopup}
-                    book={{
+                    book={selectedBook.isPack ? selectedBook : {
                         id: selectedBook.id,
                         title: selectedBook.title,
                         author: selectedBook.author.name,
@@ -658,6 +929,7 @@ const BookDetails = () => {
                         coverImage: selectedBook.coverImageUrl,
                         language: selectedBook.language
                     }}
+                    packBooks={selectedBook.isPack ? packBooks : []}
                 />
             )}
 

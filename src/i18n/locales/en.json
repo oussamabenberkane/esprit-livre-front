@@ -130,7 +130,8 @@
     "addToCart": "Add to cart",
     "viewFullDescription": "View full description",
     "fullDescription": "Full Description",
-    "recommendations": "Recommendations:"
+    "recommendations": "Recommendations:",
+    "packRecommendations": "Pack Recommendations:"
   },
   "cart": {
     "title": "Cart ({{count}} item)",
@@ -351,7 +352,9 @@
     "currency": "DZD",
     "booksIncluded": "Books included",
     "save": "Save",
-    "books": "books"
+    "books": "books",
+    "seeMore": "See More",
+    "allBooks": "All Books"
   },
   "packsPage": {
     "title": "Promotional Packs",

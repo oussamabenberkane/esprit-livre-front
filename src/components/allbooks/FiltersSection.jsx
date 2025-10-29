@@ -239,7 +239,7 @@ const FilterDropdown = ({
   );
 };
 
-const FiltersSection = ({ initialFilters }) => {
+const FiltersSection = ({ initialFilters, onFiltersChange }) => {
   const { t } = useTranslation();
   const [isMobile, setIsMobile] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -271,6 +271,13 @@ const FiltersSection = ({ initialFilters }) => {
       }));
     }
   }, [initialFilters]);
+
+  // Notify parent component when filters change
+  useEffect(() => {
+    if (onFiltersChange) {
+      onFiltersChange(filters);
+    }
+  }, [filters, onFiltersChange]);
 
   useEffect(() => {
     const checkMobile = () => {

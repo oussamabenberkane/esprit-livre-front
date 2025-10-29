@@ -33,3 +33,7 @@ Takes time :
   add create author section in books page in admin: ---
   remove language tag from bookcard: --- 
   weird dropshadow effect on bookcards: --- 
+
+
+
+cablage implementations without checking anything: allbooks(books, filters), homepage (categ, authors, main display, search), bookdetails(book details, recommendations), profile, favorites, orders (history+current ones)

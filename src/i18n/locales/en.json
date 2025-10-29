@@ -10,6 +10,7 @@
   "bookCard": {
     "addToCart": "Add to\ncart",
     "currency": "DZD",
+    "unknownAuthor": "Unknown Author",
     "stockStatus": {
       "inStock": "in stock",
       "outOfStock": "out of stock",
@@ -96,7 +97,12 @@
     "loading": "Loading...",
     "error": "An error occurred",
     "retry": "Retry",
-    "seeMore": "See more"
+    "seeMore": "See more",
+    "noData": "No data available"
+  },
+  "search": {
+    "noResults": "No results found",
+    "viewAllResults": "View all results for \"{{query}}\""
   },
   "homePage": {
     "greeting": "Hello",

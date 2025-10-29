@@ -1,10 +1,12 @@
 // src/components/common/Navbar.jsx
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Search, ShoppingCart, Heart, User, Menu } from 'lucide-react';
 import LanguageToggle from '../animations/LanguageToggle'; // Your existing component
 import BottomSheet from './BottomSheet';
+import SearchSuggestions from './SearchSuggestions';
+import { fetchBookSuggestions } from '../../services/books.service';
 
 // Simple Language Toggle for Mobile/Tablet (the one I created earlier)
 const SimpleLanguageToggle = () => {
@@ -37,30 +39,41 @@ const Logo = () => (
 );
 
 // SearchBar Component
-const SearchBar = ({ placeholder = "Recherchez...", onSearch }) => (
-    <div className="relative bg-white rounded-lg h-10 md:h-11 w-full md:w-96 flex items-center">
-        <div className="absolute left-3 w-4 h-4 text-slate-500">
-            <Search className="w-full h-full" />
+const SearchBar = ({ placeholder = "Recherchez...", value, onChange, onFocus }) => {
+    return (
+        <div className="relative bg-white rounded-lg h-10 md:h-11 w-full md:w-96 flex items-center">
+            <div className="absolute left-3 w-4 h-4 text-slate-500">
+                <Search className="w-full h-full" />
+            </div>
+            <input
+                type="text"
+                placeholder={placeholder}
+                value={value}
+                onChange={onChange}
+                onFocus={onFocus}
+                className="w-full h-full pl-10 pr-4 text-sm md:text-base text-black bg-transparent border-none outline-none placeholder:text-slate-500 rounded-lg"
+            />
         </div>
-        <input
-            type="text"
-            placeholder={placeholder}
-            onChange={onSearch}
-            className="w-full h-full pl-10 pr-4 text-sm md:text-base text-black bg-transparent border-none outline-none placeholder:text-slate-500 rounded-lg"
-        />
-    </div>
-);
+    );
+};
 
 // Main Navbar Component
 const Navbar = ({
     searchPlaceholder,
     cartCount = 0,
-    onSearch = () => { },
     onCartClick
 }) => {
     const { t } = useTranslation();
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
     const navigate = useNavigate();
+
+    // Search state
+    const [searchQuery, setSearchQuery] = useState('');
+    const [suggestions, setSuggestions] = useState([]);
+    const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const searchTimeoutRef = useRef(null);
+    const searchContainerRef = useRef(null);
 
     // Use translation if no custom placeholder is provided
     const placeholder = searchPlaceholder || t('navbar.searchPlaceholder');
@@ -84,6 +97,76 @@ const Navbar = ({
         navigate('/profile');
     };
 
+    // Handle search input change with debouncing
+    const handleSearchChange = (e) => {
+        const query = e.target.value;
+        setSearchQuery(query);
+
+        // Clear previous timeout
+        if (searchTimeoutRef.current) {
+            clearTimeout(searchTimeoutRef.current);
+        }
+
+        // If query is empty, hide suggestions
+        if (!query || query.trim().length === 0) {
+            setSuggestions([]);
+            setShowSuggestions(false);
+            return;
+        }
+
+        // Debounce search API call (300ms)
+        setIsLoadingSuggestions(true);
+        searchTimeoutRef.current = setTimeout(async () => {
+            try {
+                const results = await fetchBookSuggestions(query);
+                setSuggestions(results);
+                setShowSuggestions(true);
+            } catch (error) {
+                console.error('Failed to fetch suggestions:', error);
+                setSuggestions([]);
+            } finally {
+                setIsLoadingSuggestions(false);
+            }
+        }, 300);
+    };
+
+    // Handle search input focus
+    const handleSearchFocus = () => {
+        if (searchQuery && searchQuery.trim().length > 0) {
+            setShowSuggestions(true);
+        }
+    };
+
+    // Close suggestions
+    const closeSuggestions = () => {
+        setShowSuggestions(false);
+        setSearchQuery('');
+        setSuggestions([]);
+    };
+
+    // Click outside to close suggestions
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+                setShowSuggestions(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    // Cleanup timeout on unmount
+    useEffect(() => {
+        return () => {
+            if (searchTimeoutRef.current) {
+                clearTimeout(searchTimeoutRef.current);
+            }
+        };
+    }, []);
+
     return (
         <>
             {/* Desktop and Tablet Navbar */}
@@ -93,8 +176,21 @@ const Navbar = ({
                     <Logo />
 
                     {/* Search Bar - Always visible but responsive width */}
-                    <div className="flex-1 md:flex-initial">
-                        <SearchBar placeholder={placeholder} onSearch={onSearch} />
+                    <div className="flex-1 md:flex-initial relative" ref={searchContainerRef}>
+                        <SearchBar
+                            placeholder={placeholder}
+                            value={searchQuery}
+                            onChange={handleSearchChange}
+                            onFocus={handleSearchFocus}
+                        />
+                        {showSuggestions && (
+                            <SearchSuggestions
+                                suggestions={suggestions}
+                                isLoading={isLoadingSuggestions}
+                                query={searchQuery}
+                                onClose={closeSuggestions}
+                            />
+                        )}
                     </div>
 
                     {/* Desktop Spacer */}
@@ -186,9 +282,22 @@ const Navbar = ({
                 </div>
 
                 {/* Second Line: Search Bar */}
-                <div className="pb-2">
+                <div className="pb-2 relative">
                     <div className="w-[100%]">
-                        <SearchBar placeholder={placeholder} onSearch={onSearch} />
+                        <SearchBar
+                            placeholder={placeholder}
+                            value={searchQuery}
+                            onChange={handleSearchChange}
+                            onFocus={handleSearchFocus}
+                        />
+                        {showSuggestions && (
+                            <SearchSuggestions
+                                suggestions={suggestions}
+                                isLoading={isLoadingSuggestions}
+                                query={searchQuery}
+                                onClose={closeSuggestions}
+                            />
+                        )}
                     </div>
                 </div>
             </div>

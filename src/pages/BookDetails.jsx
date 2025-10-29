@@ -11,6 +11,7 @@ import SeeMore from '../components/buttons/SeeMore';
 import CartConfirmationPopup from '../components/common/cartConfirmationPopup';
 import FloatingCartBadge from '../components/common/FloatingCartBadge';
 import { BOOKS_DATA, getLanguageCode } from '../data/booksData';
+import { fetchBookById, fetchBookRecommendations } from '../services/books.service';
 
 const BookDetails = () => {
     const { t } = useTranslation();
@@ -25,20 +26,25 @@ const BookDetails = () => {
         // Scroll to top when book ID changes
         window.scrollTo(0, 0);
 
-        // Simulate API call - in production, replace with actual API fetch
-        const fetchBook = () => {
+        // Fetch book from API
+        const fetchBook = async () => {
             setLoading(true);
 
-            // Find book by ID (convert string ID from URL to number)
-            const foundBook = BOOKS_DATA.find(b => b.id === parseInt(id));
+            try {
+                // Fetch book by ID from API
+                const foundBook = await fetchBookById(parseInt(id));
 
-            if (foundBook) {
-                setBook(foundBook);
-            } else {
+                if (foundBook) {
+                    setBook(foundBook);
+                } else {
+                    setBook(null);
+                }
+            } catch (error) {
+                console.error('Error fetching book details:', error);
                 setBook(null);
+            } finally {
+                setLoading(false);
             }
-
-            setLoading(false);
         };
 
         fetchBook();
@@ -69,9 +75,19 @@ const BookDetails = () => {
 
     // Load recommended books when ID changes
     useEffect(() => {
-        // Simulate backend call - replace with actual API call
-        const books = BOOKS_DATA.filter(b => b.id !== parseInt(id)).slice(0, 8);
-        setRecommendedBooks(books);
+        // Fetch recommended books from API
+        const fetchRecommendations = async () => {
+            try {
+                const recommendations = await fetchBookRecommendations(parseInt(id));
+                setRecommendedBooks(recommendations);
+            } catch (error) {
+                console.error('Error fetching recommendations:', error);
+                // Fallback to empty array on error
+                setRecommendedBooks([]);
+            }
+        };
+
+        fetchRecommendations();
     }, [id]);
 
     // Scroll handlers

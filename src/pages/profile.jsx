@@ -6,6 +6,8 @@ import { useScrollToTop } from '../hooks/useScrollToTop';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
+import { getUserProfile, updateUserProfile } from '../services/user.service';
+import { isAuthenticated, logout as authLogout, getCurrentUser } from '../services/authService';
 
 // Algerian Wilaya data
 const wilayaData = {
@@ -22,17 +24,14 @@ const wilayaData = {
 export default function Profile() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [userData, setUserData] = useState({
-    name: "Ahmed Benali",
-    email: "ahmed.benali@email.com",
-    phone: "+213 555 12 34 56",
-    wilaya: "Alger",
-    city: "Kouba"
-  });
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [saving, setSaving] = useState(false);
 
   const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [isEditingPhone, setIsEditingPhone] = useState(false);
-  const [availableCities, setAvailableCities] = useState(wilayaData[userData.wilaya] || []);
+  const [availableCities, setAvailableCities] = useState([]);
   const [shippingPreference, setShippingPreference] = useState("home"); // "home" or "pickup"
   const [homeAddress, setHomeAddress] = useState("");
   const [pickupProvider, setPickupProvider] = useState("");
@@ -49,6 +48,73 @@ export default function Profile() {
 
   // Scroll to top when page loads
   useScrollToTop();
+
+  // Check authentication and fetch profile data
+  useEffect(() => {
+    const fetchProfile = async () => {
+      // Check if user is authenticated
+      if (!isAuthenticated()) {
+        navigate('/login', { state: { from: '/profile' } });
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Fetch user profile from API
+        const profile = await getUserProfile();
+
+        // Map API response to userData state
+        setUserData({
+          name: `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || 'User',
+          email: profile.user?.email || '',
+          phone: profile.phone || '',
+          wilaya: profile.wilaya || '',
+          city: profile.city || '',
+        });
+
+        // Set available cities based on wilaya
+        if (profile.wilaya && wilayaData[profile.wilaya]) {
+          setAvailableCities(wilayaData[profile.wilaya]);
+        }
+
+        // Set shipping preferences
+        if (profile.defaultShippingMethod) {
+          setShippingPreference(
+            profile.defaultShippingMethod === 'HOME_DELIVERY' ? 'home' : 'pickup'
+          );
+        }
+
+        if (profile.streetAddress) {
+          setHomeAddress(profile.streetAddress);
+        }
+
+        if (profile.defaultShippingProvider) {
+          // Map API enum to display name
+          const providerMap = {
+            'YALIDINE': 'Yalidine',
+            'ZR': 'ZRexpress',
+          };
+          setPickupProvider(providerMap[profile.defaultShippingProvider] || '');
+        }
+
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching profile:', err);
+        setError(err.message || 'Failed to load profile');
+        setLoading(false);
+
+        // If unauthorized, redirect to login
+        if (err.message.includes('Unauthorized')) {
+          authLogout();
+          navigate('/login', { state: { from: '/profile' } });
+        }
+      }
+    };
+
+    fetchProfile();
+  }, [navigate]);
 
   // Click outside to close dropdowns
   useEffect(() => {
@@ -126,11 +192,98 @@ export default function Profile() {
   };
 
   const handleLogout = () => {
-    // TODO: Add actual logout logic
-    console.log('User logged out');
-    alert('Logged out successfully');
+    authLogout();
     navigate('/');
   };
+
+  const handleSaveProfile = async () => {
+    if (!userData) return;
+
+    try {
+      setSaving(true);
+      setError(null);
+
+      // Map display names back to API enums
+      const providerMap = {
+        'Yalidine': 'YALIDINE',
+        'ZRexpress': 'ZR',
+      };
+
+      // Prepare profile update data
+      const updateData = {
+        phone: userData.phone,
+        wilaya: userData.wilaya,
+        city: userData.city,
+        streetAddress: homeAddress || null,
+        defaultShippingMethod: shippingPreference === 'home' ? 'HOME_DELIVERY' : 'SHIPPING_PROVIDER',
+        defaultShippingProvider: pickupProvider ? providerMap[pickupProvider] : null,
+      };
+
+      await updateUserProfile(updateData);
+
+      // Reset editing states
+      setIsEditingEmail(false);
+      setIsEditingPhone(false);
+
+      setSaving(false);
+      alert('Profile updated successfully!');
+    } catch (err) {
+      console.error('Error updating profile:', err);
+      setError(err.message || 'Failed to update profile');
+      setSaving(false);
+      alert('Failed to update profile. Please try again.');
+    }
+  };
+
+  // Show loading state
+  if (loading) {
+    return (
+      <main className="w-full max-w-[100vw] overflow-x-hidden">
+        <div className="min-h-screen bg-gray-50">
+          <section className="w-full max-w-[100vw] overflow-x-hidden">
+            <Navbar />
+          </section>
+          <div className="h-28 md:h-20"></div>
+          <div className="max-w-2xl mx-auto px-4 py-20 text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading profile...</p>
+          </div>
+          <Footer />
+        </div>
+      </main>
+    );
+  }
+
+  // Show error state
+  if (error && !userData) {
+    return (
+      <main className="w-full max-w-[100vw] overflow-x-hidden">
+        <div className="min-h-screen bg-gray-50">
+          <section className="w-full max-w-[100vw] overflow-x-hidden">
+            <Navbar />
+          </section>
+          <div className="h-28 md:h-20"></div>
+          <div className="max-w-2xl mx-auto px-4 py-20 text-center">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+              <p className="text-red-600 mb-4">{error}</p>
+              <button
+                onClick={() => navigate('/')}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Go Home
+              </button>
+            </div>
+          </div>
+          <Footer />
+        </div>
+      </main>
+    );
+  }
+
+  // Don't render if no user data
+  if (!userData) {
+    return null;
+  }
 
   return (
     <main className="w-full max-w-[100vw] overflow-x-hidden">
@@ -662,8 +815,25 @@ export default function Profile() {
           </button>
         </div>
 
-        {/* Logout Button */}
-        <div className="mt-8 flex justify-end">
+        {/* Action Buttons */}
+        <div className="mt-8 flex justify-between items-center gap-4">
+          <button
+            onClick={handleSaveProfile}
+            disabled={saving}
+            className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {saving ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                <span>Saving...</span>
+              </>
+            ) : (
+              <>
+                <Edit2 className="w-5 h-5" />
+                <span>{t('profile.saveChanges') || 'Save Changes'}</span>
+              </>
+            )}
+          </button>
           <button
             onClick={handleLogout}
             className="flex items-center gap-2 px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all"

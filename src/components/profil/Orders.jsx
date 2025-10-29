@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Package, Calendar, Eye } from 'lucide-react';
@@ -6,95 +6,44 @@ import { useScrollToTop } from '../../hooks/useScrollToTop';
 import Navbar from '../common/Navbar';
 import Footer from '../common/Footer';
 import { getLanguageCode, getFullLanguageName } from '../../data/booksData';
+import { getUserOrders } from '../../services/order.service';
+import { isAuthenticated } from '../../services/authService';
 
-// Mock orders data
-const mockOrders = {
-  current: [
-    {
-      id: "CMD-2024-001",
-      date: "15 Jan 2024",
-      status: "confirmed",
-      total: 4500,
-      items: [
-        {
-          title: "L'Étranger",
-          author: "Albert Camus",
-          image: "https://images.unsplash.com/photo-1760120482171-d9d5468f75fd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
-          language: "French"
-        },
-        {
-          title: "Le Petit Prince",
-          author: "Antoine de Saint-Exupéry",
-          image: "https://images.unsplash.com/photo-1620647885779-064b00c4c139?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
-          language: "Arabic"
-        }
-      ]
-    },
-    {
-      id: "CMD-2024-002",
-      date: "12 Jan 2024",
-      status: "shipped",
-      total: 2200,
-      items: [
-        {
-          title: "1984",
-          author: "George Orwell",
-          image: "https://images.unsplash.com/photo-1679180174039-c84e26f1a78d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
-          language: "English"
-        }
-      ]
-    }
-  ],
-  history: [
-    {
-      id: "CMD-2023-089",
-      date: "28 Déc 2023",
-      status: "delivered",
-      total: 3500,
-      items: [
-        {
-          title: "Les Misérables",
-          author: "Victor Hugo",
-          image: "https://images.unsplash.com/photo-1746913361326-01c3214c7540?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
-          language: "French"
-        }
-      ]
-    },
-    {
-      id: "CMD-2023-075",
-      date: "10 Déc 2023",
-      status: "delivered",
-      total: 5000,
-      items: [
-        {
-          title: "Le Comte de Monte-Cristo",
-          author: "Alexandre Dumas",
-          image: "https://images.unsplash.com/photo-1760120482171-d9d5468f75fd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
-          language: "Arabic"
-        },
-        {
-          title: "Madame Bovary",
-          author: "Gustave Flaubert",
-          image: "https://images.unsplash.com/photo-1620647885779-064b00c4c139?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
-          language: "English"
-        }
-      ]
-    },
-    {
-      id: "CMD-2023-042",
-      date: "5 Nov 2023",
-      status: "cancelled",
-      total: 1800,
-      items: [
-        {
-          title: "La Peste",
-          author: "Albert Camus",
-          image: "https://images.unsplash.com/photo-1679180174039-c84e26f1a78d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
-          language: "French"
-        }
-      ]
-    }
-  ]
+/**
+ * Format date for display
+ * @param {string} dateString - ISO date string
+ * @returns {string} Formatted date
+ */
+const formatOrderDate = (dateString) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  });
+};
+
+/**
+ * Transform API order to UI format
+ * @param {Object} apiOrder - Order from API
+ * @returns {Object} Transformed order for UI
+ */
+const transformOrder = (apiOrder) => {
+  return {
+    id: apiOrder.uniqueId || apiOrder.id,
+    date: formatOrderDate(apiOrder.createdAt),
+    status: apiOrder.status?.toLowerCase() || 'pending',
+    total: apiOrder.totalAmount || 0,
+    items: apiOrder.orderItems?.map(item => ({
+      title: item.book?.title || 'Unknown',
+      author: item.book?.author?.name || 'Unknown Author',
+      image: item.book?.coverImageUrl || 'https://via.placeholder.com/200x300?text=No+Image',
+      language: item.book?.language || null,
+      quantity: item.quantity || 1,
+      unitPrice: item.unitPrice || 0
+    })) || []
+  };
 };
 
 // Status Badge Component
@@ -217,11 +166,62 @@ function OrderCard({ order }) {
 export default function Orders() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [currentOrders] = useState(mockOrders.current);
-  const [orderHistory] = useState(mockOrders.history);
+  const [currentOrders, setCurrentOrders] = useState([]);
+  const [orderHistory, setOrderHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Scroll to top when page loads
   useScrollToTop();
+
+  // Fetch orders on component mount
+  useEffect(() => {
+    const fetchOrders = async () => {
+      // Check if user is authenticated
+      if (!isAuthenticated()) {
+        navigate('/auth');
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Fetch all orders (API will paginate, we'll fetch first page for now)
+        const response = await getUserOrders(0, 100);
+
+        if (response && response.content) {
+          const allOrders = response.content.map(transformOrder);
+
+          // Separate current orders (pending, confirmed, shipped) from history (delivered, cancelled)
+          const current = allOrders.filter(order =>
+            ['pending', 'confirmed', 'shipped'].includes(order.status)
+          );
+          const history = allOrders.filter(order =>
+            ['delivered', 'cancelled'].includes(order.status)
+          );
+
+          setCurrentOrders(current);
+          setOrderHistory(history);
+        } else {
+          setCurrentOrders([]);
+          setOrderHistory([]);
+        }
+      } catch (err) {
+        console.error('Error fetching orders:', err);
+        setError(err.message || 'Failed to load orders');
+
+        // If unauthorized, redirect to auth
+        if (err.message?.includes('Unauthorized')) {
+          navigate('/auth');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, [navigate]);
 
   const handleBack = () => {
     navigate(-1);
@@ -265,7 +265,28 @@ export default function Orders() {
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-6">
-        {totalOrders > 0 ? (
+        {loading ? (
+          // Loading State
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-gray-600">{t('orders.loading') || 'Loading orders...'}</p>
+          </div>
+        ) : error ? (
+          // Error State
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mb-6">
+              <Package className="w-12 h-12 text-red-500" />
+            </div>
+            <h2 className="text-xl text-gray-800 mb-2">{t('orders.errorTitle') || 'Error Loading Orders'}</h2>
+            <p className="text-gray-500 text-center max-w-md mb-6">{error}</p>
+            <button
+              onClick={handleBack}
+              className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+            >
+              {t('orders.back')}
+            </button>
+          </div>
+        ) : totalOrders > 0 ? (
           <>
             {/* Current Orders */}
             {currentOrders.length > 0 && (

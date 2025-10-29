@@ -5,7 +5,7 @@ import { ArrowLeft, Heart } from 'lucide-react';
 import BookCard from '../common/BookCard';
 import CartConfirmationPopup from '../common/cartConfirmationPopup';
 import FloatingCartBadge from '../common/FloatingCartBadge';
-import { BOOKS_DATA } from '../../data/booksData';
+import { fetchLikedBooks } from '../../services/books.service';
 import { useScrollToTop } from '../../hooks/useScrollToTop';
 import Navbar from '../common/Navbar';
 import Footer from '../common/Footer';
@@ -17,8 +17,10 @@ export default function Favorites() {
   // Scroll to top when page loads
   useScrollToTop();
 
-  // Filter books that are liked by the current user from BOOKS_DATA
+  // State management
   const [favoriteBooks, setFavoriteBooks] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Cart popup state
   const [showCartPopup, setShowCartPopup] = useState(false);
@@ -29,10 +31,21 @@ export default function Favorites() {
   const [cartItemCount, setCartItemCount] = useState(0);
 
   useEffect(() => {
-    // In production, this would be an API call to fetch user's favorites
-    // For now, filter books where isLikedByCurrentUser is true
-    const likedBooks = BOOKS_DATA.filter(book => book.isLikedByCurrentUser);
-    setFavoriteBooks(likedBooks);
+    const loadFavoriteBooks = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const response = await fetchLikedBooks(0, 100); // Fetch up to 100 favorites
+        setFavoriteBooks(response.books);
+      } catch (err) {
+        console.error('Error loading favorite books:', err);
+        setError(err.message || 'Failed to load favorite books');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadFavoriteBooks();
   }, []);
 
   const handleBack = () => {
@@ -100,7 +113,30 @@ export default function Favorites() {
 
       {/* Main Content */}
       <div className="w-full container-main px-fluid-md py-fluid-lg">
-        {favoriteBooks.length > 0 ? (
+        {isLoading ? (
+          // Loading State
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-gray-600">{t('common.loading')}</p>
+          </div>
+        ) : error ? (
+          // Error State
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mb-6">
+              <Heart className="w-12 h-12 text-red-500" />
+            </div>
+            <h2 className="text-xl text-gray-800 mb-2">{t('common.error')}</h2>
+            <p className="text-gray-500 text-center max-w-md mb-6">
+              {error}
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+            >
+              {t('common.retry')}
+            </button>
+          </div>
+        ) : favoriteBooks.length > 0 ? (
           <div className="flex flex-wrap gap-fluid-md justify-center">
             {favoriteBooks.map((book, index) => {
               // Extract badge from tags (same logic as BookDetails.jsx)

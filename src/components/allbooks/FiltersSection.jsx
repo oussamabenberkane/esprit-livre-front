@@ -190,16 +190,20 @@ const FilterDropdown = ({
 
             <div className="max-h-52 overflow-y-auto">
               {filteredOptions.length > 0 ? (
-                filteredOptions.map((option) => (
-                  <button
-                    key={option}
-                    onClick={() => onAddFilterItem(type, option)}
-                    className="w-full text-left px-4 py-3 text-sm hover:bg-blue-50 transition-colors flex items-center border-b border-gray-100 last:border-b-0"
-                  >
-                    <div className="w-3 h-3 border-2 border-gray-300 rounded-full mr-3 flex-shrink-0"></div>
-                    <span className="text-gray-700">{option}</span>
-                  </button>
-                ))
+                filteredOptions.map((option) => {
+                  const displayText = typeof option === 'object' ? option.name : option;
+                  const key = typeof option === 'object' ? option.id : option;
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => onAddFilterItem(type, option)}
+                      className="w-full text-left px-4 py-3 text-sm hover:bg-blue-50 transition-colors flex items-center border-b border-gray-100 last:border-b-0"
+                    >
+                      <div className="w-3 h-3 border-2 border-gray-300 rounded-full mr-3 flex-shrink-0"></div>
+                      <span className="text-gray-700">{displayText}</span>
+                    </button>
+                  );
+                })
               ) : (
                 <div className="px-4 py-6 text-sm text-gray-500 text-center">
                   {t('filters.noResults')}
@@ -217,20 +221,24 @@ const FilterDropdown = ({
         {selectedItems.length > 0 && !searchTerm && (
           <div className="p-3 bg-blue-50 rounded-lg overflow-x-hidden">
             <div className="flex gap-2 flex-wrap">
-              {selectedItems.map((item) => (
-                <div
-                  key={item}
-                  className="flex items-center bg-white px-3 py-1.5 rounded-full text-sm whitespace-nowrap flex-shrink-0 shadow-sm border border-blue-200"
-                >
-                  <span className="mr-2 text-gray-700 truncate max-w-[150px]">{item}</span>
-                  <button
-                    onClick={() => onRemoveFilterItem(type, item)}
-                    className="text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
+              {selectedItems.map((item) => {
+                const displayText = typeof item === 'object' ? item.name : item;
+                const key = typeof item === 'object' ? item.id : item;
+                return (
+                  <div
+                    key={key}
+                    className="flex items-center bg-white px-3 py-1.5 rounded-full text-sm whitespace-nowrap flex-shrink-0 shadow-sm border border-blue-200"
                   >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              ))}
+                    <span className="mr-2 text-gray-700 truncate max-w-[150px]">{displayText}</span>
+                    <button
+                      onClick={() => onRemoveFilterItem(type, item)}
+                      className="text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
@@ -239,7 +247,7 @@ const FilterDropdown = ({
   );
 };
 
-const FiltersSection = ({ initialFilters }) => {
+const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], authorsData = [] }) => {
   const { t } = useTranslation();
   const [isMobile, setIsMobile] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -265,12 +273,34 @@ const FiltersSection = ({ initialFilters }) => {
   // Apply initial filters from URL params
   useEffect(() => {
     if (initialFilters) {
+      const mappedFilters = {};
+
+      // Map category names from URL to category objects
+      if (initialFilters.categories && categoriesData.length > 0) {
+        mappedFilters.categories = initialFilters.categories
+          .map(catName => categoriesData.find(cat =>
+            (cat.nameFr === catName || cat.nameEn === catName || cat.name === catName)
+          ))
+          .filter(Boolean);
+      } else if (initialFilters.categories) {
+        mappedFilters.categories = initialFilters.categories.map((name, idx) => ({ id: `url-${idx}`, name }));
+      }
+
+      // Map author names from URL to author objects
+      if (initialFilters.authors && authorsData.length > 0) {
+        mappedFilters.authors = initialFilters.authors
+          .map(authorName => authorsData.find(author => author.name === authorName))
+          .filter(Boolean);
+      } else if (initialFilters.authors) {
+        mappedFilters.authors = initialFilters.authors.map((name, idx) => ({ id: `url-${idx}`, name }));
+      }
+
       setFilters(prev => ({
         ...prev,
-        ...initialFilters
+        ...mappedFilters
       }));
     }
-  }, [initialFilters]);
+  }, [initialFilters, categoriesData, authorsData]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -433,7 +463,9 @@ const FiltersSection = ({ initialFilters }) => {
   const removeFilterItem = (type, item) => {
     setFilters(prev => ({
       ...prev,
-      [type]: prev[type].filter(i => i !== item)
+      [type]: prev[type].filter(i =>
+        typeof i === 'object' ? i.id !== item.id : i !== item
+      )
     }));
   };
 
@@ -467,18 +499,63 @@ const FiltersSection = ({ initialFilters }) => {
 
   const applyFilters = () => {
     console.log('Applying filters:', filters);
+
+    // Extract values from filter objects
+    const extractValues = (items, type) => {
+      if (!items || items.length === 0) return [];
+      // For categories, return IDs (API expects categoryId)
+      if (type === 'categories') {
+        return items.map(item => typeof item === 'object' ? item.id : item);
+      }
+      // For authors, return names (API expects author name)
+      // For other types, return values as-is
+      return items.map(item => typeof item === 'object' ? item.name : item);
+    };
+
+    // Call the parent callback with current filters
+    if (onApplyFilters) {
+      onApplyFilters({
+        categories: extractValues(filters.categories, 'categories'),
+        authors: extractValues(filters.authors, 'authors'),
+        titles: extractValues(filters.titles, 'titles'),
+        languages: extractValues(filters.languages, 'languages'),
+        minPrice: filters.price.min,
+        maxPrice: filters.price.max
+      });
+    }
+
     if (isMobile) {
       setIsMenuOpen(false);
     }
   };
 
   const getFilteredOptions = (type, searchTerm) => {
-    const options = mockFiltersData[type] || [];
+    let options = [];
+
+    // Use real data if available, fall back to mock data
+    if (type === 'categories') {
+      options = categoriesData.length > 0
+        ? categoriesData.map(cat => ({
+            id: cat.id,
+            name: cat.nameFr || cat.nameEn || cat.name
+          }))
+        : (mockFiltersData[type] || []).map((name, idx) => ({ id: idx, name }));
+    } else if (type === 'authors') {
+      options = authorsData.length > 0
+        ? authorsData.map(author => ({
+            id: author.id,
+            name: author.name
+          }))
+        : (mockFiltersData[type] || []).map((name, idx) => ({ id: idx, name }));
+    } else {
+      options = (mockFiltersData[type] || []).map((name, idx) => ({ id: idx, name }));
+    }
+
     const selectedItems = filters[type] || [];
 
     return options.filter(option =>
-      !selectedItems.includes(option) &&
-      option.toLowerCase().includes(searchTerm.toLowerCase())
+      !selectedItems.some(selected => selected.id === option.id) &&
+      option.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
 

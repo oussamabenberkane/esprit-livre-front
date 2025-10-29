@@ -12,7 +12,9 @@ import PaginationDots from '../components/common/PaginationDots';
 import Footer from '../components/common/Footer';
 import CartConfirmationPopup from '../components/common/cartConfirmationPopup';
 import FloatingCartBadge from '../components/common/FloatingCartBadge';
-import { fetchCategories, fetchMainDisplays, fetchBooksByMainDisplay, fetchTopAuthors } from '../services/tagsService';
+import { fetchCategories, fetchMainDisplays } from '../services/tags.service';
+import { fetchBooksByMainDisplay } from '../services/books.service';
+import { fetchTopAuthors } from '../services/authors.service';
 
 
 // MainDisplayCarousel component for rendering individual carousels

@@ -1,235 +1,159 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Navbar from '../components/common/Navbar';
 import FiltersSection from '../components/allbooks/FiltersSection';
 import Footer from '../components/common/Footer';
 import PackCard from '../components/common/PackCard';
 import CartConfirmationPopup from '../components/common/cartConfirmationPopup';
+import FloatingCartBadge from '../components/common/FloatingCartBadge';
+import { getAllBookPacks } from '../services/bookPackService';
+import { getBooksByIds } from '../services/bookService';
 
-// Mock data for promotional packs
-const mockPacks = [
-    {
-        id: 'pack-1',
-        title: 'Pack Classiques Français',
-        description: 'Découvrez les plus grands chefs-d\'œuvre de la littérature française dans ce pack exceptionnel.',
-        originalPrice: 2800,
-        packPrice: 1999,
-        packImage: null, // Will use composite image
-        books: [
-            {
-                id: '1',
-                title: 'L\'Étranger',
-                author: 'Albert Camus',
-                price: 700,
-                coverImage: 'https://picsum.photos/seed/book1/400/600'
-            },
-            {
-                id: '2',
-                title: 'Les Misérables',
-                author: 'Victor Hugo',
-                price: 900,
-                coverImage: 'https://picsum.photos/seed/book2/400/600'
-            },
-            {
-                id: '3',
-                title: 'Le Petit Prince',
-                author: 'Antoine de Saint-Exupéry',
-                price: 600,
-                coverImage: 'https://picsum.photos/seed/book3/400/600'
-            },
-            {
-                id: '4',
-                title: 'Madame Bovary',
-                author: 'Gustave Flaubert',
-                price: 600,
-                coverImage: 'https://picsum.photos/seed/book4/400/600'
-            }
-        ]
-    },
-    {
-        id: 'pack-2',
-        title: 'Pack Science-Fiction Moderne',
-        description: 'Plongez dans des univers futuristes captivants avec cette sélection de romans de science-fiction contemporains.',
-        originalPrice: 3200,
-        packPrice: 2399,
-        packImage: null,
-        books: [
-            {
-                id: '5',
-                title: 'Dune',
-                author: 'Frank Herbert',
-                price: 1000,
-                coverImage: 'https://picsum.photos/seed/scifi1/400/600'
-            },
-            {
-                id: '6',
-                title: 'Foundation',
-                author: 'Isaac Asimov',
-                price: 800,
-                coverImage: 'https://picsum.photos/seed/scifi2/400/600'
-            },
-            {
-                id: '7',
-                title: 'Neuromancer',
-                author: 'William Gibson',
-                price: 750,
-                coverImage: 'https://picsum.photos/seed/scifi3/400/600'
-            },
-            {
-                id: '8',
-                title: 'The Martian',
-                author: 'Andy Weir',
-                price: 650,
-                coverImage: 'https://picsum.photos/seed/scifi4/400/600'
-            }
-        ]
-    },
-    {
-        id: 'pack-3',
-        title: 'Pack Philosophie Contemporaine',
-        description: 'Explorez les grandes questions existentielles avec ces œuvres philosophiques essentielles.',
-        originalPrice: 2500,
-        packPrice: 1799,
-        packImage: null,
-        books: [
-            {
-                id: '9',
-                title: 'L\'Être et le Néant',
-                author: 'Jean-Paul Sartre',
-                price: 900,
-                coverImage: 'https://picsum.photos/seed/philo1/400/600'
-            },
-            {
-                id: '10',
-                title: 'Le Deuxième Sexe',
-                author: 'Simone de Beauvoir',
-                price: 850,
-                coverImage: 'https://picsum.photos/seed/philo2/400/600'
-            },
-            {
-                id: '11',
-                title: 'Ainsi parlait Zarathoustra',
-                author: 'Friedrich Nietzsche',
-                price: 750,
-                coverImage: 'https://picsum.photos/seed/philo3/400/600'
-            }
-        ]
-    },
-    {
-        id: 'pack-4',
-        title: 'Pack Romans Policiers',
-        description: 'Résolvez les énigmes les plus captivantes avec cette collection de romans policiers.',
-        originalPrice: 2100,
-        packPrice: 1499,
-        packImage: null,
-        books: [
-            {
-                id: '12',
-                title: 'Le Chien des Baskerville',
-                author: 'Arthur Conan Doyle',
-                price: 600,
-                coverImage: 'https://picsum.photos/seed/police1/400/600'
-            },
-            {
-                id: '13',
-                title: 'Meurtre sur le Nil',
-                author: 'Agatha Christie',
-                price: 700,
-                coverImage: 'https://picsum.photos/seed/police2/400/600'
-            },
-            {
-                id: '14',
-                title: 'La Vérité sur l\'affaire Harry Quebert',
-                author: 'Joël Dicker',
-                price: 800,
-                coverImage: 'https://picsum.photos/seed/police3/400/600'
-            }
-        ]
-    },
-    {
-        id: 'pack-5',
-        title: 'Pack Fantasy Épique',
-        description: 'Embarquez pour des aventures extraordinaires dans des mondes magiques et fantastiques.',
-        originalPrice: 3500,
-        packPrice: 2699,
-        packImage: null,
-        books: [
-            {
-                id: '15',
-                title: 'Le Seigneur des Anneaux',
-                author: 'J.R.R. Tolkien',
-                price: 1200,
-                coverImage: 'https://picsum.photos/seed/fantasy1/400/600'
-            },
-            {
-                id: '16',
-                title: 'Harry Potter',
-                author: 'J.K. Rowling',
-                price: 1000,
-                coverImage: 'https://picsum.photos/seed/fantasy2/400/600'
-            },
-            {
-                id: '17',
-                title: 'Le Nom du Vent',
-                author: 'Patrick Rothfuss',
-                price: 900,
-                coverImage: 'https://picsum.photos/seed/fantasy3/400/600'
-            },
-            {
-                id: '18',
-                title: 'Chroniques de Narnia',
-                author: 'C.S. Lewis',
-                price: 400,
-                coverImage: 'https://picsum.photos/seed/fantasy4/400/600'
-            }
-        ]
-    },
-    {
-        id: 'pack-6',
-        title: 'Pack Développement Personnel',
-        description: 'Transformez votre vie avec ces ouvrages inspirants de développement personnel.',
-        originalPrice: 1800,
-        packPrice: 1299,
-        packImage: null,
-        books: [
-            {
-                id: '19',
-                title: 'Les 7 habitudes des gens efficaces',
-                author: 'Stephen Covey',
-                price: 650,
-                coverImage: 'https://picsum.photos/seed/devpers1/400/600'
-            },
-            {
-                id: '20',
-                title: 'Père riche, père pauvre',
-                author: 'Robert Kiyosaki',
-                price: 600,
-                coverImage: 'https://picsum.photos/seed/devpers2/400/600'
-            },
-            {
-                id: '21',
-                title: 'L\'homme qui voulait être heureux',
-                author: 'Laurent Gounelle',
-                price: 550,
-                coverImage: 'https://picsum.photos/seed/devpers3/400/600'
-            }
-        ]
-    }
-];
 
 const PacksPromotionnels = () => {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedPack, setSelectedPack] = useState(null);
     const [cartCount, setCartCount] = useState(0);
 
+    // Floating cart badge state
+    const [showFloatingBadge, setShowFloatingBadge] = useState(false);
+
+    // Pack data state
+    const [packs, setPacks] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // Filter state
+    const [filters, setFilters] = useState({
+        price: { min: 0, max: 10000 },
+        categories: [],
+        authors: [],
+        titles: [],
+        languages: []
+    });
+
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
     };
 
+    const [packBooks, setPackBooks] = useState([]);
+
+    // Fetch packs with filters
+    useEffect(() => {
+        const fetchPacks = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+
+                // Build query params from filters
+                const params = {
+                    page: 0,
+                    size: 100, // Get all packs for now
+                };
+
+                // Add price filters if they differ from defaults
+                if (filters.price.min > 0) {
+                    params.minPrice = filters.price.min;
+                }
+                if (filters.price.max < 10000) {
+                    params.maxPrice = filters.price.max;
+                }
+
+                // Add search query
+                if (searchQuery) {
+                    params.search = searchQuery;
+                }
+
+                // Fetch packs from API
+                const response = await getAllBookPacks(params);
+                const packsData = response.content || response;
+
+                // For each pack, fetch the full book details
+                const packsWithBooks = await Promise.all(
+                    packsData.map(async (pack) => {
+                        try {
+                            // Extract book IDs from the pack
+                            const bookIds = pack.books || [];
+
+                            // Fetch all books for this pack
+                            const booksDetails = await getBooksByIds(bookIds);
+
+                            // Calculate original price (sum of all book prices)
+                            const originalPrice = booksDetails.reduce((sum, book) => {
+                                return sum + (parseFloat(book.price) || 0);
+                            }, 0);
+
+                            return {
+                                ...pack,
+                                books: booksDetails.map(book => ({
+                                    id: book.id,
+                                    title: book.title,
+                                    author: book.author?.name || 'Unknown',
+                                    price: parseFloat(book.price) || 0,
+                                    coverImage: book.coverImageUrl
+                                })),
+                                originalPrice: originalPrice,
+                                packPrice: parseFloat(pack.price) || 0,
+                                packImage: pack.coverImageUrl || null
+                            };
+                        } catch (err) {
+                            console.error(`Error fetching books for pack ${pack.id}:`, err);
+                            // Return pack with empty books array if fetch fails
+                            return {
+                                ...pack,
+                                books: [],
+                                originalPrice: parseFloat(pack.price) || 0,
+                                packPrice: parseFloat(pack.price) || 0,
+                                packImage: pack.coverImageUrl || null
+                            };
+                        }
+                    })
+                );
+
+                // Apply client-side filtering for categories, authors, titles, languages
+                let filteredPacks = packsWithBooks;
+
+                // Filter by authors
+                if (filters.authors.length > 0) {
+                    filteredPacks = filteredPacks.filter(pack =>
+                        pack.books.some(book =>
+                            filters.authors.some(author =>
+                                book.author.toLowerCase().includes(author.toLowerCase())
+                            )
+                        )
+                    );
+                }
+
+                // Filter by titles
+                if (filters.titles.length > 0) {
+                    filteredPacks = filteredPacks.filter(pack =>
+                        pack.books.some(book =>
+                            filters.titles.some(title =>
+                                book.title.toLowerCase().includes(title.toLowerCase())
+                            )
+                        )
+                    );
+                }
+
+                setPacks(filteredPacks);
+            } catch (err) {
+                console.error('Error fetching packs:', err);
+                setError(err.message);
+                setPacks([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchPacks();
+    }, [filters, searchQuery]);
+
     const handleAddToCart = (packId) => {
-        const pack = mockPacks.find(p => p.id === packId);
+        const pack = packs.find(p => p.id === packId);
         if (pack) {
             // Convert pack to book-like format for the popup
             const packAsBook = {
@@ -237,25 +161,26 @@ const PacksPromotionnels = () => {
                 title: pack.title,
                 author: `${pack.books.length} ${t('packCard.books')}`,
                 price: pack.packPrice,
-                coverImage: pack.books[0]?.coverImage || 'https://picsum.photos/seed/default/400/600',
-                language: null
+                coverImage: pack.books[0]?.coverImage || pack.packImage || 'https://picsum.photos/seed/default/400/600',
+                language: null,
+                isPack: true // Flag to identify this is a pack
             };
 
             setSelectedPack(packAsBook);
+            setPackBooks(pack.books); // Store the books array
             setIsPopupOpen(true);
             setCartCount(prev => prev + 1);
         }
     };
 
-    // Filter packs based on search query
-    const filteredPacks = mockPacks.filter(pack =>
-        pack.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        pack.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        pack.books.some(book =>
-            book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            book.author.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-    );
+    const handleClosePopup = () => {
+        setIsPopupOpen(false);
+        // Show floating badge after popup closes
+        setShowFloatingBadge(true);
+    };
+
+    // Packs are already filtered by the useEffect hook
+    const filteredPacks = packs;
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -281,36 +206,72 @@ const PacksPromotionnels = () => {
 
                     {/* Filters Section */}
                     <div className="mb-8">
-                        <FiltersSection />
+                        <FiltersSection onFiltersChange={setFilters} />
                     </div>
 
                     {/* Packs Grid */}
                     <div className="space-y-4">
-                        {/* Results Count */}
-                        <div className="flex items-center justify-between mb-4">
-                            <p className="text-gray-600">
-                                <span className="font-semibold text-[#00417a]">{filteredPacks.length}</span> {t('packsPage.packsFound')}
-                            </p>
-                        </div>
+                        {/* Loading State */}
+                        {loading && (
+                            <div className="text-center py-16">
+                                <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                                <p className="text-gray-600 mt-4">{t('common.loading', 'Loading...')}</p>
+                            </div>
+                        )}
 
-                        {/* Packs List - 2 columns on desktop, 1 on mobile */}
-                        {filteredPacks.length > 0 ? (
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {/* Error State */}
+                        {error && !loading && (
+                            <div className="text-center py-16">
+                                <div className="text-red-500 mb-4">
+                                    <svg
+                                        className="w-20 h-20 mx-auto"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={1.5}
+                                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        />
+                                    </svg>
+                                </div>
+                                <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                                    {t('common.error', 'Error')}
+                                </h3>
+                                <p className="text-gray-500">{error}</p>
+                            </div>
+                        )}
+
+                        {/* Results Count */}
+                        {!loading && !error && (
+                            <div className="flex items-center justify-between mb-4">
+                                <p className="text-gray-600">
+                                    <span className="font-semibold text-[#00417a]">{filteredPacks.length}</span> {t('packsPage.packsFound')}
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Packs List - 2 columns on desktop, 1 on mobile with consistent sizing */}
+                        {!loading && !error && filteredPacks.length > 0 ? (
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 auto-rows-fr">
                                 {filteredPacks.map((pack) => (
-                                    <PackCard
-                                        key={pack.id}
-                                        id={pack.id}
-                                        title={pack.title}
-                                        description={pack.description}
-                                        originalPrice={pack.originalPrice}
-                                        packPrice={pack.packPrice}
-                                        packImage={pack.packImage}
-                                        books={pack.books}
-                                        onAddToCart={handleAddToCart}
-                                    />
+                                    <div key={pack.id} className="h-full">
+                                        <PackCard
+                                            id={pack.id}
+                                            title={pack.title}
+                                            description={pack.description}
+                                            originalPrice={pack.originalPrice}
+                                            packPrice={pack.packPrice}
+                                            packImage={pack.packImage}
+                                            books={pack.books}
+                                            onAddToCart={handleAddToCart}
+                                        />
+                                    </div>
                                 ))}
                             </div>
-                        ) : (
+                        ) : !loading && !error && (
                             <div className="text-center py-16">
                                 <div className="text-gray-400 mb-4">
                                     <svg
@@ -346,10 +307,19 @@ const PacksPromotionnels = () => {
             {selectedPack && (
                 <CartConfirmationPopup
                     isOpen={isPopupOpen}
-                    onClose={() => setIsPopupOpen(false)}
+                    onClose={handleClosePopup}
                     book={selectedPack}
+                    packBooks={packBooks}
                 />
             )}
+
+            {/* Floating Cart Badge - Shows after popup is dismissed */}
+            <FloatingCartBadge
+                isVisible={showFloatingBadge}
+                onDismiss={() => setShowFloatingBadge(false)}
+                onGoToCart={() => navigate('/cart')}
+                itemCount={cartCount}
+            />
         </div>
     );
 };

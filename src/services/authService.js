@@ -1,9 +1,9 @@
 // Temporary authentication service using OAuth Password Grant
 // This will be replaced with Google OAuth later
 
-const KEYCLOAK_URL = 'https://honest-coats-enter.loca.lt';
-const REALM = 'jhipster';
-const TOKEN_URL = `${KEYCLOAK_URL}/realms/${REALM}/protocol/openid-connect/token`;
+import { API_BASE_URL, KEYCLOAK_URL, KEYCLOAK_REALM, KEYCLOAK_CLIENT_ID, KEYCLOAK_CLIENT_SECRET } from './apiConfig';
+
+const TOKEN_URL = `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token`;
 
 // Token storage keys
 const ACCESS_TOKEN_KEY = 'el_access_token';
@@ -26,8 +26,8 @@ export const loginWithPassword = async (username, password) => {
         grant_type: 'password',
         username: username,
         password: password,
-        client_id: 'web_app',
-        client_secret: 'ASoXbE72eEiIpZmvGBObIpN2dNhiyM26',
+        client_id: KEYCLOAK_CLIENT_ID,
+        client_secret: KEYCLOAK_CLIENT_SECRET,
         scope: 'openid profile email',
       }),
     });
@@ -86,7 +86,7 @@ export const getCurrentUser = async () => {
     throw new Error('Not authenticated');
   }
 
-  const response = await fetch('https://sharp-crabs-allow.loca.lt/api/account', {
+  const response = await fetch(`${API_BASE_URL}/api/account`, {
     headers: {
       'Authorization': `Bearer ${token}`,
     },

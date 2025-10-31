@@ -136,7 +136,8 @@
     "addToCart": "Ajouter au panier",
     "viewFullDescription": "Voir la description complète",
     "fullDescription": "Description complète",
-    "recommendations": "Recommandations :"
+    "recommendations": "Recommandations :",
+    "packRecommendations": "Recommandations de packs :"
   },
   "cart": {
     "title": "Panier ({{count}} article)",
@@ -357,7 +358,9 @@
     "currency": "DZD",
     "booksIncluded": "Livres inclus",
     "save": "Économisez",
-    "books": "livres"
+    "books": "livres",
+    "seeMore": "Voir plus",
+    "allBooks": "Tous les livres"
   },
   "packsPage": {
     "title": "Packs Promotionnels",

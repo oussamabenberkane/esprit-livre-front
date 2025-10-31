@@ -302,6 +302,13 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
     }
   }, [initialFilters, categoriesData, authorsData]);
 
+  // Notify parent component when filters change
+  useEffect(() => {
+    if (onFiltersChange) {
+      onFiltersChange(filters);
+    }
+  }, [filters, onFiltersChange]);
+
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024);

@@ -9,6 +9,7 @@ import CartConfirmationPopup from '../components/common/cartConfirmationPopup';
 import FloatingCartBadge from '../components/common/FloatingCartBadge';
 import { getAllBookPacks } from '../services/bookPackService';
 import { getBooksByIds } from '../services/bookService';
+import { getBookCoverUrl, getBookPackCoverUrl } from '../utils/imageUtils';
 
 
 const PacksPromotionnels = () => {
@@ -94,11 +95,11 @@ const PacksPromotionnels = () => {
                                     title: book.title,
                                     author: book.author?.name || 'Unknown',
                                     price: parseFloat(book.price) || 0,
-                                    coverImage: book.coverImageUrl
+                                    coverImage: getBookCoverUrl(book.id)
                                 })),
                                 originalPrice: originalPrice,
                                 packPrice: parseFloat(pack.price) || 0,
-                                packImage: pack.coverImageUrl || null
+                                packImage: getBookPackCoverUrl(pack.id) || null
                             };
                         } catch (err) {
                             console.error(`Error fetching books for pack ${pack.id}:`, err);
@@ -108,7 +109,7 @@ const PacksPromotionnels = () => {
                                 books: [],
                                 originalPrice: parseFloat(pack.price) || 0,
                                 packPrice: parseFloat(pack.price) || 0,
-                                packImage: pack.coverImageUrl || null
+                                packImage: getBookPackCoverUrl(pack.id) || null
                             };
                         }
                     })

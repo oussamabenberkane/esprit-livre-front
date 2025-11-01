@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Heart, ShoppingCart } from 'lucide-react';
 import { getLanguageCode, getFullLanguageName } from '../../data/booksData';
-import { getBookCoverUrl } from '../../utils/imageUtils';
 
 const BookCard = ({
     id,
@@ -20,8 +19,6 @@ const BookCard = ({
 }) => {
     const { t } = useTranslation();
     const [favorited, setFavorited] = useState(isFavorited);
-    // Get the cover image URL from the API endpoint
-    const coverImageUrl = getBookCoverUrl(id);
     const navigate = useNavigate();
 
     const handleFavoriteClick = (e) => {
@@ -66,7 +63,7 @@ const BookCard = ({
             <div className="relative pt-fluid-sm pb-auto w-full flex items-center justify-center">
                 <div className="relative book-image-height w-full px-2">
                     <img
-                        src={coverImageUrl}
+                        src={coverImage}
                         alt={title}
                         className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                     />

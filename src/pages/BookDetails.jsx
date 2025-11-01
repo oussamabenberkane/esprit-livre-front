@@ -14,6 +14,7 @@ import CartConfirmationPopup from '../components/common/cartConfirmationPopup';
 import FloatingCartBadge from '../components/common/FloatingCartBadge';
 import { BOOKS_DATA, getLanguageCode } from '../data/booksData';
 import { fetchBookById, fetchBookRecommendations } from '../services/books.service';
+import { getBookCoverUrl, getBookPackCoverUrl } from '../utils/imageUtils';
 
 const BookDetails = () => {
     const { t } = useTranslation();
@@ -152,7 +153,7 @@ const BookDetails = () => {
                                     title: book.title,
                                     author: book.author?.name || 'Unknown',
                                     price: parseFloat(book.price) || 0,
-                                    coverImage: book.coverImageUrl
+                                    coverImage: getBookCoverUrl(book.id)
                                 })),
                                 originalPrice: originalPrice,
                                 packPrice: parseFloat(pack.price) || 0,
@@ -379,7 +380,7 @@ const BookDetails = () => {
         console.log(`Added main book ${book.id} to cart`);
         setSelectedBook({
             ...book,
-            coverImage: book.coverImageUrl
+            coverImage: getBookCoverUrl(book.id)
         });
         setPackBooks([]); // Clear pack books for regular books
         setShowCartPopup(true);
@@ -940,7 +941,7 @@ const BookDetails = () => {
                         title: selectedBook.title,
                         author: selectedBook.author.name,
                         price: selectedBook.price,
-                        coverImage: selectedBook.coverImageUrl,
+                        coverImage: getBookCoverUrl(selectedBook.id),
                         language: selectedBook.language
                     }}
                     packBooks={selectedBook.isPack ? packBooks : []}

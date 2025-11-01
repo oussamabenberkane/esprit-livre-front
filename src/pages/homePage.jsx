@@ -15,6 +15,7 @@ import FloatingCartBadge from '../components/common/FloatingCartBadge';
 import { fetchCategories, fetchMainDisplays } from '../services/tags.service';
 import { fetchBooksByMainDisplay } from '../services/books.service';
 import { fetchTopAuthors } from '../services/authors.service';
+import { getBookCoverUrl } from '../utils/imageUtils';
 
 
 // MainDisplayCarousel component for rendering individual carousels
@@ -118,7 +119,7 @@ const MainDisplayCarousel = ({ display, onAddToCart, onToggleFavorite, updateScr
                                         title={book.title}
                                         author={book.author?.name || 'Unknown Author'}
                                         price={book.price}
-                                        coverImage={book.coverImageUrl}
+                                        coverImage={getBookCoverUrl(book.id)}
                                         badge={badge}
                                         stockStatus={stockStatus}
                                         language={book.language}
@@ -774,7 +775,7 @@ const HomePage = () => {
                         title: selectedBook.title,
                         author: selectedBook.author?.name || 'Unknown Author',
                         price: selectedBook.price,
-                        coverImage: selectedBook.coverImageUrl,
+                        coverImage: getBookCoverUrl(selectedBook.id),
                         language: selectedBook.language
                     }}
                 />

@@ -10,6 +10,7 @@ import { fetchTopAuthors } from "../services/authors.service"
 import { useState, useEffect } from "react"
 import { useSearchParams, useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
+import { getBookCoverUrl } from '../utils/imageUtils'
 
 export default function AllBooks() {
     const { t } = useTranslation()
@@ -247,7 +248,7 @@ export default function AllBooks() {
                                         title={book.title}
                                         author={book.author.name}
                                         price={book.price}
-                                        coverImage={book.coverImageUrl}
+                                        coverImage={getBookCoverUrl(book.id)}
                                         badge={badge}
                                         stockStatus={stockStatus}
                                         language={book.language}
@@ -328,7 +329,7 @@ export default function AllBooks() {
                         title: selectedBook.title,
                         author: selectedBook.author.name,
                         price: selectedBook.price,
-                        coverImage: selectedBook.coverImageUrl,
+                        coverImage: getBookCoverUrl(selectedBook.id),
                         language: selectedBook.language
                     }}
                 />

@@ -8,6 +8,7 @@ import FloatingCartBadge from '../common/FloatingCartBadge';
 import { fetchLikedBooks } from '../../services/books.service';
 import { useScrollToTop } from '../../hooks/useScrollToTop';
 import Navbar from '../common/Navbar';
+import { getBookCoverUrl } from '../../utils/imageUtils';
 import Footer from '../common/Footer';
 
 export default function Favorites() {
@@ -163,7 +164,7 @@ export default function Favorites() {
                     title={book.title}
                     author={book.author.name}
                     price={book.price}
-                    coverImage={book.coverImageUrl}
+                    coverImage={getBookCoverUrl(book.id)}
                     badge={badge}
                     stockStatus={stockStatus}
                     language={book.language}
@@ -205,7 +206,7 @@ export default function Favorites() {
             title: selectedBook.title,
             author: selectedBook.author.name,
             price: selectedBook.price,
-            coverImage: selectedBook.coverImageUrl,
+            coverImage: getBookCoverUrl(selectedBook.id),
             language: selectedBook.language
           }}
         />

@@ -10,6 +10,7 @@ import { getUserOrders } from '../../services/order.service';
 import { isAuthenticated } from '../../services/authService';
 
 /**
+import { getBookCoverUrl } from '../../utils/imageUtils';
  * Format date for display
  * @param {string} dateString - ISO date string
  * @returns {string} Formatted date
@@ -38,7 +39,7 @@ const transformOrder = (apiOrder) => {
     items: apiOrder.orderItems?.map(item => ({
       title: item.book?.title || 'Unknown',
       author: item.book?.author?.name || 'Unknown Author',
-      image: item.book?.coverImageUrl || 'https://via.placeholder.com/200x300?text=No+Image',
+      image: getBookCoverUrl(item.book?.id) || 'https://via.placeholder.com/200x300?text=No+Image',
       language: item.book?.language || null,
       quantity: item.quantity || 1,
       unitPrice: item.unitPrice || 0

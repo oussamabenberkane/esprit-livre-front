@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Book, Search } from 'lucide-react';
+import { getBookCoverUrl } from '../../utils/imageUtils';
 
 const SearchSuggestions = ({ suggestions, isLoading, query, onClose }) => {
     const navigate = useNavigate();
@@ -48,9 +49,9 @@ const SearchSuggestions = ({ suggestions, isLoading, query, onClose }) => {
                             >
                                 {/* Book Cover */}
                                 <div className="flex-shrink-0 w-12 h-16 bg-gray-100 rounded overflow-hidden">
-                                    {book.coverImageUrl ? (
+                                    {getBookCoverUrl(book.id) ? (
                                         <img
-                                            src={book.coverImageUrl}
+                                            src={getBookCoverUrl(book.id)}
                                             alt={book.title}
                                             className="w-full h-full object-cover"
                                         />

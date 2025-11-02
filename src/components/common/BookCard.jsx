@@ -14,6 +14,7 @@ const BookCard = ({
     badge = null,
     stockStatus = { available: true, text: "en stock" },
     language = null,
+    stock,
     onAddToCart,
     onToggleFavorite,
     isFavorited = false
@@ -23,6 +24,9 @@ const BookCard = ({
     // Get the cover image URL from the API endpoint
     const coverImageUrl = getBookCoverUrl(id);
     const navigate = useNavigate();
+
+    // Determine if book is available based on stock
+    const isAvailable = stock !== 0;
 
     const handleFavoriteClick = (e) => {
         e.stopPropagation(); // Prevent card click navigation
@@ -77,9 +81,9 @@ const BookCard = ({
                 {badge && (
                     <div
                         className="absolute top-0 left-0 px-3 py-2 rounded-br-2xl text-fluid-tag font-semibold text-white"
-                        style={{ backgroundColor: badge.colorHex || '#6B7280' }}
+                        style={{ backgroundColor: isAvailable ? (badge.colorHex || '#6B7280') : '#2563eb' }}
                     >
-                        {badge.text}
+                        {isAvailable ? badge.text : 'Preorder'}
                     </div>
                 )}
 
@@ -112,16 +116,16 @@ const BookCard = ({
                 {/* Stock Status */}
                 <div className="text-fluid-tag font-bold mb-auto">
                     <span className={`inline-flex items-center ${
-                        stockStatus.available
+                        isAvailable
                             ? 'text-green-600'
                             : 'text-blue-600'
                         }`}>
                         <span className={`w-2 h-2 rounded-full mr-1 ${
-                            stockStatus.available
+                            isAvailable
                                 ? 'bg-green-600'
                                 : 'bg-blue-600'
                             }`}></span>
-                        {stockStatus.available
+                        {isAvailable
                             ? t('bookCard.stockStatus.inStock')
                             : t('bookCard.stockStatus.preorder')
                         }

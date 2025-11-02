@@ -336,23 +336,139 @@ export default function AllBooks() {
                     {/* Bottom Navigation */}
                     <div className="flex flex-col sm:flex-row justify-between items-center gap-4 py-fluid-lg border-t border-gray-200 text-fluid-small">
                         <div className="text-gray-600 font-medium">{t('allBooks.digitalLibrary')}</div>
-                        <div className="flex items-center gap-6 flex-wrap justify-center">
-                            <div className="flex gap-2">
-                                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => (
-                                    <button
-                                        key={i + 1}
-                                        onClick={() => setCurrentPage(i + 1)}
-                                        className={`w-8 h-8 rounded text-sm font-medium transition-all duration-200 ${currentPage === i + 1
-                                            ? "bg-blue-600 text-white shadow-md scale-110"
-                                            : "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105 active:scale-95"
-                                            }`}
-                                    >
-                                        {i + 1}
-                                    </button>
-                                ))}
+
+                        {/* Pagination Controls */}
+                        {totalPages > 1 && (
+                            <div className="flex items-center gap-2">
+                                {/* Previous Button */}
+                                <button
+                                    onClick={() => {
+                                        setCurrentPage(prev => Math.max(1, prev - 1))
+                                        window.scrollTo({ top: 0, behavior: 'smooth' })
+                                    }}
+                                    disabled={currentPage === 1}
+                                    className={`flex items-center justify-center w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 ${
+                                        currentPage === 1
+                                            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                            : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+                                    }`}
+                                    aria-label="Previous page"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                    </svg>
+                                </button>
+
+                                {/* Page Numbers */}
+                                <div className="flex gap-1">
+                                    {(() => {
+                                        const pageNumbers = []
+                                        const showEllipsisStart = currentPage > 3
+                                        const showEllipsisEnd = currentPage < totalPages - 2
+
+                                        // Always show first page
+                                        pageNumbers.push(
+                                            <button
+                                                key={1}
+                                                onClick={() => {
+                                                    setCurrentPage(1)
+                                                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                                                }}
+                                                className={`min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                                                    currentPage === 1
+                                                        ? "bg-blue-600 text-white shadow-md"
+                                                        : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+                                                }`}
+                                            >
+                                                1
+                                            </button>
+                                        )
+
+                                        // Show ellipsis after first page if needed
+                                        if (showEllipsisStart) {
+                                            pageNumbers.push(
+                                                <span key="ellipsis-start" className="flex items-center justify-center w-9 h-9 text-gray-400">
+                                                    ...
+                                                </span>
+                                            )
+                                        }
+
+                                        // Show pages around current page
+                                        const startPage = Math.max(2, currentPage - 1)
+                                        const endPage = Math.min(totalPages - 1, currentPage + 1)
+
+                                        for (let i = startPage; i <= endPage; i++) {
+                                            pageNumbers.push(
+                                                <button
+                                                    key={i}
+                                                    onClick={() => {
+                                                        setCurrentPage(i)
+                                                        window.scrollTo({ top: 0, behavior: 'smooth' })
+                                                    }}
+                                                    className={`min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                                                        currentPage === i
+                                                            ? "bg-blue-600 text-white shadow-md"
+                                                            : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+                                                    }`}
+                                                >
+                                                    {i}
+                                                </button>
+                                            )
+                                        }
+
+                                        // Show ellipsis before last page if needed
+                                        if (showEllipsisEnd) {
+                                            pageNumbers.push(
+                                                <span key="ellipsis-end" className="flex items-center justify-center w-9 h-9 text-gray-400">
+                                                    ...
+                                                </span>
+                                            )
+                                        }
+
+                                        // Always show last page if more than 1 page
+                                        if (totalPages > 1) {
+                                            pageNumbers.push(
+                                                <button
+                                                    key={totalPages}
+                                                    onClick={() => {
+                                                        setCurrentPage(totalPages)
+                                                        window.scrollTo({ top: 0, behavior: 'smooth' })
+                                                    }}
+                                                    className={`min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                                                        currentPage === totalPages
+                                                            ? "bg-blue-600 text-white shadow-md"
+                                                            : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+                                                    }`}
+                                                >
+                                                    {totalPages}
+                                                </button>
+                                            )
+                                        }
+
+                                        return pageNumbers
+                                    })()}
+                                </div>
+
+                                {/* Next Button */}
+                                <button
+                                    onClick={() => {
+                                        setCurrentPage(prev => Math.min(totalPages, prev + 1))
+                                        window.scrollTo({ top: 0, behavior: 'smooth' })
+                                    }}
+                                    disabled={currentPage === totalPages}
+                                    className={`flex items-center justify-center w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 ${
+                                        currentPage === totalPages
+                                            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                            : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+                                    }`}
+                                    aria-label="Next page"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </button>
                             </div>
-                            <span className="text-gray-600 font-medium">{t('allBooks.customerService')}</span>
-                        </div>
+                        )}
                     </div>
                 </div>
 

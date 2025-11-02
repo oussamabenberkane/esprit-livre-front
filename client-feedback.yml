@@ -29,11 +29,15 @@ EZ :
 Takes time :
   add etiquettes option in admin panel in the books page with color picker with hexa value paste: --- mzl a better styling for the color picker ak d position n edit or supress popup --- done
   add pagination to every multiple elements component instead of a scroll in those pages orders, users and books (both sections) and in marketing: --- done
-  preorder isnt renderen in bookdetails: ---
-  add create author section in books page in admin: ---
-  remove language tag from bookcard: --- 
+  filters layout: --- done
+
+  preorder isnt renderen in bookdetails: --- done
+  pagination in allbooks: --- add arrows --- 
+  remove condition from book details and replace it with category: --- 
+  add 2-4 days for estimated delivery: --- done
+  id book quantity = make it in preorder: --- 
+  rigli book service ni n tmenyik 2 files: ---
+  rigli lanimation ni n first caroussel display + add auto scroll: --- 
+  add create author section in books page in admin: --- 
   weird dropshadow effect on bookcards: --- 
 
-
-
-cablage implementations without checking anything: allbooks(books, filters), homepage (categ, authors, main display, search), bookdetails(book details, recommendations), profile, favorites, orders (history+current ones)

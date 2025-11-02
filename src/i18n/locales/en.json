@@ -136,7 +136,7 @@
     "soldBy": "Sold and shipped by {{seller}}",
     "condition": "Condition: {{condition}}",
     "inStock": "in stock",
-    "estimatedDelivery": "Estimated delivery: {{date}}",
+    "estimatedDelivery": "Estimated delivery: 2-4 days",
     "addToCart": "Add to cart",
     "viewFullDescription": "View full description",
     "fullDescription": "Full Description",

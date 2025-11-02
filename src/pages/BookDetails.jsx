@@ -329,7 +329,7 @@ const BookDetails = () => {
         if (bookToAdd) {
             setSelectedBook({
                 ...bookToAdd,
-                coverImage: bookToAdd.coverImageUrl
+                coverImage: getBookCoverUrl(bookToAdd.id)
             });
             setPackBooks([]); // Clear pack books for regular books
             setShowCartPopup(true);
@@ -514,7 +514,7 @@ const BookDetails = () => {
                         <div className="flex justify-center mb-fluid-md">
                             <div className="w-[150px] aspect-[5/7] rounded-md shadow-[0px_5px_20px_0px_rgba(0,0,0,0.25)] overflow-hidden">
                                 <img
-                                    src={book.coverImageUrl}
+                                    src={getBookCoverUrl(book.id)}
                                     alt={book.title}
                                     className="w-full h-full object-cover"
                                 />
@@ -621,7 +621,7 @@ const BookDetails = () => {
                                 <div className="flex-shrink-0 flex flex-col gap-fluid-sm pl-fluid-sm">
                                     <div className="w-[180px] lg:w-[220px] aspect-[5/7] rounded-md shadow-[0px_5px_20px_0px_rgba(0,0,0,0.25)] overflow-hidden">
                                         <img
-                                            src={book.coverImageUrl}
+                                            src={getBookCoverUrl(book.id)}
                                             alt={book.title}
                                             className="w-full h-full object-cover"
                                         />

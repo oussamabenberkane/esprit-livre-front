@@ -8,9 +8,9 @@ import Footer from '../common/Footer';
 import { getLanguageCode, getFullLanguageName } from '../../data/booksData';
 import { getUserOrders } from '../../services/order.service';
 import { isAuthenticated } from '../../services/authService';
+import { getBookCoverUrl } from '../../utils/imageUtils';
 
 /**
-import { getBookCoverUrl } from '../../utils/imageUtils';
  * Format date for display
  * @param {string} dateString - ISO date string
  * @returns {string} Formatted date

@@ -349,14 +349,15 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
           ...prev,
           ...mappedFilters
         }));
+      }
 
-        // Auto-apply filters when coming from URL (e.g., from search)
-        if (initialFilters.search || initialFilters.categories || initialFilters.authors) {
-          // Small delay to ensure filters are set before applying
-          setTimeout(() => {
-            applyFilters();
-          }, 100);
-        }
+      // Auto-apply filters when coming from URL (e.g., from search)
+      // This includes search-only cases (no categories/authors)
+      if (initialFilters.search || initialFilters.categories || initialFilters.authors) {
+        // Small delay to ensure filters are set before applying
+        setTimeout(() => {
+          applyFilters();
+        }, 100);
       }
     }
   }, [initialFilters, categoriesData, authorsData]);

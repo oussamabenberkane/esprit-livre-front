@@ -26,17 +26,22 @@ export const fetchAllBooks = async (page = 0, size = 12, filters = {}) => {
     // Add category filters (API accepts multiple categoryId params)
     if (filters.categories && filters.categories.length > 0) {
       filters.categories.forEach(category => {
-        params.append('categoryId', category);
+        // Ensure we're appending the ID as a string, not an object
+        const categoryId = typeof category === 'object' ? category.id : category;
+        if (categoryId) {
+          params.append('categoryId', categoryId.toString());
+        }
       });
     }
 
-    // Add author filter (API accepts single author param with name, not ID)
+    // Add author filter (API accepts author ID)
     if (filters.authors && filters.authors.length > 0) {
-      // API expects author name, not ID
-      // If we have IDs, we need to get the names from somewhere
-      // For now, join multiple authors with comma (if API supports it)
       filters.authors.forEach(author => {
-        params.append('author', author);
+        // Ensure we're appending the ID as a string, not an object
+        const authorId = typeof author === 'object' ? author.id : author;
+        if (authorId) {
+          params.append('author', authorId.toString());
+        }
       });
     }
 

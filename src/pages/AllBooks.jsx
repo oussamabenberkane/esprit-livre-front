@@ -113,6 +113,13 @@ export default function AllBooks() {
         }
     }, [searchParams, t])
 
+    // Auto-apply initial filters from URL params
+    useEffect(() => {
+        if (initialFilters) {
+            setAppliedFilters(initialFilters)
+        }
+    }, [initialFilters])
+
     // Fetch books from API
     useEffect(() => {
         const loadBooks = async () => {

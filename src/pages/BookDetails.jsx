@@ -14,6 +14,8 @@ import CartConfirmationPopup from '../components/common/cartConfirmationPopup';
 import FloatingCartBadge from '../components/common/FloatingCartBadge';
 import { BOOKS_DATA, getLanguageCode } from '../data/booksData';
 import { fetchBookById, fetchBookRecommendations } from '../services/books.service';
+import { getRecommendedPacksForBook } from '../services/bookPackService';
+import { getBooksByIds } from '../services/bookService';
 import { getBookCoverUrl, getBookPackCoverUrl } from '../utils/imageUtils';
 
 const BookDetails = () => {

@@ -123,6 +123,7 @@ const MainDisplayCarousel = ({ display, onAddToCart, onToggleFavorite, updateScr
                                         badge={badge}
                                         stockStatus={stockStatus}
                                         language={book.language}
+                                        stock={book.stockQuantity}
                                         onAddToCart={onAddToCart}
                                         onToggleFavorite={onToggleFavorite}
                                         isFavorited={book.isLikedByCurrentUser}

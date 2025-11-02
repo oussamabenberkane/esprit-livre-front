@@ -168,6 +168,7 @@ export default function Favorites() {
                     badge={badge}
                     stockStatus={stockStatus}
                     language={book.language}
+                    stock={book.stockQuantity}
                     onAddToCart={handleAddToCart}
                     onToggleFavorite={handleToggleFavorite}
                     isFavorited={true}

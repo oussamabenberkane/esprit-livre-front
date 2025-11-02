@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ShoppingCart, CheckCircle2, ChevronDown } from 'lucide-react';
 import Navbar from '../components/common/Navbar';
@@ -21,10 +21,14 @@ import { getBookCoverUrl, getBookPackCoverUrl } from '../utils/imageUtils';
 const BookDetails = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const location = useLocation();
     const { id } = useParams(); // Get book ID from URL
 
+    // Get book data from navigation state if available
+    const navigationBook = location.state?.book;
+
     // Find the book based on URL parameter
-    const [book, setBook] = useState(null);
+    const [book, setBook] = useState(navigationBook || null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -77,7 +81,6 @@ const BookDetails = () => {
 
     // Recommended books - exclude current book (backend will provide this later)
     const [recommendedBooks, setRecommendedBooks] = useState([]);
-
     // Load recommended books when ID changes
     useEffect(() => {
         // Fetch recommended books from API
@@ -563,9 +566,9 @@ const BookDetails = () => {
 
                                 {/* Stock Status */}
                                 <div className="flex items-center gap-1 mb-fluid-xs">
-                                    <CheckCircle2 className="w-3 h-3 text-[#198919]" />
-                                    <span className="font-['Poppins'] font-bold text-[#198919] text-fluid-tag">
-                                        {t('bookDetails.inStock')}
+                                    <CheckCircle2 className={`w-3 h-3 ${book.stockQuantity > 0 ? 'text-[#198919]' : 'text-blue-600'}`} />
+                                    <span className={`font-['Poppins'] font-bold text-fluid-tag ${book.stockQuantity > 0 ? 'text-[#198919]' : 'text-blue-600'}`}>
+                                        {book.stockQuantity > 0 ? t('bookCard.stockStatus.inStock') : t('bookCard.stockStatus.preorder')}
                                     </span>
                                 </div>
 
@@ -680,9 +683,9 @@ const BookDetails = () => {
 
                                             {/* Stock Status */}
                                             <div className="flex items-center gap-1 mb-fluid-xxs">
-                                                <CheckCircle2 className="w-3 h-3 text-[#198919]" />
-                                                <span className="font-['Poppins'] font-bold text-[#198919] text-fluid-vsmall">
-                                                    {t('bookDetails.inStock')}
+                                                <CheckCircle2 className={`w-3 h-3 ${book.stockQuantity > 0 ? 'text-[#198919]' : 'text-blue-600'}`} />
+                                                <span className={`font-['Poppins'] font-bold text-fluid-vsmall ${book.stockQuantity > 0 ? 'text-[#198919]' : 'text-blue-600'}`}>
+                                                    {book.stockQuantity > 0 ? t('bookCard.stockStatus.inStock') : t('bookCard.stockStatus.preorder')}
                                                 </span>
                                             </div>
 
@@ -710,11 +713,10 @@ const BookDetails = () => {
                     {showFullDescription && (
                         <div
                             ref={descriptionRef}
-                            className={`mt-fluid-lg transition-all duration-300 ease-in-out ${
-                                isAnimatingOut
-                                    ? 'animate-fade-out'
-                                    : 'animate-fade-in'
-                            }`}
+                            className={`mt-fluid-lg transition-all duration-300 ease-in-out ${isAnimatingOut
+                                ? 'animate-fade-out'
+                                : 'animate-fade-in'
+                                }`}
                             style={{ animationDuration: '300ms' }}
                         >
                             {/* Mobile Layout */}
@@ -776,7 +778,7 @@ const BookDetails = () => {
 
                                     const stockStatus = {
                                         available: recommendedBook.stockQuantity > 0,
-                                        text: recommendedBook.stockQuantity > 0 ? t('bookCard.stockStatus.inStock') : t('bookCard.stockStatus.outOfStock')
+                                        text: recommendedBook.stockQuantity > 0 ? t('bookCard.stockStatus.inStock') : t('bookCard.stockStatus.preorder')
                                     };
 
                                     return (
@@ -793,6 +795,7 @@ const BookDetails = () => {
                                                 badge={badge}
                                                 stockStatus={stockStatus}
                                                 language={recommendedBook.language}
+                                                stock={recommendedBook.stockQuantity}
                                                 onAddToCart={handleAddToCart}
                                                 onToggleFavorite={handleToggleFavorite}
                                                 isFavorited={recommendedBook.isLikedByCurrentUser}

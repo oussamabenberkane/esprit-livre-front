@@ -27,6 +27,10 @@ const BookCard = ({
 
     // Determine if book is available based on stock
     const isAvailable = stock !== 0;
+    console.log(`BookCard ${id} - Title: ${title}`)
+    console.log('stockStatus:', stockStatus)
+    console.log('stock prop:', stock)
+    console.log('stock > 0:', stock > 0)
 
     const handleFavoriteClick = (e) => {
         e.stopPropagation(); // Prevent card click navigation
@@ -55,7 +59,8 @@ const BookCard = ({
                     coverImage,
                     badge,
                     stockStatus,
-                    language
+                    language,
+                    stockQuantity: stock
                 }
             }
         });
@@ -75,7 +80,7 @@ const BookCard = ({
                         className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                     />
 
-                    
+
                 </div>
                 {/* Badge */}
                 {badge && isAvailable && (
@@ -124,17 +129,15 @@ const BookCard = ({
 
                 {/* Stock Status */}
                 <div className="text-fluid-tag font-bold mb-auto">
-                    <span className={`inline-flex items-center ${
-                        isAvailable
-                            ? 'text-green-600'
-                            : 'text-blue-600'
+                    <span className={`inline-flex items-center ${(stock !== null && stock !== undefined && stock > 0)
+                        ? 'text-green-600'
+                        : 'text-blue-600'
                         }`}>
-                        <span className={`w-2 h-2 rounded-full mr-1 ${
-                            isAvailable
-                                ? 'bg-green-600'
-                                : 'bg-blue-600'
+                        <span className={`w-2 h-2 rounded-full mr-1 ${(stock !== null && stock !== undefined && stock > 0)
+                            ? 'bg-green-600'
+                            : 'bg-blue-600'
                             }`}></span>
-                        {isAvailable
+                        {(stock !== null && stock !== undefined && stock > 0)
                             ? t('bookCard.stockStatus.inStock')
                             : t('bookCard.stockStatus.preorder')
                         }

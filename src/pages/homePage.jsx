@@ -575,6 +575,7 @@ const HomePage = () => {
                                             onClick={() => handleCategoryClick(category.nameFr || category.nameEn)}
                                         >
                                             <CategoryCard
+                                                categoryId={category.id}
                                                 title={category.nameFr || category.nameEn}
                                                 imageSrc={category.imageUrl} />
                                         </div>
@@ -701,6 +702,7 @@ const HomePage = () => {
                                             onClick={() => handleAuthorClick(author.name)}
                                         >
                                             <AuthorComponent
+                                                authorId={author.id}
                                                 authorImage={author.profilePictureUrl}
                                                 authorName={author.name}
                                             />

@@ -1,15 +1,19 @@
 import React from 'react';
+import { getCategoryImageUrl } from '../../utils/imageUtils';
 
 const CategoryCard = ({
+    categoryId,
     title,
     imageSrc
 }) => {
+    // Use categoryId to generate image URL if provided, otherwise fall back to imageSrc prop
+    const imageUrl = categoryId ? getCategoryImageUrl(categoryId) : imageSrc;
     return (
         <div className="relative cat-card-size bg-gray-200 rounded-[10px] overflow-hidden cursor-pointer hover:scale-102 transition-transform duration-200">
             {/* Background Image */}
             <div className="absolute inset-0">
                 <img
-                    src={imageSrc}
+                    src={imageUrl}
                     alt={title}
                     className="absolute inset-0 w-full h-full object-cover object-center"
                 />

@@ -23,3 +23,27 @@ export const getBookPackCoverUrl = (packId) => {
   }
   return `${API_BASE_URL}/api/book-packs/${packId}/cover`;
 };
+
+/**
+ * Get the full URL for an author picture
+ * @param {number|string} authorId - The author ID
+ * @returns {string} The full URL to the author picture
+ */
+export const getAuthorPictureUrl = (authorId) => {
+  if (!authorId) {
+    return null;
+  }
+  return `${API_BASE_URL}/api/authors/${authorId}/picture`;
+};
+
+/**
+ * Get the full URL for a category/tag image
+ * @param {number|string} tagId - The tag/category ID
+ * @returns {string} The full URL to the category image
+ */
+export const getCategoryImageUrl = (tagId) => {
+  if (!tagId) {
+    return null;
+  }
+  return `${API_BASE_URL}/api/tags/${tagId}/image`;
+};

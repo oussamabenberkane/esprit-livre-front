@@ -293,6 +293,7 @@ export default function AllBooks() {
                                                 badge={badge}
                                                 stockStatus={stockStatus}
                                                 language={book.language}
+                                                stock={book.stockQuantity}
                                                 onAddToCart={handleAddToCart}
                                                 onToggleFavorite={handleToggleFavorite}
                                                 isFavorited={book.isLikedByCurrentUser}
@@ -335,7 +336,7 @@ export default function AllBooks() {
 
                     {/* Bottom Navigation */}
                     <div className="flex flex-col sm:flex-row justify-between items-center gap-4 py-fluid-lg border-t border-gray-200 text-fluid-small">
-                        <div className="text-gray-600 font-medium">{t('allBooks.digitalLibrary')}</div>
+                        <div ></div>
 
                         {/* Pagination Controls */}
                         {totalPages > 1 && (

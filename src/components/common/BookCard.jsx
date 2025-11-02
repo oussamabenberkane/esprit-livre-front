@@ -78,12 +78,21 @@ const BookCard = ({
                     
                 </div>
                 {/* Badge */}
-                {badge && (
+                {badge && isAvailable && (
                     <div
                         className="absolute top-0 left-0 px-3 py-2 rounded-br-2xl text-fluid-tag font-semibold text-white"
-                        style={{ backgroundColor: isAvailable ? (badge.colorHex || '#6B7280') : '#2563eb' }}
+                        style={{ backgroundColor: badge.colorHex || '#6B7280' }}
                     >
-                        {isAvailable ? badge.text : 'Preorder'}
+                        {badge.text}
+                    </div>
+                )}
+                {/* Preorder Badge when stock is 0 */}
+                {!isAvailable && (
+                    <div
+                        className="absolute top-0 left-0 px-3 py-2 rounded-br-2xl text-fluid-tag font-semibold text-white"
+                        style={{ backgroundColor: '#2563eb' }}
+                    >
+                        Preorder
                     </div>
                 )}
 

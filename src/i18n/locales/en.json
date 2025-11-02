@@ -20,6 +20,7 @@
   "allBooks": {
     "pageTitle": "All Books",
     "pageSubtitle": "Discover our complete collection of books",
+    "resultsFor": "Results for \"{{query}}\"",
     "resultsTitle": "Results",
     "resultsCount": "{{start}} - {{end}} of {{total}} books",
     "page": "Page {{current}}/{{total}}",
@@ -102,7 +103,10 @@
   },
   "search": {
     "noResults": "No results found",
-    "viewAllResults": "View all results for \"{{query}}\""
+    "viewAllResults": "View all results for \"{{query}}\"",
+    "bookTitle": "Book",
+    "author": "Author",
+    "category": "Category"
   },
   "homePage": {
     "greeting": "Hello",

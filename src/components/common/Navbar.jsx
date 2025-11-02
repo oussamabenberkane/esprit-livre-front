@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Search, ShoppingCart, Heart, User, Menu } from 'lucide-react';
-import LanguageToggle from '../animations/LanguageToggle'; // Your existing component
+import LanguageToggle from '../animations/LanguageToggle';
 import BottomSheet from './BottomSheet';
 import SearchSuggestions from './SearchSuggestions';
 import { fetchBookSuggestions } from '../../services/books.service';
@@ -39,7 +39,7 @@ const Logo = () => (
 );
 
 // SearchBar Component
-const SearchBar = ({ placeholder = "Recherchez...", value, onChange, onFocus }) => {
+const SearchBar = ({ placeholder = "Recherchez...", value, onChange, onFocus, onKeyDown }) => {
     return (
         <div className="relative bg-white rounded-lg h-10 md:h-11 w-full md:w-96 flex items-center">
             <div className="absolute left-3 w-4 h-4 text-slate-500">
@@ -51,6 +51,7 @@ const SearchBar = ({ placeholder = "Recherchez...", value, onChange, onFocus }) 
                 value={value}
                 onChange={onChange}
                 onFocus={onFocus}
+                onKeyDown={onKeyDown}
                 className="w-full h-full pl-10 pr-4 text-sm md:text-base text-black bg-transparent border-none outline-none placeholder:text-slate-500 rounded-lg"
             />
         </div>
@@ -97,7 +98,7 @@ const Navbar = ({
         navigate('/profile');
     };
 
-    // Handle search input change with debouncing
+    // Handle search input change - fetch suggestions on every keystroke
     const handleSearchChange = (e) => {
         const query = e.target.value;
         setSearchQuery(query);
@@ -114,7 +115,7 @@ const Navbar = ({
             return;
         }
 
-        // Debounce search API call (300ms)
+        // Fetch suggestions with minimal debounce (150ms) for responsive feedback
         setIsLoadingSuggestions(true);
         searchTimeoutRef.current = setTimeout(async () => {
             try {
@@ -127,13 +128,30 @@ const Navbar = ({
             } finally {
                 setIsLoadingSuggestions(false);
             }
-        }, 300);
+        }, 150);
     };
 
     // Handle search input focus
     const handleSearchFocus = () => {
         if (searchQuery && searchQuery.trim().length > 0) {
             setShowSuggestions(true);
+        }
+    };
+
+    // Handle Enter key to perform search
+    const handleSearchSubmit = () => {
+        if (searchQuery && searchQuery.trim().length > 0) {
+            // Navigate to AllBooks page with search parameter
+            navigate(`/allbooks?search=${encodeURIComponent(searchQuery.trim())}`);
+            // Close suggestions
+            setShowSuggestions(false);
+        }
+    };
+
+    // Handle key down events
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            handleSearchSubmit();
         }
     };
 
@@ -182,6 +200,7 @@ const Navbar = ({
                             value={searchQuery}
                             onChange={handleSearchChange}
                             onFocus={handleSearchFocus}
+                            onKeyDown={handleKeyDown}
                         />
                         {showSuggestions && (
                             <SearchSuggestions
@@ -289,6 +308,7 @@ const Navbar = ({
                             value={searchQuery}
                             onChange={handleSearchChange}
                             onFocus={handleSearchFocus}
+                            onKeyDown={handleKeyDown}
                         />
                         {showSuggestions && (
                             <SearchSuggestions

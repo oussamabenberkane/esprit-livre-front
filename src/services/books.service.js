@@ -10,6 +10,7 @@ import { getAccessToken } from './authService';
  * @param {Array<string>} filters.categories - Array of category names
  * @param {Array<string>} filters.authors - Array of author names
  * @param {Array<string>} filters.titles - Array of book title search terms
+ * @param {string} filters.search - Search query string
  * @param {Array<string>} filters.languages - Array of languages (FRENCH/ARABIC/ENGLISH)
  * @param {number} filters.minPrice - Minimum price
  * @param {number} filters.maxPrice - Maximum price
@@ -39,8 +40,11 @@ export const fetchAllBooks = async (page = 0, size = 12, filters = {}) => {
       });
     }
 
-    // Add search filter for titles (API uses 'search' param)
-    if (filters.titles && filters.titles.length > 0) {
+    // Add search filter (API uses 'search' param)
+    // Support both direct search string and titles array for backward compatibility
+    if (filters.search && filters.search.trim().length > 0) {
+      params.append('search', filters.search.trim());
+    } else if (filters.titles && filters.titles.length > 0) {
       // Join multiple title searches
       params.append('search', filters.titles.join(' '));
     }
@@ -58,9 +62,9 @@ export const fetchAllBooks = async (page = 0, size = 12, filters = {}) => {
     if (filters.languages && filters.languages.length > 0) {
       // Map display names to API enum values
       const languageMap = {
-        'Français': 'FRENCH',
-        'English': 'ENGLISH',
-        'العربية': 'ARABIC'
+        'Français': 'FR',
+        'English': 'EN',
+        'العربية': 'AR'
       };
       filters.languages.forEach(lang => {
         const apiLang = languageMap[lang] || lang.toUpperCase();

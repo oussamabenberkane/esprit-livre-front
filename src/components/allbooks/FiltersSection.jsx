@@ -172,7 +172,7 @@ const FilterDropdown = ({
         </div>
 
         <div
-          className={`${isMobile ? 'overflow-hidden' : 'absolute top-full left-0 right-0 z-50'} transition-all duration-300 ease-in-out ${isActive ? 'max-h-64 mt-2 opacity-100 visible' : 'max-h-0 mt-0 opacity-0 invisible'
+          className={`${isMobile ? 'overflow-hidden' : 'relative z-50'} transition-all duration-300 ease-in-out ${isActive ? 'max-h-64 mt-2 opacity-100 visible' : 'max-h-0 mt-0 opacity-0 invisible'
             }`}
         >
           <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
@@ -219,8 +219,8 @@ const FilterDropdown = ({
           }`}
       >
         {selectedItems.length > 0 && !searchTerm && (
-          <div className="p-3 bg-blue-50 rounded-lg overflow-x-hidden">
-            <div className="flex gap-2 flex-wrap">
+          <div className="p-3 bg-blue-50 rounded-lg">
+            <div className="flex gap-2 overflow-x-auto pb-2 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-blue-100 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-blue-400 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-blue-500 [&::-webkit-scrollbar-thumb]:transition-colors">
               {selectedItems.map((item) => {
                 const displayText = typeof item === 'object' ? item.name : item;
                 const key = typeof item === 'object' ? item.id : item;
@@ -229,7 +229,7 @@ const FilterDropdown = ({
                     key={key}
                     className="flex items-center bg-white px-3 py-1.5 rounded-full text-sm whitespace-nowrap flex-shrink-0 shadow-sm border border-blue-200"
                   >
-                    <span className="mr-2 text-gray-700 truncate max-w-[150px]">{displayText}</span>
+                    <span className="mr-2 text-gray-700">{displayText}</span>
                     <button
                       onClick={() => onRemoveFilterItem(type, item)}
                       className="text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
@@ -255,14 +255,12 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
     price: { min: 0, max: 10000 },
     categories: [],
     authors: [],
-    titles: [],
     languages: []
   });
 
   const [searchTerms, setSearchTerms] = useState({
     categories: '',
     authors: '',
-    titles: '',
     languages: ''
   });
 
@@ -275,30 +273,91 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
     if (initialFilters) {
       const mappedFilters = {};
 
-      // Map category names from URL to category objects
-      if (initialFilters.categories && categoriesData.length > 0) {
-        mappedFilters.categories = initialFilters.categories
-          .map(catName => categoriesData.find(cat =>
-            (cat.nameFr === catName || cat.nameEn === catName || cat.name === catName)
-          ))
-          .filter(Boolean);
-      } else if (initialFilters.categories) {
-        mappedFilters.categories = initialFilters.categories.map((name, idx) => ({ id: `url-${idx}`, name }));
+      // Map category IDs from URL to category objects
+      if (initialFilters.categories && initialFilters.categories.length > 0) {
+        // Check if we already have objects with names (from URL params)
+        const firstCat = initialFilters.categories[0];
+        if (typeof firstCat === 'object' && firstCat.name) {
+          // Already have full objects with names - use them directly
+          mappedFilters.categories = initialFilters.categories;
+        } else if (categoriesData.length > 0) {
+          // Need to look up in categoriesData
+          mappedFilters.categories = initialFilters.categories
+            .map(catId => {
+              // Try to find by ID first (new behavior)
+              const byId = categoriesData.find(cat => cat.id === parseInt(catId) || cat.id === catId);
+              if (byId) {
+                return {
+                  id: byId.id,
+                  name: byId.nameFr || byId.nameEn || byId.name
+                };
+              }
+              // Fallback to name matching for backward compatibility
+              const byName = categoriesData.find(cat =>
+                (cat.nameFr === catId || cat.nameEn === catId || cat.name === catId)
+              );
+              if (byName) {
+                return {
+                  id: byName.id,
+                  name: byName.nameFr || byName.nameEn || byName.name
+                };
+              }
+              return null;
+            })
+            .filter(Boolean);
+        }
+        // If we don't have names yet and categoriesData isn't loaded, wait
       }
 
-      // Map author names from URL to author objects
-      if (initialFilters.authors && authorsData.length > 0) {
-        mappedFilters.authors = initialFilters.authors
-          .map(authorName => authorsData.find(author => author.name === authorName))
-          .filter(Boolean);
-      } else if (initialFilters.authors) {
-        mappedFilters.authors = initialFilters.authors.map((name, idx) => ({ id: `url-${idx}`, name }));
+      // Map author IDs from URL to author objects
+      if (initialFilters.authors && initialFilters.authors.length > 0) {
+        // Check if we already have objects with names (from URL params)
+        const firstAuthor = initialFilters.authors[0];
+        if (typeof firstAuthor === 'object' && firstAuthor.name) {
+          // Already have full objects with names - use them directly
+          mappedFilters.authors = initialFilters.authors;
+        } else if (authorsData.length > 0) {
+          // Need to look up in authorsData
+          mappedFilters.authors = initialFilters.authors
+            .map(authorId => {
+              // Try to find by ID first (new behavior)
+              const byId = authorsData.find(author => author.id === parseInt(authorId) || author.id === authorId);
+              if (byId) {
+                return {
+                  id: byId.id,
+                  name: byId.name
+                };
+              }
+              // Fallback to name matching for backward compatibility
+              const byName = authorsData.find(author => author.name === authorId);
+              if (byName) {
+                return {
+                  id: byName.id,
+                  name: byName.name
+                };
+              }
+              return null;
+            })
+            .filter(Boolean);
+        }
+        // If we don't have names yet and authorsData isn't loaded, wait
       }
 
-      setFilters(prev => ({
-        ...prev,
-        ...mappedFilters
-      }));
+      // Only update filters if we have mapped data
+      if (Object.keys(mappedFilters).length > 0) {
+        setFilters(prev => ({
+          ...prev,
+          ...mappedFilters
+        }));
+
+        // Auto-apply filters when coming from URL (e.g., from search)
+        if (initialFilters.search || initialFilters.categories || initialFilters.authors) {
+          // Small delay to ensure filters are set before applying
+          setTimeout(() => {
+            applyFilters();
+          }, 100);
+        }
+      }
     }
   }, [initialFilters, categoriesData, authorsData]);
 
@@ -475,7 +534,6 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
       filters.price.max < 10000 ||
       filters.categories.length > 0 ||
       filters.authors.length > 0 ||
-      filters.titles.length > 0 ||
       filters.languages.length > 0
     );
   };
@@ -485,13 +543,11 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
       price: { min: 0, max: 10000 },
       categories: [],
       authors: [],
-      titles: [],
       languages: []
     });
     setSearchTerms({
       categories: '',
       authors: '',
-      titles: '',
       languages: ''
     });
     setActiveDropdown(null);
@@ -507,21 +563,30 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
       if (type === 'categories') {
         return items.map(item => typeof item === 'object' ? item.id : item);
       }
-      // For authors, return names (API expects author name)
+      // For authors, return IDs (API expects authorId)
+      if (type === 'authors') {
+        return items.map(item => typeof item === 'object' ? item.id : item);
+      }
       // For other types, return values as-is
       return items.map(item => typeof item === 'object' ? item.name : item);
     };
 
     // Call the parent callback with current filters
     if (onApplyFilters) {
-      onApplyFilters({
+      const filterPayload = {
         categories: extractValues(filters.categories, 'categories'),
         authors: extractValues(filters.authors, 'authors'),
-        titles: extractValues(filters.titles, 'titles'),
         languages: extractValues(filters.languages, 'languages'),
         minPrice: filters.price.min,
         maxPrice: filters.price.max
-      });
+      };
+
+      // Include search from initialFilters if present
+      if (initialFilters && initialFilters.search) {
+        filterPayload.search = initialFilters.search;
+      }
+
+      onApplyFilters(filterPayload);
     }
 
     if (isMobile) {
@@ -536,16 +601,16 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
     if (type === 'categories') {
       options = categoriesData.length > 0
         ? categoriesData.map(cat => ({
-            id: cat.id,
-            name: cat.nameFr || cat.nameEn || cat.name
-          }))
+          id: cat.id,
+          name: cat.nameFr || cat.nameEn || cat.name
+        }))
         : (mockFiltersData[type] || []).map((name, idx) => ({ id: idx, name }));
     } else if (type === 'authors') {
       options = authorsData.length > 0
         ? authorsData.map(author => ({
-            id: author.id,
-            name: author.name
-          }))
+          id: author.id,
+          name: author.name
+        }))
         : (mockFiltersData[type] || []).map((name, idx) => ({ id: idx, name }));
     } else {
       options = (mockFiltersData[type] || []).map((name, idx) => ({ id: idx, name }));
@@ -587,32 +652,8 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [activeDropdown]);
 
-  // Smooth scroll to bottom with padding when dropdown opens on desktop
-  useEffect(() => {
-    if (!isMobile && activeDropdown && dropdownRefs.current[activeDropdown]) {
-      setTimeout(() => {
-        const dropdownElement = dropdownRefs.current[activeDropdown];
-        if (dropdownElement) {
-          const dropdownRect = dropdownElement.getBoundingClientRect();
-          const viewportHeight = window.innerHeight;
-
-          // Calculate the bottom position of the dropdown (including the options menu)
-          const dropdownBottom = dropdownRect.bottom + 260; // 260px is approximate max-height of dropdown menu
-
-          // If dropdown extends beyond viewport, scroll to show it
-          if (dropdownBottom > viewportHeight) {
-            const extraPadding = 40; // Extra padding at the bottom
-            const scrollAmount = dropdownBottom - viewportHeight + extraPadding;
-
-            window.scrollBy({
-              top: scrollAmount,
-              behavior: 'smooth'
-            });
-          }
-        }
-      }, 100); // Small delay to allow dropdown to render
-    }
-  }, [activeDropdown, isMobile]);
+  // Desktop: No scroll behavior needed - section expands naturally
+  // Mobile scroll behavior handled separately in mobile-specific useEffect
 
   if (isMobile) {
     return (
@@ -728,27 +769,6 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
                       </div>
                       <div className="w-full min-w-0">
                         <FilterDropdown
-                          type="titles"
-                          label={t('filters.bookTitle.label')}
-                          placeholder={t('filters.bookTitle.placeholder')}
-                          searchable={true}
-                          filters={filters}
-                          searchTerms={searchTerms}
-                          activeDropdown={activeDropdown}
-                          filterRefs={filterRefs}
-                          dropdownRefs={dropdownRefs}
-                          onSearchTermChange={handleSearchTermChange}
-                          onToggleDropdown={toggleDropdown}
-                          onCloseDropdown={closeDropdown}
-                          onSetActiveDropdown={setActiveDropdown}
-                          onAddFilterItem={addFilterItem}
-                          onRemoveFilterItem={removeFilterItem}
-                          getFilteredOptions={getFilteredOptions}
-                          isMobile={true}
-                        />
-                      </div>
-                      <div className="w-full min-w-0">
-                        <FilterDropdown
                           type="languages"
                           label={t('filters.language.label')}
                           placeholder={t('filters.language.placeholder')}
@@ -791,7 +811,7 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
   }
 
   return (
-    <div className="w-full bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+    <div className="w-full bg-white p-6 overflow-hidden transition-all duration-500 ease-in-out">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Filter className="w-5 h-5 text-blue-600" />
@@ -814,8 +834,8 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
         </AnimatePresence>
       </div>
 
-      <div className="flex items-start gap-[clamp(0.75rem,2vw,1.25rem)] flex-wrap">
-        <div className="flex-1 min-w-[clamp(180px,20%,100%)]">
+      <div className="flex items-start gap-[clamp(0.75rem,2vw,1.25rem)] flex-wrap pb-2 transition-all duration-300 ease-in-out">
+        <div className="flex-1 min-w-[clamp(200px,22%,100%)]">
           <PriceFilter
             filters={filters}
             onPriceChange={handlePriceChange}
@@ -825,7 +845,7 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
           />
         </div>
 
-        <div className="flex-1 min-w-[clamp(160px,18%,100%)]">
+        <div className="flex-1 min-w-[clamp(180px,22%,100%)]">
           <FilterDropdown
             type="categories"
             label={t('filters.category.label')}
@@ -846,7 +866,7 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
           />
         </div>
 
-        <div className="flex-1 min-w-[clamp(160px,18%,100%)]">
+        <div className="flex-1 min-w-[clamp(180px,22%,100%)]">
           <FilterDropdown
             type="authors"
             label={t('filters.author.label')}
@@ -867,28 +887,7 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
           />
         </div>
 
-        <div className="flex-1 min-w-[clamp(160px,18%,100%)]">
-          <FilterDropdown
-            type="titles"
-            label={t('filters.bookTitle.label')}
-            placeholder={t('filters.bookTitle.placeholderShort')}
-            searchable={true}
-            filters={filters}
-            searchTerms={searchTerms}
-            activeDropdown={activeDropdown}
-            filterRefs={filterRefs}
-            dropdownRefs={dropdownRefs}
-            onSearchTermChange={handleSearchTermChange}
-            onToggleDropdown={toggleDropdown}
-            onCloseDropdown={closeDropdown}
-            onSetActiveDropdown={setActiveDropdown}
-            onAddFilterItem={addFilterItem}
-            onRemoveFilterItem={removeFilterItem}
-            getFilteredOptions={getFilteredOptions}
-          />
-        </div>
- 
-        <div className="flex-1 min-w-[clamp(140px,15%,100%)]">
+        <div className="flex-1 min-w-[clamp(160px,20%,100%)]">
           <FilterDropdown
             type="languages"
             label={t('filters.language.label')}

@@ -20,6 +20,7 @@
   "allBooks": {
     "pageTitle": "Tous les livres",
     "pageSubtitle": "Découvrez notre collection complète de livres",
+    "resultsFor": "Résultats pour \"{{query}}\"",
     "resultsTitle": "Résultats",
     "resultsCount": "{{start}} - {{end}} sur {{total}} livres",
     "page": "Page {{current}}/{{total}}",
@@ -102,7 +103,10 @@
   },
   "search": {
     "noResults": "Aucun résultat trouvé",
-    "viewAllResults": "Voir tous les résultats pour \"{{query}}\""
+    "viewAllResults": "Voir tous les résultats pour \"{{query}}\"",
+    "bookTitle": "Livre",
+    "author": "Auteur",
+    "category": "Catégorie"
   },
   "homePage": {
     "greeting": "Bonjour",

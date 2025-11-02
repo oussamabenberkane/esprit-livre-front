@@ -1,8 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Book, Search } from 'lucide-react';
-import { getBookCoverUrl } from '../../utils/imageUtils';
+import { Book, Search, User, Tag } from 'lucide-react';
 
 const SearchSuggestions = ({ suggestions, isLoading, query, onClose }) => {
     const navigate = useNavigate();
@@ -13,14 +12,52 @@ const SearchSuggestions = ({ suggestions, isLoading, query, onClose }) => {
         return null;
     }
 
-    const handleSuggestionClick = (bookId) => {
-        navigate(`/books/${bookId}`);
+    const handleSuggestionClick = (suggestion) => {
+        // Navigate based on suggestion type with ID and name
+        if (suggestion.type === 'BOOK_TITLE') {
+            // Search for the book title directly
+            navigate(`/allbooks?search=${encodeURIComponent(suggestion.suggestion)}&searchType=title`);
+        } else if (suggestion.type === 'AUTHOR') {
+            // Filter by author ID and pass name for display
+            navigate(`/allbooks?authorId=${suggestion.id}&authorName=${encodeURIComponent(suggestion.suggestion)}`);
+        } else if (suggestion.type === 'CATEGORY') {
+            // Filter by category ID and pass name for display
+            navigate(`/allbooks?categoryId=${suggestion.id}&categoryName=${encodeURIComponent(suggestion.suggestion)}`);
+        }
         onClose();
     };
 
     const handleViewAll = () => {
         navigate(`/allbooks?search=${encodeURIComponent(query)}`);
         onClose();
+    };
+
+    // Get icon based on suggestion type
+    const getSuggestionIcon = (type) => {
+        switch (type) {
+            case 'BOOK_TITLE':
+                return <Book className="w-4 h-4 text-blue-600" />;
+            case 'AUTHOR':
+                return <User className="w-4 h-4 text-green-600" />;
+            case 'CATEGORY':
+                return <Tag className="w-4 h-4 text-purple-600" />;
+            default:
+                return <Search className="w-4 h-4 text-gray-600" />;
+        }
+    };
+
+    // Get type label based on suggestion type
+    const getTypeLabel = (type) => {
+        switch (type) {
+            case 'BOOK_TITLE':
+                return t('search.bookTitle', 'Book');
+            case 'AUTHOR':
+                return t('search.author', 'Author');
+            case 'CATEGORY':
+                return t('search.category', 'Category');
+            default:
+                return '';
+        }
     };
 
     return (
@@ -41,40 +78,34 @@ const SearchSuggestions = ({ suggestions, isLoading, query, onClose }) => {
                 <>
                     {/* Suggestions List */}
                     <div className="py-2">
-                        {suggestions.map((book) => (
+                        {suggestions.map((item, index) => (
                             <button
-                                key={book.id}
-                                onClick={() => handleSuggestionClick(book.id)}
-                                className="w-full px-4 py-3 hover:bg-gray-50 flex items-start gap-3 text-left transition-colors"
+                                key={`${item.type}-${item.suggestion}-${index}`}
+                                onClick={() => handleSuggestionClick(item)}
+                                className="w-full px-4 py-2.5 hover:bg-gray-50 flex items-center gap-3 text-left transition-colors"
                             >
-                                {/* Book Cover */}
-                                <div className="flex-shrink-0 w-12 h-16 bg-gray-100 rounded overflow-hidden">
-                                    {getBookCoverUrl(book.id) ? (
-                                        <img
-                                            src={getBookCoverUrl(book.id)}
-                                            alt={book.title}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center">
-                                            <Book className="w-6 h-6 text-gray-400" />
-                                        </div>
-                                    )}
+                                {/* Icon */}
+                                <div className="flex-shrink-0">
+                                    {getSuggestionIcon(item.type)}
                                 </div>
 
-                                {/* Book Info */}
+                                {/* Suggestion Text */}
                                 <div className="flex-1 min-w-0">
-                                    <h4 className="text-sm font-semibold text-gray-900 truncate">
-                                        {book.title}
-                                    </h4>
-                                    <p className="text-xs text-gray-600 truncate mt-0.5">
-                                        {book.author?.name || t('bookCard.unknownAuthor')}
+                                    <p className="text-sm text-gray-900 truncate">
+                                        {item.suggestion}
                                     </p>
-                                    {book.price && (
-                                        <p className="text-sm font-bold text-blue-600 mt-1">
-                                            {book.price.toFixed(2)} DA
-                                        </p>
-                                    )}
+                                </div>
+
+                                {/* Type Badge */}
+                                <div className="flex-shrink-0">
+                                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                        item.type === 'BOOK_TITLE' ? 'bg-blue-100 text-blue-700' :
+                                        item.type === 'AUTHOR' ? 'bg-green-100 text-green-700' :
+                                        item.type === 'CATEGORY' ? 'bg-purple-100 text-purple-700' :
+                                        'bg-gray-100 text-gray-700'
+                                    }`}>
+                                        {getTypeLabel(item.type)}
+                                    </span>
                                 </div>
                             </button>
                         ))}

@@ -21,6 +21,8 @@ export default function AllBooks() {
     const [appliedFilters, setAppliedFilters] = useState(null)
     const [showCartPopup, setShowCartPopup] = useState(false)
     const [selectedBook, setSelectedBook] = useState(null)
+    const [pageTitle, setPageTitle] = useState(null) // Dynamic page title
+    const [searchContext, setSearchContext] = useState(null) // Store search context (type + name)
 
     // Floating cart badge state
     const [showFloatingBadge, setShowFloatingBadge] = useState(false)
@@ -32,7 +34,7 @@ export default function AllBooks() {
     const [totalPages, setTotalPages] = useState(0)
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState(null)
-    const booksPerPage = 4
+    const booksPerPage = 12
 
     // Filter data state
     const [categories, setCategories] = useState([])
@@ -64,20 +66,52 @@ export default function AllBooks() {
 
     // Extract filters from URL params on mount
     useEffect(() => {
-        const category = searchParams.get('category')
-        const author = searchParams.get('author')
+        const categoryId = searchParams.get('categoryId')
+        const categoryName = searchParams.get('categoryName')
+        const authorId = searchParams.get('authorId')
+        const authorName = searchParams.get('authorName')
+        const search = searchParams.get('search')
+        const searchType = searchParams.get('searchType')
 
-        if (category || author) {
+        if (categoryId || authorId || search) {
             const filters = {}
-            if (category) {
-                filters.categories = [decodeURIComponent(category)]
+            let context = null
+
+            if (categoryId && categoryName) {
+                // Category filter by ID and name (pass both for immediate display)
+                filters.categories = [{
+                    id: categoryId,
+                    name: decodeURIComponent(categoryName)
+                }]
+                context = { type: 'category', name: decodeURIComponent(categoryName) }
+                setPageTitle(t('allBooks.resultsFor', { query: decodeURIComponent(categoryName) }))
             }
-            if (author) {
-                filters.authors = [decodeURIComponent(author)]
+
+            if (authorId && authorName) {
+                // Author filter by ID and name (pass both for immediate display)
+                filters.authors = [{
+                    id: authorId,
+                    name: decodeURIComponent(authorName)
+                }]
+                context = { type: 'author', name: decodeURIComponent(authorName) }
+                setPageTitle(t('allBooks.resultsFor', { query: decodeURIComponent(authorName) }))
             }
+
+            if (search) {
+                // Direct search (book title or general search)
+                filters.search = decodeURIComponent(search)
+                context = { type: searchType || 'general', name: decodeURIComponent(search) }
+                setPageTitle(t('allBooks.resultsFor', { query: decodeURIComponent(search) }))
+            }
+
+            setSearchContext(context)
             setInitialFilters(filters)
+        } else {
+            // Reset to default when no search params
+            setPageTitle(null)
+            setSearchContext(null)
         }
-    }, [searchParams])
+    }, [searchParams, t])
 
     // Fetch books from API
     useEffect(() => {
@@ -172,7 +206,7 @@ export default function AllBooks() {
                     <div className="mb-fluid-lg">
                         <div className="flex items-center justify-between flex-wrap gap-2">
                             <h2 className="text-brand-blue text-fluid-h1to2 font-['poppins'] font-semibold">
-                                {t('allBooks.resultsTitle')}
+                                {pageTitle || t('allBooks.resultsTitle')}
                             </h2>
                             {!isLoading && (
                                 <div className="text-fluid-small text-gray-600">

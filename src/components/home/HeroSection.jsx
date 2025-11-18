@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const HeroCarousel = ({
@@ -8,16 +8,45 @@ const HeroCarousel = ({
     onSlideChange
 }) => {
     const scrollContainerRef = useRef(null);
+    const [rightArrowOffset, setRightArrowOffset] = useState(16); // Default 1rem in px
+
+    // Calculate right arrow offset accounting for scrollbar
+    useEffect(() => {
+        const calculateRightOffset = () => {
+            // Calculate scrollbar width
+            const scrollbarW = window.innerWidth - document.documentElement.clientWidth;
+
+            // Base padding based on screen width (matching Tailwind breakpoints)
+            let basePadding = 16; // 1rem for mobile (right-4)
+            if (window.innerWidth >= 768) {
+                basePadding = 32; // 2rem for md (right-8)
+            } else if (window.innerWidth >= 640) {
+                basePadding = 24; // 1.5rem for sm (right-6)
+            }
+
+            // Add scrollbar width to maintain visual consistency
+            setRightArrowOffset(basePadding + scrollbarW);
+        };
+
+        calculateRightOffset();
+        window.addEventListener('resize', calculateRightOffset);
+
+        return () => window.removeEventListener('resize', calculateRightOffset);
+    }, []);
 
     const scroll = (direction) => {
-        const container = scrollContainerRef.current;
-        if (container) {
-            const scrollAmount = container.offsetWidth;
-            container.scrollBy({
-                left: direction === 'left' ? -scrollAmount : scrollAmount,
-                behavior: 'smooth'
-            });
+        if (!onSlideChange) return;
+
+        let newSlide;
+        if (direction === 'left') {
+            // Loop to last slide if at first slide
+            newSlide = currentSlide === 0 ? images.length - 1 : currentSlide - 1;
+        } else {
+            // Loop to first slide if at last slide
+            newSlide = currentSlide === images.length - 1 ? 0 : currentSlide + 1;
         }
+
+        onSlideChange(newSlide);
     };
 
     // Listen to scroll events and update active slide
@@ -65,6 +94,18 @@ const HeroCarousel = ({
         }
     }, [currentSlide]);
 
+    // Auto-scroll every 2 seconds with looping
+    useEffect(() => {
+        if (images.length <= 1 || !onSlideChange) return;
+
+        const autoScrollInterval = setInterval(() => {
+            const nextSlide = (currentSlide + 1) % images.length;
+            onSlideChange(nextSlide);
+        }, 2000);
+
+        return () => clearInterval(autoScrollInterval);
+    }, [currentSlide, images.length, onSlideChange]);
+
     return (
         <div className="relative">
             {/* Scrollable Container */}
@@ -99,19 +140,20 @@ const HeroCarousel = ({
                     {/* Left Arrow */}
                     <button
                         onClick={() => scroll('left')}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg transition-all z-10"
+                        className="absolute left-4 sm:left-6 md:left-8 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all z-10"
                         aria-label="Previous slide"
                     >
-                        <ChevronLeft className="w-6 h-6 text-gray-800" />
+                        <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-gray-800" />
                     </button>
 
                     {/* Right Arrow */}
                     <button
                         onClick={() => scroll('right')}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg transition-all z-10"
+                        className="absolute top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all z-10"
+                        style={{ right: `${rightArrowOffset}px` }}
                         aria-label="Next slide"
                     >
-                        <ChevronRight className="w-6 h-6 text-gray-800" />
+                        <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-gray-800" />
                     </button>
                 </>
             )}

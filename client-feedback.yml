@@ -37,7 +37,26 @@ Takes time :
   add 2-4 days for estimated delivery: --- done
   id book quantity = make it in preorder: --- 
   rigli book service ni n tmenyik 2 files: ---
-  rigli lanimation ni n first caroussel display + add auto scroll: --- 
+  rigli lanimation ni n first caroussel display + add auto scroll: --- done
   add create author section in books page in admin: --- 
   weird dropshadow effect on bookcards: --- 
+  cablage n shit : 
+
+back :
+- when i click on reset filters , filters should disapear too and not just visually
+
+front :
+- in homepage the caroussel for banierres isnt scrolling automatically after 3 seconds, and its arrows [right one] doesnt have any padding to its right: --- done
+- footer is not responsively centerd apparently
+- add packs icon and routing to navbar on large screens
+- book details layout
+- cablage n packs
+- cablage n favorites
+- cablage n cart 
+- cablage n orders 
+- add preview/placeholders for each box/element on loading state
+
+
+- state management --- neki ---- apres
+- email(verified or not) state with a popup if not --- neki ---- apres
 

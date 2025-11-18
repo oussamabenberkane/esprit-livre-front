@@ -12,7 +12,11 @@
       "Bash(npm install:*)",
       "Read(//c/work/Esprit Livre/el-api/src/main/resources/templates/mail/**)",
       "Read(//c/work/Esprit Livre/el-api/src/main/java/**)",
-      "Read(//c/work/Esprit Livre/el-api/**)"
+      "Read(//c/work/Esprit Livre/el-api/**)",
+      "Bash(sed:*)",
+      "Bash(xargs:*)",
+      "Bash(git log:*)",
+      "Bash(node:*)"
     ],
     "deny": [],
     "ask": []

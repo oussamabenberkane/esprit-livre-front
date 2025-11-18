@@ -8,7 +8,7 @@ import PackCard from '../components/common/PackCard';
 import CartConfirmationPopup from '../components/common/cartConfirmationPopup';
 import FloatingCartBadge from '../components/common/FloatingCartBadge';
 import { getAllBookPacks } from '../services/bookPackService';
-import { getBooksByIds } from '../services/bookService';
+import { getBooksByIds } from '../services/books.service';
 import { getBookCoverUrl, getBookPackCoverUrl } from '../utils/imageUtils';
 
 

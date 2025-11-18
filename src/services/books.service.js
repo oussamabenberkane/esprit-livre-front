@@ -1,6 +1,18 @@
-// Books API Service
+// Books API Service - Unified service for all book-related API calls
 import { API_BASE_URL, getDefaultHeaders } from './apiConfig';
 import { getAccessToken } from './authService';
+
+/**
+ * Get authenticated headers with Bearer token
+ * @returns {Object} Headers with Authorization
+ */
+const getAuthHeaders = () => {
+  const token = getAccessToken();
+  return {
+    ...getDefaultHeaders(),
+    'Authorization': `Bearer ${token}`,
+  };
+};
 
 /**
  * Fetch all books with pagination and filters
@@ -11,9 +23,11 @@ import { getAccessToken } from './authService';
  * @param {Array<string>} filters.authors - Array of author names
  * @param {Array<string>} filters.titles - Array of book title search terms
  * @param {string} filters.search - Search query string
- * @param {Array<string>} filters.languages - Array of languages (FRENCH/ARABIC/ENGLISH)
+ * @param {Array<string>} filters.languages - Array of languages (FR/EN/AR)
  * @param {number} filters.minPrice - Minimum price
  * @param {number} filters.maxPrice - Maximum price
+ * @param {number} filters.categoryId - Category ID filter
+ * @param {number} filters.mainDisplayId - Main display ID filter
  * @returns {Promise<Object>} Paginated response with books and metadata
  */
 export const fetchAllBooks = async (page = 0, size = 12, filters = {}) => {
@@ -34,6 +48,16 @@ export const fetchAllBooks = async (page = 0, size = 12, filters = {}) => {
       });
     }
 
+    // Add single categoryId filter if provided
+    if (filters.categoryId) {
+      params.append('categoryId', filters.categoryId.toString());
+    }
+
+    // Add mainDisplayId filter if provided
+    if (filters.mainDisplayId) {
+      params.append('mainDisplayId', filters.mainDisplayId.toString());
+    }
+
     // Add author filter (API accepts author ID)
     if (filters.authors && filters.authors.length > 0) {
       filters.authors.forEach(author => {
@@ -43,6 +67,11 @@ export const fetchAllBooks = async (page = 0, size = 12, filters = {}) => {
           params.append('author', authorId.toString());
         }
       });
+    }
+
+    // Add single author filter if provided
+    if (filters.author) {
+      params.append('author', filters.author);
     }
 
     // Add search filter (API uses 'search' param)
@@ -77,9 +106,12 @@ export const fetchAllBooks = async (page = 0, size = 12, filters = {}) => {
       });
     }
 
+    const token = getAccessToken();
+    const headers = token ? getAuthHeaders() : getDefaultHeaders();
+
     const response = await fetch(`${API_BASE_URL}/api/books?${params.toString()}`, {
       method: 'GET',
-      headers: getDefaultHeaders(),
+      headers,
     });
 
     if (!response.ok) {
@@ -179,9 +211,12 @@ export const fetchBooksByMainDisplay = async (mainDisplayId, page = 0, size = 10
  */
 export const fetchBookById = async (id) => {
   try {
+    const token = getAccessToken();
+    const headers = token ? getAuthHeaders() : getDefaultHeaders();
+
     const response = await fetch(`${API_BASE_URL}/api/books/${id}`, {
       method: 'GET',
-      headers: getDefaultHeaders(),
+      headers,
     });
 
     if (!response.ok) {
@@ -202,11 +237,18 @@ export const fetchBookById = async (id) => {
 /**
  * Fetch recommended books for a specific book
  * @param {number} id - The book ID
+ * @param {number} page - Page number (default 0)
+ * @param {number} size - Number of recommendations (default 5)
  * @returns {Promise<Array>} Array of recommended books
  */
-export const fetchBookRecommendations = async (id) => {
+export const fetchBookRecommendations = async (id, page = 0, size = 5) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/books/${id}/recommendations`, {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      size: size.toString()
+    });
+
+    const response = await fetch(`${API_BASE_URL}/api/books/${id}/recommendations?${params.toString()}`, {
       method: 'GET',
       headers: getDefaultHeaders(),
     });
@@ -232,7 +274,7 @@ export const fetchBookRecommendations = async (id) => {
 };
 
 /**
- * Fetch book suggestions based on search query
+ * Fetch book suggestions based on search query (for autocomplete)
  * @param {string} query - The search query
  * @returns {Promise<Array>} Array of book suggestions
  */
@@ -246,9 +288,12 @@ export const fetchBookSuggestions = async (query) => {
       q: query.trim()
     });
 
+    const token = getAccessToken();
+    const headers = token ? getAuthHeaders() : getDefaultHeaders();
+
     const response = await fetch(`${API_BASE_URL}/api/books/suggestions?${params.toString()}`, {
       method: 'GET',
-      headers: getDefaultHeaders(),
+      headers,
     });
 
     if (!response.ok) {
@@ -269,18 +314,6 @@ export const fetchBookSuggestions = async (query) => {
     console.error(`Error fetching book suggestions for query "${query}":`, error);
     throw error;
   }
-};
-
-/**
- * Get authenticated headers with Bearer token
- * @returns {Object} Headers with Authorization
- */
-const getAuthHeaders = () => {
-  const token = getAccessToken();
-  return {
-    ...getDefaultHeaders(),
-    'Authorization': `Bearer ${token}`,
-  };
 };
 
 /**
@@ -378,3 +411,59 @@ export const fetchLikedBooks = async (page = 0, size = 20, filters = {}) => {
     throw error;
   }
 };
+
+/**
+ * Fetch multiple books by their IDs
+ * @param {Array<number>} bookIds - Array of book IDs
+ * @returns {Promise<Array>} Array of book details
+ */
+export const getBooksByIds = async (bookIds) => {
+  try {
+    if (!bookIds || bookIds.length === 0) {
+      return [];
+    }
+
+    // Fetch all books in parallel
+    const bookPromises = bookIds.map(id => fetchBookById(id));
+    const books = await Promise.all(bookPromises);
+
+    return books.filter(book => book !== null);
+  } catch (error) {
+    console.error('Error fetching books by IDs:', error);
+    throw error;
+  }
+};
+
+/**
+ * Get book cover image URL
+ * @param {number} id - The book ID
+ * @param {boolean} placeholder - Return placeholder if cover not found (default: false)
+ * @returns {string} Cover image URL
+ */
+export const getBookCoverUrl = (id, placeholder = false) => {
+  return `${API_BASE_URL}/api/books/${id}/cover${placeholder ? '?placeholder=true' : ''}`;
+};
+
+// ============================================================================
+// ALTERNATIVE FUNCTION NAMES (for backward compatibility)
+// ============================================================================
+
+/**
+ * Alias for fetchAllBooks (for backward compatibility)
+ */
+export const getAllBooks = fetchAllBooks;
+
+/**
+ * Alias for fetchBookById (for backward compatibility)
+ */
+export const getBookById = fetchBookById;
+
+/**
+ * Alias for fetchBookSuggestions (for backward compatibility)
+ */
+export const getBookSuggestions = fetchBookSuggestions;
+
+/**
+ * Alias for fetchLikedBooks (for backward compatibility)
+ */
+export const getLikedBooks = fetchLikedBooks;

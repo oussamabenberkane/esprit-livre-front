@@ -13,9 +13,8 @@ import SeeMore from '../components/buttons/SeeMore';
 import CartConfirmationPopup from '../components/common/cartConfirmationPopup';
 import FloatingCartBadge from '../components/common/FloatingCartBadge';
 import { BOOKS_DATA, getLanguageCode } from '../data/booksData';
-import { fetchBookById, fetchBookRecommendations } from '../services/books.service';
+import { fetchBookById, fetchBookRecommendations, getBooksByIds } from '../services/books.service';
 import { getRecommendedPacksForBook } from '../services/bookPackService';
-import { getBooksByIds } from '../services/bookService';
 import { getBookCoverUrl, getBookPackCoverUrl } from '../utils/imageUtils';
 
 const BookDetails = () => {
@@ -516,8 +515,8 @@ const BookDetails = () => {
                         </p>
 
                         {/* Book Image */}
-                        <div className="flex justify-center mb-fluid-md">
-                            <div className="w-[150px] aspect-[5/7] rounded-md shadow-[0px_5px_20px_0px_rgba(0,0,0,0.25)] overflow-hidden">
+                        <div className="flex justify-center mb-fluid-lg">
+                            <div className="w-[200px] xs:w-[220px] aspect-[5/7] rounded-md shadow-[0px_5px_20px_0px_rgba(0,0,0,0.25)] overflow-hidden">
                                 <img
                                     src={getBookCoverUrl(book.id)}
                                     alt={book.title}
@@ -557,12 +556,17 @@ const BookDetails = () => {
                                     {t('bookDetails.soldBy', { seller: book.seller })}
                                 </p>
 
-                                {/* Condition */}
-                                <div className="flex items-center gap-2 mb-fluid-sm">
-                                    <p className="font-['Poppins'] font-semibold lg:font-bold text-[#1c2d55] text-fluid-small">
-                                        {t('bookDetails.condition', { condition: book.condition })}
-                                    </p>
-                                </div>
+                                {/* Category */}
+                                {book.tags && book.tags.find(tag => tag.type === "CATEGORY") && (
+                                    <div className="flex items-center gap-2 mb-fluid-sm">
+                                        <p className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-small">
+                                            {t('bookDetails.categoryLabel')}:
+                                        </p>
+                                        <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
+                                            {book.tags.find(tag => tag.type === "CATEGORY").nameFr}
+                                        </span>
+                                    </div>
+                                )}
 
                                 {/* Stock Status */}
                                 <div className="flex items-center gap-1 mb-fluid-xs">
@@ -598,9 +602,9 @@ const BookDetails = () => {
                         </div>
                     </div>
 
-                    {/* Tablet & Desktop Layout (>= md) - Horizontal with Side Margins */}
+                    {/* Tablet & Desktop Layout (>= md) - Horizontal Centered */}
                     <div className="hidden md:block">
-                        <div className="container-main px-fluid-xl lg:px-[8rem]">
+                        <div className="container-main px-fluid-md">
                             {/* Back Button */}
                             <button
                                 onClick={handleBackClick}
@@ -620,11 +624,11 @@ const BookDetails = () => {
                                 {t('bookDetails.author')} {book.author.name}
                             </p>
 
-                            {/* Horizontal Layout with Equal Left Margins */}
-                            <div className="flex gap-fluid-md items-stretch max-w-5xl ml-fluid-2xl">
+                            {/* Horizontal Layout - Centered */}
+                            <div className="flex gap-fluid-lg items-stretch max-w-6xl mx-auto">
                                 {/* Left Column - Book Image with Description Link */}
-                                <div className="flex-shrink-0 flex flex-col gap-fluid-sm pl-fluid-sm">
-                                    <div className="w-[180px] lg:w-[220px] aspect-[5/7] rounded-md shadow-[0px_5px_20px_0px_rgba(0,0,0,0.25)] overflow-hidden">
+                                <div className="flex-shrink-0 flex flex-col justify-between w-[240px] lg:w-[280px]">
+                                    <div className="w-full aspect-[5/7] rounded-md shadow-[0px_5px_20px_0px_rgba(0,0,0,0.25)] overflow-hidden">
                                         <img
                                             src={getBookCoverUrl(book.id)}
                                             alt={book.title}
@@ -632,10 +636,10 @@ const BookDetails = () => {
                                         />
                                     </div>
 
-                                    {/* View Full Description Link - Below Image on Desktop */}
+                                    {/* View Full Description Link - Aligned to Bottom of Details Card */}
                                     <button
                                         onClick={handleToggleDescription}
-                                        className="font-['Poppins'] font-medium text-[#626e82] text-fluid-vsmall hover:text-[#1c2d55] transition-colors flex items-center gap-1 w-full"
+                                        className="font-['Poppins'] font-medium text-[#626e82] text-fluid-vsmall hover:text-[#1c2d55] transition-colors flex items-center gap-1 w-full mt-fluid-sm"
                                     >
                                         <span className="flex-1 text-left"><h1 className='text-fluid-h3 whitespace-nowrap'>{t('bookDetails.viewFullDescription')}</h1></span>
                                         <ChevronDown className={`w-3 h-3 flex-shrink-0 transition-transform duration-300 ${showFullDescription ? 'rotate-180' : ''}`} />
@@ -643,7 +647,7 @@ const BookDetails = () => {
                                 </div>
 
                                 {/* Right Column - Book Information (Extended Height) */}
-                                <div className="flex flex-col gap-fluid-sm flex-1 min-w-0 pl-fluid-sm">
+                                <div className="flex flex-col gap-fluid-sm flex-1 min-w-0">
                                     {/* Price Card */}
                                     <div className="bg-neutral-100 rounded-md p-fluid-sm">
                                         <div className="flex items-start justify-between gap-4 mb-2">
@@ -674,12 +678,17 @@ const BookDetails = () => {
                                                 {t('bookDetails.soldBy', { seller: book.seller })}
                                             </p>
 
-                                            {/* Condition */}
-                                            <div className="flex items-center gap-2 mb-fluid-md">
-                                                <p className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-small">
-                                                    {t('bookDetails.condition', { condition: book.condition })}
-                                                </p>
-                                            </div>
+                                            {/* Category */}
+                                            {book.tags && book.tags.find(tag => tag.type === "CATEGORY") && (
+                                                <div className="flex items-center gap-2 mb-fluid-md">
+                                                    <p className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-small">
+                                                        {t('bookDetails.categoryLabel')}:
+                                                    </p>
+                                                    <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
+                                                        {book.tags.find(tag => tag.type === "CATEGORY").nameFr}
+                                                    </span>
+                                                </div>
+                                            )}
 
                                             {/* Stock Status */}
                                             <div className="flex items-center gap-1 mb-fluid-xxs">
@@ -733,8 +742,8 @@ const BookDetails = () => {
 
                             {/* Desktop Layout - Match width of image + details box */}
                             <div className="hidden md:block">
-                                <div className="container-main px-fluid-xl lg:px-[8rem]">
-                                    <div className="max-w-5xl ml-fluid-2xl">
+                                <div className="container-main px-fluid-md">
+                                    <div className="max-w-6xl mx-auto">
                                         <div className="bg-gray-50 rounded-md p-fluid-md border border-gray-200 shadow-sm">
                                             <h3 className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-h3 mb-fluid-sm">
                                                 {t('bookDetails.fullDescription')}

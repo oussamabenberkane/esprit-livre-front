@@ -32,31 +32,27 @@ Takes time :
   filters layout: --- done
 
   preorder isnt renderen in bookdetails: --- done
-  pagination in allbooks: --- add arrows --- 
-  remove condition from book details and replace it with category: --- 
+  pagination in allbooks: --- add arrows --- done
   add 2-4 days for estimated delivery: --- done
-  id book quantity = make it in preorder: --- 
-  rigli book service ni n tmenyik 2 files: ---
+  id book quantity = 0 make it in preorder: --- done normalement
   rigli lanimation ni n first caroussel display + add auto scroll: --- done
-  add create author section in books page in admin: --- 
-  weird dropshadow effect on bookcards: --- 
-  cablage n shit : 
+  remove condition from book details and replace it with category: --- done
+  make details card in bookdetails size fixed and responsive: --- done
+  rigli book service ni n tmenyik 2 files: --- done
+  add create author section in books page in admin: --- done
 
 back :
-- when i click on reset filters , filters should disapear too and not just visually
+- when i click on reset filters , filters should disapear too and not just visually so than all the books reapear
 
 front :
-- in homepage the caroussel for banierres isnt scrolling automatically after 3 seconds, and its arrows [right one] doesnt have any padding to its right: --- done
-- footer is not responsively centerd apparently
-- add packs icon and routing to navbar on large screens
-- book details layout
-- cablage n packs
-- cablage n favorites
-- cablage n cart 
-- cablage n orders 
-- add preview/placeholders for each box/element on loading state
-
-
-- state management --- neki ---- apres
-- email(verified or not) state with a popup if not --- neki ---- apres
+- footer is not responsively centerd apparently : 
+- add packs icon and routing to navbar on large screens : 
+- book details layout : 
+- cablage n packs : 
+- cablage n favorites : 
+- cablage n cart : 
+- cablage n orders : 
+- add preview/placeholders : for each box/element on loading state
+- add popups everywhere : user not connected so cant add shit to favs, user cant access cart, user cant access profile --- 
+- email(verified or not) : state with a popup if not --- neki ---- apres
 

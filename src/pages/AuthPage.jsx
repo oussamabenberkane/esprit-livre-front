@@ -7,14 +7,29 @@ import { isAuthenticated } from '../services/authService';
 
 export default function AuthPage() {
   const [currentView, setCurrentView] = useState('signin'); // 'signin' or 'signup'
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
   const navigate = useNavigate();
 
-  // Redirect to home if already authenticated
+  // Check authentication status on mount
   useEffect(() => {
-    if (isAuthenticated()) {
-      navigate('/', { replace: true });
-    }
+    const checkAuth = async () => {
+      // Small delay to prevent flash
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      if (isAuthenticated()) {
+        navigate('/', { replace: true });
+      } else {
+        setIsAuthChecked(true);
+      }
+    };
+
+    checkAuth();
   }, [navigate]);
+
+  // Don't render until auth check is complete
+  if (!isAuthChecked) {
+    return null;
+  }
 
   return (
     <AnimatePresence mode="wait">

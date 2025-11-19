@@ -42,17 +42,23 @@ Takes time :
   add create author section in books page in admin: --- done
 
 back :
-- when i click on reset filters , filters should disapear too and not just visually so than all the books reapear
+- cablage n filters n packs page : waqilq uthyekhdim ara ouss
 
 front :
-- footer is not responsively centerd apparently : 
-- add packs icon and routing to navbar on large screens : 
-- book details layout : 
-- cablage n packs : 
+- footer is not responsively centerd apparently : done
+- add packs icon and routing to navbar on large screens : done
+- book details layout : done
+- cablage n packs : c bon 
+- packs --- add pagination and make the packs more responsive : done
+- sign in button should disapear when the user is authenticated : 
+- navbar language toggle icon : 
+- when i click on reset filters , filters should disapear too and not just visually so than all the books reapear :
 - cablage n favorites : 
 - cablage n cart : 
 - cablage n orders : 
-- add preview/placeholders : for each box/element on loading state
-- add popups everywhere : user not connected so cant add shit to favs, user cant access cart, user cant access profile --- 
-- email(verified or not) : state with a popup if not --- neki ---- apres
+- check allbooks and bookdetails cablage : 
+- add preview/placeholders for each box/element on loading state : 
+- add popups everywhere user not connected so cant add shit to favs, user cant access cart, user cant access profile --- : 
+- email(verified or not) state with a popup if not --- neki ---- apres : 
+- when selecting an author or a category from homepage it doesnt navugate to all books page with the targetted filter being already choosen : 
 

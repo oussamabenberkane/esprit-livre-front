@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Search, ShoppingCart, Heart, User, Menu } from 'lucide-react';
+import { Search, ShoppingCart, Heart, User, Menu, Package } from 'lucide-react';
 import LanguageToggle from '../animations/LanguageToggle';
 import BottomSheet from './BottomSheet';
 import SearchSuggestions from './SearchSuggestions';
@@ -28,14 +28,28 @@ const SimpleLanguageToggle = () => {
     );
 };
 
+// Sign In Button Component - Unified for all screen sizes
+const SignInButton = ({ onClick, className = "" }) => {
+    const { t } = useTranslation();
+
+    return (
+        <button
+            onClick={onClick}
+            className={`bg-white/10 hover:bg-white/20 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg transition-colors text-sm font-medium whitespace-nowrap ${className}`}
+        >
+            {t('navbar.signIn')}
+        </button>
+    );
+};
+
 // Logo Component
-const Logo = () => (
-    <a href='/'>
+const Logo = ({ onClick }) => (
+    <button onClick={onClick} className="text-left">
         <div className="flex flex-col text-white">
             <div className="text-base md:text-xl font-bold leading-tight">Esprit</div>
             <div className="text-sm md:text-lg font-bold leading-tight">Livre</div>
         </div>
-    </a>
+    </button>
 );
 
 // SearchBar Component
@@ -96,6 +110,16 @@ const Navbar = ({
     // Default user click handler - navigate to profile page
     const handleUserClick = () => {
         navigate('/profile');
+    };
+
+    // Handle logo click - navigate to home page
+    const handleLogoClick = () => {
+        navigate('/');
+    };
+
+    // Default packs click handler - navigate to packs page
+    const handlePacksClick = () => {
+        navigate('/packs');
     };
 
     // Handle search input change - fetch suggestions on every keystroke
@@ -191,7 +215,7 @@ const Navbar = ({
             <div className="hidden md:block fixed top-0 left-0 right-0 bg-blue-800 rounded-br-2xl px-4 md:px-6 py-3 h-20 z-40">
                 <div className="flex items-center w-full h-full gap-4">
                     {/* Logo - Always visible */}
-                    <Logo />
+                    <Logo onClick={handleLogoClick} />
 
                     {/* Search Bar - Always visible but responsive width */}
                     <div className="flex-1 md:flex-initial relative" ref={searchContainerRef}>
@@ -215,19 +239,27 @@ const Navbar = ({
                     {/* Desktop Spacer */}
                     <div className="hidden md:flex flex-1"></div>
 
-                    {/* Language Toggle - Different components based on screen size */}
-                    {/* Desktop: Use your actual LanguageToggle component */}
-                    <div className="hidden lg:block">
-                        <LanguageToggle />
-                    </div>
-
-                    {/* Tablet/Large Mobile: Use the simple toggle */}
-                    <div className="hidden md:block lg:hidden">
-                        <SimpleLanguageToggle />
-                    </div>
-
                     {/* Action Icons */}
                     <div className="flex items-center gap-3">
+                        {/* Sign In Button - Desktop only */}
+                        <SignInButton onClick={() => navigate('/auth')} className="hidden md:block" />
+
+                        {/* Language Toggle - Different components based on screen size */}
+                        {/* Desktop: Use your actual LanguageToggle component */}
+                        <div className="hidden lg:block">
+                            <LanguageToggle />
+                        </div>
+
+                        {/* Tablet/Large Mobile: Use the simple toggle */}
+                        <div className="hidden md:block lg:hidden">
+                            <SimpleLanguageToggle />
+                        </div>
+
+                        {/* Packs - Desktop only */}
+                        <button onClick={handlePacksClick} className="hidden md:block">
+                            <Package className="w-6 h-6 text-white hover:opacity-80 transition-opacity" />
+                        </button>
+
                         {/* Cart - Always visible */}
                         <button onClick={handleCartClick} className="relative">
                             <ShoppingCart className="w-5 h-5 md:w-6 md:h-6 text-white hover:opacity-80 transition-opacity" />
@@ -268,18 +300,13 @@ const Navbar = ({
                         </button>
 
                         {/* Logo */}
-                        <Logo />
+                        <Logo onClick={handleLogoClick} />
                     </div>
 
                     {/* Right side: Sign In, Profile, Cart */}
                     <div className="flex items-center gap-2">
                         {/* Sign In Button */}
-                        <button
-                            onClick={() => navigate('/auth')}
-                            className="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg transition-colors text-sm font-medium"
-                        >
-                            {t('navbar.signIn')}
-                        </button>
+                        <SignInButton onClick={() => navigate('/auth')} />
 
                         {/* User Profile Icon */}
                         <button onClick={handleUserClick} className="flex-shrink-0">
@@ -288,7 +315,7 @@ const Navbar = ({
 
                         {/* Cart Icon */}
                         <button onClick={handleCartClick} className="relative flex-shrink-0">
-                            <ShoppingCart className="w-7 h- text-white hover:opacity-80 transition-opacity" />
+                            <ShoppingCart className="w-7 h-7 text-white hover:opacity-80 transition-opacity" />
                             {cartCount > 0 && (
                                 <div className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
                                     <span className="text-xs text-white font-bold">

@@ -1768,6 +1768,9 @@
 				{
 					"name": "Get All Book Packs",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -1796,6 +1799,9 @@
 				{
 					"name": "Get Book Pack by ID",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -1857,6 +1863,9 @@
 				{
 					"name": "Get Book Pack Cover Image",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [],
 						"url": {

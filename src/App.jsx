@@ -11,6 +11,7 @@ import TeamPage from './pages/TeamPage';
 import ServiceClientPage from './pages/ServiceClientPage';
 import PacksPromotionnels from './pages/PacksPromotionnels.jsx';
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
+import TestPage from './pages/TestPage.jsx';
 
 function App() {
   return (
@@ -19,16 +20,16 @@ function App() {
         <Routes>
           {/* Home page as entry point - Accessible to both guests and authenticated users */}
           <Route path="/" element={<HomePage />} />
-          
 
-           {/* auth page */}
+
+          {/* auth page */}
           <Route path="/auth" element={<AuthPage />} />
 
           {/* All books catalog page */}
           <Route path="/allbooks" element={<AllBooks />} />
 
           {/* Promotional packs page */}
-          <Route path="/packs-promotionnels" element={<PacksPromotionnels />} />
+          <Route path="/packs" element={<PacksPromotionnels />} />
 
           {/* Book details page with dynamic ID */}
           <Route path="/books/:id" element={<BookDetails />} />
@@ -50,6 +51,9 @@ function App() {
 
           {/* Service Client page */}
           <Route path="/service-client" element={<ServiceClientPage />} />
+
+          {/* Test page for debugging */}
+          <Route path="/test" element={<TestPage />} />
         </Routes>
       </div>
     </BrowserRouter>

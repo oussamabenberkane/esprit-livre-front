@@ -212,7 +212,7 @@ export const fetchBooksByMainDisplay = async (mainDisplayId, page = 0, size = 10
 export const fetchBookById = async (id) => {
   try {
     const token = getAccessToken();
-    const headers = token ? getAuthHeaders() : getDefaultHeaders();
+    const headers = getDefaultHeaders();
 
     const response = await fetch(`${API_BASE_URL}/api/books/${id}`, {
       method: 'GET',

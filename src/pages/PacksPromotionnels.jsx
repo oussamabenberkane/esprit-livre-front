@@ -5,6 +5,7 @@ import Navbar from '../components/common/Navbar';
 import FiltersSection from '../components/allbooks/FiltersSection';
 import Footer from '../components/common/Footer';
 import PackCard from '../components/common/PackCard';
+import PackBooksPopup from '../components/common/PackBooksPopup';
 import CartConfirmationPopup from '../components/common/cartConfirmationPopup';
 import FloatingCartBadge from '../components/common/FloatingCartBadge';
 import { getAllBookPacks } from '../services/bookPackService';
@@ -22,6 +23,10 @@ const PacksPromotionnels = () => {
 
     // Floating cart badge state
     const [showFloatingBadge, setShowFloatingBadge] = useState(false);
+
+    // Pack books popup state
+    const [showPackBooksPopup, setShowPackBooksPopup] = useState(false);
+    const [selectedPackForPopup, setSelectedPackForPopup] = useState(null);
 
     // Pack data state
     const [packs, setPacks] = useState([]);
@@ -302,6 +307,10 @@ const PacksPromotionnels = () => {
                                             packImage={pack.packImage}
                                             books={pack.books}
                                             onAddToCart={handleAddToCart}
+                                            onViewAllBooks={() => {
+                                                setSelectedPackForPopup(pack);
+                                                setShowPackBooksPopup(true);
+                                            }}
                                         />
                                     </div>
                                 ))}
@@ -486,6 +495,19 @@ const PacksPromotionnels = () => {
                 onGoToCart={() => navigate('/cart')}
                 itemCount={cartCount}
             />
+
+            {/* Pack Books Popup - Shows all books in selected pack */}
+            {selectedPackForPopup && (
+                <PackBooksPopup
+                    isOpen={showPackBooksPopup}
+                    onClose={() => {
+                        setShowPackBooksPopup(false);
+                        setSelectedPackForPopup(null);
+                    }}
+                    packTitle={selectedPackForPopup.title}
+                    books={selectedPackForPopup.books}
+                />
+            )}
         </div>
     );
 };

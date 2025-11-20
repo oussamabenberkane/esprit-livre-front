@@ -11,7 +11,8 @@ const PackCard = ({
     packPrice,
     packImage,
     books = [],
-    onAddToCart
+    onAddToCart,
+    onViewAllBooks
 }) => {
     const { t } = useTranslation();
     const [imageError, setImageError] = useState(false);
@@ -156,7 +157,12 @@ const PackCard = ({
                             className="relative overflow-hidden rounded-sm bg-gray-100 cursor-pointer"
                             onClick={isLastThumbnail ? (e) => {
                                 e.stopPropagation();
-                                setShowAllBooksPopup(true);
+                                // Use external callback if provided, otherwise use internal state
+                                if (onViewAllBooks) {
+                                    onViewAllBooks();
+                                } else {
+                                    setShowAllBooksPopup(true);
+                                }
                             } : undefined}
                         >
                             <img
@@ -341,13 +347,15 @@ const PackCard = ({
                 </div>
             </div>
 
-            {/* Pack Books Popup - Shows all books with improved styling */}
-            <PackBooksPopup
-                isOpen={showAllBooksPopup}
-                onClose={() => setShowAllBooksPopup(false)}
-                packTitle={title}
-                books={books}
-            />
+            {/* Pack Books Popup - Only show internal popup if no external handler provided */}
+            {!onViewAllBooks && (
+                <PackBooksPopup
+                    isOpen={showAllBooksPopup}
+                    onClose={() => setShowAllBooksPopup(false)}
+                    packTitle={title}
+                    books={books}
+                />
+            )}
         </>
     );
 };

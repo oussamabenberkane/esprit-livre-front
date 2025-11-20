@@ -78,7 +78,10 @@ const PacksPromotionnels = () => {
                     packsData.map(async (pack) => {
                         try {
                             // Extract book IDs from the pack
-                            const bookIds = pack.books || [];
+                            // Handle both array of IDs and array of objects with id property
+                            const bookIds = (pack.books || []).map(book =>
+                                typeof book === 'object' ? book.id : book
+                            );
 
                             // Fetch all books for this pack
                             const booksDetails = await getBooksByIds(bookIds);

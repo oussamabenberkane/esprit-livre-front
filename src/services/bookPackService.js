@@ -1,5 +1,4 @@
 import { API_BASE_URL, getDefaultHeaders } from './apiConfig';
-import { getAccessToken } from './authService';
 
 /**
  * Get all book packs with pagination and filtering
@@ -26,19 +25,9 @@ export const getAllBookPacks = async (params = {}) => {
 
     const url = `${API_BASE_URL}/api/book-packs${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
 
-    const headers = {
-      'Content-Type': 'application/json',
-    };
-
-    // Add auth token if available
-    const token = getAccessToken();
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
     const response = await fetch(url, {
       method: 'GET',
-      headers,
+      headers: getDefaultHeaders(),
     });
 
     if (!response.ok) {
@@ -59,18 +48,9 @@ export const getAllBookPacks = async (params = {}) => {
  */
 export const getBookPackById = async (id) => {
   try {
-    const headers = {
-      'Content-Type': 'application/json',
-    };
-
-    const token = getAccessToken();
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
     const response = await fetch(`${API_BASE_URL}/api/book-packs/${id}`, {
       method: 'GET',
-      headers,
+      headers: getDefaultHeaders(),
     });
 
     if (!response.ok) {
@@ -106,18 +86,9 @@ export const getRecommendedPacksForBook = async (bookId, params = {}) => {
 
     const url = `${API_BASE_URL}/api/books/${bookId}/recommended-packs${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
 
-    const headers = {
-      'Content-Type': 'application/json',
-    };
-
-    const token = getAccessToken();
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
     const response = await fetch(url, {
       method: 'GET',
-      headers,
+      headers: getDefaultHeaders(),
     });
 
     if (!response.ok) {

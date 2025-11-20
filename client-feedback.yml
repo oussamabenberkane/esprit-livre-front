@@ -48,8 +48,8 @@ front :
 - footer is not responsively centerd apparently : done
 - add packs icon and routing to navbar on large screens : done
 - book details layout : done
-- cablage n packs : c bon 
-- packs --- add pagination and make the packs more responsive : done
+- cablage n packs : 
+- packs --- add pagination and make the packs more responsive : 
 - sign in button should disapear when the user is authenticated : 
 - navbar language toggle icon : 
 - when i click on reset filters , filters should disapear too and not just visually so than all the books reapear :

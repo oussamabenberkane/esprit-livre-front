@@ -48,15 +48,16 @@ front :
 - footer is not responsively centerd apparently : done
 - add packs icon and routing to navbar on large screens : done
 - book details layout : done
-- cablage n packs : 
-- packs --- add pagination and make the packs more responsive : 
-- sign in button should disapear when the user is authenticated : 
+- cablage n packs : done
+- packs - add pagination : done
 - navbar language toggle icon : 
 - when i click on reset filters , filters should disapear too and not just visually so than all the books reapear :
 - cablage n favorites : 
 - cablage n cart : 
 - cablage n orders : 
-- check allbooks and bookdetails cablage : 
+- check and bookdetails cablage : 
+- check filters n allbooks : 
+- sign in button should disapear when the user is authenticated : 
 - add preview/placeholders for each box/element on loading state : 
 - add popups everywhere user not connected so cant add shit to favs, user cant access cart, user cant access profile --- : 
 - email(verified or not) state with a popup if not --- neki ---- apres : 

@@ -42,7 +42,9 @@ Takes time :
   add create author section in books page in admin: --- done
 
 back :
-- cablage n filters n packs page : waqilq uthyekhdim ara ouss
+- filters n packs page : 
+- filters n books by author and language doesnt work :
+
 
 front :
 - footer is not responsively centerd apparently : done
@@ -50,12 +52,14 @@ front :
 - book details layout : done
 - cablage n packs : done
 - packs - add pagination : done
+- check bookdetails cablage : done
+- packs recomendations in bookdetails responsiveness : done
+
 - navbar language toggle icon : 
 - when i click on reset filters , filters should disapear too and not just visually so than all the books reapear :
 - cablage n favorites : 
 - cablage n cart : 
 - cablage n orders : 
-- check and bookdetails cablage : 
 - check filters n allbooks : 
 - sign in button should disapear when the user is authenticated : 
 - add preview/placeholders for each box/element on loading state : 

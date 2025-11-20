@@ -886,8 +886,7 @@ const BookDetails = () => {
                                     {recommendedPacks.map((pack) => (
                                         <div
                                             key={pack.id}
-                                            className="flex-shrink-0 snap-start"
-                                            style={{ width: 'clamp(280px, 45vw, 500px)' }}
+                                            className="flex-shrink-0 snap-start w-[clamp(280px,85vw,400px)] sm:w-[clamp(320px,60vw,450px)] md:w-[clamp(360px,45vw,500px)]"
                                         >
                                             <PackCard
                                                 id={pack.id}

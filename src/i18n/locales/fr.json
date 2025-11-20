@@ -374,5 +374,12 @@
     "packsFound": "packs trouvés",
     "noPacksFound": "Aucun pack trouvé",
     "tryDifferentSearch": "Essayez une recherche différente ou ajustez vos filtres"
+  },
+  "packBooksPopup": {
+    "book": "livre",
+    "books": "livres",
+    "close": "Fermer",
+    "currency": "DZD",
+    "clickToViewDetails": "Cliquez sur un livre pour voir ses détails"
   }
 }

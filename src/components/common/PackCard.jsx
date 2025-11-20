@@ -353,6 +353,7 @@ const PackCard = ({
                     isOpen={showAllBooksPopup}
                     onClose={() => setShowAllBooksPopup(false)}
                     packTitle={title}
+                    packDescription={description}
                     books={books}
                 />
             )}

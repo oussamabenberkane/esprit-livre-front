@@ -440,9 +440,7 @@ const BookDetails = () => {
         return (
             <main className="w-full max-w-[100vw] overflow-x-hidden">
                 <div className="min-h-screen bg-white">
-                    <section className="w-full max-w-[100vw] overflow-x-hidden">
-                        <Navbar />
-                    </section>
+                    <Navbar />
                     <div className="h-20"></div>
                     <div className="flex items-center justify-center min-h-[60vh]">
                         <div className="text-center">
@@ -461,9 +459,7 @@ const BookDetails = () => {
         return (
             <main className="w-full max-w-[100vw] overflow-x-hidden">
                 <div className="min-h-screen bg-white">
-                    <section className="w-full max-w-[100vw] overflow-x-hidden">
-                        <Navbar />
-                    </section>
+                    <Navbar />
                     <div className="h-20"></div>
                     <div className="flex items-center justify-center min-h-[60vh]">
                         <div className="text-center">
@@ -491,9 +487,7 @@ const BookDetails = () => {
         <main className="w-full max-w-[100vw] overflow-x-hidden">
             <div className="min-h-screen bg-white">
                 {/* Navbar */}
-                <section className="w-full max-w-[100vw] overflow-x-hidden">
-                    <Navbar />
-                </section>
+                <Navbar />
 
                 <div className="h-20"></div>
 

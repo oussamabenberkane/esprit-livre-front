@@ -57,7 +57,7 @@ const LanguageToggle = ({ onLanguageChange, className = '' }) => {
                     {currentLang === "fr" ? (
                         <motion.img
                             key="fr"
-                            src="assets/icons/french-flag.png"
+                            src="/assets/icons/french-flag.png"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
@@ -67,7 +67,7 @@ const LanguageToggle = ({ onLanguageChange, className = '' }) => {
                     ) : (
                         <motion.img
                             key="en"
-                            src="assets/icons/english-flag.png"
+                            src="/assets/icons/english-flag.png"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}

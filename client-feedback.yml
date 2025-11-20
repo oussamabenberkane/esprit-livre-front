@@ -58,7 +58,7 @@ front :
 - packs cards in packPromo page popup for listing the books / better ui + i18n  : done
 - packs promo page / spacing between navbar and rest of the page : done
 - enable navigation to BookDetails when clicking book image preview : done
-- navbar language toggle icon in bookdetails page : 
+- navbar language toggle icon in bookdetails page  : 
 
 - add preview/placeholders for each box/element on loading state : 
 - add popups everywhere user not connected so cant add shit to favs, user cant access cart, user cant access profile --- : 

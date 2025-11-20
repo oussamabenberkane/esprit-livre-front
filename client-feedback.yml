@@ -57,7 +57,7 @@ front :
 - packs cards in packPromo page popup for listing the books : done
 - packs cards in packPromo page popup for listing the books / better ui + i18n  : done
 - packs promo page / spacing between navbar and rest of the page : done
-- add see more button everywhere on packs : 
+- enable navigation to BookDetails when clicking book image preview : done
 - navbar language toggle icon in bookdetails page : 
 
 - add preview/placeholders for each box/element on loading state : 

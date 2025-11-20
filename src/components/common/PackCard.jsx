@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ShoppingCart } from 'lucide-react';
 import PackBooksPopup from './PackBooksPopup';
@@ -15,6 +16,7 @@ const PackCard = ({
     onViewAllBooks
 }) => {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const [imageError, setImageError] = useState(false);
     const [showAllBooksPopup, setShowAllBooksPopup] = useState(false);
     const [showDescriptionModal, setShowDescriptionModal] = useState(false);
@@ -145,6 +147,12 @@ const PackCard = ({
     const displayedBooks = books.slice(0, 4);
     const hasMoreBooks = books.length > 4;
 
+    // Handle book thumbnail click - navigate to book details
+    const handleBookClick = (bookId, e) => {
+        e.stopPropagation();
+        navigate(`/books/${bookId}`);
+    };
+
     // Render book thumbnails with "See More" overlay on 4th book
     const renderBookThumbnails = () => {
         return (
@@ -155,15 +163,20 @@ const PackCard = ({
                         <div
                             key={index}
                             className="relative overflow-hidden rounded-sm bg-gray-100 cursor-pointer"
-                            onClick={isLastThumbnail ? (e) => {
-                                e.stopPropagation();
-                                // Use external callback if provided, otherwise use internal state
-                                if (onViewAllBooks) {
-                                    onViewAllBooks();
+                            onClick={(e) => {
+                                if (isLastThumbnail) {
+                                    e.stopPropagation();
+                                    // Use external callback if provided, otherwise use internal state
+                                    if (onViewAllBooks) {
+                                        onViewAllBooks();
+                                    } else {
+                                        setShowAllBooksPopup(true);
+                                    }
                                 } else {
-                                    setShowAllBooksPopup(true);
+                                    // Navigate to book details for non-last thumbnails
+                                    handleBookClick(book.id, e);
                                 }
-                            } : undefined}
+                            }}
                         >
                             <img
                                 src={book.coverImage}

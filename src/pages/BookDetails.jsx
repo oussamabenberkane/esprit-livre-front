@@ -129,7 +129,13 @@ const BookDetails = () => {
                 const packsWithBooks = await Promise.all(
                     packsData.map(async (pack) => {
                         try {
-                            const bookIds = pack.books || [];
+                            // Extract book IDs - handle both array of objects and array of IDs
+                            let bookIds = pack.books || [];
+
+                            // If books is an array of objects with id property, extract just the IDs
+                            if (bookIds.length > 0 && typeof bookIds[0] === 'object') {
+                                bookIds = bookIds.map(book => book.id || book);
+                            }
 
                             // Skip fetching if no books in pack
                             if (bookIds.length === 0) {
@@ -778,7 +784,7 @@ const BookDetails = () => {
                                 className="flex pt-fluid-xs pr-fluid-lg pl-fluid-2xl gap-fluid-md overflow-x-auto scrollbar-hide pb-4"
                             >
                                 {recommendedBooks.map((recommendedBook) => {
-                                    const etiquetteTag = recommendedBook.tags.find(tag => tag.type === "ETIQUETTE");
+                                    const etiquetteTag = recommendedBook.tags?.find(tag => tag.type === "ETIQUETTE");
                                     const badge = etiquetteTag ? {
                                         type: etiquetteTag.nameEn.toLowerCase(),
                                         text: etiquetteTag.nameFr,
@@ -798,7 +804,7 @@ const BookDetails = () => {
                                             <BookCard
                                                 id={recommendedBook.id}
                                                 title={recommendedBook.title}
-                                                author={recommendedBook.author.name}
+                                                author={recommendedBook.author?.name || 'Unknown'}
                                                 price={recommendedBook.price}
                                                 coverImage={recommendedBook.coverImageUrl}
                                                 badge={badge}

@@ -414,8 +414,18 @@ export const getBooksByIds = async (bookIds) => {
       return [];
     }
 
+    // Extract IDs if array contains objects, and filter out invalid values
+    const validIds = bookIds
+      .map(item => typeof item === 'object' ? item.id : item)
+      .filter(id => id !== null && id !== undefined && !isNaN(id));
+
+    if (validIds.length === 0) {
+      console.warn('No valid book IDs found in array:', bookIds);
+      return [];
+    }
+
     // Fetch all books in parallel
-    const bookPromises = bookIds.map(id => fetchBookById(id));
+    const bookPromises = validIds.map(id => fetchBookById(id));
     const books = await Promise.all(bookPromises);
 
     return books.filter(book => book !== null);

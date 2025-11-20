@@ -99,7 +99,8 @@ export const getRecommendedPacksForBook = async (bookId, params = {}) => {
     */
 
     // Temporary fallback - fetches all packs
-    console.warn(`Using fallback: Recommendation endpoint not yet implemented for book ${bookId}`);
+    // TODO: Implement book-specific pack recommendations endpoint on backend
+    console.log(`[INFO] Using fallback: fetching all packs for book ${bookId}`);
     return await getAllBookPacks(params);
   } catch (error) {
     console.error('Error fetching recommended packs:', error);

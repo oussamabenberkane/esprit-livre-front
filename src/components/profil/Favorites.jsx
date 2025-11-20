@@ -141,7 +141,7 @@ export default function Favorites() {
           <div className="flex flex-wrap gap-fluid-md justify-center">
             {favoriteBooks.map((book, index) => {
               // Extract badge from tags (same logic as BookDetails.jsx)
-              const etiquetteTag = book.tags.find(tag => tag.type === "ETIQUETTE");
+              const etiquetteTag = book.tags?.find(tag => tag.type === "ETIQUETTE");
               const badge = etiquetteTag ? {
                 type: etiquetteTag.nameEn.toLowerCase(),
                 text: etiquetteTag.nameFr,

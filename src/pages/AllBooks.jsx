@@ -265,7 +265,7 @@ export default function AllBooks() {
                             <div className="flex flex-wrap gap-fluid-md justify-center">
                                 {books.map((book, index) => {
                                     // Extract first ETIQUETTE tag for badge
-                                    const etiquetteTag = book.tags.find(tag => tag.type === "ETIQUETTE")
+                                    const etiquetteTag = book.tags?.find(tag => tag.type === "ETIQUETTE")
                                     const badge = etiquetteTag ? {
                                         type: etiquetteTag.nameEn.toLowerCase(),
                                         text: etiquetteTag.nameFr,

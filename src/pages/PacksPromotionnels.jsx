@@ -220,8 +220,11 @@ const PacksPromotionnels = () => {
                 onSearch={handleSearch}
             />
 
+            {/* Responsive spacing for navbar - taller on mobile due to two-line layout */}
+            <div className="h-36"></div>
+
             {/* Main Content */}
-            <main className="pt-28 sm:pt-32 md:pt-28 pb-12">
+            <main className="pb-12">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Page Header */}
                     <div className="mb-8">
@@ -349,11 +352,10 @@ const PacksPromotionnels = () => {
                                         window.scrollTo({ top: 0, behavior: 'smooth' })
                                     }}
                                     disabled={currentPage === 1}
-                                    className={`flex items-center justify-center w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 ${
-                                        currentPage === 1
-                                            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                                            : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
-                                    }`}
+                                    className={`flex items-center justify-center w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 ${currentPage === 1
+                                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                        : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+                                        }`}
                                     aria-label="Previous page"
                                 >
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -376,11 +378,10 @@ const PacksPromotionnels = () => {
                                                     setCurrentPage(1)
                                                     window.scrollTo({ top: 0, behavior: 'smooth' })
                                                 }}
-                                                className={`min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                                                    currentPage === 1
-                                                        ? "bg-blue-600 text-white shadow-md"
-                                                        : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
-                                                }`}
+                                                className={`min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${currentPage === 1
+                                                    ? "bg-blue-600 text-white shadow-md"
+                                                    : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+                                                    }`}
                                             >
                                                 1
                                             </button>
@@ -407,11 +408,10 @@ const PacksPromotionnels = () => {
                                                         setCurrentPage(i)
                                                         window.scrollTo({ top: 0, behavior: 'smooth' })
                                                     }}
-                                                    className={`min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                                                        currentPage === i
-                                                            ? "bg-blue-600 text-white shadow-md"
-                                                            : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
-                                                    }`}
+                                                    className={`min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${currentPage === i
+                                                        ? "bg-blue-600 text-white shadow-md"
+                                                        : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+                                                        }`}
                                                 >
                                                     {i}
                                                 </button>
@@ -436,11 +436,10 @@ const PacksPromotionnels = () => {
                                                         setCurrentPage(totalPages)
                                                         window.scrollTo({ top: 0, behavior: 'smooth' })
                                                     }}
-                                                    className={`min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                                                        currentPage === totalPages
-                                                            ? "bg-blue-600 text-white shadow-md"
-                                                            : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
-                                                    }`}
+                                                    className={`min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${currentPage === totalPages
+                                                        ? "bg-blue-600 text-white shadow-md"
+                                                        : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+                                                        }`}
                                                 >
                                                     {totalPages}
                                                 </button>
@@ -458,11 +457,10 @@ const PacksPromotionnels = () => {
                                         window.scrollTo({ top: 0, behavior: 'smooth' })
                                     }}
                                     disabled={currentPage === totalPages}
-                                    className={`flex items-center justify-center w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 ${
-                                        currentPage === totalPages
-                                            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                                            : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
-                                    }`}
+                                    className={`flex items-center justify-center w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 ${currentPage === totalPages
+                                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                        : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+                                        }`}
                                     aria-label="Next page"
                                 >
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

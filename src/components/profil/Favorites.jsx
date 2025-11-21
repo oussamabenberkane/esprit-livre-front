@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Heart } from 'lucide-react';
 import BookCard from '../common/BookCard';
@@ -15,6 +15,7 @@ import { isAuthenticated } from '../../services/authService';
 export default function Favorites() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Scroll to top when page loads
   useScrollToTop();
@@ -42,13 +43,21 @@ export default function Favorites() {
 
   // Load favorite books on mount and when returning to the page
   useEffect(() => {
-    loadFavoriteBooks();
-  }, [loadFavoriteBooks]);
+    // Check if auth status changed since last visit
+    const currentAuth = isAuthenticated();
+    if (currentAuth !== prevAuthRef.current) {
+      console.log('Auth status changed on Favorites mount/navigation - reloading favorites');
+      prevAuthRef.current = currentAuth;
+    }
 
-  // Listen for authentication state changes
+    loadFavoriteBooks();
+  }, [loadFavoriteBooks, location.pathname]); // Re-run when navigating to this route
+
+  // Listen for authentication state changes and reload favorites
   useEffect(() => {
     const handleAuthChange = (event) => {
       console.log('Auth state changed event received on Favorites page');
+      prevAuthRef.current = isAuthenticated();
       // Reload favorite books after authentication change
       setTimeout(() => {
         loadFavoriteBooks();

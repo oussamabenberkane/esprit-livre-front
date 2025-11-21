@@ -8,6 +8,7 @@ const TOKEN_URL = `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-conn
 // Token storage keys
 const ACCESS_TOKEN_KEY = 'el_access_token';
 const REFRESH_TOKEN_KEY = 'el_refresh_token';
+const REDIRECT_URL_KEY = 'el_redirect_url';
 
 /**
  * Authenticate using OAuth Password Grant (temporary implementation)
@@ -44,6 +45,9 @@ export const loginWithPassword = async (username, password) => {
     if (data.refresh_token) {
       localStorage.setItem(REFRESH_TOKEN_KEY, data.refresh_token);
     }
+
+    // Dispatch custom event to notify components of auth change
+    window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated: true } }));
 
     return data;
   } catch (error) {
@@ -97,4 +101,31 @@ export const getCurrentUser = async () => {
   }
 
   return response.json();
+};
+
+/**
+ * Save the URL to redirect to after login
+ * @param {string} url - The URL to redirect to after successful login
+ */
+export const saveRedirectUrl = (url) => {
+  if (url && url !== '/auth') {
+    localStorage.setItem(REDIRECT_URL_KEY, url);
+  }
+};
+
+/**
+ * Get and clear the saved redirect URL
+ * @returns {string|null} The saved redirect URL, or null if none exists
+ */
+export const getAndClearRedirectUrl = () => {
+  const url = localStorage.getItem(REDIRECT_URL_KEY);
+  localStorage.removeItem(REDIRECT_URL_KEY);
+  return url;
+};
+
+/**
+ * Clear the saved redirect URL without retrieving it
+ */
+export const clearRedirectUrl = () => {
+  localStorage.removeItem(REDIRECT_URL_KEY);
 };

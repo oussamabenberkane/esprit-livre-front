@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import GoogleAuthButton from '../components/buttons/GoogleAuthButton';
-import { loginWithPassword } from '../services/authService';
+import { loginWithPassword, getAndClearRedirectUrl } from '../services/authService';
 
 export default function SignIn({ onSwitchToSignUp }) {
   const navigate = useNavigate();
@@ -21,8 +21,11 @@ export default function SignIn({ onSwitchToSignUp }) {
 
       console.log('Authentication successful!');
 
-      // Navigate to home page after successful login
-      navigate('/');
+      // Get saved redirect URL or default to home
+      const redirectUrl = getAndClearRedirectUrl() || '/';
+
+      // Navigate to saved page or home page after successful login
+      navigate(redirectUrl, { replace: true });
     } catch (err) {
       console.error('Sign in error:', err);
       setError(err.message || 'Authentication failed. Please try again.');

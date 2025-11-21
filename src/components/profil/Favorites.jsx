@@ -1,15 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Heart } from 'lucide-react';
 import BookCard from '../common/BookCard';
 import CartConfirmationPopup from '../common/cartConfirmationPopup';
 import FloatingCartBadge from '../common/FloatingCartBadge';
-import { fetchLikedBooks } from '../../services/books.service';
+import { useFavorites } from '../../contexts/FavoritesContext';
 import { useScrollToTop } from '../../hooks/useScrollToTop';
 import Navbar from '../common/Navbar';
 import { getBookCoverUrl } from '../../utils/imageUtils';
 import Footer from '../common/Footer';
+import { isAuthenticated } from '../../services/authService';
 
 export default function Favorites() {
   const { t } = useTranslation();
@@ -18,10 +19,14 @@ export default function Favorites() {
   // Scroll to top when page loads
   useScrollToTop();
 
-  // State management
-  const [favoriteBooks, setFavoriteBooks] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // Favorites context
+  const {
+    favoriteBooks,
+    isLoading,
+    error,
+    loadFavoriteBooks,
+    toggleFavorite: toggleFavoriteContext
+  } = useFavorites();
 
   // Cart popup state
   const [showCartPopup, setShowCartPopup] = useState(false);
@@ -31,23 +36,31 @@ export default function Favorites() {
   const [showFloatingBadge, setShowFloatingBadge] = useState(false);
   const [cartItemCount, setCartItemCount] = useState(0);
 
+  // Track authentication status changes
+  const isAuth = isAuthenticated();
+  const prevAuthRef = useRef(isAuth);
+
+  // Load favorite books on mount and when returning to the page
   useEffect(() => {
-    const loadFavoriteBooks = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const response = await fetchLikedBooks(0, 100); // Fetch up to 100 favorites
-        setFavoriteBooks(response.books);
-      } catch (err) {
-        console.error('Error loading favorite books:', err);
-        setError(err.message || 'Failed to load favorite books');
-      } finally {
-        setIsLoading(false);
-      }
+    loadFavoriteBooks();
+  }, [loadFavoriteBooks]);
+
+  // Listen for authentication state changes
+  useEffect(() => {
+    const handleAuthChange = (event) => {
+      console.log('Auth state changed event received on Favorites page');
+      // Reload favorite books after authentication change
+      setTimeout(() => {
+        loadFavoriteBooks();
+      }, 100); // Small delay to ensure tokens are fully stored
     };
 
-    loadFavoriteBooks();
-  }, []);
+    window.addEventListener('authStateChanged', handleAuthChange);
+
+    return () => {
+      window.removeEventListener('authStateChanged', handleAuthChange);
+    };
+  }, [loadFavoriteBooks]);
 
   const handleBack = () => {
     navigate(-1);
@@ -70,12 +83,14 @@ export default function Favorites() {
     setShowFloatingBadge(true);
   };
 
-  const handleToggleFavorite = (bookId, isFavorited) => {
-    // When unfavoriting, remove from the list
-    if (!isFavorited) {
-      setFavoriteBooks(favoriteBooks.filter(book => book.id !== bookId));
-      console.log(`Removed book ${bookId} from favorites`);
-    }
+  const handleToggleFavorite = async (bookId, isFavorited) => {
+    // BookCard already handles the toggle through context
+    // We just need to reload the list to update the view
+    console.log(`${isFavorited ? 'Added' : 'Removed'} book ${bookId} ${isFavorited ? 'to' : 'from'} favorites`);
+
+    // Reload favorite books to update the list immediately
+    // This ensures the book is removed from the view when unfavorited
+    await loadFavoriteBooks();
   };
 
   return (

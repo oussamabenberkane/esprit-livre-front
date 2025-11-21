@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Heart, ShoppingCart } from 'lucide-react';
 import { getLanguageCode, getFullLanguageName } from '../../data/booksData';
 import { getBookCoverUrl } from '../../utils/imageUtils';
+import { useFavorites } from '../../contexts/FavoritesContext';
 
 const BookCard = ({
     id,
@@ -20,23 +21,34 @@ const BookCard = ({
     isFavorited = false
 }) => {
     const { t } = useTranslation();
-    const [favorited, setFavorited] = useState(isFavorited);
+    const { isFavorited: isBookFavorited, toggleFavorite } = useFavorites();
+    const [favorited, setFavorited] = useState(isBookFavorited(id));
     // Get the cover image URL from the API endpoint
     const coverImageUrl = getBookCoverUrl(id);
     const navigate = useNavigate();
 
+    // Update favorited state when context changes
+    useEffect(() => {
+        setFavorited(isBookFavorited(id));
+    }, [id, isBookFavorited]);
+
     // Determine if book is available based on stock
     const isAvailable = stock !== 0;
-    console.log(`BookCard ${id} - Title: ${title}`)
-    console.log('stockStatus:', stockStatus)
-    console.log('stock prop:', stock)
-    console.log('stock > 0:', stock > 0)
 
-    const handleFavoriteClick = (e) => {
+    const handleFavoriteClick = async (e) => {
         e.stopPropagation(); // Prevent card click navigation
-        setFavorited(!favorited);
-        if (onToggleFavorite) {
-            onToggleFavorite(id, !favorited);
+
+        try {
+            // Use context to toggle favorite
+            const isNowFavorited = await toggleFavorite(id);
+            setFavorited(isNowFavorited);
+
+            // Also call the parent callback if provided
+            if (onToggleFavorite) {
+                onToggleFavorite(id, isNowFavorited);
+            }
+        } catch (error) {
+            console.error('Error toggling favorite:', error);
         }
     };
 

@@ -1,6 +1,6 @@
 // src/components/common/Navbar.jsx
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Search, ShoppingCart, Heart, User, Menu, Package } from 'lucide-react';
 import LanguageToggle from '../animations/LanguageToggle';
@@ -8,7 +8,7 @@ import BottomSheet from './BottomSheet';
 import SearchSuggestions from './SearchSuggestions';
 import LoginPromptPopup from './LoginPromptPopup';
 import { fetchBookSuggestions } from '../../services/books.service';
-import { isAuthenticated } from '../../services/authService';
+import { isAuthenticated, saveRedirectUrl } from '../../services/authService';
 
 // Simple Language Toggle for Mobile/Tablet (the one I created earlier)
 const SimpleLanguageToggle = () => {
@@ -87,6 +87,7 @@ const Navbar = ({
     const { t } = useTranslation();
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
 
     // Search state
     const [searchQuery, setSearchQuery] = useState('');
@@ -139,7 +140,6 @@ const Navbar = ({
 
     // Handle user icon hover - check authentication and show popup
     const handleUserHover = (e, isMobile = false) => {
-        if (e) e.preventDefault();
         if (!isAuthenticated()) {
             if (isMobile) {
                 setShowLoginPromptMobile(true);
@@ -166,6 +166,9 @@ const Navbar = ({
     // Handle login button click from popup
     const handleLoginFromPopup = () => {
         closeLoginPrompt();
+        // Save current location for redirect after login
+        const currentPath = location.pathname + location.search;
+        saveRedirectUrl(currentPath);
         navigate('/auth');
     };
 
@@ -300,7 +303,11 @@ const Navbar = ({
                     <div className="flex items-center gap-3">
                         {/* Sign In Button - Desktop only */}
                         <SignInButton
-                            onClick={() => navigate('/auth')}
+                            onClick={() => {
+                                const currentPath = location.pathname + location.search;
+                                saveRedirectUrl(currentPath);
+                                navigate('/auth');
+                            }}
                             className="hidden md:block"
                             highlight={highlightSignInButton}
                         />
@@ -381,7 +388,11 @@ const Navbar = ({
                     <div className="flex items-center gap-2">
                         {/* Sign In Button */}
                         <SignInButton
-                            onClick={() => navigate('/auth')}
+                            onClick={() => {
+                                const currentPath = location.pathname + location.search;
+                                saveRedirectUrl(currentPath);
+                                navigate('/auth');
+                            }}
                             highlight={highlightSignInButton}
                         />
 
@@ -390,7 +401,6 @@ const Navbar = ({
                             <button
                                 onClick={(e) => handleUserClick(e, true)}
                                 onTouchStart={(e) => {
-                                    e.preventDefault();
                                     handleUserHover(e, true);
                                 }}
                                 className="hover:opacity-80 transition-opacity"

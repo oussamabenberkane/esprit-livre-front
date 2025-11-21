@@ -62,7 +62,8 @@ front :
 - add preview/placeholders for each box/element on loading state : done for @allbooks @bookdetails @homepage @packPromo
 
 
-- add popups everywhere user not connected so cant add shit to favs, user cant access cart, user cant access profile --- : 
+- add popup modal so that the user cant access profile if not authentificated : 
+- add popup modal so that the user cant proceed to cart checkout if not authentificated : 
 
 - when selecting an author or a category from homepage it doesnt navugate to all books page with the targetted filter being already choosen : 
 - when i click on reset filters , filters should disapear too and not just visually so than all the books reapear :
@@ -73,5 +74,9 @@ front :
 
 - sign in button should disapear when the user is authenticated : 
 
+- check i18n across all the pages -- books sections caroussel ni ulash :
+
 - email(verified or not) state with a popup if not --- neki ---- apres : 
+
+
 

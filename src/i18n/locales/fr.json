@@ -7,6 +7,11 @@
       "en": "EN"
     }
   },
+  "loginPrompt": {
+    "title": "Connexion requise",
+    "message": "Vous devez être connecté pour accéder à votre profil.",
+    "loginButton": "Se connecter"
+  },
   "bookCard": {
     "addToCart": "Ajouter\nau\u00A0panier",
     "currency": "DZD",

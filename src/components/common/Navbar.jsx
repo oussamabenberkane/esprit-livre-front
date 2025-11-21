@@ -6,7 +6,9 @@ import { Search, ShoppingCart, Heart, User, Menu, Package } from 'lucide-react';
 import LanguageToggle from '../animations/LanguageToggle';
 import BottomSheet from './BottomSheet';
 import SearchSuggestions from './SearchSuggestions';
+import LoginPromptPopup from './LoginPromptPopup';
 import { fetchBookSuggestions } from '../../services/books.service';
+import { isAuthenticated } from '../../services/authService';
 
 // Simple Language Toggle for Mobile/Tablet (the one I created earlier)
 const SimpleLanguageToggle = () => {
@@ -29,13 +31,17 @@ const SimpleLanguageToggle = () => {
 };
 
 // Sign In Button Component - Unified for all screen sizes
-const SignInButton = ({ onClick, className = "" }) => {
+const SignInButton = ({ onClick, className = "", highlight = false }) => {
     const { t } = useTranslation();
 
     return (
         <button
             onClick={onClick}
-            className={`bg-white/10 hover:bg-white/20 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg transition-colors text-sm font-medium whitespace-nowrap ${className}`}
+            className={`bg-white/10 hover:bg-white/20 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg transition-all text-sm font-medium whitespace-nowrap ${
+                highlight
+                    ? 'ring-2 ring-white ring-offset-2 ring-offset-blue-800 animate-pulse shadow-lg'
+                    : ''
+            } ${className}`}
         >
             {t('navbar.signIn')}
         </button>
@@ -90,6 +96,13 @@ const Navbar = ({
     const searchTimeoutRef = useRef(null);
     const searchContainerRef = useRef(null);
 
+    // Login prompt popup state
+    const [showLoginPromptDesktop, setShowLoginPromptDesktop] = useState(false);
+    const [showLoginPromptMobile, setShowLoginPromptMobile] = useState(false);
+    const [highlightSignInButton, setHighlightSignInButton] = useState(false);
+    const desktopUserButtonRef = useRef(null);
+    const mobileUserButtonRef = useRef(null);
+
     // Use translation if no custom placeholder is provided
     const placeholder = searchPlaceholder || t('navbar.searchPlaceholder');
 
@@ -107,9 +120,53 @@ const Navbar = ({
         navigate('/favorites');
     };
 
-    // Default user click handler - navigate to profile page
-    const handleUserClick = () => {
-        navigate('/profile');
+    // Handle user icon click - check authentication
+    const handleUserClick = (e, isMobile = false) => {
+        e.stopPropagation();
+
+        if (isAuthenticated()) {
+            navigate('/profile');
+        } else {
+            // Show login prompt popup
+            if (isMobile) {
+                setShowLoginPromptMobile(true);
+            } else {
+                setShowLoginPromptDesktop(true);
+            }
+            setHighlightSignInButton(true);
+        }
+    };
+
+    // Handle user icon hover - check authentication and show popup
+    const handleUserHover = (e, isMobile = false) => {
+        if (e) e.preventDefault();
+        if (!isAuthenticated()) {
+            if (isMobile) {
+                setShowLoginPromptMobile(true);
+            } else {
+                setShowLoginPromptDesktop(true);
+            }
+            setHighlightSignInButton(true);
+        }
+    };
+
+    // Handle user icon mouse leave
+    const handleUserMouseLeave = () => {
+        // Don't hide if user is interacting with popup
+        // Popup will handle its own closing
+    };
+
+    // Close login prompt popup
+    const closeLoginPrompt = () => {
+        setShowLoginPromptDesktop(false);
+        setShowLoginPromptMobile(false);
+        setHighlightSignInButton(false);
+    };
+
+    // Handle login button click from popup
+    const handleLoginFromPopup = () => {
+        closeLoginPrompt();
+        navigate('/auth');
     };
 
     // Handle logo click - navigate to home page
@@ -242,7 +299,11 @@ const Navbar = ({
                     {/* Action Icons */}
                     <div className="flex items-center gap-3">
                         {/* Sign In Button - Desktop only */}
-                        <SignInButton onClick={() => navigate('/auth')} className="hidden md:block" />
+                        <SignInButton
+                            onClick={() => navigate('/auth')}
+                            className="hidden md:block"
+                            highlight={highlightSignInButton}
+                        />
 
                         {/* Language Toggle - Different components based on screen size */}
                         {/* Desktop: Use your actual LanguageToggle component */}
@@ -278,9 +339,22 @@ const Navbar = ({
                         </button>
 
                         {/* User Account - Desktop only */}
-                        <button onClick={handleUserClick} className="hidden md:block">
-                            <User className="w-6 h-6 text-white hover:opacity-80 transition-opacity" />
-                        </button>
+                        <div className="hidden md:block relative" ref={desktopUserButtonRef}>
+                            <button
+                                onClick={(e) => handleUserClick(e, false)}
+                                onMouseEnter={(e) => handleUserHover(e, false)}
+                                onMouseLeave={handleUserMouseLeave}
+                                className="hover:opacity-80 transition-opacity"
+                            >
+                                <User className="w-6 h-6 text-white" />
+                            </button>
+                            <LoginPromptPopup
+                                isOpen={showLoginPromptDesktop}
+                                onClose={closeLoginPrompt}
+                                onLoginClick={handleLoginFromPopup}
+                                position="bottom"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -306,12 +380,30 @@ const Navbar = ({
                     {/* Right side: Sign In, Profile, Cart */}
                     <div className="flex items-center gap-2">
                         {/* Sign In Button */}
-                        <SignInButton onClick={() => navigate('/auth')} />
+                        <SignInButton
+                            onClick={() => navigate('/auth')}
+                            highlight={highlightSignInButton}
+                        />
 
                         {/* User Profile Icon */}
-                        <button onClick={handleUserClick} className="flex-shrink-0">
-                            <User className="w-7 h-7 text-white hover:opacity-80 transition-opacity" />
-                        </button>
+                        <div className="relative flex-shrink-0" ref={mobileUserButtonRef}>
+                            <button
+                                onClick={(e) => handleUserClick(e, true)}
+                                onTouchStart={(e) => {
+                                    e.preventDefault();
+                                    handleUserHover(e, true);
+                                }}
+                                className="hover:opacity-80 transition-opacity"
+                            >
+                                <User className="w-7 h-7 text-white" />
+                            </button>
+                            <LoginPromptPopup
+                                isOpen={showLoginPromptMobile}
+                                onClose={closeLoginPrompt}
+                                onLoginClick={handleLoginFromPopup}
+                                position="bottom"
+                            />
+                        </div>
 
                         {/* Cart Icon */}
                         <button onClick={handleCartClick} className="relative flex-shrink-0">

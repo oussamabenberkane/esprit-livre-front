@@ -62,8 +62,9 @@ front :
 - add preview/placeholders for each box/element on loading state : done for @allbooks @bookdetails @homepage @packPromo
 - add popup modal so that the user cant access profile if not authentificated : done
 - when i click on reset filters , filters should disapear too and not just visually so than all the books reapear : done
+- cablage n favorites : done
 
-- cablage n favorites : 
+- add pagination for favorites page : 
 - cablage n cart : 
 - add popup modal so that the user cant proceed to cart checkout if not authentificated : 
 - cablage n orders : 

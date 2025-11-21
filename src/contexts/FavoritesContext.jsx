@@ -117,36 +117,54 @@ export const FavoritesProvider = ({ children }) => {
             // Get local favorites
             const localFavs = localFavorites.get();
 
-            // Fetch server favorites
-            const { books: serverBooks } = await fetchLikedBooks(0, 100);
+            // Only fetch from server if authenticated
+            if (isAuthenticated()) {
+                try {
+                    // Fetch server favorites
+                    const { books: serverBooks } = await fetchLikedBooks(0, 100);
 
-            // Merge both sources
-            const mergedIds = mergeFavorites(localFavs, serverBooks);
+                    // Merge both sources
+                    const mergedIds = mergeFavorites(localFavs, serverBooks);
 
-            // Find which local favorites need to be synced to server
-            const serverBookIds = serverBooks.map(book => book.id);
-            const localOnlyIds = localFavs.filter(id => !serverBookIds.includes(id));
+                    // Find which local favorites need to be synced to server
+                    const serverBookIds = serverBooks.map(book => book.id);
+                    const localOnlyIds = localFavs.filter(id => !serverBookIds.includes(id));
 
-            // Sync local-only favorites to server
-            if (localOnlyIds.length > 0) {
-                console.log(`Syncing ${localOnlyIds.length} local favorites to server...`);
-                await syncLocalFavoritesToServer(localOnlyIds);
-            }
+                    // Sync local-only favorites to server
+                    if (localOnlyIds.length > 0) {
+                        console.log(`Syncing ${localOnlyIds.length} local favorites to server...`);
+                        await syncLocalFavoritesToServer(localOnlyIds);
+                    }
 
-            // Update state with merged favorites
-            dispatch({ type: ACTIONS.SET_FAVORITES, payload: mergedIds });
+                    // Update state with merged favorites
+                    dispatch({ type: ACTIONS.SET_FAVORITES, payload: mergedIds });
 
-            // Clear localStorage after successful sync
-            if (localFavs.length > 0) {
-                localFavorites.clear();
-                console.log('Local favorites cleared after sync');
+                    // Clear localStorage after successful sync
+                    if (localFavs.length > 0) {
+                        localFavorites.clear();
+                        console.log('Local favorites cleared after sync');
+                    }
+                } catch (error) {
+                    // If 401, user isn't actually authenticated - fallback to local
+                    if (error.status === 401) {
+                        console.log('Not authenticated (401), using local favorites');
+                        dispatch({ type: ACTIONS.SET_FAVORITES, payload: localFavs });
+                    } else {
+                        // Re-throw other errors to be caught by outer catch
+                        throw error;
+                    }
+                }
+            } else {
+                // Not authenticated - use local favorites
+                console.log('Not authenticated, using local favorites');
+                dispatch({ type: ACTIONS.SET_FAVORITES, payload: localFavs });
             }
 
         } catch (error) {
             console.error('Error loading and merging favorites:', error);
             dispatch({ type: ACTIONS.SET_ERROR, payload: error.message });
 
-            // Fallback to local favorites if sync fails
+            // Always fallback to local favorites on error
             const localFavs = localFavorites.get();
             dispatch({ type: ACTIONS.SET_FAVORITES, payload: localFavs });
         } finally {
@@ -207,9 +225,27 @@ export const FavoritesProvider = ({ children }) => {
             const isAuth = isAuthenticated();
 
             if (isAuth) {
-                // Fetch from server
-                const { books } = await fetchLikedBooks(0, 100);
-                dispatch({ type: ACTIONS.SET_FAVORITE_BOOKS, payload: books });
+                try {
+                    // Fetch from server
+                    const { books } = await fetchLikedBooks(0, 100);
+                    dispatch({ type: ACTIONS.SET_FAVORITE_BOOKS, payload: books });
+                } catch (error) {
+                    // If 401, user isn't actually authenticated - fallback to local
+                    if (error.status === 401) {
+                        console.log('Not authenticated (401), loading favorite books from local storage');
+                        const localFavIds = localFavorites.get();
+
+                        if (localFavIds.length > 0) {
+                            const books = await getBooksByIds(localFavIds);
+                            dispatch({ type: ACTIONS.SET_FAVORITE_BOOKS, payload: books });
+                        } else {
+                            dispatch({ type: ACTIONS.SET_FAVORITE_BOOKS, payload: [] });
+                        }
+                    } else {
+                        // Re-throw other errors
+                        throw error;
+                    }
+                }
             } else {
                 // For non-authenticated users, fetch book details by IDs from localStorage
                 const localFavIds = localFavorites.get();

@@ -59,8 +59,9 @@ front :
 - packs promo page / spacing between navbar and rest of the page : done
 - enable navigation to BookDetails when clicking book image preview : done
 - navbar language toggle icon in bookdetails page : done
+- add preview/placeholders for each box/element on loading state : done for @allbooks @bookdetails @homepage @packPromo
 
-- add preview/placeholders for each box/element on loading state : 
+
 - add popups everywhere user not connected so cant add shit to favs, user cant access cart, user cant access profile --- : 
 
 - when selecting an author or a category from homepage it doesnt navugate to all books page with the targetted filter being already choosen : 

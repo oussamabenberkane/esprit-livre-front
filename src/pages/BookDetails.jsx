@@ -12,10 +12,14 @@ import PaginationDots from '../components/common/PaginationDots';
 import SeeMore from '../components/buttons/SeeMore';
 import CartConfirmationPopup from '../components/common/cartConfirmationPopup';
 import FloatingCartBadge from '../components/common/FloatingCartBadge';
+import BookDetailsSkeleton from '../components/common/skeletons/BookDetailsSkeleton';
+import BookCardSkeleton from '../components/common/skeletons/BookCardSkeleton';
+import PackCardSkeleton from '../components/common/skeletons/PackCardSkeleton';
 import { BOOKS_DATA, getLanguageCode } from '../data/booksData';
 import { fetchBookById, fetchBookRecommendations, getBooksByIds } from '../services/books.service';
 import { getRecommendedPacksForBook } from '../services/bookPackService';
 import { getBookCoverUrl, getBookPackCoverUrl } from '../utils/imageUtils';
+import useProgressiveRender from '../hooks/useProgressiveRender';
 
 const BookDetails = () => {
     const { t } = useTranslation();
@@ -80,17 +84,29 @@ const BookDetails = () => {
 
     // Recommended books - exclude current book (backend will provide this later)
     const [recommendedBooks, setRecommendedBooks] = useState([]);
+    const [recommendedBooksLoading, setRecommendedBooksLoading] = useState(true);
+
+    // Progressive rendering for recommended books
+    const { visibleItems: visibleRecommendedBooks, isRendering: isRecommendedBooksRendering } = useProgressiveRender(
+        recommendedBooks,
+        recommendedBooksLoading,
+        80 // 80ms delay between each book appearing
+    );
+
     // Load recommended books when ID changes
     useEffect(() => {
         // Fetch recommended books from API
         const fetchRecommendations = async () => {
             try {
+                setRecommendedBooksLoading(true);
                 const recommendations = await fetchBookRecommendations(parseInt(id));
                 setRecommendedBooks(recommendations);
             } catch (error) {
                 console.error('Error fetching recommendations:', error);
                 // Fallback to empty array on error
                 setRecommendedBooks([]);
+            } finally {
+                setRecommendedBooksLoading(false);
             }
         };
 
@@ -104,6 +120,13 @@ const BookDetails = () => {
     const [canScrollPacksLeft, setCanScrollPacksLeft] = useState(false);
     const [canScrollPacksRight, setCanScrollPacksRight] = useState(true);
     const [packsLoading, setPacksLoading] = useState(true);
+
+    // Progressive rendering for recommended packs
+    const { visibleItems: visibleRecommendedPacks, isRendering: isRecommendedPacksRendering } = useProgressiveRender(
+        recommendedPacks,
+        packsLoading,
+        100 // 100ms delay between each pack appearing
+    );
 
     // Fetch pack recommendations for the current book
     useEffect(() => {
@@ -198,7 +221,7 @@ const BookDetails = () => {
     // Scroll handlers
     const checkBooksScrollPosition = () => {
         const container = booksScrollRef.current;
-        if (!container || recommendedBooks.length === 0) return;
+        if (!container || visibleRecommendedBooks.length === 0) return;
 
         const scrollLeft = container.scrollLeft;
         const maxScroll = container.scrollWidth - container.clientWidth;
@@ -206,9 +229,12 @@ const BookDetails = () => {
         setCanScrollBooksLeft(scrollLeft > 0);
         setCanScrollBooksRight(scrollLeft < maxScroll - 10);
 
+        // Calculate total items for pagination (visible + loading)
+        const totalItems = recommendedBooksLoading ? 10 : recommendedBooks.length;
+
         // If at the very end, set to last index
         if (scrollLeft >= maxScroll - 5) {
-            setCurrentBookIndex(recommendedBooks.length - 1);
+            setCurrentBookIndex(totalItems - 1);
         }
         // If at the very start, set to first index
         else if (scrollLeft <= 5) {
@@ -224,7 +250,7 @@ const BookDetails = () => {
             let activeIndex = Math.round((containerCenter - (itemWidth / 2)) / (itemWidth + gap));
 
             // Clamp between 0 and last index
-            activeIndex = Math.max(0, Math.min(activeIndex, recommendedBooks.length - 1));
+            activeIndex = Math.max(0, Math.min(activeIndex, totalItems - 1));
 
             setCurrentBookIndex(activeIndex);
         }
@@ -247,7 +273,7 @@ const BookDetails = () => {
     // Pack scroll handlers
     const checkPacksScrollPosition = () => {
         const container = packsScrollRef.current;
-        if (!container || recommendedPacks.length === 0) return;
+        if (!container || visibleRecommendedPacks.length === 0) return;
 
         const scrollLeft = container.scrollLeft;
         const maxScroll = container.scrollWidth - container.clientWidth;
@@ -255,8 +281,11 @@ const BookDetails = () => {
         setCanScrollPacksLeft(scrollLeft > 0);
         setCanScrollPacksRight(scrollLeft < maxScroll - 10);
 
+        // Calculate total items for pagination (visible + loading)
+        const totalItems = packsLoading ? 8 : recommendedPacks.length;
+
         if (scrollLeft >= maxScroll - 5) {
-            setCurrentPackIndex(recommendedPacks.length - 1);
+            setCurrentPackIndex(totalItems - 1);
         } else if (scrollLeft <= 5) {
             setCurrentPackIndex(0);
         } else {
@@ -265,7 +294,7 @@ const BookDetails = () => {
             const containerCenter = scrollLeft + (container.clientWidth / 2);
 
             let activeIndex = Math.round((containerCenter - (itemWidth / 2)) / (itemWidth + gap));
-            activeIndex = Math.max(0, Math.min(activeIndex, recommendedPacks.length - 1));
+            activeIndex = Math.max(0, Math.min(activeIndex, totalItems - 1));
 
             setCurrentPackIndex(activeIndex);
         }
@@ -287,7 +316,7 @@ const BookDetails = () => {
 
     // Setup scroll listeners when recommended books are loaded
     useEffect(() => {
-        if (recommendedBooks.length === 0) return;
+        if (visibleRecommendedBooks.length === 0 && !recommendedBooksLoading) return;
 
         setCurrentBookIndex(0);
         if (booksScrollRef.current) {
@@ -307,11 +336,11 @@ const BookDetails = () => {
                 window.removeEventListener('resize', handleResize);
             };
         }
-    }, [recommendedBooks]);
+    }, [visibleRecommendedBooks.length, recommendedBooksLoading]);
 
     // Setup scroll listeners for packs when loaded
     useEffect(() => {
-        if (recommendedPacks.length === 0) return;
+        if (visibleRecommendedPacks.length === 0 && !packsLoading) return;
 
         setCurrentPackIndex(0);
         if (packsScrollRef.current) {
@@ -331,7 +360,7 @@ const BookDetails = () => {
                 window.removeEventListener('resize', handleResize);
             };
         }
-    }, [recommendedPacks]);
+    }, [visibleRecommendedPacks.length, packsLoading]);
 
     const handleAddToCart = (bookId) => {
         console.log(`Added book ${bookId} to cart`);
@@ -442,12 +471,12 @@ const BookDetails = () => {
                 <div className="min-h-screen bg-white">
                     <Navbar />
                     <div className="h-20"></div>
-                    <div className="flex items-center justify-center min-h-[60vh]">
-                        <div className="text-center">
-                            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#00417a] mx-auto mb-4"></div>
-                            <p className="font-['Poppins'] text-[#626e82] text-fluid-body">{t('bookDetails.loading')}</p>
-                        </div>
-                    </div>
+
+                    {/* Book Details Skeleton */}
+                    <section className="w-full section-spacing">
+                        <BookDetailsSkeleton />
+                    </section>
+
                     <Footer />
                 </div>
             </main>
@@ -777,7 +806,8 @@ const BookDetails = () => {
                                 ref={booksScrollRef}
                                 className="flex pt-fluid-xs pr-fluid-lg pl-fluid-2xl gap-fluid-md overflow-x-auto scrollbar-hide pb-4"
                             >
-                                {recommendedBooks.map((recommendedBook) => {
+                                {/* Render visible books */}
+                                {visibleRecommendedBooks.map((recommendedBook) => {
                                     const etiquetteTag = recommendedBook.tags?.find(tag => tag.type === "ETIQUETTE");
                                     const badge = etiquetteTag ? {
                                         type: etiquetteTag.nameEn.toLowerCase(),
@@ -812,54 +842,71 @@ const BookDetails = () => {
                                         </div>
                                     );
                                 })}
+
+                                {/* Render skeleton placeholders for remaining items */}
+                                {(() => {
+                                    const totalItems = recommendedBooksLoading ? 10 : recommendedBooks.length;
+                                    const skeletonCount = recommendedBooksLoading ? 10 : Math.max(0, totalItems - visibleRecommendedBooks.length);
+
+                                    return Array.from({ length: skeletonCount }).map((_, index) => (
+                                        <div
+                                            key={`skeleton-${index}`}
+                                            className="flex-shrink-0 snap-start book-card-width"
+                                        >
+                                            <BookCardSkeleton />
+                                        </div>
+                                    ));
+                                })()}
                             </div>
                         </div>
 
                         {/* Pagination Controls */}
-                        <div className="flex items-center justify-between pr-fluid-lg pt-2 mt-4 mb-4">
-                            <div className="flex-1"></div>
+                        {!recommendedBooksLoading && recommendedBooks.length > 0 && (
+                            <div className="flex items-center justify-between pr-fluid-lg pt-2 mt-4 mb-4">
+                                <div className="flex-1"></div>
 
-                            <div className="flex-1 flex justify-center">
-                                <PaginationDots
-                                    totalDots={recommendedBooks.length}
-                                    currentIndex={currentBookIndex}
-                                    onDotClick={(index) => {
-                                        const container = booksScrollRef.current;
-                                        if (container) {
-                                            const itemWidth = container.firstChild?.offsetWidth || 0;
-                                            const gap = parseFloat(getComputedStyle(container).gap) || 0;
+                                <div className="flex-1 flex justify-center">
+                                    <PaginationDots
+                                        totalDots={recommendedBooks.length}
+                                        currentIndex={currentBookIndex}
+                                        onDotClick={(index) => {
+                                            const container = booksScrollRef.current;
+                                            if (container) {
+                                                const itemWidth = container.firstChild?.offsetWidth || 0;
+                                                const gap = parseFloat(getComputedStyle(container).gap) || 0;
 
-                                            let scrollAmount;
-                                            if (index === 0) {
-                                                scrollAmount = 0;
-                                            } else if (index === recommendedBooks.length - 1) {
-                                                scrollAmount = container.scrollWidth - container.clientWidth;
-                                            } else {
-                                                const itemPosition = index * (itemWidth + gap);
-                                                const centerOffset = (container.clientWidth - itemWidth) / 2;
-                                                scrollAmount = itemPosition - centerOffset;
+                                                let scrollAmount;
+                                                if (index === 0) {
+                                                    scrollAmount = 0;
+                                                } else if (index === recommendedBooks.length - 1) {
+                                                    scrollAmount = container.scrollWidth - container.clientWidth;
+                                                } else {
+                                                    const itemPosition = index * (itemWidth + gap);
+                                                    const centerOffset = (container.clientWidth - itemWidth) / 2;
+                                                    scrollAmount = itemPosition - centerOffset;
+                                                }
+
+                                                container.scrollTo({ left: scrollAmount, behavior: 'smooth' });
                                             }
+                                        }}
+                                    />
+                                </div>
 
-                                            container.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-                                        }
-                                    }}
-                                />
+                                <div className="flex-1 flex justify-end">
+                                    <SlideScroll
+                                        onPrevious={() => scrollBooks('left')}
+                                        onNext={() => scrollBooks('right')}
+                                        canScrollLeft={canScrollBooksLeft}
+                                        canScrollRight={canScrollBooksRight}
+                                    />
+                                </div>
                             </div>
-
-                            <div className="flex-1 flex justify-end">
-                                <SlideScroll
-                                    onPrevious={() => scrollBooks('left')}
-                                    onNext={() => scrollBooks('right')}
-                                    canScrollLeft={canScrollBooksLeft}
-                                    canScrollRight={canScrollBooksRight}
-                                />
-                            </div>
-                        </div>
+                        )}
                     </div>
                 </section>
 
                 {/* Pack Recommendations Section */}
-                {!packsLoading && recommendedPacks.length > 0 && (
+                {(packsLoading || recommendedPacks.length > 0) && (
                     <section className="w-full section-spacing bg-white">
                         <div className="container-main container-padding2xl-left-only">
 
@@ -877,7 +924,8 @@ const BookDetails = () => {
                                     ref={packsScrollRef}
                                     className="flex pt-fluid-xs pr-fluid-lg pl-fluid-2xl gap-fluid-md overflow-x-auto scrollbar-hide pb-4"
                                 >
-                                    {recommendedPacks.map((pack) => (
+                                    {/* Render visible packs */}
+                                    {visibleRecommendedPacks.map((pack) => (
                                         <div
                                             key={pack.id}
                                             className="flex-shrink-0 snap-start w-[clamp(280px,85vw,400px)] sm:w-[clamp(320px,60vw,450px)] md:w-[clamp(360px,45vw,500px)]"
@@ -894,49 +942,66 @@ const BookDetails = () => {
                                             />
                                         </div>
                                     ))}
+
+                                    {/* Render skeleton placeholders for remaining items */}
+                                    {(() => {
+                                        const totalItems = packsLoading ? 8 : recommendedPacks.length;
+                                        const skeletonCount = packsLoading ? 8 : Math.max(0, totalItems - visibleRecommendedPacks.length);
+
+                                        return Array.from({ length: skeletonCount }).map((_, index) => (
+                                            <div
+                                                key={`skeleton-${index}`}
+                                                className="flex-shrink-0 snap-start w-[clamp(280px,85vw,400px)] sm:w-[clamp(320px,60vw,450px)] md:w-[clamp(360px,45vw,500px)]"
+                                            >
+                                                <PackCardSkeleton />
+                                            </div>
+                                        ));
+                                    })()}
                                 </div>
                             </div>
 
                             {/* Pagination Controls */}
-                            <div className="flex items-center justify-between pr-fluid-lg pt-2 mt-4 mb-4">
-                                <div className="flex-1"></div>
+                            {!packsLoading && recommendedPacks.length > 0 && (
+                                <div className="flex items-center justify-between pr-fluid-lg pt-2 mt-4 mb-4">
+                                    <div className="flex-1"></div>
 
-                                <div className="flex-1 flex justify-center">
-                                    <PaginationDots
-                                        totalDots={recommendedPacks.length}
-                                        currentIndex={currentPackIndex}
-                                        onDotClick={(index) => {
-                                            const container = packsScrollRef.current;
-                                            if (container) {
-                                                const itemWidth = container.firstChild?.offsetWidth || 0;
-                                                const gap = parseFloat(getComputedStyle(container).gap) || 0;
+                                    <div className="flex-1 flex justify-center">
+                                        <PaginationDots
+                                            totalDots={recommendedPacks.length}
+                                            currentIndex={currentPackIndex}
+                                            onDotClick={(index) => {
+                                                const container = packsScrollRef.current;
+                                                if (container) {
+                                                    const itemWidth = container.firstChild?.offsetWidth || 0;
+                                                    const gap = parseFloat(getComputedStyle(container).gap) || 0;
 
-                                                let scrollAmount;
-                                                if (index === 0) {
-                                                    scrollAmount = 0;
-                                                } else if (index === recommendedPacks.length - 1) {
-                                                    scrollAmount = container.scrollWidth - container.clientWidth;
-                                                } else {
-                                                    const itemPosition = index * (itemWidth + gap);
-                                                    const centerOffset = (container.clientWidth - itemWidth) / 2;
-                                                    scrollAmount = itemPosition - centerOffset;
+                                                    let scrollAmount;
+                                                    if (index === 0) {
+                                                        scrollAmount = 0;
+                                                    } else if (index === recommendedPacks.length - 1) {
+                                                        scrollAmount = container.scrollWidth - container.clientWidth;
+                                                    } else {
+                                                        const itemPosition = index * (itemWidth + gap);
+                                                        const centerOffset = (container.clientWidth - itemWidth) / 2;
+                                                        scrollAmount = itemPosition - centerOffset;
+                                                    }
+
+                                                    container.scrollTo({ left: scrollAmount, behavior: 'smooth' });
                                                 }
+                                            }}
+                                        />
+                                    </div>
 
-                                                container.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-                                            }
-                                        }}
-                                    />
+                                    <div className="flex-1 flex justify-end">
+                                        <SlideScroll
+                                            onPrevious={() => scrollPacks('left')}
+                                            onNext={() => scrollPacks('right')}
+                                            canScrollLeft={canScrollPacksLeft}
+                                            canScrollRight={canScrollPacksRight}
+                                        />
+                                    </div>
                                 </div>
-
-                                <div className="flex-1 flex justify-end">
-                                    <SlideScroll
-                                        onPrevious={() => scrollPacks('left')}
-                                        onNext={() => scrollPacks('right')}
-                                        canScrollLeft={canScrollPacksLeft}
-                                        canScrollRight={canScrollPacksRight}
-                                    />
-                                </div>
-                            </div>
+                            )}
                         </div>
                     </section>
                 )}

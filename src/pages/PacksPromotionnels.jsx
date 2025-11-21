@@ -8,9 +8,11 @@ import PackCard from '../components/common/PackCard';
 import PackBooksPopup from '../components/common/PackBooksPopup';
 import CartConfirmationPopup from '../components/common/cartConfirmationPopup';
 import FloatingCartBadge from '../components/common/FloatingCartBadge';
+import PackCardSkeleton from '../components/common/skeletons/PackCardSkeleton';
 import { getAllBookPacks } from '../services/bookPackService';
 import { getBooksByIds } from '../services/books.service';
 import { getBookCoverUrl, getBookPackCoverUrl } from '../utils/imageUtils';
+import useProgressiveRender from '../hooks/useProgressiveRender';
 
 
 const PacksPromotionnels = () => {
@@ -54,6 +56,17 @@ const PacksPromotionnels = () => {
 
     const [packBooks, setPackBooks] = useState([]);
     const [allFilteredPacks, setAllFilteredPacks] = useState([]);
+
+    // Progressive rendering for packs - show them one at a time
+    const { visibleItems: visiblePacks, isRendering } = useProgressiveRender(
+        packs,
+        loading,
+        100 // 100ms delay between each pack appearing
+    );
+
+    // Calculate total items to show (visible packs + remaining skeletons)
+    const totalItems = loading ? packsPerPage : packs.length;
+    const skeletonCount = loading ? packsPerPage : Math.max(0, totalItems - visiblePacks.length);
 
     // Fetch packs with filters
     useEffect(() => {
@@ -185,6 +198,7 @@ const PacksPromotionnels = () => {
     }, [currentPage, allFilteredPacks, packsPerPage]);
 
     const handleAddToCart = (packId) => {
+        // Find pack in the main packs array (not visiblePacks)
         const pack = packs.find(p => p.id === packId);
         if (pack) {
             // Convert pack to book-like format for the popup
@@ -265,16 +279,6 @@ const PacksPromotionnels = () => {
 
                     {/* Packs Grid */}
                     <section className="pb-12">
-                        {/* Loading State */}
-                        {loading && (
-                            <div className="flex justify-center items-center py-20">
-                                <div className="text-center">
-                                    <div className="inline-block w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-                                    <p className="text-gray-600 text-sm">{t('common.loading', 'Loading...')}</p>
-                                </div>
-                            </div>
-                        )}
-
                         {/* Error State */}
                         {error && !loading && (
                             <div className="flex justify-center items-center py-20">
@@ -292,14 +296,14 @@ const PacksPromotionnels = () => {
                             </div>
                         )}
 
-                        {/* Packs Grid */}
-                        {!loading && !error && (
+                        {/* Packs Grid - Show skeletons while loading, then progressively render packs */}
+                        {!error && (
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 auto-rows-fr">
-                                {packs.map((pack, index) => (
+                                {/* Render visible packs */}
+                                {visiblePacks.map((pack) => (
                                     <div
                                         key={pack.id}
-                                        className="h-full animate-fade-in"
-                                        style={{ animationDelay: `${index * 50}ms` }}
+                                        className="h-full"
                                     >
                                         <PackCard
                                             id={pack.id}
@@ -315,6 +319,16 @@ const PacksPromotionnels = () => {
                                                 setShowPackBooksPopup(true);
                                             }}
                                         />
+                                    </div>
+                                ))}
+
+                                {/* Render skeleton placeholders for remaining items */}
+                                {Array.from({ length: skeletonCount }).map((_, index) => (
+                                    <div
+                                        key={`skeleton-${index}`}
+                                        className="h-full"
+                                    >
+                                        <PackCardSkeleton />
                                     </div>
                                 ))}
                             </div>

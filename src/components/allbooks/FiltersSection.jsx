@@ -540,6 +540,7 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
   };
 
   const resetFilters = () => {
+    // Clear all filter state
     setFilters({
       price: { min: 0, max: 10000 },
       categories: [],
@@ -552,6 +553,22 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
       languages: ''
     });
     setActiveDropdown(null);
+
+    // Trigger refetch with empty filters (same as initial page load)
+    if (onApplyFilters) {
+      onApplyFilters({
+        categories: [],
+        authors: [],
+        languages: [],
+        minPrice: 0,
+        maxPrice: 10000
+      });
+    }
+
+    // Close mobile sidebar to show refreshed results
+    if (isMobile) {
+      setIsMenuOpen(false);
+    }
   };
 
   const applyFilters = () => {

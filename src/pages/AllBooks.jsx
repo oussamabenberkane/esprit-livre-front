@@ -1,6 +1,7 @@
 import Navbar from "../components/common/Navbar"
 import Footer from "../components/common/Footer"
 import BookCard from "../components/common/BookCard"
+import BookCardSkeleton from "../components/common/skeletons/BookCardSkeleton"
 import FiltersSection from "../components/allbooks/FiltersSection"
 import CartConfirmationPopup from "../components/common/cartConfirmationPopup"
 import FloatingCartBadge from "../components/common/FloatingCartBadge"
@@ -11,6 +12,7 @@ import { useState, useEffect } from "react"
 import { useSearchParams, useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { getBookCoverUrl } from '../utils/imageUtils'
+import useProgressiveRender from '../hooks/useProgressiveRender'
 
 export default function AllBooks() {
     const { t } = useTranslation()
@@ -39,6 +41,13 @@ export default function AllBooks() {
     // Filter data state
     const [categories, setCategories] = useState([])
     const [authors, setAuthors] = useState([])
+
+    // Progressive rendering for books - show them one at a time
+    const { visibleItems: visibleBooks, isRendering } = useProgressiveRender(
+        books,
+        isLoading,
+        60 // 60ms delay between each book appearing
+    )
 
     // Scroll to top when component mounts or params change
     useEffect(() => {
@@ -233,16 +242,6 @@ export default function AllBooks() {
 
                     {/* Books Grid */}
                     <section className="pb-fluid-xl">
-                        {/* Loading State */}
-                        {isLoading && (
-                            <div className="flex justify-center items-center py-20">
-                                <div className="text-center">
-                                    <div className="inline-block w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-                                    <p className="text-gray-600 text-fluid-small">{t('common.loading', 'Loading books...')}</p>
-                                </div>
-                            </div>
-                        )}
-
                         {/* Error State */}
                         {error && !isLoading && (
                             <div className="flex justify-center items-center py-20">
@@ -260,10 +259,11 @@ export default function AllBooks() {
                             </div>
                         )}
 
-                        {/* Books Grid */}
-                        {!isLoading && !error && (
+                        {/* Books Grid with Progressive Loading */}
+                        {!error && (
                             <div className="flex flex-wrap gap-fluid-md justify-center">
-                                {books.map((book, index) => {
+                                {/* Render visible books progressively */}
+                                {visibleBooks.map((book, index) => {
                                     // Extract first ETIQUETTE tag for badge
                                     const etiquetteTag = book.tags?.find(tag => tag.type === "ETIQUETTE")
                                     const badge = etiquetteTag ? {
@@ -282,7 +282,6 @@ export default function AllBooks() {
                                         <div
                                             key={book.id}
                                             className="book-card-width animate-fade-in"
-                                            style={{ animationDelay: `${index * 50}ms` }}
                                         >
                                             <BookCard
                                                 id={book.id}
@@ -301,6 +300,24 @@ export default function AllBooks() {
                                         </div>
                                     )
                                 })}
+
+                                {/* Show skeleton placeholders while loading or while books are progressively rendering */}
+                                {(() => {
+                                    // Calculate how many skeletons to show
+                                    const totalItems = isLoading ? booksPerPage : books.length
+                                    const skeletonCount = isLoading
+                                        ? booksPerPage
+                                        : Math.max(0, totalItems - visibleBooks.length)
+
+                                    return Array.from({ length: skeletonCount }).map((_, index) => (
+                                        <div
+                                            key={`skeleton-${index}`}
+                                            className="book-card-width"
+                                        >
+                                            <BookCardSkeleton />
+                                        </div>
+                                    ))
+                                })()}
                             </div>
                         )}
 

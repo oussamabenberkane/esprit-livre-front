@@ -12,19 +12,34 @@ import PaginationDots from '../components/common/PaginationDots';
 import Footer from '../components/common/Footer';
 import CartConfirmationPopup from '../components/common/cartConfirmationPopup';
 import FloatingCartBadge from '../components/common/FloatingCartBadge';
+import CategoryCardSkeleton from '../components/common/skeletons/CategoryCardSkeleton';
+import BookCardSkeleton from '../components/common/skeletons/BookCardSkeleton';
+import AuthorCardSkeleton from '../components/common/skeletons/AuthorCardSkeleton';
 import { fetchCategories, fetchMainDisplays } from '../services/tags.service';
 import { fetchBooksByMainDisplay } from '../services/books.service';
 import { fetchTopAuthors } from '../services/authors.service';
 import { getBookCoverUrl } from '../utils/imageUtils';
+import useProgressiveRender from '../hooks/useProgressiveRender';
 
 
 // MainDisplayCarousel component for rendering individual carousels
 const MainDisplayCarousel = ({ display, onAddToCart, onToggleFavorite, updateScrollState, t }) => {
     const scrollRef = useRef(null);
 
+    // Progressive rendering for books - show them one at a time
+    const { visibleItems: visibleBooks, isRendering } = useProgressiveRender(
+        display.books || [],
+        display.isLoading || false,
+        80 // 80ms delay between each book appearing
+    );
+
+    // Calculate total items to show (visible books + remaining skeletons)
+    const totalItems = display.isLoading ? 10 : display.books.length;
+    const skeletonCount = display.isLoading ? 10 : Math.max(0, totalItems - visibleBooks.length);
+
     const checkScrollPosition = () => {
         const container = scrollRef.current;
-        if (container && display.books.length > 0) {
+        if (container && visibleBooks.length > 0) {
             const scrollLeft = container.scrollLeft;
             const maxScroll = container.scrollWidth - container.clientWidth;
 
@@ -34,7 +49,7 @@ const MainDisplayCarousel = ({ display, onAddToCart, onToggleFavorite, updateScr
             // Calculate current index
             let currentIndex;
             if (scrollLeft >= maxScroll - 5) {
-                currentIndex = display.books.length - 1;
+                currentIndex = visibleBooks.length - 1;
             } else if (scrollLeft <= 5) {
                 currentIndex = 0;
             } else {
@@ -42,7 +57,7 @@ const MainDisplayCarousel = ({ display, onAddToCart, onToggleFavorite, updateScr
                 const gap = parseFloat(getComputedStyle(container).gap) || 0;
                 const containerCenter = scrollLeft + (container.clientWidth / 2);
                 let activeIndex = Math.round((containerCenter - (itemWidth / 2)) / (itemWidth + gap));
-                currentIndex = Math.max(0, Math.min(activeIndex, display.books.length - 1));
+                currentIndex = Math.max(0, Math.min(activeIndex, visibleBooks.length - 1));
             }
 
             updateScrollState(display.id, {
@@ -73,9 +88,10 @@ const MainDisplayCarousel = ({ display, onAddToCart, onToggleFavorite, updateScr
             container.addEventListener('scroll', checkScrollPosition);
             return () => container.removeEventListener('scroll', checkScrollPosition);
         }
-    }, [display.books.length]);
+    }, [visibleBooks.length]);
 
-    if (display.books.length === 0) return null;
+    // Don't render the section at all if there's no data and not loading
+    if (!display.isLoading && display.books.length === 0) return null;
 
     return (
         <section className="w-full section-spacing">
@@ -94,7 +110,8 @@ const MainDisplayCarousel = ({ display, onAddToCart, onToggleFavorite, updateScr
                         ref={scrollRef}
                         className="flex pt-fluid-xs pr-fluid-lg pl-fluid-2xl gap-fluid-md overflow-x-auto scrollbar-hide pb-4"
                     >
-                        {display.books.map((book) => {
+                        {/* Render visible books */}
+                        {visibleBooks.map((book) => {
                             // Extract first ETIQUETTE tag for badge
                             const etiquetteTag = book.tags?.find(tag => tag.type === "ETIQUETTE");
                             const badge = etiquetteTag ? {
@@ -131,6 +148,16 @@ const MainDisplayCarousel = ({ display, onAddToCart, onToggleFavorite, updateScr
                                 </div>
                             );
                         })}
+
+                        {/* Render skeleton placeholders for remaining items */}
+                        {Array.from({ length: skeletonCount }).map((_, index) => (
+                            <div
+                                key={`skeleton-${index}`}
+                                className="flex-shrink-0 snap-start book-card-width"
+                            >
+                                <BookCardSkeleton />
+                            </div>
+                        ))}
                     </div>
                 </div>
                 <div className="flex items-center justify-between pr-fluid-lg pt-2 mt-4 mb-4">
@@ -138,7 +165,7 @@ const MainDisplayCarousel = ({ display, onAddToCart, onToggleFavorite, updateScr
 
                     <div className="flex-1 flex justify-center">
                         <PaginationDots
-                            totalDots={display.books.length}
+                            totalDots={totalItems}
                             currentIndex={display.currentIndex}
                             onDotClick={(index) => {
                                 updateScrollState(display.id, { currentIndex: index });
@@ -154,7 +181,7 @@ const MainDisplayCarousel = ({ display, onAddToCart, onToggleFavorite, updateScr
                                         scrollAmount = 0;
                                     }
                                     // Last dot: scroll to end
-                                    else if (index === display.books.length - 1) {
+                                    else if (index === totalItems - 1) {
                                         scrollAmount = container.scrollWidth - container.clientWidth;
                                     }
                                     // Middle dots: center the item
@@ -229,6 +256,20 @@ const HomePage = () => {
     const categoriesScrollRef = useRef(null);
     const [canScrollCategoriesLeft, setCanScrollCategoriesLeft] = useState(false);
     const [canScrollCategoriesRight, setCanScrollCategoriesRight] = useState(true);
+
+    // Progressive rendering for categories
+    const { visibleItems: visibleCategories, isRendering: isCategoriesRendering } = useProgressiveRender(
+        categories,
+        categoriesLoading,
+        100 // 100ms delay between each category
+    );
+
+    // Progressive rendering for authors
+    const { visibleItems: visibleAuthors, isRendering: isAuthorsRendering } = useProgressiveRender(
+        authors,
+        authorsLoading,
+        100 // 100ms delay between each author
+    );
 
     const checkCategoriesScrollPosition = () => {
         const container = categoriesScrollRef.current;
@@ -432,36 +473,48 @@ const HomePage = () => {
                 setMainDisplaysLoading(true);
                 const displays = await fetchMainDisplays();
 
-                // Fetch books for each main display
-                const displaysWithBooks = await Promise.all(
-                    displays.map(async (display) => {
-                        try {
-                            const books = await fetchBooksByMainDisplay(display.id, 0, 10);
-                            return {
-                                ...display,
-                                books: books || [],
-                                currentIndex: 0,
-                                canScrollLeft: false,
-                                canScrollRight: true
-                            };
-                        } catch (error) {
-                            console.error(`Failed to load books for display ${display.id}:`, error);
-                            return {
-                                ...display,
-                                books: [],
-                                currentIndex: 0,
-                                canScrollLeft: false,
-                                canScrollRight: false
-                            };
-                        }
-                    })
-                );
+                // Initialize displays with loading state
+                const initialDisplays = displays.map(display => ({
+                    ...display,
+                    books: [],
+                    isLoading: true,
+                    currentIndex: 0,
+                    canScrollLeft: false,
+                    canScrollRight: false
+                }));
+                setMainDisplays(initialDisplays);
+                setMainDisplaysLoading(false);
 
-                setMainDisplays(displaysWithBooks);
+                // Fetch books for each main display sequentially to simulate real-time loading
+                for (const display of displays) {
+                    try {
+                        const books = await fetchBooksByMainDisplay(display.id, 0, 10);
+                        setMainDisplays(prevDisplays =>
+                            prevDisplays.map(d =>
+                                d.id === display.id
+                                    ? {
+                                        ...d,
+                                        books: books || [],
+                                        isLoading: false,
+                                        canScrollRight: (books || []).length > 0
+                                    }
+                                    : d
+                            )
+                        );
+                    } catch (error) {
+                        console.error(`Failed to load books for display ${display.id}:`, error);
+                        setMainDisplays(prevDisplays =>
+                            prevDisplays.map(d =>
+                                d.id === display.id
+                                    ? { ...d, books: [], isLoading: false }
+                                    : d
+                            )
+                        );
+                    }
+                }
             } catch (error) {
                 console.error('Failed to load main displays:', error);
                 setMainDisplays([]);
-            } finally {
                 setMainDisplaysLoading(false);
             }
         };
@@ -557,30 +610,47 @@ const HomePage = () => {
                                 ref={categoriesScrollRef}
                                 className="flex pt-fluid-lg pl-fluid-2xl pr-fluid-lg gap-fluid-lg overflow-x-auto pb-4 scrollbar-hide"
                             >
-                                {categoriesLoading ? (
-                                    // Loading state
-                                    <div className="flex-1 flex justify-center items-center py-fluid-lg">
-                                        <p className="text-brand-blue">{t('common.loading')}</p>
+                                {/* Render visible categories */}
+                                {visibleCategories.map((category) => (
+                                    <div
+                                        key={category.id}
+                                        className="flex-shrink-0 snap-start cursor-pointer"
+                                        onClick={() => handleCategoryClick(category.nameFr || category.nameEn)}
+                                    >
+                                        <CategoryCard
+                                            categoryId={category.id}
+                                            title={category.nameFr || category.nameEn}
+                                            imageSrc={category.imageUrl} />
                                     </div>
-                                ) : categories.length === 0 ? (
-                                    // Empty state
+                                ))}
+
+                                {/* Render skeleton placeholders */}
+                                {categoriesLoading && Array.from({ length: 10 }).map((_, index) => (
+                                    <div
+                                        key={`skeleton-${index}`}
+                                        className="flex-shrink-0 snap-start"
+                                    >
+                                        <CategoryCardSkeleton />
+                                    </div>
+                                ))}
+
+                                {/* Render remaining skeletons while items are appearing */}
+                                {!categoriesLoading && isCategoriesRendering &&
+                                    Array.from({ length: categories.length - visibleCategories.length }).map((_, index) => (
+                                        <div
+                                            key={`skeleton-rendering-${index}`}
+                                            className="flex-shrink-0 snap-start"
+                                        >
+                                            <CategoryCardSkeleton />
+                                        </div>
+                                    ))
+                                }
+
+                                {/* Empty state */}
+                                {!categoriesLoading && categories.length === 0 && (
                                     <div className="flex-1 flex justify-center items-center py-fluid-lg">
                                         <p className="text-brand-blue">{t('common.noData')}</p>
                                     </div>
-                                ) : (
-                                    // Categories list
-                                    categories.map((category) => (
-                                        <div
-                                            key={category.id}
-                                            className="flex-shrink-0 snap-start cursor-pointer"
-                                            onClick={() => handleCategoryClick(category.nameFr || category.nameEn)}
-                                        >
-                                            <CategoryCard
-                                                categoryId={category.id}
-                                                title={category.nameFr || category.nameEn}
-                                                imageSrc={category.imageUrl} />
-                                        </div>
-                                    ))
                                 )}
                             </div>
                         </div>
@@ -589,46 +659,50 @@ const HomePage = () => {
                             <div className="flex-1"></div>
 
                             <div className="flex-1 flex justify-center">
-                                <PaginationDots
-                                    totalDots={categories.length}
-                                    currentIndex={currentCategoryIndex}
-                                    onDotClick={(index) => {
-                                        setCurrentCategoryIndex(index);
-                                        const container = categoriesScrollRef.current;
-                                        if (container) {
-                                            const itemWidth = container.firstChild?.offsetWidth || 0;
-                                            const gap = parseFloat(getComputedStyle(container).gap) || 0;
+                                {!categoriesLoading && categories.length > 0 && (
+                                    <PaginationDots
+                                        totalDots={categories.length}
+                                        currentIndex={currentCategoryIndex}
+                                        onDotClick={(index) => {
+                                            setCurrentCategoryIndex(index);
+                                            const container = categoriesScrollRef.current;
+                                            if (container) {
+                                                const itemWidth = container.firstChild?.offsetWidth || 0;
+                                                const gap = parseFloat(getComputedStyle(container).gap) || 0;
 
-                                            let scrollAmount;
+                                                let scrollAmount;
 
-                                            // First dot: scroll to start
-                                            if (index === 0) {
-                                                scrollAmount = 0;
-                                            }
-                                            // Last dot: scroll to end
-                                            else if (index === categories.length - 1) {
-                                                scrollAmount = container.scrollWidth - container.clientWidth;
-                                            }
-                                            // Middle dots: center the item
-                                            else {
-                                                const itemPosition = index * (itemWidth + gap);
-                                                const centerOffset = (container.clientWidth - itemWidth) / 2;
-                                                scrollAmount = itemPosition - centerOffset;
-                                            }
+                                                // First dot: scroll to start
+                                                if (index === 0) {
+                                                    scrollAmount = 0;
+                                                }
+                                                // Last dot: scroll to end
+                                                else if (index === categories.length - 1) {
+                                                    scrollAmount = container.scrollWidth - container.clientWidth;
+                                                }
+                                                // Middle dots: center the item
+                                                else {
+                                                    const itemPosition = index * (itemWidth + gap);
+                                                    const centerOffset = (container.clientWidth - itemWidth) / 2;
+                                                    scrollAmount = itemPosition - centerOffset;
+                                                }
 
-                                            container.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-                                        }
-                                    }}
-                                />
+                                                container.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+                                            }
+                                        }}
+                                    />
+                                )}
                             </div>
 
                             <div className="flex-1 flex justify-end">
-                                <SlideScroll
-                                    onPrevious={() => scrollCategories('left')}
-                                    onNext={() => scrollCategories('right')}
-                                    canScrollLeft={canScrollCategoriesLeft}
-                                    canScrollRight={canScrollCategoriesRight}
-                                />
+                                {!categoriesLoading && categories.length > 0 && (
+                                    <SlideScroll
+                                        onPrevious={() => scrollCategories('left')}
+                                        onNext={() => scrollCategories('right')}
+                                        canScrollLeft={canScrollCategoriesLeft}
+                                        canScrollRight={canScrollCategoriesRight}
+                                    />
+                                )}
                             </div>
                         </div>
                     </div>
@@ -684,31 +758,48 @@ const HomePage = () => {
                                 ref={authorsScrollRef}
                                 className="flex gap-fluid-sm pl-fluid-2xl pr-fluid-lg overflow-x-auto scrollbar-hide pt-fluid-xs pb-4"
                             >
-                                {authorsLoading ? (
-                                    // Loading state
-                                    <div className="flex-1 flex justify-center items-center py-fluid-lg">
-                                        <p className="text-brand-blue">{t('common.loading')}</p>
+                                {/* Render visible authors */}
+                                {visibleAuthors.map((author) => (
+                                    <div
+                                        key={author.id}
+                                        className="flex-shrink-0 snap-start cursor-pointer"
+                                        onClick={() => handleAuthorClick(author.name)}
+                                    >
+                                        <AuthorComponent
+                                            authorId={author.id}
+                                            authorImage={author.profilePictureUrl}
+                                            authorName={author.name}
+                                        />
                                     </div>
-                                ) : authors.length === 0 ? (
-                                    // Empty state
+                                ))}
+
+                                {/* Render skeleton placeholders */}
+                                {authorsLoading && Array.from({ length: 10 }).map((_, index) => (
+                                    <div
+                                        key={`skeleton-${index}`}
+                                        className="flex-shrink-0 snap-start"
+                                    >
+                                        <AuthorCardSkeleton />
+                                    </div>
+                                ))}
+
+                                {/* Render remaining skeletons while items are appearing */}
+                                {!authorsLoading && isAuthorsRendering &&
+                                    Array.from({ length: authors.length - visibleAuthors.length }).map((_, index) => (
+                                        <div
+                                            key={`skeleton-rendering-${index}`}
+                                            className="flex-shrink-0 snap-start"
+                                        >
+                                            <AuthorCardSkeleton />
+                                        </div>
+                                    ))
+                                }
+
+                                {/* Empty state */}
+                                {!authorsLoading && authors.length === 0 && (
                                     <div className="flex-1 flex justify-center items-center py-fluid-lg">
                                         <p className="text-brand-blue">{t('common.noData')}</p>
                                     </div>
-                                ) : (
-                                    // Authors list
-                                    authors.map((author) => (
-                                        <div
-                                            key={author.id}
-                                            className="flex-shrink-0 snap-start cursor-pointer"
-                                            onClick={() => handleAuthorClick(author.name)}
-                                        >
-                                            <AuthorComponent
-                                                authorId={author.id}
-                                                authorImage={author.profilePictureUrl}
-                                                authorName={author.name}
-                                            />
-                                        </div>
-                                    ))
                                 )}
                             </div>
                         </div>
@@ -717,46 +808,50 @@ const HomePage = () => {
                             <div className="flex-1"></div>
 
                             <div className="flex-1 flex justify-center">
-                                <PaginationDots
-                                    totalDots={authors.length}
-                                    currentIndex={currentAuthorIndex}
-                                    onDotClick={(index) => {
-                                        setCurrentAuthorIndex(index);
-                                        const container = authorsScrollRef.current;
-                                        if (container) {
-                                            const itemWidth = container.firstChild?.offsetWidth || 0;
-                                            const gap = parseFloat(getComputedStyle(container).gap) || 0;
+                                {!authorsLoading && authors.length > 0 && (
+                                    <PaginationDots
+                                        totalDots={authors.length}
+                                        currentIndex={currentAuthorIndex}
+                                        onDotClick={(index) => {
+                                            setCurrentAuthorIndex(index);
+                                            const container = authorsScrollRef.current;
+                                            if (container) {
+                                                const itemWidth = container.firstChild?.offsetWidth || 0;
+                                                const gap = parseFloat(getComputedStyle(container).gap) || 0;
 
-                                            let scrollAmount;
+                                                let scrollAmount;
 
-                                            // First dot: scroll to start
-                                            if (index === 0) {
-                                                scrollAmount = 0;
-                                            }
-                                            // Last dot: scroll to end
-                                            else if (index === authors.length - 1) {
-                                                scrollAmount = container.scrollWidth - container.clientWidth;
-                                            }
-                                            // Middle dots: center the item
-                                            else {
-                                                const itemPosition = index * (itemWidth + gap);
-                                                const centerOffset = (container.clientWidth - itemWidth) / 2;
-                                                scrollAmount = itemPosition - centerOffset;
-                                            }
+                                                // First dot: scroll to start
+                                                if (index === 0) {
+                                                    scrollAmount = 0;
+                                                }
+                                                // Last dot: scroll to end
+                                                else if (index === authors.length - 1) {
+                                                    scrollAmount = container.scrollWidth - container.clientWidth;
+                                                }
+                                                // Middle dots: center the item
+                                                else {
+                                                    const itemPosition = index * (itemWidth + gap);
+                                                    const centerOffset = (container.clientWidth - itemWidth) / 2;
+                                                    scrollAmount = itemPosition - centerOffset;
+                                                }
 
-                                            container.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-                                        }
-                                    }}
-                                />
+                                                container.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+                                            }
+                                        }}
+                                    />
+                                )}
                             </div>
 
                             <div className="flex-1 flex justify-end">
-                                <SlideScroll
-                                    onPrevious={() => scrollAuthors('left')}
-                                    onNext={() => scrollAuthors('right')}
-                                    canScrollLeft={canScrollAuthorsLeft}
-                                    canScrollRight={canScrollAuthorsRight}
-                                />
+                                {!authorsLoading && authors.length > 0 && (
+                                    <SlideScroll
+                                        onPrevious={() => scrollAuthors('left')}
+                                        onNext={() => scrollAuthors('right')}
+                                        canScrollLeft={canScrollAuthorsLeft}
+                                        canScrollRight={canScrollAuthorsRight}
+                                    />
+                                )}
                             </div>
                         </div>
 

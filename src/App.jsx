@@ -13,12 +13,14 @@ import PacksPromotionnels from './pages/PacksPromotionnels.jsx';
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
 import TestPage from './pages/TestPage.jsx';
 import { FavoritesProvider } from './contexts/FavoritesContext';
+import { CartProvider } from './contexts/CartContext';
 
 function App() {
   return (
     <BrowserRouter>
       <FavoritesProvider>
-        <div className="min-h-screen min-w-screen bg-gray-50">
+        <CartProvider>
+          <div className="min-h-screen min-w-screen bg-gray-50">
           <Routes>
           {/* Home page as entry point - Accessible to both guests and authenticated users */}
           <Route path="/" element={<HomePage />} />
@@ -57,7 +59,8 @@ function App() {
           {/* Test page for debugging */}
           <Route path="/test" element={<TestPage />} />
         </Routes>
-      </div>
+          </div>
+        </CartProvider>
       </FavoritesProvider>
     </BrowserRouter>
   );

@@ -20,9 +20,11 @@ import { fetchBookById, fetchBookRecommendations, getBooksByIds } from '../servi
 import { getRecommendedPacksForBook } from '../services/bookPackService';
 import { getBookCoverUrl, getBookPackCoverUrl } from '../utils/imageUtils';
 import useProgressiveRender from '../hooks/useProgressiveRender';
+import { useCart } from '../contexts/CartContext';
 
 const BookDetails = () => {
     const { t } = useTranslation();
+    const { addToCart } = useCart();
     const navigate = useNavigate();
     const location = useLocation();
     const { id } = useParams(); // Get book ID from URL
@@ -362,10 +364,13 @@ const BookDetails = () => {
         }
     }, [visibleRecommendedPacks.length, packsLoading]);
 
-    const handleAddToCart = (bookId) => {
+    const handleAddToCart = async (bookId) => {
         console.log(`Added book ${bookId} to cart`);
         const bookToAdd = recommendedBooks.find(b => b.id === bookId);
         if (bookToAdd) {
+            // Add to cart using CartContext
+            await addToCart(bookId, 1);
+
             setSelectedBook({
                 ...bookToAdd,
                 coverImage: getBookCoverUrl(bookToAdd.id)
@@ -415,8 +420,12 @@ const BookDetails = () => {
         navigate(-1);
     };
 
-    const handleAddMainBookToCart = () => {
+    const handleAddMainBookToCart = async () => {
         console.log(`Added main book ${book.id} to cart`);
+
+        // Add to cart using CartContext
+        await addToCart(book.id, 1);
+
         setSelectedBook({
             ...book,
             coverImage: getBookCoverUrl(book.id)
@@ -1017,7 +1026,7 @@ const BookDetails = () => {
                     book={selectedBook.isPack ? selectedBook : {
                         id: selectedBook.id,
                         title: selectedBook.title,
-                        author: selectedBook.author.name,
+                        author: selectedBook.author?.name || 'Unknown',
                         price: selectedBook.price,
                         coverImage: getBookCoverUrl(selectedBook.id),
                         language: selectedBook.language

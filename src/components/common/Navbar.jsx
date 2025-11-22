@@ -9,6 +9,7 @@ import SearchSuggestions from './SearchSuggestions';
 import LoginPromptPopup from './LoginPromptPopup';
 import { fetchBookSuggestions } from '../../services/books.service';
 import { isAuthenticated, saveRedirectUrl } from '../../services/authService';
+import { useCart } from '../../contexts/CartContext';
 
 // Simple Language Toggle for Mobile/Tablet (the one I created earlier)
 const SimpleLanguageToggle = () => {
@@ -81,10 +82,11 @@ const SearchBar = ({ placeholder = "Recherchez...", value, onChange, onFocus, on
 // Main Navbar Component
 const Navbar = ({
     searchPlaceholder,
-    cartCount = 0,
     onCartClick
 }) => {
     const { t } = useTranslation();
+    const { getCartItemCount } = useCart();
+    const cartCount = getCartItemCount();
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();

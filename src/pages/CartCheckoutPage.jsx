@@ -7,29 +7,8 @@ import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 import { getLanguageCode, getFullLanguageName } from '../data/booksData';
-
-
-// Mock cart data
-const initialCartData = [
-  {
-    id: 1,
-    title: "l'incompris",
-    author: "Saneh Sangsuk",
-    price: 2600,
-    quantity: 1,
-    language: "French",
-    image: "https://images.unsplash.com/photo-1661936901394-a993c79303c7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxib29rJTIwY292ZXIlMjBmaWN0aW9ufGVufDF8fHx8MTc2MDM0NjMzNnww&ixlib=rb-4.1.0&q=80&w=400"
-  },
-  {
-    id: 2,
-    title: "Le hobbit",
-    author: "J.R.R Tolkien",
-    price: 2100,
-    quantity: 1,
-    language: "English",
-    image: "https://images.unsplash.com/photo-1620647885779-064b00c4c139?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxib29rJTIwY292ZXIlMjBub3ZlbHxlbnwxfHx8fDE3NjAzNDYzMzd8MA&ixlib=rb-4.1.0&q=80&w=400"
-  }
-];
+import { useCart } from '../contexts/CartContext';
+import { getBookCoverUrl } from '../utils/imageUtils';
 
 // Algerian Wilaya data (sample)
 const wilayaData = {
@@ -46,6 +25,7 @@ const wilayaData = {
 // CartItem Component
 function CartItem({ item, onUpdateQuantity, onRemove }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -57,7 +37,7 @@ function CartItem({ item, onUpdateQuantity, onRemove }) {
       {/* Book Image */}
       <div className="flex-shrink-0">
         <img
-          src={item.image}
+          src={getBookCoverUrl(item.id)}
           alt={item.title}
           className="w-20 h-30 md:w-28 md:h-40 object-cover rounded"
         />
@@ -84,9 +64,9 @@ function CartItem({ item, onUpdateQuantity, onRemove }) {
               )}
             </div>
           </div>
-          <h1 className="text-[#717192] text-fluid-medium font-[400] md:text-fluid-small mb-fluid-xs">{item.author}</h1>
+          <h1 className="text-[#717192] text-fluid-medium font-[400] md:text-fluid-small mb-fluid-xs">{item.author?.name || item.author}</h1>
           <button
-            onClick={() => window.location.href = `/book/${item.id}`}
+            onClick={() => navigate(`/books/${item.id}`)}
             className="flex items-center gap-1 text-[#626e82] text-xs hover:text-blue-600 transition-colors"
           >
             <span><h1 className="text-fluid-medium">{t('cart.bookDetails')}</h1></span>
@@ -871,28 +851,33 @@ function CheckoutForm({ onSubmit }) {
 // Main CartCheckoutPage Component
 export default function CartCheckoutPage() {
   const { t } = useTranslation();
-  const [cartItems, setCartItems] = useState(initialCartData);
+  const { cartBooks, isLoading, error, updateQuantity, removeFromCart, loadCartBooks } = useCart();
   const [showCheckout, setShowCheckout] = useState(false);
   const navigate = useNavigate();
 
   // Scroll to top when page loads
   useScrollToTop();
 
+  // Load cart books on mount
+  useEffect(() => {
+    loadCartBooks();
+  }, [loadCartBooks]);
+
   const shippingFee = 700;
 
   // Calculate subtotal
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = cartBooks.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
   // Update quantity
-  const handleUpdateQuantity = (itemId, newQuantity) => {
-    setCartItems(cartItems.map(item =>
-      item.id === itemId ? { ...item, quantity: newQuantity } : item
-    ));
+  const handleUpdateQuantity = async (itemId, newQuantity) => {
+    await updateQuantity(itemId, newQuantity);
+    // Reload cart books to update UI
+    await loadCartBooks();
   };
 
   // Remove item
-  const handleRemoveItem = (itemId) => {
-    setCartItems(cartItems.filter(item => item.id !== itemId));
+  const handleRemoveItem = async (itemId) => {
+    await removeFromCart(itemId);
   };
 
   // Proceed to checkout
@@ -910,12 +895,59 @@ export default function CartCheckoutPage() {
     alert('Commande finalisée avec succès! 🎉');
   };
 
+  // Show loading state
+  if (isLoading) {
+    return (
+      <main className="w-full max-w-[100vw] overflow-x-hidden">
+        <div className="min-h-screen bg-white">
+          <section className="w-full max-w-[100vw] overflow-x-hidden">
+            <Navbar />
+          </section>
+          <div className="h-28 md:h-20"></div>
+          <div className="max-w-4xl mx-auto px-4 py-6 md:py-8">
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div>
+              <p className="mt-4 text-gray-600">{t('cart.loading') || 'Loading cart...'}</p>
+            </div>
+          </div>
+          <Footer />
+        </div>
+      </main>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <main className="w-full max-w-[100vw] overflow-x-hidden">
+        <div className="min-h-screen bg-white">
+          <section className="w-full max-w-[100vw] overflow-x-hidden">
+            <Navbar />
+          </section>
+          <div className="h-28 md:h-20"></div>
+          <div className="max-w-4xl mx-auto px-4 py-6 md:py-8">
+            <div className="text-center py-12">
+              <p className="text-red-600">{t('cart.error') || 'Error loading cart'}: {error}</p>
+              <button
+                onClick={() => loadCartBooks()}
+                className="mt-4 px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600"
+              >
+                {t('cart.retry') || 'Retry'}
+              </button>
+            </div>
+          </div>
+          <Footer />
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="w-full max-w-[100vw] overflow-x-hidden">
       <div className="min-h-screen bg-white">
         {/* Navigation Bar */}
         <section className="w-full max-w-[100vw] overflow-x-hidden">
-          <Navbar cartCount={cartItems.length} />
+          <Navbar />
         </section>
 
         {/* Responsive spacing for navbar - taller on mobile due to two-line layout */}
@@ -943,15 +975,15 @@ export default function CartCheckoutPage() {
             <div className="flex items-center gap-2 mb-6">
               <ShoppingBag className="w-5 h-5 md:w-6 md:h-6 text-black" />
               <h1 className="text-black font-[500]">
-                {cartItems.length === 1 ? t('cart.title', { count: cartItems.length }) : t('cart.title_plural', { count: cartItems.length })}
+                {cartBooks.length === 1 ? t('cart.title', { count: cartBooks.length }) : t('cart.title_plural', { count: cartBooks.length })}
               </h1>
             </div>
 
             {/* Cart Items */}
             <AnimatePresence mode="popLayout">
-              {cartItems.length > 0 ? (
+              {cartBooks.length > 0 ? (
                 <div className="space-y-2">
-                  {cartItems.map((item) => (
+                  {cartBooks.map((item) => (
                     <CartItem
                       key={item.id}
                       item={item}
@@ -972,7 +1004,7 @@ export default function CartCheckoutPage() {
             </AnimatePresence>
 
             {/* Cart Summary */}
-            {cartItems.length > 0 && (
+            {cartBooks.length > 0 && (
               <CartSummary
                 subtotal={subtotal}
                 shipping={shippingFee}

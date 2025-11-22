@@ -20,6 +20,7 @@ import { fetchBooksByMainDisplay } from '../services/books.service';
 import { fetchTopAuthors } from '../services/authors.service';
 import { getBookCoverUrl } from '../utils/imageUtils';
 import useProgressiveRender from '../hooks/useProgressiveRender';
+import { useCart } from '../contexts/CartContext';
 
 
 // MainDisplayCarousel component for rendering individual carousels
@@ -214,6 +215,7 @@ const MainDisplayCarousel = ({ display, onAddToCart, onToggleFavorite, updateScr
 const HomePage = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const { addToCart } = useCart();
 
     // Hero carousel state (you already have this)
     const [currentSlide, setCurrentSlide] = React.useState(0);
@@ -416,8 +418,12 @@ const HomePage = () => {
 
     ];
 
-    const handleAddToCart = (bookId) => {
+    const handleAddToCart = async (bookId) => {
         console.log(`Added book ${bookId} to cart`);
+
+        // Add to cart using CartContext
+        await addToCart(bookId, 1);
+
         // Find book across all main displays
         let foundBook = null;
         for (const display of mainDisplays) {

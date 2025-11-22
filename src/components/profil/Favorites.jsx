@@ -11,10 +11,12 @@ import Navbar from '../common/Navbar';
 import { getBookCoverUrl } from '../../utils/imageUtils';
 import Footer from '../common/Footer';
 import { isAuthenticated } from '../../services/authService';
+import { useCart } from '../../contexts/CartContext';
 
 export default function Favorites() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { addToCart } = useCart();
   const location = useLocation();
 
   // Scroll to top when page loads
@@ -24,7 +26,7 @@ export default function Favorites() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalBooks, setTotalBooks] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const booksPerPage = 12;
+  const booksPerPage = 5;
 
   // Favorites context
   const {
@@ -94,8 +96,12 @@ export default function Favorites() {
     navigate(-1);
   };
 
-  const handleAddToCart = (bookId) => {
+  const handleAddToCart = async (bookId) => {
     console.log(`Added book ${bookId} to cart`);
+
+    // Add to cart using CartContext
+    await addToCart(bookId, 1);
+
     const book = favoriteBooks.find(b => b.id === bookId);
     if (book) {
       setSelectedBook(book);
@@ -263,8 +269,8 @@ export default function Favorites() {
                   }}
                   disabled={currentPage === 1}
                   className={`flex items-center justify-center w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 ${currentPage === 1
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
                     }`}
                   aria-label="Previous page"
                 >
@@ -289,8 +295,8 @@ export default function Favorites() {
                           window.scrollTo({ top: 0, behavior: 'smooth' })
                         }}
                         className={`min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${currentPage === 1
-                            ? "bg-blue-600 text-white shadow-md"
-                            : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+                          ? "bg-blue-600 text-white shadow-md"
+                          : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
                           }`}
                       >
                         1
@@ -319,8 +325,8 @@ export default function Favorites() {
                             window.scrollTo({ top: 0, behavior: 'smooth' })
                           }}
                           className={`min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${currentPage === i
-                              ? "bg-blue-600 text-white shadow-md"
-                              : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+                            ? "bg-blue-600 text-white shadow-md"
+                            : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
                             }`}
                         >
                           {i}
@@ -347,8 +353,8 @@ export default function Favorites() {
                             window.scrollTo({ top: 0, behavior: 'smooth' })
                           }}
                           className={`min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${currentPage === totalPages
-                              ? "bg-blue-600 text-white shadow-md"
-                              : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+                            ? "bg-blue-600 text-white shadow-md"
+                            : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
                             }`}
                         >
                           {totalPages}
@@ -368,8 +374,8 @@ export default function Favorites() {
                   }}
                   disabled={currentPage === totalPages}
                   className={`flex items-center justify-center w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 ${currentPage === totalPages
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
                     }`}
                   aria-label="Next page"
                 >

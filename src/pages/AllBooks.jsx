@@ -13,10 +13,12 @@ import { useSearchParams, useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { getBookCoverUrl } from '../utils/imageUtils'
 import useProgressiveRender from '../hooks/useProgressiveRender'
+import { useCart } from '../contexts/CartContext'
 
 export default function AllBooks() {
     const { t } = useTranslation()
     const navigate = useNavigate()
+    const { addToCart } = useCart()
     const [currentPage, setCurrentPage] = useState(1)
     const [searchParams] = useSearchParams()
     const [initialFilters, setInitialFilters] = useState(null)
@@ -156,8 +158,12 @@ export default function AllBooks() {
         setCurrentPage((prev) => Math.min(prev + 1, totalPages))
     }
 
-    const handleAddToCart = (bookId) => {
+    const handleAddToCart = async (bookId) => {
         console.log(`Added book ${bookId} to cart`)
+
+        // Add to cart using CartContext
+        await addToCart(bookId, 1)
+
         const book = books.find(b => b.id === bookId)
         if (book) {
             setSelectedBook(book)

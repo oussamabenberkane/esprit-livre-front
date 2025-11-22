@@ -69,8 +69,7 @@ front :
 - add i18n to confirmation message after book removal : done
 - floating cart badge to cart checkout page redirection : done
 - add pagination to cart checkout page : done
-
-- remove every interaction when floating cart badge is being dragged : 
+- remove every interaction when floating cart badge is being dragged : done
 - sign in button should disapear when the user is authenticated : 
 - add pack to cart :
 - proceed to checkout :

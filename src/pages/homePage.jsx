@@ -224,10 +224,6 @@ const HomePage = () => {
     const [showCartPopup, setShowCartPopup] = useState(false);
     const [selectedBook, setSelectedBook] = useState(null);
 
-    // Floating cart badge state
-    const [showFloatingBadge, setShowFloatingBadge] = useState(false);
-    const [cartItemCount, setCartItemCount] = useState(0);
-
     // Navigation handler for categories
     const handleCategoryClick = (categoryTitle) => {
         navigate(`/allbooks?category=${encodeURIComponent(categoryTitle)}`);
@@ -434,15 +430,11 @@ const HomePage = () => {
         if (foundBook) {
             setSelectedBook(foundBook);
             setShowCartPopup(true);
-            // Increment cart count
-            setCartItemCount(prev => prev + 1);
         }
     };
 
     const handleClosePopup = () => {
         setShowCartPopup(false);
-        // Show floating badge after popup closes
-        setShowFloatingBadge(true);
     };
 
     const handleToggleFavorite = (bookId, isFavorited) => {
@@ -885,12 +877,9 @@ const HomePage = () => {
                 />
             )}
 
-            {/* Floating Cart Badge - Shows after popup is dismissed */}
+            {/* Floating Cart Badge - Self-managed, syncs with cart state */}
             <FloatingCartBadge
-                isVisible={showFloatingBadge}
-                onDismiss={() => setShowFloatingBadge(false)}
                 onGoToCart={() => navigate('/cart')}
-                itemCount={cartItemCount}
             />
         </main>
     );

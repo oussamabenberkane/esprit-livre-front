@@ -64,12 +64,12 @@ front :
 - when i click on reset filters , filters should disapear too and not just visually so than all the books reapear : done
 - cablage n favorites : done
 - add pagination for favorites page : done
+- add book to cart : done
 
+- floating cart badge logic : 
 - sign in button should disapear when the user is authenticated : 
-- add book to cart : ce qui reste : 
 - add pack to cart :
 - proceed to checkout :
-- floating cart badge :
 - cablage n orders : 
 
 

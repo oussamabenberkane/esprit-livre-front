@@ -21,10 +21,6 @@ const PacksPromotionnels = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedPack, setSelectedPack] = useState(null);
-    const [cartCount, setCartCount] = useState(0);
-
-    // Floating cart badge state
-    const [showFloatingBadge, setShowFloatingBadge] = useState(false);
 
     // Pack books popup state
     const [showPackBooksPopup, setShowPackBooksPopup] = useState(false);
@@ -215,14 +211,11 @@ const PacksPromotionnels = () => {
             setSelectedPack(packAsBook);
             setPackBooks(pack.books); // Store the books array
             setIsPopupOpen(true);
-            setCartCount(prev => prev + 1);
         }
     };
 
     const handleClosePopup = () => {
         setIsPopupOpen(false);
-        // Show floating badge after popup closes
-        setShowFloatingBadge(true);
     };
 
     return (
@@ -230,7 +223,6 @@ const PacksPromotionnels = () => {
             {/* Navbar */}
             <Navbar
                 searchPlaceholder={t('packsPage.searchPlaceholder')}
-                cartCount={cartCount}
                 onSearch={handleSearch}
             />
 
@@ -500,12 +492,9 @@ const PacksPromotionnels = () => {
                 />
             )}
 
-            {/* Floating Cart Badge - Shows after popup is dismissed */}
+            {/* Floating Cart Badge - Self-managed, syncs with cart state */}
             <FloatingCartBadge
-                isVisible={showFloatingBadge}
-                onDismiss={() => setShowFloatingBadge(false)}
                 onGoToCart={() => navigate('/cart')}
-                itemCount={cartCount}
             />
 
             {/* Pack Books Popup - Shows all books in selected pack */}

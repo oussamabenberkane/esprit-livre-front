@@ -28,10 +28,6 @@ export default function AllBooks() {
     const [pageTitle, setPageTitle] = useState(null) // Dynamic page title
     const [searchContext, setSearchContext] = useState(null) // Store search context (type + name)
 
-    // Floating cart badge state
-    const [showFloatingBadge, setShowFloatingBadge] = useState(false)
-    const [cartItemCount, setCartItemCount] = useState(0)
-
     // API state
     const [books, setBooks] = useState([])
     const [totalBooks, setTotalBooks] = useState(0)
@@ -168,15 +164,11 @@ export default function AllBooks() {
         if (book) {
             setSelectedBook(book)
             setShowCartPopup(true)
-            // Increment cart count
-            setCartItemCount(prev => prev + 1)
         }
     }
 
     const handleClosePopup = () => {
         setShowCartPopup(false)
-        // Show floating badge after popup closes
-        setShowFloatingBadge(true)
     }
 
     const handleToggleFavorite = (bookId, isFavorited) => {
@@ -515,12 +507,9 @@ export default function AllBooks() {
                 />
             )}
 
-            {/* Floating Cart Badge - Shows after popup is dismissed */}
+            {/* Floating Cart Badge - Self-managed, syncs with cart state */}
             <FloatingCartBadge
-                isVisible={showFloatingBadge}
-                onDismiss={() => setShowFloatingBadge(false)}
                 onGoToCart={() => navigate('/cart')}
-                itemCount={cartItemCount}
             />
         </main>
     )

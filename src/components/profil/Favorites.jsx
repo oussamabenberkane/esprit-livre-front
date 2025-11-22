@@ -41,10 +41,6 @@ export default function Favorites() {
   const [showCartPopup, setShowCartPopup] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
 
-  // Floating cart badge state
-  const [showFloatingBadge, setShowFloatingBadge] = useState(false);
-  const [cartItemCount, setCartItemCount] = useState(0);
-
   // Track authentication status changes
   const isAuth = isAuthenticated();
   const prevAuthRef = useRef(isAuth);
@@ -106,15 +102,11 @@ export default function Favorites() {
     if (book) {
       setSelectedBook(book);
       setShowCartPopup(true);
-      // Increment cart count
-      setCartItemCount(prev => prev + 1);
     }
   };
 
   const handleClosePopup = () => {
     setShowCartPopup(false);
-    // Show floating badge after popup closes
-    setShowFloatingBadge(true);
   };
 
   const handleToggleFavorite = async (bookId, isFavorited) => {
@@ -404,12 +396,9 @@ export default function Favorites() {
           />
         )}
 
-        {/* Floating Cart Badge - Shows after popup is dismissed */}
+        {/* Floating Cart Badge - Self-managed, syncs with cart state */}
         <FloatingCartBadge
-          isVisible={showFloatingBadge}
-          onDismiss={() => setShowFloatingBadge(false)}
           onGoToCart={() => navigate('/cart')}
-          itemCount={cartItemCount}
         />
       </div>
       <Footer />

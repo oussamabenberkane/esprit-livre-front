@@ -1,14 +1,20 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ShoppingCart, X, Trash2 } from 'lucide-react';
+import { useCart } from '../../contexts/CartContext';
 
-export default function FloatingCartBadge({
-  isVisible,
-  onDismiss,
-  onGoToCart,
-  itemCount = 1
-}) {
+const BADGE_VISIBILITY_KEY = 'el_cart_badge_dismissed';
+
+export default function FloatingCartBadge({ onGoToCart }) {
   const { t } = useTranslation();
+  const { cartItems, getCartItemCount } = useCart();
+
+  // State for visibility - managed internally now
+  const [isVisible, setIsVisible] = useState(false);
+  const [itemCount, setItemCount] = useState(0);
+  const previousCountRef = useRef(0);
+
+  // Drag & drop states (unchanged)
   const [isDragging, setIsDragging] = useState(false);
   const [showDeleteZone, setShowDeleteZone] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -22,8 +28,54 @@ export default function FloatingCartBadge({
   // Drag threshold in pixels - must move this much before considering it a drag
   const DRAG_THRESHOLD = 10;
 
+  /**
+   * Core Logic: Listen to cart changes and manage badge visibility
+   */
   useEffect(() => {
-    // Reset position when badge becomes visible
+    const currentCount = getCartItemCount();
+    const previousCount = previousCountRef.current;
+
+    // Update item count
+    setItemCount(currentCount);
+
+    // Hide badge if cart is empty
+    if (currentCount === 0) {
+      setIsVisible(false);
+      localStorage.removeItem(BADGE_VISIBILITY_KEY);
+      previousCountRef.current = 0;
+      return;
+    }
+
+    // Check if badge was manually dismissed
+    const wasDismissed = localStorage.getItem(BADGE_VISIBILITY_KEY) === 'true';
+
+    // Show badge if:
+    // 1. Cart count increased (new items added) - always show, even if previously dismissed
+    // 2. Cart has items and badge was never dismissed
+    if (currentCount > previousCount) {
+      // New items added - show badge
+      setIsVisible(true);
+      localStorage.removeItem(BADGE_VISIBILITY_KEY); // Clear dismissed state
+    } else if (currentCount > 0 && !wasDismissed) {
+      // Cart has items and wasn't dismissed - show badge
+      setIsVisible(true);
+    }
+
+    // Update previous count
+    previousCountRef.current = currentCount;
+  }, [cartItems, getCartItemCount]);
+
+  /**
+   * Handle manual dismissal (close button or drag-to-remove)
+   */
+  const handleDismiss = () => {
+    setIsVisible(false);
+    // Mark as dismissed in localStorage
+    localStorage.setItem(BADGE_VISIBILITY_KEY, 'true');
+  };
+
+  // Reset position when badge becomes visible
+  useEffect(() => {
     if (isVisible) {
       setPosition({ x: 0, y: 0 });
       setIsDragging(false);
@@ -129,7 +181,7 @@ export default function FloatingCartBadge({
 
     // If near delete zone and delete zone is shown, dismiss
     if (isNearDelete && showDeleteZone) {
-      onDismiss();
+      handleDismiss();
     } else {
       // Snap back to original position
       setPosition({ x: 0, y: 0 });
@@ -189,7 +241,7 @@ export default function FloatingCartBadge({
 
     // If near delete zone and delete zone is shown, dismiss
     if (isNearDelete && showDeleteZone) {
-      onDismiss();
+      handleDismiss();
     } else {
       // Snap back to original position
       setPosition({ x: 0, y: 0 });
@@ -256,7 +308,7 @@ export default function FloatingCartBadge({
         }`}>
           {/* Close Button */}
           <button
-            onClick={onDismiss}
+            onClick={handleDismiss}
             className="absolute top-0.5 right-0.5 md:top-2 md:right-2 w-5 h-5 md:w-6 md:h-6 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors"
             aria-label={t('floatingCartBadge.close')}
           >

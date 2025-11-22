@@ -80,10 +80,6 @@ const BookDetails = () => {
     const [showCartPopup, setShowCartPopup] = useState(false);
     const [selectedBook, setSelectedBook] = useState(null);
 
-    // Floating cart badge state
-    const [showFloatingBadge, setShowFloatingBadge] = useState(false);
-    const [cartItemCount, setCartItemCount] = useState(0);
-
     // Recommended books - exclude current book (backend will provide this later)
     const [recommendedBooks, setRecommendedBooks] = useState([]);
     const [recommendedBooksLoading, setRecommendedBooksLoading] = useState(true);
@@ -377,15 +373,11 @@ const BookDetails = () => {
             });
             setPackBooks([]); // Clear pack books for regular books
             setShowCartPopup(true);
-            // Increment cart count
-            setCartItemCount(prev => prev + 1);
         }
     };
 
     const handleClosePopup = () => {
         setShowCartPopup(false);
-        // Show floating badge after popup closes
-        setShowFloatingBadge(true);
     };
 
     const handleToggleFavorite = (bookId, isFavorited) => {
@@ -412,7 +404,6 @@ const BookDetails = () => {
             setSelectedBook(packAsBook);
             setPackBooks(pack.books); // Store the books array for the popup
             setShowCartPopup(true);
-            setCartItemCount(prev => prev + 1);
         }
     };
 
@@ -432,8 +423,6 @@ const BookDetails = () => {
         });
         setPackBooks([]); // Clear pack books for regular books
         setShowCartPopup(true);
-        // Increment cart count
-        setCartItemCount(prev => prev + 1);
     };
 
     const handleToggleDescription = () => {
@@ -1035,12 +1024,9 @@ const BookDetails = () => {
                 />
             )}
 
-            {/* Floating Cart Badge - Shows after popup is dismissed */}
+            {/* Floating Cart Badge - Self-managed, syncs with cart state */}
             <FloatingCartBadge
-                isVisible={showFloatingBadge}
-                onDismiss={() => setShowFloatingBadge(false)}
                 onGoToCart={() => navigate('/cart')}
-                itemCount={cartItemCount}
             />
         </main>
     );

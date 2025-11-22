@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ShoppingCart, Check, X } from 'lucide-react';
 import { getLanguageCode } from '../../data/booksData';
+import { useCart } from '../../contexts/CartContext';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function CartConfirmationPopup({
     isOpen,
@@ -12,6 +14,7 @@ export default function CartConfirmationPopup({
 }) {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const { removeFromCart } = useCart();
 
     // Prevent body scroll when popup is open
     useEffect(() => {
@@ -45,8 +48,30 @@ export default function CartConfirmationPopup({
         onClose(); // Close the popup after navigation
     };
 
+    const handleRemoveFromCart = async () => {
+        try {
+            await removeFromCart(book.id);
+            toast.success(t('cartPopup.removedSuccess') || 'Book removed from cart', {
+                duration: 3000,
+                position: 'top-center',
+                style: {
+                    background: '#10B981',
+                    color: '#fff',
+                    fontWeight: '500',
+                },
+            });
+            onClose();
+        } catch (error) {
+            toast.error(t('cartPopup.removedError') || 'Failed to remove book from cart', {
+                duration: 3000,
+                position: 'top-center',
+            });
+        }
+    };
+
     return (
         <>
+            <Toaster />
             {/* Backdrop with blur and blue-grey tint */}
             <div
                 className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-40"
@@ -183,11 +208,7 @@ export default function CartConfirmationPopup({
                             <h1 className="text-fluid-small">{t('cartPopup.viewCart')}</h1>
                         </button>
                         <button
-                            onClick={() => {
-                                // Remove from cart
-                                console.log('Remove from cart');
-                                onClose();
-                            }}
+                            onClick={handleRemoveFromCart}
                             className="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium py-fluid-tiny px-fluid-sm rounded-lg transition-colors"
                         >
                             <h1 className="text-fluid-medium">{t('cartPopup.remove')}</h1>

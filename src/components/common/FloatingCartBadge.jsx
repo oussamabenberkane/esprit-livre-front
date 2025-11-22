@@ -110,39 +110,58 @@ export default function FloatingCartBadge({ onGoToCart }) {
     }
   }, [isVisible]);
 
-  // Manage scroll behavior during drag - aggressive approach for mobile
+  // Completely freeze all background interactions during drag
   useEffect(() => {
     if (isDragging) {
       // Save current scroll position
       scrollPositionRef.current = window.pageYOffset || document.documentElement.scrollTop;
 
-      // Prevent scrolling on mobile/touch devices
+      // Freeze the page completely
       document.body.style.overflow = 'hidden';
       document.body.style.touchAction = 'none';
       document.body.style.position = 'fixed';
       document.body.style.top = `-${scrollPositionRef.current}px`;
       document.body.style.width = '100%';
+      document.body.style.userSelect = 'none'; // Prevent text selection
+      document.body.style.pointerEvents = 'none'; // Disable all pointer events on background
 
-      // Prevent scroll on document level
-      const preventScroll = (e) => {
+      // Prevent all default behaviors except on our badge and delete zone
+      const preventBackgroundEvents = (e) => {
+        // Allow events on the badge and delete zone to pass through
+        if (badgeRef.current?.contains(e.target) || deleteZoneRef.current?.contains(e.target)) {
+          return;
+        }
         e.preventDefault();
+        e.stopPropagation();
       };
 
-      // Add non-passive listeners to prevent default scroll behavior
-      document.addEventListener('touchmove', preventScroll, { passive: false });
-      document.addEventListener('wheel', preventScroll, { passive: false });
+      // Add non-passive listeners to prevent background interactions
+      document.addEventListener('touchmove', preventBackgroundEvents, { passive: false });
+      document.addEventListener('wheel', preventBackgroundEvents, { passive: false });
+      document.addEventListener('scroll', preventBackgroundEvents, { passive: false });
+      document.addEventListener('click', preventBackgroundEvents, { capture: true });
+      document.addEventListener('mousedown', preventBackgroundEvents, { capture: true });
+      document.addEventListener('mouseup', preventBackgroundEvents, { capture: true });
+      document.addEventListener('contextmenu', preventBackgroundEvents, { capture: true });
 
       return () => {
-        // Restore scroll when dragging stops
+        // Restore all interactions when dragging stops
         document.body.style.overflow = '';
         document.body.style.touchAction = '';
         document.body.style.position = '';
         document.body.style.top = '';
         document.body.style.width = '';
+        document.body.style.userSelect = '';
+        document.body.style.pointerEvents = '';
 
-        // Remove event listeners
-        document.removeEventListener('touchmove', preventScroll);
-        document.removeEventListener('wheel', preventScroll);
+        // Remove all event listeners
+        document.removeEventListener('touchmove', preventBackgroundEvents);
+        document.removeEventListener('wheel', preventBackgroundEvents);
+        document.removeEventListener('scroll', preventBackgroundEvents);
+        document.removeEventListener('click', preventBackgroundEvents, { capture: true });
+        document.removeEventListener('mousedown', preventBackgroundEvents, { capture: true });
+        document.removeEventListener('mouseup', preventBackgroundEvents, { capture: true });
+        document.removeEventListener('contextmenu', preventBackgroundEvents, { capture: true });
 
         // Restore scroll position
         window.scrollTo(0, scrollPositionRef.current);
@@ -365,6 +384,7 @@ export default function FloatingCartBadge({ onGoToCart }) {
           className={`fixed bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-50 transition-all duration-200 ${
             isNearDelete ? 'scale-110' : 'scale-100'
           }`}
+          style={{ pointerEvents: 'auto' }}
         >
           <div className={`rounded-full p-3 md:p-4 transition-colors ${
             isNearDelete ? 'bg-red-600' : 'bg-red-500'
@@ -388,6 +408,7 @@ export default function FloatingCartBadge({ onGoToCart }) {
           transition: isDragging ? 'none' : 'transform 0.3s ease-out',
           animation: !isDragging && position.x === 0 && position.y === 0 ? 'slideUp 0.3s ease-out' : 'none',
           opacity: isDragging && isNearDelete ? 0.5 : 1,
+          pointerEvents: 'auto', // Keep badge interactive even when background is frozen
         }}
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}

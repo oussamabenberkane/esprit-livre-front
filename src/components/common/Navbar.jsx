@@ -301,18 +301,16 @@ const Navbar = ({
 
                     {/* Action Icons */}
                     <div className="flex items-center gap-3">
-                        {/* Sign In Button - Desktop only - Hidden when authenticated */}
-                        {!isAuthenticated() && (
-                            <SignInButton
-                                onClick={() => {
-                                    const currentPath = location.pathname + location.search;
-                                    saveRedirectUrl(currentPath);
-                                    navigate('/auth');
-                                }}
-                                className="hidden md:block"
-                                highlight={highlightSignInButton}
-                            />
-                        )}
+                        {/* Sign In Button - Desktop only */}
+                        <SignInButton
+                            onClick={() => {
+                                const currentPath = location.pathname + location.search;
+                                saveRedirectUrl(currentPath);
+                                navigate('/auth');
+                            }}
+                            className="hidden md:block"
+                            highlight={highlightSignInButton}
+                        />
 
                         {/* Language Toggle - Different components based on screen size */}
                         {/* Desktop: Use your actual LanguageToggle component */}
@@ -388,17 +386,15 @@ const Navbar = ({
 
                     {/* Right side: Sign In, Profile, Cart */}
                     <div className="flex items-center gap-2">
-                        {/* Sign In Button - Hidden when authenticated */}
-                        {!isAuthenticated() && (
-                            <SignInButton
-                                onClick={() => {
-                                    const currentPath = location.pathname + location.search;
-                                    saveRedirectUrl(currentPath);
-                                    navigate('/auth');
-                                }}
-                                highlight={highlightSignInButton}
-                            />
-                        )}
+                        {/* Sign In Button */}
+                        <SignInButton
+                            onClick={() => {
+                                const currentPath = location.pathname + location.search;
+                                saveRedirectUrl(currentPath);
+                                navigate('/auth');
+                            }}
+                            highlight={highlightSignInButton}
+                        />
 
                         {/* User Profile Icon */}
                         <div className="relative flex-shrink-0" ref={mobileUserButtonRef}>

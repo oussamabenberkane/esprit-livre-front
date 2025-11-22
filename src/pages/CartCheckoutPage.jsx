@@ -855,6 +855,10 @@ export default function CartCheckoutPage() {
   const [showCheckout, setShowCheckout] = useState(false);
   const navigate = useNavigate();
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5; // Show 5 items per page in cart
+
   // Scroll to top when page loads
   useScrollToTop();
 
@@ -868,6 +872,12 @@ export default function CartCheckoutPage() {
   // Calculate subtotal
   const subtotal = cartBooks.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
+  // Pagination calculations
+  const totalPages = Math.ceil(cartBooks.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedCartBooks = cartBooks.slice(startIndex, endIndex);
+
   // Update quantity
   const handleUpdateQuantity = async (itemId, newQuantity) => {
     await updateQuantity(itemId, newQuantity);
@@ -878,6 +888,10 @@ export default function CartCheckoutPage() {
   // Remove item
   const handleRemoveItem = async (itemId) => {
     await removeFromCart(itemId);
+    // If we removed the last item on current page, go to previous page
+    if (paginatedCartBooks.length === 1 && currentPage > 1) {
+      setCurrentPage(prev => prev - 1);
+    }
   };
 
   // Proceed to checkout
@@ -972,18 +986,38 @@ export default function CartCheckoutPage() {
             className="bg-white border border-neutral-200 rounded-lg p-4 md:p-6 shadow-sm"
           >
             {/* Cart Header */}
-            <div className="flex items-center gap-2 mb-6">
-              <ShoppingBag className="w-5 h-5 md:w-6 md:h-6 text-black" />
-              <h1 className="text-black font-[500]">
-                {cartBooks.length === 1 ? t('cart.title', { count: cartBooks.length }) : t('cart.title_plural', { count: cartBooks.length })}
-              </h1>
+            <div className="flex items-center justify-between flex-wrap gap-2 mb-6">
+              <div className="flex items-center gap-2">
+                <ShoppingBag className="w-5 h-5 md:w-6 md:h-6 text-black" />
+                <h1 className="text-black font-[500]">
+                  {cartBooks.length === 1 ? t('cart.title', { count: cartBooks.length }) : t('cart.title_plural', { count: cartBooks.length })}
+                </h1>
+              </div>
+              {/* Results count - only show if there are items */}
+              {!isLoading && cartBooks.length > 0 && (
+                <div className="text-fluid-small text-gray-600">
+                  {t('allBooks.resultsCount', {
+                    start: cartBooks.length > 0 ? startIndex + 1 : 0,
+                    end: Math.min(endIndex, cartBooks.length),
+                    total: cartBooks.length
+                  })}
+                  {totalPages > 1 && (
+                    <>
+                      <span className="hidden sm:inline ml-2 text-gray-400">•</span>
+                      <span className="hidden sm:inline ml-2">
+                        {t('allBooks.page', { current: currentPage, total: totalPages })}
+                      </span>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Cart Items */}
             <AnimatePresence mode="popLayout">
               {cartBooks.length > 0 ? (
                 <div className="space-y-2">
-                  {cartBooks.map((item) => (
+                  {paginatedCartBooks.map((item) => (
                     <CartItem
                       key={item.id}
                       item={item}
@@ -1002,6 +1036,143 @@ export default function CartCheckoutPage() {
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && cartBooks.length > 0 && (
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 py-4 border-t border-gray-200 text-fluid-small mt-4">
+                <div></div>
+
+                <div className="flex items-center gap-2">
+                  {/* Previous Button */}
+                  <button
+                    onClick={() => {
+                      setCurrentPage(prev => Math.max(1, prev - 1));
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    disabled={currentPage === 1}
+                    className={`flex items-center justify-center w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      currentPage === 1
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-gray-100 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 active:scale-95"
+                    }`}
+                    aria-label="Previous page"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+
+                  {/* Page Numbers */}
+                  <div className="flex gap-1">
+                    {(() => {
+                      const pageNumbers = [];
+                      const showEllipsisStart = currentPage > 3;
+                      const showEllipsisEnd = currentPage < totalPages - 2;
+
+                      // Always show first page
+                      pageNumbers.push(
+                        <button
+                          key={1}
+                          onClick={() => {
+                            setCurrentPage(1);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                          className={`min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                            currentPage === 1
+                              ? "bg-emerald-600 text-white shadow-md"
+                              : "bg-gray-100 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 active:scale-95"
+                          }`}
+                        >
+                          1
+                        </button>
+                      );
+
+                      // Show ellipsis after first page if needed
+                      if (showEllipsisStart) {
+                        pageNumbers.push(
+                          <span key="ellipsis-start" className="flex items-center justify-center w-9 h-9 text-gray-400">
+                            ...
+                          </span>
+                        );
+                      }
+
+                      // Show pages around current page
+                      const startPage = Math.max(2, currentPage - 1);
+                      const endPage = Math.min(totalPages - 1, currentPage + 1);
+
+                      for (let i = startPage; i <= endPage; i++) {
+                        pageNumbers.push(
+                          <button
+                            key={i}
+                            onClick={() => {
+                              setCurrentPage(i);
+                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
+                            className={`min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                              currentPage === i
+                                ? "bg-emerald-600 text-white shadow-md"
+                                : "bg-gray-100 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 active:scale-95"
+                            }`}
+                          >
+                            {i}
+                          </button>
+                        );
+                      }
+
+                      // Show ellipsis before last page if needed
+                      if (showEllipsisEnd) {
+                        pageNumbers.push(
+                          <span key="ellipsis-end" className="flex items-center justify-center w-9 h-9 text-gray-400">
+                            ...
+                          </span>
+                        );
+                      }
+
+                      // Always show last page if more than 1 page
+                      if (totalPages > 1) {
+                        pageNumbers.push(
+                          <button
+                            key={totalPages}
+                            onClick={() => {
+                              setCurrentPage(totalPages);
+                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
+                            className={`min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                              currentPage === totalPages
+                                ? "bg-emerald-600 text-white shadow-md"
+                                : "bg-gray-100 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 active:scale-95"
+                            }`}
+                          >
+                            {totalPages}
+                          </button>
+                        );
+                      }
+
+                      return pageNumbers;
+                    })()}
+                  </div>
+
+                  {/* Next Button */}
+                  <button
+                    onClick={() => {
+                      setCurrentPage(prev => Math.min(totalPages, prev + 1));
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    disabled={currentPage === totalPages}
+                    className={`flex items-center justify-center w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      currentPage === totalPages
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-gray-100 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 active:scale-95"
+                    }`}
+                    aria-label="Next page"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Cart Summary */}
             {cartBooks.length > 0 && (

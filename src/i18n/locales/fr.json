@@ -97,7 +97,13 @@
     "bookDetails": "Détails du livre",
     "currency": "DZD",
     "viewCart": "Voir le panier",
-    "remove": "Retirer"
+    "remove": "Retirer",
+    "removeConfirmTitle": "Retirer du panier ?",
+    "removeConfirmMessage": "Êtes-vous sûr de vouloir retirer ce livre de votre panier ?",
+    "confirmRemove": "Oui, retirer",
+    "cancelRemove": "Annuler",
+    "removedSuccess": "Livre retiré du panier avec succès",
+    "removedError": "Échec de la suppression du livre. Veuillez réessayer."
   },
   "common": {
     "loading": "Chargement...",
@@ -167,6 +173,7 @@
     "email": "Email",
     "emailPlaceholder": "exemple@email.com",
     "emailError": "Veuillez entrer une adresse email valide",
+    "optional": "Optionnel",
     "phone": "Numéro de téléphone",
     "phonePlaceholder": "0555 00 00 00",
     "phoneError": "Le numéro doit contenir 10 chiffres (ex: 0555 00 00 00)",

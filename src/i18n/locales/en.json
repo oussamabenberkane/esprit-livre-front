@@ -97,7 +97,13 @@
     "bookDetails": "Book details",
     "currency": "DZD",
     "viewCart": "View cart",
-    "remove": "Remove"
+    "remove": "Remove",
+    "removeConfirmTitle": "Remove from cart?",
+    "removeConfirmMessage": "Are you sure you want to remove this book from your cart?",
+    "confirmRemove": "Yes, remove",
+    "cancelRemove": "Cancel",
+    "removedSuccess": "Book successfully removed from cart",
+    "removedError": "Failed to remove book from cart. Please try again."
   },
   "common": {
     "loading": "Loading...",
@@ -167,6 +173,7 @@
     "email": "Email",
     "emailPlaceholder": "example@email.com",
     "emailError": "Please enter a valid email address",
+    "optional": "Optional",
     "phone": "Phone number",
     "phonePlaceholder": "0555 00 00 00",
     "phoneError": "Number must contain 10 digits (e.g. 0555 00 00 00)",

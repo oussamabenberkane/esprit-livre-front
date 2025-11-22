@@ -48,10 +48,13 @@ export default function CartConfirmationPopup({
         onClose(); // Close the popup after navigation
     };
 
-    const handleRemoveFromCart = async () => {
+    const handleRemoveClick = async () => {
         try {
+            // Remove the book from cart first
             await removeFromCart(book.id);
-            toast.success(t('cartPopup.removedSuccess') || 'Book removed from cart', {
+
+            // Show success toast
+            toast.success(t('cartPopup.removedSuccess'), {
                 duration: 3000,
                 position: 'top-center',
                 style: {
@@ -60,12 +63,27 @@ export default function CartConfirmationPopup({
                     fontWeight: '500',
                 },
             });
-            onClose();
+
+            // Close popup after a short delay to allow toast to be visible
+            setTimeout(() => {
+                onClose();
+            }, 500);
         } catch (error) {
-            toast.error(t('cartPopup.removedError') || 'Failed to remove book from cart', {
+            // Show error toast
+            toast.error(t('cartPopup.removedError'), {
                 duration: 3000,
                 position: 'top-center',
+                style: {
+                    background: '#EF4444',
+                    color: '#fff',
+                    fontWeight: '500',
+                },
             });
+
+            // Close popup after error toast shows
+            setTimeout(() => {
+                onClose();
+            }, 500);
         }
     };
 
@@ -208,7 +226,7 @@ export default function CartConfirmationPopup({
                             <h1 className="text-fluid-small">{t('cartPopup.viewCart')}</h1>
                         </button>
                         <button
-                            onClick={handleRemoveFromCart}
+                            onClick={handleRemoveClick}
                             className="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium py-fluid-tiny px-fluid-sm rounded-lg transition-colors"
                         >
                             <h1 className="text-fluid-medium">{t('cartPopup.remove')}</h1>

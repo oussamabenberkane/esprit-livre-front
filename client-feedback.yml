@@ -65,11 +65,12 @@ front :
 - cablage n favorites : done
 
 - add pagination for favorites page : 
+- sign in button should disapear when the user is authenticated : 
 - cablage n cart : 
 - add popup modal so that the user cant proceed to cart checkout if not authentificated : 
+
 - cablage n orders : 
 
-- sign in button should disapear when the user is authenticated : 
 
 - check i18n across all the pages -- books sections caroussel ni ulash :
 

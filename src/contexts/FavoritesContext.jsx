@@ -216,8 +216,11 @@ export const FavoritesProvider = ({ children }) => {
 
     /**
      * Load full favorite books (for Favorites page)
+     * @param {number} page - Page number (0-based)
+     * @param {number} size - Number of items per page
+     * @returns {Promise<{books: Array, totalElements: number, totalPages: number}>}
      */
-    const loadFavoriteBooks = useCallback(async () => {
+    const loadFavoriteBooks = useCallback(async (page = 0, size = 100) => {
         dispatch({ type: ACTIONS.SET_LOADING, payload: true });
 
         try {
@@ -226,9 +229,10 @@ export const FavoritesProvider = ({ children }) => {
 
             if (isAuth) {
                 try {
-                    // Fetch from server
-                    const { books } = await fetchLikedBooks(0, 100);
-                    dispatch({ type: ACTIONS.SET_FAVORITE_BOOKS, payload: books });
+                    // Fetch from server with pagination
+                    const result = await fetchLikedBooks(page, size);
+                    dispatch({ type: ACTIONS.SET_FAVORITE_BOOKS, payload: result.books });
+                    return result; // Return full result including pagination info
                 } catch (error) {
                     // If 401, user isn't actually authenticated - fallback to local
                     if (error.status === 401) {
@@ -237,9 +241,18 @@ export const FavoritesProvider = ({ children }) => {
 
                         if (localFavIds.length > 0) {
                             const books = await getBooksByIds(localFavIds);
-                            dispatch({ type: ACTIONS.SET_FAVORITE_BOOKS, payload: books });
+                            // Apply manual pagination for local favorites
+                            const startIndex = page * size;
+                            const endIndex = startIndex + size;
+                            const paginatedBooks = books.slice(startIndex, endIndex);
+                            const totalElements = books.length;
+                            const totalPages = Math.ceil(totalElements / size);
+
+                            dispatch({ type: ACTIONS.SET_FAVORITE_BOOKS, payload: paginatedBooks });
+                            return { books: paginatedBooks, totalElements, totalPages };
                         } else {
                             dispatch({ type: ACTIONS.SET_FAVORITE_BOOKS, payload: [] });
+                            return { books: [], totalElements: 0, totalPages: 0 };
                         }
                     } else {
                         // Re-throw other errors
@@ -253,14 +266,24 @@ export const FavoritesProvider = ({ children }) => {
                 if (localFavIds.length > 0) {
                     // Fetch full book details for each ID
                     const books = await getBooksByIds(localFavIds);
-                    dispatch({ type: ACTIONS.SET_FAVORITE_BOOKS, payload: books });
+                    // Apply manual pagination for local favorites
+                    const startIndex = page * size;
+                    const endIndex = startIndex + size;
+                    const paginatedBooks = books.slice(startIndex, endIndex);
+                    const totalElements = books.length;
+                    const totalPages = Math.ceil(totalElements / size);
+
+                    dispatch({ type: ACTIONS.SET_FAVORITE_BOOKS, payload: paginatedBooks });
+                    return { books: paginatedBooks, totalElements, totalPages };
                 } else {
                     dispatch({ type: ACTIONS.SET_FAVORITE_BOOKS, payload: [] });
+                    return { books: [], totalElements: 0, totalPages: 0 };
                 }
             }
         } catch (error) {
             console.error('Error loading favorite books:', error);
             dispatch({ type: ACTIONS.SET_ERROR, payload: error.message });
+            return { books: [], totalElements: 0, totalPages: 0 };
         }
     }, []); // Removed authenticated from deps - now checks dynamically
 

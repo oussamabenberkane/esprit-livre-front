@@ -2,9 +2,10 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Minus, Plus, Trash2, ExternalLink, ShoppingBag, ChevronDown, Home, MapPin, Truck, X, Search } from 'lucide-react';
+import { ArrowLeft, Minus, Plus, Trash2, ExternalLink, ShoppingBag, ChevronDown, Home, MapPin, Truck, X, Search, Package } from 'lucide-react';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
+import PackBooksPopup from '../components/common/PackBooksPopup';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 import { getLanguageCode, getFullLanguageName } from '../data/booksData';
 import { useCart } from '../contexts/CartContext';
@@ -120,6 +121,108 @@ function CartItem({ item, onUpdateQuantity, onRemove }) {
           </div>
 
 
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// PackItem Component - Similar to CartItem but for packs
+function PackItem({ item, onUpdateQuantity, onRemove, onViewBooks }) {
+  const { t } = useTranslation();
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, x: -100 }}
+      transition={{ duration: 0.3 }}
+      className="flex gap-3 md:gap-4 py-4 border-b border-neutral-200 last:border-b-0"
+    >
+      {/* Pack Image - Show first book's cover with pack indicator */}
+      <div className="flex-shrink-0 relative">
+        <img
+          src={item.books && item.books[0] ? item.books[0].coverImage : 'https://via.placeholder.com/120x180'}
+          alt={item.title}
+          className="w-20 h-30 md:w-28 md:h-40 object-cover rounded"
+        />
+        {/* Pack Badge Overlay */}
+        <div className="absolute top-1 right-1 bg-blue-600 text-white px-2 py-1 rounded text-xs font-semibold flex items-center gap-1 shadow-md">
+          <Package className="w-3 h-3" />
+          <span>Pack</span>
+        </div>
+      </div>
+
+      {/* Pack Details */}
+      <div className="flex-1 flex flex-col justify-between min-w-0">
+        <div>
+          <div className="flex flex-row justify-between">
+            <div className="flex flex-col gap-1">
+              <h1 className="font-[550] text-fluid-h3 mb-fluid-small">{item.title}</h1>
+            </div>
+            {/* Price */}
+            <div className="text-right ml-2 flex flex-col items-end gap-1">
+              <div>
+                <span className="text-black text-fluid-h3 font-bold">{item.price * item.quantity}</span>
+                <span className="text-fluid-medium font-semibold text-gray-600 ml-1">DZD</span>
+              </div>
+            </div>
+          </div>
+          <h1 className="text-[#717192] text-fluid-medium font-[400] md:text-fluid-small mb-fluid-xs">
+            {item.books?.length || 0} {t('cart.books')}
+          </h1>
+          <button
+            onClick={() => onViewBooks(item)}
+            className="flex items-center gap-1 text-[#626e82] text-xs hover:text-blue-600 transition-colors"
+          >
+            <span><h1 className="text-fluid-medium">{t('cart.viewPackBooks')}</h1></span>
+            <ExternalLink className="w-4 h-3" />
+          </button>
+        </div>
+
+        {/* Quantity Controls & Delete - Mobile/Desktop Layout */}
+        <div className="flex items-center justify-end mt-2">
+          <div className="flex items-center gap-fluid-small md:gap-fluid-2xl">
+            {/* Quantity Selector */}
+            <div className="flex items-center gap-1">
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => onUpdateQuantity(item.id, Math.max(1, item.quantity - 1))}
+                className="w-5 h-5 md:w-6 md:h-6 border border-neutral-200 rounded flex items-center justify-center hover:bg-gray-50 transition-colors"
+              >
+                <Minus className="w-3 h-3" />
+              </motion.button>
+
+              <motion.div
+                key={item.quantity}
+                initial={{ scale: 1.2, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="w-7 h-5 md:w-8 md:h-6 bg-[#f3f3f5] rounded flex items-center justify-center text-xs md:text-sm"
+              >
+                {item.quantity}
+              </motion.div>
+
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+                className="w-5 h-5 md:w-6 md:h-6 border border-neutral-200 rounded flex items-center justify-center hover:bg-gray-50 transition-colors"
+              >
+                <Plus className="w-3 h-3" />
+              </motion.button>
+            </div>
+
+            {/* Delete Button */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => onRemove(item.id)}
+              className="flex items-center gap-1 text-[#eb3223] text-xs hover:text-red-700 transition-colors ml-2 md:ml-4"
+            >
+              <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
+              <span><h1 className="text-fluid-small md:text-fluid-h3">{t('cart.delete')}</h1></span>
+            </motion.button>
+          </div>
         </div>
       </div>
     </motion.div>
@@ -851,8 +954,21 @@ function CheckoutForm({ onSubmit }) {
 // Main CartCheckoutPage Component
 export default function CartCheckoutPage() {
   const { t } = useTranslation();
-  const { cartBooks, isLoading, error, updateQuantity, removeFromCart, loadCartBooks } = useCart();
+  const {
+    cartBooks,
+    cartPacks,
+    isLoading,
+    error,
+    updateQuantity,
+    removeFromCart,
+    updatePackQuantity,
+    removePackFromCart,
+    loadCartBooks,
+    loadCartPacks
+  } = useCart();
   const [showCheckout, setShowCheckout] = useState(false);
+  const [showPackBooksPopup, setShowPackBooksPopup] = useState(false);
+  const [selectedPackForPopup, setSelectedPackForPopup] = useState(null);
   const navigate = useNavigate();
 
   // Pagination state
@@ -862,36 +978,63 @@ export default function CartCheckoutPage() {
   // Scroll to top when page loads
   useScrollToTop();
 
-  // Load cart books on mount
+  // Load cart books and packs on mount
   useEffect(() => {
     loadCartBooks();
-  }, [loadCartBooks]);
+    loadCartPacks();
+  }, [loadCartBooks, loadCartPacks]);
 
   const shippingFee = 700;
 
-  // Calculate subtotal
-  const subtotal = cartBooks.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  // Calculate subtotal (books + packs)
+  const subtotal = cartBooks.reduce((sum, item) => sum + (item.price * item.quantity), 0) +
+    cartPacks.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+  // Combine books and packs for unified display
+  const allCartItems = [...cartBooks, ...cartPacks];
 
   // Pagination calculations
-  const totalPages = Math.ceil(cartBooks.length / itemsPerPage);
+  const totalPages = Math.ceil(allCartItems.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedCartBooks = cartBooks.slice(startIndex, endIndex);
+  const paginatedCartItems = allCartItems.slice(startIndex, endIndex);
 
-  // Update quantity
+  // Update quantity for books
   const handleUpdateQuantity = async (itemId, newQuantity) => {
     await updateQuantity(itemId, newQuantity);
     // Reload cart books to update UI
     await loadCartBooks();
   };
 
-  // Remove item
+  // Update quantity for packs
+  const handleUpdatePackQuantity = async (packId, newQuantity) => {
+    await updatePackQuantity(packId, newQuantity);
+    // Reload cart packs to update UI
+    await loadCartPacks();
+  };
+
+  // Remove book from cart
   const handleRemoveItem = async (itemId) => {
     await removeFromCart(itemId);
     // If we removed the last item on current page, go to previous page
-    if (paginatedCartBooks.length === 1 && currentPage > 1) {
+    if (paginatedCartItems.length === 1 && currentPage > 1) {
       setCurrentPage(prev => prev - 1);
     }
+  };
+
+  // Remove pack from cart
+  const handleRemovePackItem = async (packId) => {
+    await removePackFromCart(packId);
+    // If we removed the last item on current page, go to previous page
+    if (paginatedCartItems.length === 1 && currentPage > 1) {
+      setCurrentPage(prev => prev - 1);
+    }
+  };
+
+  // Show pack books popup
+  const handleViewPackBooks = (pack) => {
+    setSelectedPackForPopup(pack);
+    setShowPackBooksPopup(true);
   };
 
   // Proceed to checkout
@@ -990,16 +1133,16 @@ export default function CartCheckoutPage() {
               <div className="flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 md:w-6 md:h-6 text-black" />
                 <h1 className="text-black font-[500]">
-                  {cartBooks.length === 1 ? t('cart.title', { count: cartBooks.length }) : t('cart.title_plural', { count: cartBooks.length })}
+                  {allCartItems.length === 1 ? t('cart.title', { count: allCartItems.length }) : t('cart.title_plural', { count: allCartItems.length })}
                 </h1>
               </div>
               {/* Results count - only show if there are items */}
-              {!isLoading && cartBooks.length > 0 && (
+              {!isLoading && allCartItems.length > 0 && (
                 <div className="text-fluid-small text-gray-600">
                   {t('allBooks.resultsCount', {
-                    start: cartBooks.length > 0 ? startIndex + 1 : 0,
-                    end: Math.min(endIndex, cartBooks.length),
-                    total: cartBooks.length
+                    start: allCartItems.length > 0 ? startIndex + 1 : 0,
+                    end: Math.min(endIndex, allCartItems.length),
+                    total: allCartItems.length
                   })}
                   {totalPages > 1 && (
                     <>
@@ -1013,17 +1156,27 @@ export default function CartCheckoutPage() {
               )}
             </div>
 
-            {/* Cart Items */}
+            {/* Cart Items - Books and Packs */}
             <AnimatePresence mode="popLayout">
-              {cartBooks.length > 0 ? (
+              {allCartItems.length > 0 ? (
                 <div className="space-y-2">
-                  {paginatedCartBooks.map((item) => (
-                    <CartItem
-                      key={item.id}
-                      item={item}
-                      onUpdateQuantity={handleUpdateQuantity}
-                      onRemove={handleRemoveItem}
-                    />
+                  {paginatedCartItems.map((item) => (
+                    item.isPack ? (
+                      <PackItem
+                        key={`pack-${item.id}`}
+                        item={item}
+                        onUpdateQuantity={handleUpdatePackQuantity}
+                        onRemove={handleRemovePackItem}
+                        onViewBooks={handleViewPackBooks}
+                      />
+                    ) : (
+                      <CartItem
+                        key={`book-${item.id}`}
+                        item={item}
+                        onUpdateQuantity={handleUpdateQuantity}
+                        onRemove={handleRemoveItem}
+                      />
+                    )
                   ))}
                 </div>
               ) : (
@@ -1038,7 +1191,7 @@ export default function CartCheckoutPage() {
             </AnimatePresence>
 
             {/* Pagination Controls */}
-            {totalPages > 1 && cartBooks.length > 0 && (
+            {totalPages > 1 && allCartItems.length > 0 && (
               <div className="flex flex-col sm:flex-row justify-between items-center gap-4 py-4 border-t border-gray-200 text-fluid-small mt-4">
                 <div></div>
 
@@ -1175,7 +1328,7 @@ export default function CartCheckoutPage() {
             )}
 
             {/* Cart Summary */}
-            {cartBooks.length > 0 && (
+            {allCartItems.length > 0 && (
               <CartSummary
                 subtotal={subtotal}
                 shipping={shippingFee}
@@ -1193,6 +1346,20 @@ export default function CartCheckoutPage() {
         </div>
       </div>
       <Footer />
+
+      {/* Pack Books Popup */}
+      {selectedPackForPopup && (
+        <PackBooksPopup
+          isOpen={showPackBooksPopup}
+          onClose={() => {
+            setShowPackBooksPopup(false);
+            setSelectedPackForPopup(null);
+          }}
+          packTitle={selectedPackForPopup.title}
+          packDescription={selectedPackForPopup.description}
+          books={selectedPackForPopup.books}
+        />
+      )}
     </main>
   );
 }

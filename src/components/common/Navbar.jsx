@@ -85,8 +85,10 @@ const Navbar = ({
     onCartClick
 }) => {
     const { t } = useTranslation();
-    const { getCartItemCount } = useCart();
-    const cartCount = getCartItemCount();
+    const { getCartItemCount, getPackCartItemCount } = useCart();
+    const bookCount = getCartItemCount();
+    const packCount = getPackCartItemCount();
+    const cartCount = bookCount + packCount; // Total count: books + packs (1 item per pack)
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();

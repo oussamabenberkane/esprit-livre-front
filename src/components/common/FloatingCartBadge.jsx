@@ -8,7 +8,7 @@ const LAST_CART_COUNT_KEY = 'el_cart_last_count';
 
 export default function FloatingCartBadge({ onGoToCart }) {
   const { t } = useTranslation();
-  const { cartItems, getCartItemCount } = useCart();
+  const { cartItems, packCartItems, getCartItemCount, getPackCartItemCount } = useCart();
 
   // State for visibility - managed internally now
   const [isVisible, setIsVisible] = useState(false);
@@ -38,9 +38,12 @@ export default function FloatingCartBadge({ onGoToCart }) {
   /**
    * Core Logic: Listen to cart changes and manage badge visibility
    * Updated to track last known count and only show when new items are added
+   * Now includes both book and pack counts
    */
   useEffect(() => {
-    const currentCount = getCartItemCount();
+    const bookCount = getCartItemCount();
+    const packCount = getPackCartItemCount();
+    const currentCount = bookCount + packCount; // Pack counts as 1 item
     const previousCount = previousCountRef.current;
 
     // Update item count
@@ -76,7 +79,7 @@ export default function FloatingCartBadge({ onGoToCart }) {
 
     // Update previous count for within-session tracking
     previousCountRef.current = currentCount;
-  }, [cartItems, getCartItemCount]);
+  }, [cartItems, packCartItems, getCartItemCount, getPackCartItemCount]);
 
   /**
    * Handle manual dismissal (close button or drag-to-remove)

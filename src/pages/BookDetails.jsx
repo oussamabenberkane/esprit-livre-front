@@ -24,7 +24,7 @@ import { useCart } from '../contexts/CartContext';
 
 const BookDetails = () => {
     const { t } = useTranslation();
-    const { addToCart } = useCart();
+    const { addToCart, addPackToCart } = useCart();
     const navigate = useNavigate();
     const location = useLocation();
     const { id } = useParams(); // Get book ID from URL
@@ -387,23 +387,30 @@ const BookDetails = () => {
     // Pack books for popup (store separately from selectedBook)
     const [packBooks, setPackBooks] = useState([]);
 
-    const handleAddPackToCart = (packId) => {
+    const handleAddPackToCart = async (packId) => {
         const pack = recommendedPacks.find(p => p.id === packId);
         if (pack) {
-            // Convert pack to book-like format for the popup
-            const packAsBook = {
-                id: pack.id,
-                title: pack.title,
-                author: `${pack.books.length} ${t('packCard.books')}`,
-                price: pack.packPrice,
-                coverImage: pack.books[0]?.coverImage || pack.packImage || 'https://picsum.photos/seed/default/400/600',
-                language: null,
-                isPack: true
-            };
+            try {
+                // Add pack to cart using context
+                await addPackToCart(packId, 1);
 
-            setSelectedBook(packAsBook);
-            setPackBooks(pack.books); // Store the books array for the popup
-            setShowCartPopup(true);
+                // Convert pack to book-like format for the popup
+                const packAsBook = {
+                    id: pack.id,
+                    title: pack.title,
+                    author: `${pack.books.length} ${t('packCard.books')}`,
+                    price: pack.packPrice,
+                    coverImage: pack.books[0]?.coverImage || pack.packImage || 'https://picsum.photos/seed/default/400/600',
+                    language: null,
+                    isPack: true
+                };
+
+                setSelectedBook(packAsBook);
+                setPackBooks(pack.books); // Store the books array for the popup
+                setShowCartPopup(true);
+            } catch (error) {
+                console.error('Error adding pack to cart:', error);
+            }
         }
     };
 

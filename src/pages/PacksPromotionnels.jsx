@@ -13,6 +13,7 @@ import { getAllBookPacks } from '../services/bookPackService';
 import { getBooksByIds } from '../services/books.service';
 import { getBookCoverUrl, getBookPackCoverUrl } from '../utils/imageUtils';
 import useProgressiveRender from '../hooks/useProgressiveRender';
+import { useCart } from '../contexts/CartContext';
 
 
 const PacksPromotionnels = () => {
@@ -193,24 +194,33 @@ const PacksPromotionnels = () => {
         setPacks(allFilteredPacks.slice(startIndex, endIndex));
     }, [currentPage, allFilteredPacks, packsPerPage]);
 
-    const handleAddToCart = (packId) => {
+    const { addPackToCart } = useCart();
+
+    const handleAddToCart = async (packId) => {
         // Find pack in the main packs array (not visiblePacks)
         const pack = packs.find(p => p.id === packId);
         if (pack) {
-            // Convert pack to book-like format for the popup
-            const packAsBook = {
-                id: pack.id,
-                title: pack.title,
-                author: `${pack.books.length} ${t('packCard.books')}`,
-                price: pack.packPrice,
-                coverImage: pack.books[0]?.coverImage || pack.packImage || 'https://picsum.photos/seed/default/400/600',
-                language: null,
-                isPack: true // Flag to identify this is a pack
-            };
+            try {
+                // Add pack to cart using context
+                await addPackToCart(packId, 1);
 
-            setSelectedPack(packAsBook);
-            setPackBooks(pack.books); // Store the books array
-            setIsPopupOpen(true);
+                // Convert pack to book-like format for the popup
+                const packAsBook = {
+                    id: pack.id,
+                    title: pack.title,
+                    author: `${pack.books.length} ${t('packCard.books')}`,
+                    price: pack.packPrice,
+                    coverImage: pack.books[0]?.coverImage || pack.packImage || 'https://picsum.photos/seed/default/400/600',
+                    language: null,
+                    isPack: true // Flag to identify this is a pack
+                };
+
+                setSelectedPack(packAsBook);
+                setPackBooks(pack.books); // Store the books array
+                setIsPopupOpen(true);
+            } catch (error) {
+                console.error('Error adding pack to cart:', error);
+            }
         }
     };
 

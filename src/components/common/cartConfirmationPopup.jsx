@@ -14,7 +14,7 @@ export default function CartConfirmationPopup({
 }) {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { removeFromCart } = useCart();
+    const { removeFromCart, removePackFromCart } = useCart();
 
     // Prevent body scroll when popup is open
     useEffect(() => {
@@ -50,8 +50,12 @@ export default function CartConfirmationPopup({
 
     const handleRemoveClick = async () => {
         try {
-            // Remove the book from cart first
-            await removeFromCart(book.id);
+            // Remove the item (book or pack) from cart
+            if (book.isPack) {
+                await removePackFromCart(book.id);
+            } else {
+                await removeFromCart(book.id);
+            }
 
             // Show success toast
             toast.success(t('cartPopup.removedSuccess'), {

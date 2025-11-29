@@ -140,6 +140,18 @@ export const exchangeCodeForTokens = async (code, redirectUri = null) => {
 
     if (!response.ok) {
       const error = await response.json();
+      console.error('Token exchange error details:', {
+        status: response.status,
+        error: error.error,
+        description: error.error_description,
+        requestParams: {
+          grant_type: 'authorization_code',
+          redirect_uri: callback,
+          client_id: KEYCLOAK_CLIENT_ID,
+          has_code: !!code,
+          has_verifier: !!codeVerifier,
+        }
+      });
       throw new Error(error.error_description || 'Token exchange failed');
     }
 

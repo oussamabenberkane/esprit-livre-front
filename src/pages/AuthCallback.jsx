@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { validateState, exchangeCodeForTokens } from '../services/oauthService';
-import { getAndClearRedirectUrl } from '../services/authService';
+import { getAndClearRedirectUrl, getCurrentUser } from '../services/authService';
 
 /**
  * OAuth Callback Handler Component
@@ -58,7 +58,15 @@ const AuthCallback = () => {
         }
 
         // Exchange authorization code for tokens
+        console.log('[AuthCallback] Exchanging authorization code for tokens...');
         await exchangeCodeForTokens(code);
+        console.log('[AuthCallback] Tokens successfully obtained');
+
+        // Sync user with backend database by calling /api/account
+        // This creates/updates the user record in the database
+        console.log('[AuthCallback] Syncing user with backend database...');
+        const userData = await getCurrentUser();
+        console.log('[AuthCallback] User synced successfully:', userData);
 
         // Get saved redirect URL or default to home
         const redirectUrl = getAndClearRedirectUrl() || '/';

@@ -73,22 +73,21 @@ front :
 - sign in button should disapear when the user is authenticated : done
 - add pack to cart : done
 - server side pagination for everything : done
+- filters n books (authors + language) + packs (kulesh) : done
 
 
 
-- filters n books (authors + language) + packs (kulesh) : 
 - filter by language for packs, do it like books : 
 - filter by many categories for packs, do it like books : 
 - implement search logic in filters : 
 - reset filters after removing filters manually : 
+- cablage n profile : 
 - proceed to checkout : 
 - cablage n orders : 
 - remove 1/8 articles ni : 
 - move the wilayas list to a separate file in utils with all ... :  
 - when selecting an author or a category from homepage it doesnt navugate to all books page with the targetted filter being already choosen : 
-
 - check i18n across all the pages -- books sections caroussel ni ulash :
-- email(verified or not) state with a popup if not --- neki ---- apres : 
 
 
 

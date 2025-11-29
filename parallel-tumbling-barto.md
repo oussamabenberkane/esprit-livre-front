@@ -1,5 +1,26 @@
 # Google Sign-In Integration with Keycloak - Implementation Plan
 
+## ✅ USER SYNCHRONIZATION UPDATE (2025-11-29)
+
+**RESOLVED:** Users are now automatically created/updated in the backend database on every login.
+
+**Implementation:**
+- Modified [AuthCallback.jsx:65-69](src/pages/AuthCallback.jsx#L65-L69) to call `getCurrentUser()` after token exchange
+- `getCurrentUser()` calls `/api/account` endpoint which triggers backend auto-sync
+- Backend [UserService.syncUserWithIdP()](../../el-api/src/main/java/com/oussamabenberkane/espritlivre/service/UserService.java#L101-L140) creates/updates user records
+- User profile data (firstName, lastName, email, imageUrl, etc.) synced from Keycloak to PostgreSQL database
+
+**Flow:**
+1. User authenticates with Google → Keycloak creates account
+2. Frontend receives tokens
+3. **Frontend calls `/api/account`** (NEW STEP)
+4. Backend auto-syncs user to database
+5. User can now place orders, save favorites, etc.
+
+---
+
+# Google Sign-In Integration with Keycloak - Implementation Plan
+
 ## Executive Summary
 
 Replace the temporary password-based authentication with real Google Sign-In using Keycloak as an identity broker. This implementation uses OAuth2 Authorization Code Flow with PKCE for security, removes password grant entirely, and keeps the implementation simple with frontend-only logout and no automatic token refresh.

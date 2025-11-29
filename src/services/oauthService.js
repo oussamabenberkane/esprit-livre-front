@@ -85,6 +85,7 @@ export const initiateGoogleLogin = async (redirectUri = null) => {
       code_challenge: challenge,
       code_challenge_method: 'S256',
       kc_idp_hint: 'google', // Skip Keycloak login page, go directly to Google
+      prompt: 'select_account'
     });
 
     const authUrl = `${AUTH_URL}?${params.toString()}`;

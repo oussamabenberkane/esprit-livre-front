@@ -215,7 +215,7 @@ export default function TeamPage() {
         </div>
       </motion.div>
 
-      {/* Mission Statement Section */}
+      {/* Mission Statement Section
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -230,7 +230,7 @@ export default function TeamPage() {
             {t('team.missionText')}
           </p>
         </div>
-      </motion.div>
+      </motion.div> */}
 
       <Footer />
     </div>

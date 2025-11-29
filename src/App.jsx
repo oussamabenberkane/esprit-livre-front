@@ -4,6 +4,7 @@ import AllBooks from './pages/AllBooks';
 import BookDetails from './pages/BookDetails';
 import CartCheckoutPage from './pages/CartCheckoutPage.jsx';
 import AuthPage from './pages/AuthPage.jsx';
+import AuthCallback from './pages/AuthCallback.jsx';
 import Profile from './pages/profile.jsx';
 import Orders from './components/profil/Orders.jsx';
 import Favorites from './components/profil/Favorites.jsx';
@@ -28,6 +29,9 @@ function App() {
 
           {/* auth page */}
           <Route path="/auth" element={<AuthPage />} />
+
+          {/* OAuth callback route */}
+          <Route path="/auth/callback" element={<AuthCallback />} />
 
           {/* All books catalog page */}
           <Route path="/allbooks" element={<AllBooks />} />

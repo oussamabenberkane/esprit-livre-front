@@ -1,44 +1,24 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import GoogleAuthButton from '../components/buttons/GoogleAuthButton';
-import { loginWithPassword, getAndClearRedirectUrl } from '../services/authService';
+import { initiateGoogleLogin } from '../services/oauthService';
 
 export default function SignIn({ onSwitchToSignUp }) {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Temporary password grant authentication
-  // TODO: Replace with Google OAuth later
-  const handleTemporarySignIn = async () => {
+  const handleGoogleSignIn = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      // Hardcoded credentials for testing (as requested)
-      await loginWithPassword('admin', 'admin');
-
-      console.log('Authentication successful!');
-
-      // Get saved redirect URL or default to home
-      const redirectUrl = getAndClearRedirectUrl() || '/';
-
-      // Navigate to saved page or home page after successful login
-      navigate(redirectUrl, { replace: true });
+      await initiateGoogleLogin();
+      // Note: This will redirect to Keycloak/Google, so code after won't execute
     } catch (err) {
       console.error('Sign in error:', err);
-      setError(err.message || 'Authentication failed. Please try again.');
-    } finally {
+      setError(err.message || 'Failed to start sign-in process. Please try again.');
       setLoading(false);
     }
-  };
-
-  const handleGoogleSignIn = () => {
-    console.log('Google Sign In clicked - Backend integration needed');
-    // This is where your backend partner will integrate the Google OAuth
-    // For now, use temporary password grant
-    handleTemporarySignIn();
   };
 
   return (
@@ -59,18 +39,18 @@ export default function SignIn({ onSwitchToSignUp }) {
             className="text-center mb-8"
           >
             <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-500 rounded-full mb-4">
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                className="h-8 w-8 text-white" 
-                fill="none" 
-                viewBox="0 0 24 24" 
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-8 w-8 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" 
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
                 />
               </svg>
             </div>

@@ -1,10 +1,24 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useState } from 'react';
 import GoogleAuthButton from '../components/buttons/GoogleAuthButton';
+import { initiateGoogleLogin } from '../services/oauthService';
 
 export default function SignUp({ onSwitchToSignIn }) {
-  const handleGoogleSignUp = () => {
-    console.log('Google Sign Up clicked - Backend integration needed');
-    // This is where your backend partner will integrate the Google OAuth
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleGoogleSignUp = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      await initiateGoogleLogin();
+      // Note: This will redirect to Keycloak/Google, so code after won't execute
+    } catch (err) {
+      console.error('Sign up error:', err);
+      setError(err.message || 'Failed to start sign-up process. Please try again.');
+      setLoading(false);
+    }
   };
 
   return (
@@ -54,6 +68,17 @@ export default function SignUp({ onSwitchToSignIn }) {
             <p className="text-gray-500 text-sm">Join us today! Sign up to get started</p>
           </motion.div>
 
+          {/* Error Message */}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg"
+            >
+              <p className="text-red-600 text-sm text-center">{error}</p>
+            </motion.div>
+          )}
+
           {/* Google Sign Up Button */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -61,9 +86,10 @@ export default function SignUp({ onSwitchToSignIn }) {
             transition={{ delay: 0.3, duration: 0.4 }}
             className="mb-6"
           >
-            <GoogleAuthButton 
-              text="Sign up with Google" 
+            <GoogleAuthButton
+              text={loading ? "Signing up..." : "Sign up with Google"}
               onClick={handleGoogleSignUp}
+              disabled={loading}
             />
           </motion.div>
 

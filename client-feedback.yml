@@ -72,8 +72,15 @@ front :
 - remove every interaction when floating cart badge is being dragged : done
 - sign in button should disapear when the user is authenticated : done
 - add pack to cart : done
+- server side pagination for everything : done
+
+
 
 - filters n books (authors + language) + packs (kulesh) : 
+- filter by language for packs, do it like books : 
+- filter by many categories for packs, do it like books : 
+- implement search logic in filters : 
+- reset filters after removing filters manually : 
 - proceed to checkout : 
 - cablage n orders : 
 - remove 1/8 articles ni : 

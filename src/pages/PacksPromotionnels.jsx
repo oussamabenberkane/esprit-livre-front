@@ -10,7 +10,8 @@ import CartConfirmationPopup from '../components/common/cartConfirmationPopup';
 import FloatingCartBadge from '../components/common/FloatingCartBadge';
 import PackCardSkeleton from '../components/common/skeletons/PackCardSkeleton';
 import { getAllBookPacks } from '../services/bookPackService';
-import { getBooksByIds } from '../services/books.service';
+import { fetchCategories } from '../services/tags.service';
+import { fetchTopAuthors } from '../services/authors.service';
 import { getBookCoverUrl, getBookPackCoverUrl } from '../utils/imageUtils';
 import useProgressiveRender from '../hooks/useProgressiveRender';
 import { useCart } from '../contexts/CartContext';
@@ -19,7 +20,6 @@ import { useCart } from '../contexts/CartContext';
 const PacksPromotionnels = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const [searchQuery, setSearchQuery] = useState('');
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedPack, setSelectedPack] = useState(null);
 
@@ -38,21 +38,14 @@ const PacksPromotionnels = () => {
     const [totalPages, setTotalPages] = useState(0);
     const packsPerPage = 12;
 
-    // Filter state
-    const [filters, setFilters] = useState({
-        price: { min: 0, max: 10000 },
-        categories: [],
-        authors: [],
-        titles: [],
-        languages: []
-    });
-
-    const handleSearch = (e) => {
-        setSearchQuery(e.target.value);
-    };
+    // Applied filters state (what's currently being used for API calls)
+    const [appliedFilters, setAppliedFilters] = useState(null);
 
     const [packBooks, setPackBooks] = useState([]);
-    const [allFilteredPacks, setAllFilteredPacks] = useState([]);
+
+    // Filter data state
+    const [categories, setCategories] = useState([]);
+    const [authors, setAuthors] = useState([]);
 
     // Progressive rendering for packs - show them one at a time
     const { visibleItems: visiblePacks, isRendering } = useProgressiveRender(
@@ -65,6 +58,25 @@ const PacksPromotionnels = () => {
     const totalItems = loading ? packsPerPage : packs.length;
     const skeletonCount = loading ? packsPerPage : Math.max(0, totalItems - visiblePacks.length);
 
+    // Fetch filter data (categories and authors) on mount
+    useEffect(() => {
+        const loadFilterData = async () => {
+            try {
+                const [categoriesData, authorsData] = await Promise.all([
+                    fetchCategories(100), // Fetch up to 100 categories
+                    fetchTopAuthors(100)  // Fetch up to 100 authors
+                ]);
+                setCategories(categoriesData);
+                setAuthors(authorsData);
+            } catch (err) {
+                console.error('Failed to fetch filter data:', err);
+                // Continue without filter data
+            }
+        };
+
+        loadFilterData();
+    }, []);
+
     // Fetch packs with filters
     useEffect(() => {
         const fetchPacks = async () => {
@@ -72,110 +84,80 @@ const PacksPromotionnels = () => {
                 setLoading(true);
                 setError(null);
 
-                // Build query params from filters
+                // Build query params from applied filters
                 const params = {
-                    page: 0,
-                    size: 100, // Get all packs for now
+                    page: currentPage - 1, // API uses 0-based indexing
+                    size: packsPerPage,
                 };
 
-                // Add price filters if they differ from defaults
-                if (filters.price.min > 0) {
-                    params.minPrice = filters.price.min;
-                }
-                if (filters.price.max < 10000) {
-                    params.maxPrice = filters.price.max;
-                }
+                // Add all server-side filters (backend supports all of these!)
+                if (appliedFilters) {
+                    // Add price filters if they differ from defaults
+                    if (appliedFilters.minPrice > 0) {
+                        params.minPrice = appliedFilters.minPrice;
+                    }
+                    if (appliedFilters.maxPrice < 10000) {
+                        params.maxPrice = appliedFilters.maxPrice;
+                    }
 
-                // Add search query
-                if (searchQuery) {
-                    params.search = searchQuery;
+                    // Add search query
+                    if (appliedFilters.search) {
+                        params.search = appliedFilters.search;
+                    }
+
+                    // Add author filter (backend supports this via 'author' parameter)
+                    if (appliedFilters.authors && appliedFilters.authors.length > 0) {
+                        params.author = appliedFilters.authors;
+                    }
+
+                    // Add category filters (backend supports multiple categoryId parameters)
+                    if (appliedFilters.categories && appliedFilters.categories.length > 0) {
+                        params.categories = appliedFilters.categories;
+                    }
+
+                    // Add language filter (backend supports this via 'language' parameter)
+                    if (appliedFilters.languages && appliedFilters.languages.length > 0) {
+                        params.language = appliedFilters.languages;
+                    }
                 }
 
                 // Fetch packs from API
                 const response = await getAllBookPacks(params);
                 const packsData = response.content || response;
 
-                // For each pack, fetch the full book details
-                const packsWithBooks = await Promise.all(
-                    packsData.map(async (pack) => {
-                        try {
-                            // Extract book IDs from the pack
-                            // Handle both array of IDs and array of objects with id property
-                            const bookIds = (pack.books || []).map(book =>
-                                typeof book === 'object' ? book.id : book
-                            );
+                // Process packs - books are already included in the response
+                const processedPacks = packsData.map(pack => {
+                    // Books are already populated by the backend
+                    const books = (pack.books || []).map(book => ({
+                        id: book.id,
+                        title: book.title,
+                        author: book.author?.name || 'Unknown',
+                        authorId: book.author?.id || null,
+                        price: parseFloat(book.price) || 0,
+                        coverImage: getBookCoverUrl(book.id)
+                    }));
 
-                            // Fetch all books for this pack
-                            const booksDetails = await getBooksByIds(bookIds);
+                    // Calculate original price (sum of all book prices)
+                    const originalPrice = books.reduce((sum, book) => {
+                        return sum + book.price;
+                    }, 0);
 
-                            // Calculate original price (sum of all book prices)
-                            const originalPrice = booksDetails.reduce((sum, book) => {
-                                return sum + (parseFloat(book.price) || 0);
-                            }, 0);
+                    return {
+                        ...pack,
+                        books: books,
+                        originalPrice: originalPrice,
+                        packPrice: parseFloat(pack.price) || 0,
+                        packImage: getBookPackCoverUrl(pack.id) || null
+                    };
+                });
 
-                            return {
-                                ...pack,
-                                books: booksDetails.map(book => ({
-                                    id: book.id,
-                                    title: book.title,
-                                    author: book.author?.name || 'Unknown',
-                                    price: parseFloat(book.price) || 0,
-                                    coverImage: getBookCoverUrl(book.id)
-                                })),
-                                originalPrice: originalPrice,
-                                packPrice: parseFloat(pack.price) || 0,
-                                packImage: getBookPackCoverUrl(pack.id) || null
-                            };
-                        } catch (err) {
-                            console.error(`Error fetching books for pack ${pack.id}:`, err);
-                            // Return pack with empty books array if fetch fails
-                            return {
-                                ...pack,
-                                books: [],
-                                originalPrice: parseFloat(pack.price) || 0,
-                                packPrice: parseFloat(pack.price) || 0,
-                                packImage: getBookPackCoverUrl(pack.id) || null
-                            };
-                        }
-                    })
-                );
-
-                // Apply client-side filtering for categories, authors, titles, languages
-                let filteredPacks = packsWithBooks;
-
-                // Filter by authors
-                if (filters.authors.length > 0) {
-                    filteredPacks = filteredPacks.filter(pack =>
-                        pack.books.some(book =>
-                            filters.authors.some(author =>
-                                book.author.toLowerCase().includes(author.toLowerCase())
-                            )
-                        )
-                    );
-                }
-
-                // Filter by titles
-                if (filters.titles.length > 0) {
-                    filteredPacks = filteredPacks.filter(pack =>
-                        pack.books.some(book =>
-                            filters.titles.some(title =>
-                                book.title.toLowerCase().includes(title.toLowerCase())
-                            )
-                        )
-                    );
-                }
-
-                // Store all filtered packs and calculate pagination
-                setAllFilteredPacks(filteredPacks);
-                setTotalPacks(filteredPacks.length);
-                setTotalPages(Math.ceil(filteredPacks.length / packsPerPage));
-
-                // Reset to page 1 when filters change
-                setCurrentPage(1);
+                // No client-side filtering needed - backend handles everything!
+                setPacks(processedPacks);
+                setTotalPacks(response.totalElements || processedPacks.length);
+                setTotalPages(response.totalPages || Math.ceil(processedPacks.length / packsPerPage));
             } catch (err) {
                 console.error('Error fetching packs:', err);
                 setError(err.message);
-                setAllFilteredPacks([]);
                 setPacks([]);
                 setTotalPacks(0);
                 setTotalPages(0);
@@ -185,14 +167,7 @@ const PacksPromotionnels = () => {
         };
 
         fetchPacks();
-    }, [filters, searchQuery, packsPerPage]);
-
-    // Update displayed packs when page changes
-    useEffect(() => {
-        const startIndex = (currentPage - 1) * packsPerPage;
-        const endIndex = startIndex + packsPerPage;
-        setPacks(allFilteredPacks.slice(startIndex, endIndex));
-    }, [currentPage, allFilteredPacks, packsPerPage]);
+    }, [appliedFilters, currentPage, packsPerPage]);
 
     const { addPackToCart } = useCart();
 
@@ -228,13 +203,20 @@ const PacksPromotionnels = () => {
         setIsPopupOpen(false);
     };
 
+    const handleApplyFilters = (filters) => {
+        console.log('Filters applied:', filters);
+        // Update applied filters state - this will trigger useEffect to fetch with new filters
+        setAppliedFilters(filters);
+        // Reset to page 1 when filters change
+        setCurrentPage(1);
+        // Scroll to top when filters are applied
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Navbar */}
-            <Navbar
-                searchPlaceholder={t('packsPage.searchPlaceholder')}
-                onSearch={handleSearch}
-            />
+            <Navbar />
 
             {/* Responsive spacing for navbar - taller on mobile due to two-line layout */}
             <div className="h-36"></div>
@@ -254,7 +236,11 @@ const PacksPromotionnels = () => {
 
                     {/* Filters Section */}
                     <div className="mb-8">
-                        <FiltersSection onFiltersChange={setFilters} />
+                        <FiltersSection
+                            onApplyFilters={handleApplyFilters}
+                            categoriesData={categories}
+                            authorsData={authors}
+                        />
                     </div>
 
                     {/* Results Section */}

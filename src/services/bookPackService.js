@@ -8,6 +8,10 @@ import { API_BASE_URL, getDefaultHeaders } from './apiConfig';
  * @param {string} params.search - Search query
  * @param {number} params.minPrice - Minimum price filter
  * @param {number} params.maxPrice - Maximum price filter
+ * @param {Array<number>|number} params.author - Author ID(s) filter
+ * @param {Array<number>} params.categories - Array of category IDs (similar to books service)
+ * @param {number} params.categoryId - Single category ID filter
+ * @param {Array<string>|string} params.language - Language filter(s)
  * @returns {Promise<Object>} Paginated book packs response
  */
 export const getAllBookPacks = async (params = {}) => {
@@ -22,6 +26,44 @@ export const getAllBookPacks = async (params = {}) => {
     if (params.search) queryParams.append('search', params.search);
     if (params.minPrice !== undefined) queryParams.append('minPrice', params.minPrice);
     if (params.maxPrice !== undefined) queryParams.append('maxPrice', params.maxPrice);
+
+    // Add category filters (API accepts multiple categoryId params) - matching books service pattern
+    if (params.categories && params.categories.length > 0) {
+      params.categories.forEach(category => {
+        // Ensure we're appending the ID as a string, not an object
+        const categoryId = typeof category === 'object' ? category.id : category;
+        if (categoryId) {
+          queryParams.append('categoryId', categoryId.toString());
+        }
+      });
+    }
+
+    // Add single categoryId filter if provided (for backward compatibility)
+    if (params.categoryId !== undefined) {
+      queryParams.append('categoryId', params.categoryId.toString());
+    }
+
+    // Add author filter(s) - support both single value and array
+    if (params.author) {
+      if (Array.isArray(params.author)) {
+        params.author.forEach(authorId => {
+          queryParams.append('author', authorId.toString());
+        });
+      } else {
+        queryParams.append('author', params.author.toString());
+      }
+    }
+
+    // Add language filter(s) - support both single value and array
+    if (params.language) {
+      if (Array.isArray(params.language)) {
+        params.language.forEach(lang => {
+          queryParams.append('language', lang);
+        });
+      } else {
+        queryParams.append('language', params.language);
+      }
+    }
 
     const url = `${API_BASE_URL}/api/book-packs${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
 

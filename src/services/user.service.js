@@ -42,7 +42,7 @@ export const getUserProfile = async () => {
 /**
  * Update current user's profile
  * @param {Object} profileData - Updated profile data
- * @returns {Promise<Object>} Updated profile
+ * @returns {Promise<Object|null>} Updated profile or null if no content
  */
 export const updateUserProfile = async (profileData) => {
   try {
@@ -59,7 +59,15 @@ export const updateUserProfile = async (profileData) => {
       throw new Error(`Failed to update profile: ${response.statusText}`);
     }
 
-    return await response.json();
+    // Check if response has content before parsing JSON
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      const text = await response.text();
+      return text ? JSON.parse(text) : null;
+    }
+
+    // Return null for successful responses with no content (204, or empty body)
+    return null;
   } catch (error) {
     console.error('Error updating user profile:', error);
     throw error;

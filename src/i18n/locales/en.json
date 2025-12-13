@@ -340,7 +340,11 @@
     "favoritesSaved": "Saved books",
     "myOrders": "My Orders",
     "ordersHistory": "Order history",
-    "logout": "Log out"
+    "saveChanges": "Save Changes",
+    "saving": "Saving...",
+    "logout": "Log out",
+    "updateSuccess": "Profile updated successfully!",
+    "updateError": "Failed to update profile. Please try again."
   },
   "favorites": {
     "title": "My Favorites",

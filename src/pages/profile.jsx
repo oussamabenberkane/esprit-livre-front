@@ -1,13 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Edit2, Heart, Package, LogOut, User, Home, MapPin, ChevronDown, Truck, X, Search } from 'lucide-react';
+import { ArrowLeft, Edit2, Heart, Package, LogOut, Home, MapPin, ChevronDown, Truck, X, Search } from 'lucide-react';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import { getUserProfile, updateUserProfile } from '../services/user.service';
-import { isAuthenticated, logout as authLogout, getCurrentUser } from '../services/authService';
+import { isAuthenticated, logout as authLogout } from '../services/authService';
 
 // Algerian Wilaya data
 const wilayaData = {
@@ -29,7 +29,6 @@ export default function Profile() {
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
 
-  const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [isEditingPhone, setIsEditingPhone] = useState(false);
   const [availableCities, setAvailableCities] = useState([]);
   const [shippingPreference, setShippingPreference] = useState("home"); // "home" or "pickup"
@@ -54,7 +53,7 @@ export default function Profile() {
     const fetchProfile = async () => {
       // Check if user is authenticated
       if (!isAuthenticated()) {
-        navigate('/login', { state: { from: '/profile' } });
+        navigate('/auth', { state: { from: '/profile' } });
         return;
       }
 
@@ -65,13 +64,20 @@ export default function Profile() {
         // Fetch user profile from API
         const profile = await getUserProfile();
 
-        // Map API response to userData state
+        // Store the full profile data matching API response structure
         setUserData({
-          name: `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || 'User',
-          email: profile.user?.email || '',
+          id: profile.id,
+          firstName: profile.firstName || '',
+          lastName: profile.lastName || '',
+          email: profile.email || '',
+          imageUrl: profile.imageUrl || null,
           phone: profile.phone || '',
           wilaya: profile.wilaya || '',
           city: profile.city || '',
+          streetAddress: profile.streetAddress || '',
+          defaultShippingMethod: profile.defaultShippingMethod || null,
+          defaultShippingProvider: profile.defaultShippingProvider || null,
+          createdAt: profile.createdAt || null,
         });
 
         // Set available cities based on wilaya
@@ -79,7 +85,7 @@ export default function Profile() {
           setAvailableCities(wilayaData[profile.wilaya]);
         }
 
-        // Set shipping preferences
+        // Set shipping preferences from stored userData
         if (profile.defaultShippingMethod) {
           setShippingPreference(
             profile.defaultShippingMethod === 'HOME_DELIVERY' ? 'home' : 'pickup'
@@ -108,7 +114,7 @@ export default function Profile() {
         // If unauthorized, redirect to login
         if (err.message.includes('Unauthorized')) {
           authLogout();
-          navigate('/login', { state: { from: '/profile' } });
+          navigate('/auth', { state: { from: '/profile' } });
         }
       }
     };
@@ -175,10 +181,6 @@ export default function Profile() {
     navigate(-1);
   };
 
-  const handleEditEmail = () => {
-    setIsEditingEmail(!isEditingEmail);
-  };
-
   const handleEditPhone = () => {
     setIsEditingPhone(!isEditingPhone);
   };
@@ -199,6 +201,17 @@ export default function Profile() {
   const handleSaveProfile = async () => {
     if (!userData) return;
 
+    // Validate required fields
+    if (!userData.lastName || !userData.lastName.trim()) {
+      alert('Last name is required');
+      return;
+    }
+
+    if (!userData.phone || !userData.phone.trim()) {
+      alert('Phone number is required');
+      return;
+    }
+
     try {
       setSaving(true);
       setError(null);
@@ -209,29 +222,34 @@ export default function Profile() {
         'ZRexpress': 'ZR',
       };
 
-      // Prepare profile update data
+      // Prepare profile update data matching the API structure
       const updateData = {
+        id: userData.id,
+        firstName: userData.firstName || null,
+        lastName: userData.lastName,
+        email: userData.email,
+        imageUrl: userData.imageUrl,
         phone: userData.phone,
-        wilaya: userData.wilaya,
-        city: userData.city,
+        wilaya: userData.wilaya || null,
+        city: userData.city || null,
         streetAddress: homeAddress || null,
         defaultShippingMethod: shippingPreference === 'home' ? 'HOME_DELIVERY' : 'SHIPPING_PROVIDER',
-        defaultShippingProvider: pickupProvider ? providerMap[pickupProvider] : null,
+        defaultShippingProvider: shippingPreference === 'pickup' && pickupProvider ? providerMap[pickupProvider] : null,
+        createdAt: userData.createdAt,
       };
 
       await updateUserProfile(updateData);
 
       // Reset editing states
-      setIsEditingEmail(false);
       setIsEditingPhone(false);
 
       setSaving(false);
-      alert('Profile updated successfully!');
+      alert(t('profile.updateSuccess'));
     } catch (err) {
       console.error('Error updating profile:', err);
       setError(err.message || 'Failed to update profile');
       setSaving(false);
-      alert('Failed to update profile. Please try again.');
+      alert(t('profile.updateError'));
     }
   };
 
@@ -312,12 +330,12 @@ export default function Profile() {
           <div className="flex items-center gap-4">
             {/* Avatar */}
             <div className="w-20 h-20 rounded-full bg-white text-blue-600 flex items-center justify-center border-4 border-blue-400 shadow-lg">
-              <span className="text-2xl">{getInitials(userData.name)}</span>
+              <span className="text-2xl">{getInitials(`${userData.firstName} ${userData.lastName}`)}</span>
             </div>
 
             {/* Name */}
             <div>
-              <h1 className="text-2xl mb-1">{userData.name}</h1>
+              <h1 className="text-2xl mb-1">{`${userData.firstName} ${userData.lastName}`.trim()}</h1>
               <p className="text-blue-100 text-sm">{t('profile.memberSince')}</p>
             </div>
           </div>
@@ -330,7 +348,25 @@ export default function Profile() {
         <div className="bg-white rounded-xl shadow-md p-6 mb-4">
           <h2 className="text-lg text-gray-800 mb-4">{t('profile.personalInfo')}</h2>
 
-          {/* Phone */}
+          {/* First Name - Read Only */}
+          <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+            <label className="block text-sm text-gray-600 mb-2">First Name</label>
+            <p className="text-gray-800">{userData.firstName || '-'}</p>
+          </div>
+
+          {/* Last Name - Read Only */}
+          <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+            <label className="block text-sm text-gray-600 mb-2">Last Name</label>
+            <p className="text-gray-800">{userData.lastName || '-'}</p>
+          </div>
+
+          {/* Email - Read Only */}
+          <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+            <label className="block text-sm text-gray-600 mb-2">{t('profile.email')}</label>
+            <p className="text-gray-800">{userData.email}</p>
+          </div>
+
+          {/* Phone - Editable */}
           <div className="mb-4 p-4 bg-gray-50 rounded-lg">
             <div className="flex items-center justify-between mb-2">
               <label className="text-sm text-gray-600">{t('profile.phone')}</label>
@@ -350,35 +386,11 @@ export default function Profile() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
               />
             ) : (
-              <p className="text-gray-800">{userData.phone}</p>
+              <p className="text-gray-800">{userData.phone || '-'}</p>
             )}
           </div>
 
-          {/* Email */}
-          <div className="mb-4 p-4 bg-gray-50 rounded-lg">
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-sm text-gray-600">{t('profile.email')}</label>
-              <button
-                onClick={handleEditEmail}
-                className="flex items-center gap-1 text-blue-600 hover:text-blue-700 transition-colors text-sm"
-              >
-                <Edit2 className="w-4 h-4" />
-                <span>{t('profile.edit')}</span>
-              </button>
-            </div>
-            {isEditingEmail ? (
-              <input
-                type="email"
-                value={userData.email}
-                onChange={(e) => setUserData({ ...userData, email: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-              />
-            ) : (
-              <p className="text-gray-800">{userData.email}</p>
-            )}
-          </div>
 
-          
 
           {/* Location */}
           <div className="space-y-4">
@@ -816,7 +828,7 @@ export default function Profile() {
         </div>
 
         {/* Action Buttons */}
-        <div className="mt-8 flex justify-between items-center gap-4">
+        <div className="mt-8 mb-12 flex justify-between items-center gap-4">
           <button
             onClick={handleSaveProfile}
             disabled={saving}
@@ -825,12 +837,12 @@ export default function Profile() {
             {saving ? (
               <>
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                <span>Saving...</span>
+                <span>{t('profile.saving')}</span>
               </>
             ) : (
               <>
                 <Edit2 className="w-5 h-5" />
-                <span>{t('profile.saveChanges') || 'Save Changes'}</span>
+                <span>{t('profile.saveChanges')}</span>
               </>
             )}
           </button>

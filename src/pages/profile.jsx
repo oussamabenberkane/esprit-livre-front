@@ -8,6 +8,7 @@ import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import { getUserProfile, updateUserProfile } from '../services/user.service';
 import { isAuthenticated, logout as authLogout } from '../services/authService';
+import { formatMemberSinceDate } from '../utils/dateUtils';
 
 // Algerian Wilaya data
 const wilayaData = {
@@ -22,7 +23,7 @@ const wilayaData = {
 };
 
 export default function Profile() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -77,7 +78,7 @@ export default function Profile() {
           streetAddress: profile.streetAddress || '',
           defaultShippingMethod: profile.defaultShippingMethod || null,
           defaultShippingProvider: profile.defaultShippingProvider || null,
-          createdAt: profile.createdAt || null,
+          createdDate: profile.createdDate || null,
         });
 
         // Set available cities based on wilaya
@@ -336,7 +337,7 @@ export default function Profile() {
             {/* Name */}
             <div>
               <h1 className="text-2xl mb-1">{`${userData.firstName} ${userData.lastName}`.trim()}</h1>
-              <p className="text-blue-100 text-sm">{t('profile.memberSince')}</p>
+              <p className="text-blue-100 text-sm">{t('profile.memberSince')} {formatMemberSinceDate(userData.createdDate, i18n.language)}</p>
             </div>
           </div>
         </div>

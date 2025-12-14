@@ -235,8 +235,7 @@ export default function Profile() {
         city: userData.city || null,
         streetAddress: homeAddress || null,
         defaultShippingMethod: shippingPreference === 'home' ? 'HOME_DELIVERY' : 'SHIPPING_PROVIDER',
-        defaultShippingProvider: shippingPreference === 'pickup' && pickupProvider ? providerMap[pickupProvider] : null,
-        createdAt: userData.createdAt,
+        defaultShippingProvider: shippingPreference === 'pickup' && pickupProvider ? providerMap[pickupProvider] : null
       };
 
       await updateUserProfile(updateData);

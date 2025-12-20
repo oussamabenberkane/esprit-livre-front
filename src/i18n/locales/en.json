@@ -384,9 +384,11 @@
     "viewDetails": "View details",
     "hideDetails": "Hide",
     "currency": "DZD",
+    "loading": "Loading your orders...",
     "emptyTitle": "No orders",
     "emptyMessage": "You haven't placed any orders yet 📦",
     "startShopping": "Start shopping",
+    "errorTitle": "Unable to Load Orders",
     "status": {
       "pending": "Pending",
       "confirmed": "Confirmed",

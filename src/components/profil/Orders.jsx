@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Package, Calendar, Eye } from 'lucide-react';
+import { ArrowLeft, Package, Calendar, Eye, PackageOpen } from 'lucide-react';
 import { useScrollToTop } from '../../hooks/useScrollToTop';
 import Navbar from '../common/Navbar';
 import Footer from '../common/Footer';
 import { getLanguageCode, getFullLanguageName } from '../../data/booksData';
 import { getUserOrders } from '../../services/order.service';
 import { isAuthenticated } from '../../services/authService';
-import { getBookCoverUrl } from '../../utils/imageUtils';
+import { getBookCoverUrl, getBookPackCoverUrl } from '../../utils/imageUtils';
 
 /**
  * Format date for display
@@ -36,14 +36,31 @@ const transformOrder = (apiOrder) => {
     date: formatOrderDate(apiOrder.createdAt),
     status: apiOrder.status?.toLowerCase() || 'pending',
     total: apiOrder.totalAmount || 0,
-    items: apiOrder.orderItems?.map(item => ({
-      title: item.book?.title || 'Unknown',
-      author: item.book?.author?.name || 'Unknown Author',
-      image: getBookCoverUrl(item.book?.id) || 'https://via.placeholder.com/200x300?text=No+Image',
-      language: item.book?.language || null,
-      quantity: item.quantity || 1,
-      unitPrice: item.unitPrice || 0
-    })) || []
+    shippingCost: apiOrder.shippingCost || 0,
+    items: apiOrder.orderItems?.map(item => {
+      // Determine if this is a book or a pack
+      const isBook = item.bookId != null;
+      const isPack = item.bookPackId != null;
+
+      return {
+        // Item identification
+        id: isBook ? item.bookId : item.bookPackId,
+        type: isBook ? 'book' : 'pack',
+
+        // Common fields
+        title: isBook ? item.bookTitle : item.bookPackTitle,
+        author: isBook ? item.bookAuthor : null,
+        image: isBook
+          ? getBookCoverUrl(item.bookId)
+          : (isPack ? getBookPackCoverUrl(item.bookPackId) : 'https://via.placeholder.com/200x300?text=No+Image'),
+        quantity: item.quantity || 1,
+        unitPrice: item.unitPrice || 0,
+        totalPrice: item.totalPrice || 0,
+
+        // Book-specific (will be null for packs)
+        language: null // Language info not available in API response
+      };
+    }) || []
   };
 };
 
@@ -108,12 +125,17 @@ function OrderCard({ order }) {
       {/* Order Items Preview */}
       <div className="flex gap-2 mb-3 overflow-x-auto">
         {order.items.map((item, index) => (
-          <div key={index} className="flex-shrink-0">
+          <div key={index} className="flex-shrink-0 relative">
             <img
               src={item.image}
               alt={item.title}
               className="w-16 h-20 object-cover rounded"
             />
+            {item.type === 'pack' && (
+              <div className="absolute -top-1 -right-1 bg-purple-500 rounded-full p-0.5">
+                <PackageOpen className="w-3 h-3 text-white" />
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -123,14 +145,33 @@ function OrderCard({ order }) {
         <div className="border-t border-gray-200 pt-3 mb-3 space-y-2">
           {order.items.map((item, index) => (
             <div key={index} className="flex items-center gap-3">
-              <img
-                src={item.image}
-                alt={item.title}
-                className="w-12 h-16 object-cover rounded"
-              />
+              <div className="relative">
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-12 h-16 object-cover rounded"
+                />
+                {item.type === 'pack' && (
+                  <div className="absolute -top-1 -right-1 bg-purple-500 rounded-full p-0.5">
+                    <PackageOpen className="w-3 h-3 text-white" />
+                  </div>
+                )}
+              </div>
               <div className="flex-1 min-w-0">
-                <h4 className="text-sm text-gray-800 line-clamp-1">{item.title}</h4>
-                <p className="text-xs text-gray-500">{item.author}</p>
+                <div className="flex items-center gap-2">
+                  <h4 className="text-sm text-gray-800 line-clamp-1">{item.title}</h4>
+                  {item.type === 'pack' && (
+                    <span className="px-1.5 py-0.5 bg-purple-100 text-purple-700 text-xs font-semibold rounded">
+                      Pack
+                    </span>
+                  )}
+                </div>
+                {item.author && <p className="text-xs text-gray-500">{item.author}</p>}
+                {item.quantity > 1 && (
+                  <p className="text-xs text-gray-600 mt-0.5">
+                    {t('cart.quantity')}: {item.quantity}
+                  </p>
+                )}
                 {item.language && (
                   <div className="mt-1">
                     <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded">

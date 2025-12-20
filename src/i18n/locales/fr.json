@@ -384,9 +384,11 @@
     "viewDetails": "Voir les détails",
     "hideDetails": "Masquer",
     "currency": "DZD",
+    "loading": "Chargement de vos commandes...",
     "emptyTitle": "Aucune commande",
     "emptyMessage": "Vous n'avez pas encore passé de commande 📦",
     "startShopping": "Commencer mes achats",
+    "errorTitle": "Impossible de charger les commandes",
     "status": {
       "pending": "En attente",
       "confirmed": "Confirmée",

@@ -5,7 +5,6 @@ import { API_BASE_URL } from './apiConfig';
 
 // Token storage keys
 const ACCESS_TOKEN_KEY = 'el_access_token';
-const REFRESH_TOKEN_KEY = 'el_refresh_token';
 const ID_TOKEN_KEY = 'el_id_token';
 const REDIRECT_URL_KEY = 'el_redirect_url';
 
@@ -16,7 +15,6 @@ const REDIRECT_URL_KEY = 'el_redirect_url';
  */
 export const logout = () => {
   localStorage.removeItem(ACCESS_TOKEN_KEY);
-  localStorage.removeItem(REFRESH_TOKEN_KEY);
   localStorage.removeItem(ID_TOKEN_KEY);
 
   // Dispatch custom event to notify components of auth change
@@ -29,14 +27,6 @@ export const logout = () => {
  */
 export const getAccessToken = () => {
   return localStorage.getItem(ACCESS_TOKEN_KEY);
-};
-
-/**
- * Get stored refresh token
- * @returns {string|null}
- */
-export const getRefreshToken = () => {
-  return localStorage.getItem(REFRESH_TOKEN_KEY);
 };
 
 /**

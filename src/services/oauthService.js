@@ -14,7 +14,6 @@ const STATE_KEY = 'oauth_state';
 
 // LocalStorage keys for tokens (matching authService.js)
 const ACCESS_TOKEN_KEY = 'el_access_token';
-const REFRESH_TOKEN_KEY = 'el_refresh_token';
 const ID_TOKEN_KEY = 'el_id_token';
 
 /**
@@ -162,11 +161,8 @@ export const exchangeCodeForTokens = async (code, redirectUri = null) => {
     sessionStorage.removeItem(CODE_VERIFIER_KEY);
     sessionStorage.removeItem(STATE_KEY);
 
-    // Store tokens in localStorage
+    // Store tokens in localStorage (no refresh token - using long-lived access token)
     localStorage.setItem(ACCESS_TOKEN_KEY, tokens.access_token);
-    if (tokens.refresh_token) {
-      localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refresh_token);
-    }
     if (tokens.id_token) {
       localStorage.setItem(ID_TOKEN_KEY, tokens.id_token);
     }
@@ -180,48 +176,6 @@ export const exchangeCodeForTokens = async (code, redirectUri = null) => {
     // Clear PKCE parameters on error
     sessionStorage.removeItem(CODE_VERIFIER_KEY);
     sessionStorage.removeItem(STATE_KEY);
-    throw error;
-  }
-};
-
-/**
- * Refresh access token using refresh token
- * @param {string} refreshToken - Refresh token
- * @returns {Promise<{access_token: string, refresh_token: string, id_token: string}>}
- */
-export const refreshAccessToken = async (refreshToken) => {
-  try {
-    const response = await fetch(TOKEN_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: refreshToken,
-        client_id: KEYCLOAK_CLIENT_ID,
-      }),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error_description || 'Token refresh failed');
-    }
-
-    const tokens = await response.json();
-
-    // Update stored tokens
-    localStorage.setItem(ACCESS_TOKEN_KEY, tokens.access_token);
-    if (tokens.refresh_token) {
-      localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refresh_token);
-    }
-    if (tokens.id_token) {
-      localStorage.setItem(ID_TOKEN_KEY, tokens.id_token);
-    }
-
-    return tokens;
-  } catch (error) {
-    console.error('Token refresh error:', error);
     throw error;
   }
 };
@@ -244,7 +198,6 @@ export const logoutFromKeycloak = (idToken, redirectUri = null) => {
 
   // Clear all tokens before redirecting
   localStorage.removeItem(ACCESS_TOKEN_KEY);
-  localStorage.removeItem(REFRESH_TOKEN_KEY);
   localStorage.removeItem(ID_TOKEN_KEY);
 
   // Dispatch custom event to notify components

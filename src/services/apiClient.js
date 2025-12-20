@@ -1,6 +1,6 @@
 // API Client - Axios-like wrapper for fetch API
 import { API_BASE_URL, getDefaultHeaders } from './apiConfig';
-import { getAccessToken } from './authService';
+import { getAccessToken, logout, saveRedirectUrl } from './authService';
 
 /**
  * Get authenticated headers with Bearer token
@@ -35,6 +35,27 @@ const handleResponse = async (response) => {
   }
 
   if (!response.ok) {
+    // Handle 401 Unauthorized - session expired, redirect to login
+    if (response.status === 401) {
+      console.warn('Session expired (401 Unauthorized). Redirecting to login...');
+
+      // Save current URL to redirect back after login
+      saveRedirectUrl(window.location.pathname + window.location.search);
+
+      // Clear auth state
+      logout();
+
+      // Redirect to auth page
+      window.location.href = '/auth';
+
+      // Throw error to stop execution
+      const error = new Error('Session expired. Redirecting to login...');
+      error.status = response.status;
+      error.data = data;
+      throw error;
+    }
+
+    // For other errors, throw immediately
     const error = new Error(data.message || data.title || 'API request failed');
     error.status = response.status;
     error.data = data;

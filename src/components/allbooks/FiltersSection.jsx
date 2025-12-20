@@ -472,13 +472,39 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
 
   const handlePriceInputBlur = (type) => {
     if (filters.price[type] === '') {
-      setFilters(prev => ({
-        ...prev,
-        price: {
-          ...prev.price,
-          [type]: type === 'min' ? 0 : 10000
+      setFilters(prev => {
+        const newFilters = {
+          ...prev,
+          price: {
+            ...prev.price,
+            [type]: type === 'min' ? 0 : 10000
+          }
+        };
+
+        // Check if all filters are now inactive after this change
+        const allInactive =
+          newFilters.price.min === 0 &&
+          newFilters.price.max === 10000 &&
+          newFilters.categories.length === 0 &&
+          newFilters.authors.length === 0 &&
+          newFilters.languages.length === 0;
+
+        // If all filters are now inactive, trigger reset
+        if (allInactive && onApplyFilters) {
+          setTimeout(() => {
+            onApplyFilters({
+              categories: [],
+              authors: [],
+              languages: [],
+              minPrice: 0,
+              maxPrice: 10000,
+              ...(initialFilters && initialFilters.search ? { search: initialFilters.search } : {})
+            });
+          }, 0);
         }
-      }));
+
+        return newFilters;
+      });
     }
   };
 
@@ -487,13 +513,39 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
     const maxValue = filters.price.max || 10000;
     // Min should stop 50 before max (one step before)
     const clampedValue = Math.min(value, maxValue - 50);
-    setFilters(prev => ({
-      ...prev,
-      price: {
-        ...prev.price,
-        min: clampedValue
+    setFilters(prev => {
+      const newFilters = {
+        ...prev,
+        price: {
+          ...prev.price,
+          min: clampedValue
+        }
+      };
+
+      // Check if all filters are now inactive after this change
+      const allInactive =
+        newFilters.price.min === 0 &&
+        newFilters.price.max === 10000 &&
+        newFilters.categories.length === 0 &&
+        newFilters.authors.length === 0 &&
+        newFilters.languages.length === 0;
+
+      // If all filters are now inactive, trigger reset
+      if (allInactive && onApplyFilters) {
+        setTimeout(() => {
+          onApplyFilters({
+            categories: [],
+            authors: [],
+            languages: [],
+            minPrice: 0,
+            maxPrice: 10000,
+            ...(initialFilters && initialFilters.search ? { search: initialFilters.search } : {})
+          });
+        }, 0);
       }
-    }));
+
+      return newFilters;
+    });
   };
 
   const handleMaxSliderChange = (e) => {
@@ -501,13 +553,39 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
     const minValue = filters.price.min || 0;
     // Max should stop 50 after min (one step after)
     const clampedValue = Math.max(value, minValue + 50);
-    setFilters(prev => ({
-      ...prev,
-      price: {
-        ...prev.price,
-        max: clampedValue
+    setFilters(prev => {
+      const newFilters = {
+        ...prev,
+        price: {
+          ...prev.price,
+          max: clampedValue
+        }
+      };
+
+      // Check if all filters are now inactive after this change
+      const allInactive =
+        newFilters.price.min === 0 &&
+        newFilters.price.max === 10000 &&
+        newFilters.categories.length === 0 &&
+        newFilters.authors.length === 0 &&
+        newFilters.languages.length === 0;
+
+      // If all filters are now inactive, trigger reset
+      if (allInactive && onApplyFilters) {
+        setTimeout(() => {
+          onApplyFilters({
+            categories: [],
+            authors: [],
+            languages: [],
+            minPrice: 0,
+            maxPrice: 10000,
+            ...(initialFilters && initialFilters.search ? { search: initialFilters.search } : {})
+          });
+        }, 0);
       }
-    }));
+
+      return newFilters;
+    });
   };
 
   const addFilterItem = (type, item) => {
@@ -521,12 +599,38 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
   };
 
   const removeFilterItem = (type, item) => {
-    setFilters(prev => ({
-      ...prev,
-      [type]: prev[type].filter(i =>
-        typeof i === 'object' ? i.id !== item.id : i !== item
-      )
-    }));
+    setFilters(prev => {
+      const newFilters = {
+        ...prev,
+        [type]: prev[type].filter(i =>
+          typeof i === 'object' ? i.id !== item.id : i !== item
+        )
+      };
+
+      // Check if all filters are now inactive after this removal
+      const allInactive =
+        newFilters.price.min === 0 &&
+        newFilters.price.max === 10000 &&
+        newFilters.categories.length === 0 &&
+        newFilters.authors.length === 0 &&
+        newFilters.languages.length === 0;
+
+      // If all filters are now inactive, trigger reset
+      if (allInactive && onApplyFilters) {
+        setTimeout(() => {
+          onApplyFilters({
+            categories: [],
+            authors: [],
+            languages: [],
+            minPrice: 0,
+            maxPrice: 10000,
+            ...(initialFilters && initialFilters.search ? { search: initialFilters.search } : {})
+          });
+        }, 0);
+      }
+
+      return newFilters;
+    });
   };
 
   const hasActiveFilters = () => {

@@ -14,23 +14,12 @@ import { buildOrderPayload, createOrder } from '../services/order.service';
 import { getUserProfile } from '../services/user.service';
 import { isAuthenticated } from '../services/authService';
 import { PROVIDER_API_TO_DISPLAY } from '../constants/orderEnums';
+import wilayaData from '../utils/wilayaData';
 
 // Skeleton Loader Component
 const SkeletonLoader = () => (
   <div className="animate-pulse bg-gray-200 rounded h-11 w-full"></div>
 );
-
-// Algerian Wilaya data (sample)
-const wilayaData = {
-  "Alger": ["Alger Centre", "Bab El Oued", "Hussein Dey", "Kouba", "Dar El Beida"],
-  "Oran": ["Oran Centre", "Es Senia", "Bir El Djir", "Arzew"],
-  "Constantine": ["Constantine Centre", "El Khroub", "Ain Smara", "Didouche Mourad"],
-  "Annaba": ["Annaba Centre", "El Bouni", "Berrahal", "Seraidi"],
-  "Blida": ["Blida Centre", "Boufarik", "Bougara", "Larbaâ"],
-  "Tizi Ouzou": ["Tizi Ouzou Centre", "Azazga", "Draa El Mizan", "Tigzirt"],
-  "Sétif": ["Sétif Centre", "El Eulma", "Ain Arnat", "Bougaa"],
-  "Batna": ["Batna Centre", "Barika", "Arris", "Merouana"],
-};
 
 // CartItem Component
 function CartItem({ item, onUpdateQuantity, onRemove }) {

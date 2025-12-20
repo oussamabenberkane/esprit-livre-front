@@ -9,18 +9,7 @@ import Footer from '../components/common/Footer';
 import { getUserProfile, updateUserProfile } from '../services/user.service';
 import { isAuthenticated, logout as authLogout } from '../services/authService';
 import { formatMemberSinceDate } from '../utils/dateUtils';
-
-// Algerian Wilaya data
-const wilayaData = {
-  "Alger": ["Alger Centre", "Bab El Oued", "Hussein Dey", "Kouba", "Dar El Beida"],
-  "Oran": ["Oran Centre", "Es Senia", "Bir El Djir", "Arzew"],
-  "Constantine": ["Constantine Centre", "El Khroub", "Ain Smara", "Didouche Mourad"],
-  "Annaba": ["Annaba Centre", "El Bouni", "Berrahal", "Seraidi"],
-  "Blida": ["Blida Centre", "Boufarik", "Bougara", "Larbaâ"],
-  "Tizi Ouzou": ["Tizi Ouzou Centre", "Azazga", "Draa El Mizan", "Tigzirt"],
-  "Sétif": ["Sétif Centre", "El Eulma", "Ain Arnat", "Bougaa"],
-  "Batna": ["Batna Centre", "Barika", "Arris", "Merouana"],
-};
+import wilayaData from '../utils/wilayaData';
 
 export default function Profile() {
   const { t, i18n } = useTranslation();

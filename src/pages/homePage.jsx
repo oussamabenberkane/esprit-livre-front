@@ -233,13 +233,13 @@ const HomePage = () => {
     const [orderUniqueId, setOrderUniqueId] = useState('');
 
     // Navigation handler for categories
-    const handleCategoryClick = (categoryTitle) => {
-        navigate(`/allbooks?category=${encodeURIComponent(categoryTitle)}`);
+    const handleCategoryClick = (categoryId, categoryName) => {
+        navigate(`/allbooks?categoryId=${encodeURIComponent(categoryId)}&categoryName=${encodeURIComponent(categoryName)}`);
     };
 
     // Navigation handler for authors
-    const handleAuthorClick = (authorName) => {
-        navigate(`/allbooks?author=${encodeURIComponent(authorName)}`);
+    const handleAuthorClick = (authorId, authorName) => {
+        navigate(`/allbooks?authorId=${encodeURIComponent(authorId)}&authorName=${encodeURIComponent(authorName)}`);
     };
 
     // Add state for categories section
@@ -679,7 +679,7 @@ const HomePage = () => {
                                     <div
                                         key={category.id}
                                         className="flex-shrink-0 snap-start cursor-pointer"
-                                        onClick={() => handleCategoryClick(category.nameFr || category.nameEn)}
+                                        onClick={() => handleCategoryClick(category.id, category.nameFr || category.nameEn)}
                                     >
                                         <CategoryCard
                                             categoryId={category.id}
@@ -827,7 +827,7 @@ const HomePage = () => {
                                     <div
                                         key={author.id}
                                         className="flex-shrink-0 snap-start cursor-pointer"
-                                        onClick={() => handleAuthorClick(author.name)}
+                                        onClick={() => handleAuthorClick(author.id, author.name)}
                                     >
                                         <AuthorComponent
                                             authorId={author.id}

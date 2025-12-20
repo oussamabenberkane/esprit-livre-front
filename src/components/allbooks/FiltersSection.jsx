@@ -345,18 +345,67 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
 
       // Only update filters if we have mapped data
       if (Object.keys(mappedFilters).length > 0) {
-        setFilters(prev => ({
-          ...prev,
-          ...mappedFilters
-        }));
-      }
+        setFilters(prev => {
+          const newFilters = {
+            ...prev,
+            ...mappedFilters
+          };
 
-      // Auto-apply filters when coming from URL (e.g., from search)
-      // This includes search-only cases (no categories/authors)
-      if (initialFilters.search || initialFilters.categories || initialFilters.authors) {
-        // Small delay to ensure filters are set before applying
+          // Auto-apply filters when coming from URL (e.g., from search)
+          // This includes search-only cases (no categories/authors)
+          if (initialFilters.search || initialFilters.categories || initialFilters.authors) {
+            // Apply filters immediately with the new filter state
+            setTimeout(() => {
+              // Extract values from filter objects
+              const extractValues = (items, type) => {
+                if (!items || items.length === 0) return [];
+                // For categories, return IDs (API expects categoryId)
+                if (type === 'categories') {
+                  return items.map(item => typeof item === 'object' ? item.id : item);
+                }
+                // For authors, return IDs (API expects authorId)
+                if (type === 'authors') {
+                  return items.map(item => typeof item === 'object' ? item.id : item);
+                }
+                // For other types, return values as-is
+                return items.map(item => typeof item === 'object' ? item.name : item);
+              };
+
+              // Call the parent callback with current filters
+              if (onApplyFilters) {
+                const filterPayload = {
+                  categories: extractValues(newFilters.categories, 'categories'),
+                  authors: extractValues(newFilters.authors, 'authors'),
+                  languages: extractValues(newFilters.languages, 'languages'),
+                  minPrice: newFilters.price.min,
+                  maxPrice: newFilters.price.max
+                };
+
+                // Include search from initialFilters if present
+                if (initialFilters && initialFilters.search) {
+                  filterPayload.search = initialFilters.search;
+                }
+
+                onApplyFilters(filterPayload);
+              }
+            }, 100);
+          }
+
+          return newFilters;
+        });
+      } else if (initialFilters.search) {
+        // If only search is present (no categories/authors to map), apply it directly
         setTimeout(() => {
-          applyFilters();
+          if (onApplyFilters) {
+            onApplyFilters({
+              categories: [],
+              authors: [],
+              languages: [],
+              minPrice: 0,
+              maxPrice: 10000,
+              search: initialFilters.search
+            });
+          }
         }, 100);
       }
     }

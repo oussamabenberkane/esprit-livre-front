@@ -187,11 +187,28 @@
     "homeDelivery": "Livraison à domicile",
     "homeDeliveryDesc": "Recevez vos livres directement chez vous",
     "homeAddressPlaceholder": "Entrez votre adresse exacte (rue, immeuble, appartement)",
+    "homeAddressRequired": "Veuillez entrer votre adresse de domicile",
     "pickupPoint": "Point de relais",
     "pickupPointDesc": "Retirez votre colis au point relais le plus proche",
     "selectProvider": "Sélectionnez un point de relais",
+    "providerRequired": "Veuillez sélectionner un point de relais",
     "finalizeOrder": "Finaliser la commande",
-    "deliveryDays": "2–4 jours"
+    "submittingOrder": "Commande en cours...",
+    "deliveryDays": "2–4 jours",
+    "emptyCartError": "Votre panier est vide. Veuillez ajouter des articles avant de passer commande.",
+    "orderSuccess": "Votre commande a été passée avec succès !",
+    "orderSuccessTitle": "Commande réussie !",
+    "orderNumber": "Commande n°",
+    "orderError": "Échec de la commande. Veuillez réessayer.",
+    "orderErrorTitle": "Échec de la commande"
+  },
+  "errors": {
+    "error.insufficientstock": "Certains articles de votre panier ont un stock insuffisant. Veuillez mettre à jour les quantités et réessayer.",
+    "error.validation": "Données invalides. Veuillez vérifier vos informations et réessayer.",
+    "error.unauthorized": "Vous devez être connecté pour faire cette action. Veuillez vous connecter et réessayer.",
+    "error.itemnotfound": "Un ou plusieurs articles de votre panier ne sont plus disponibles. Veuillez les retirer et réessayer.",
+    "error.outofstock": "Certains articles de votre panier sont en rupture de stock. Veuillez les retirer ou ajuster les quantités.",
+    "error.generic": "Une erreur s'est produite. Veuillez réessayer ou contacter le service client."
   },
   "customerService": {
     "title": "Service Client",

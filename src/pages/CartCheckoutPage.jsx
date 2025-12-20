@@ -10,6 +10,7 @@ import { useScrollToTop } from '../hooks/useScrollToTop';
 import { getLanguageCode, getFullLanguageName } from '../data/booksData';
 import { useCart } from '../contexts/CartContext';
 import { getBookCoverUrl } from '../utils/imageUtils';
+import { buildOrderPayload, createOrder } from '../services/order.service';
 
 // Algerian Wilaya data (sample)
 const wilayaData = {
@@ -286,7 +287,7 @@ function CartSummary({ subtotal, shipping, onProceed }) {
 }
 
 // CheckoutForm Component
-function CheckoutForm({ onSubmit }) {
+function CheckoutForm({ onSubmit, isSubmitting = false }) {
   const { t } = useTranslation();
   const [formData, setFormData] = useState({
     fullName: '',
@@ -300,7 +301,8 @@ function CheckoutForm({ onSubmit }) {
     email: '',
     phone: '',
     wilaya: '',
-    city: ''
+    city: '',
+    shipping: ''
   });
 
   const [availableCities, setAvailableCities] = useState([]);
@@ -416,12 +418,17 @@ function CheckoutForm({ onSubmit }) {
     const isWilayaValid = formData.wilaya.trim() !== '';
     const isCityValid = formData.city.trim() !== '';
 
+    // Shipping method validation
+    const isHomeAddressValid = shippingPreference === 'home' ? homeAddress.trim() !== '' : true;
+    const isProviderValid = shippingPreference === 'pickup' ? pickupProvider.trim() !== '' : true;
+
     // Reset validation errors
     let errors = {
       email: '',
       phone: '',
       wilaya: '',
-      city: ''
+      city: '',
+      shipping: ''
     };
 
     if (formData.email.trim() !== '' && !isEmailValid) {
@@ -440,11 +447,26 @@ function CheckoutForm({ onSubmit }) {
       errors.city = 'Please enter this field';
     }
 
+    // Validate shipping address for home delivery
+    if (shippingPreference === 'home' && !isHomeAddressValid) {
+      errors.shipping = t('cart.homeAddressRequired') || 'Please enter your home address';
+    }
+
+    // Validate shipping provider for pickup
+    if (shippingPreference === 'pickup' && !isProviderValid) {
+      errors.shipping = t('cart.providerRequired') || 'Please select a pickup provider';
+    }
+
     setValidationErrors(errors);
 
     // Only submit if all validations pass
-    if (isEmailValid && isPhoneValid && isWilayaValid && isCityValid) {
-      onSubmit(formData);
+    if (isEmailValid && isPhoneValid && isWilayaValid && isCityValid && isHomeAddressValid && isProviderValid) {
+      onSubmit({
+        ...formData,
+        shippingPreference,
+        homeAddress,
+        pickupProvider
+      });
     }
   };
 
@@ -935,16 +957,31 @@ function CheckoutForm({ onSubmit }) {
               </AnimatePresence>
             </div>
           </div>
+          {validationErrors.shipping && (
+            <p className="mt-2 text-fluid-xs text-red-500">{validationErrors.shipping}</p>
+          )}
         </div>
 
         {/* Submit Button */}
         <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+          whileHover={!isSubmitting ? { scale: 1.02 } : {}}
+          whileTap={!isSubmitting ? { scale: 0.98 } : {}}
           type="submit"
-          className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-lg transition-colors mt-6"
+          disabled={isSubmitting}
+          className={`w-full py-3 rounded-lg transition-colors mt-6 flex items-center justify-center gap-2 ${
+            isSubmitting
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-emerald-500 hover:bg-emerald-600 text-white'
+          }`}
         >
-          {t('cart.finalizeOrder')}
+          {isSubmitting ? (
+            <>
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              <span>{t('cart.submittingOrder') || 'Placing Order...'}</span>
+            </>
+          ) : (
+            <span>{t('cart.finalizeOrder')}</span>
+          )}
         </motion.button>
       </form>
     </motion.div>
@@ -964,11 +1001,15 @@ export default function CartCheckoutPage() {
     updatePackQuantity,
     removePackFromCart,
     loadCartBooks,
-    loadCartPacks
+    loadCartPacks,
+    clearCart,
+    clearPackCart
   } = useCart();
   const [showCheckout, setShowCheckout] = useState(false);
   const [showPackBooksPopup, setShowPackBooksPopup] = useState(false);
   const [selectedPackForPopup, setSelectedPackForPopup] = useState(null);
+  const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
+  const [orderError, setOrderError] = useState(null);
   const navigate = useNavigate();
 
   // Pagination state
@@ -1047,9 +1088,73 @@ export default function CartCheckoutPage() {
   };
 
   // Handle final order submission
-  const handleOrderSubmit = (formData) => {
-    console.log('Order submitted:', { cartItems, formData, total: subtotal + shippingFee });
-    alert('Commande finalisée avec succès! 🎉');
+  const handleOrderSubmit = async (formData) => {
+    // Prevent multiple submissions
+    if (isSubmittingOrder) return;
+
+    // Validate cart is not empty
+    if (allCartItems.length === 0) {
+      setOrderError(t('cart.emptyCartError') || 'Your cart is empty');
+      return;
+    }
+
+    try {
+      setIsSubmittingOrder(true);
+      setOrderError(null);
+
+      // Build order payload using the service helper
+      const orderPayload = buildOrderPayload(formData, cartBooks, cartPacks, shippingFee);
+
+      // Log payload for debugging (remove in production)
+      console.log('Submitting order:', orderPayload);
+
+      // Submit order to backend
+      const createdOrder = await createOrder(orderPayload);
+
+      console.log('Order created successfully:', createdOrder);
+
+      // Clear both book and pack carts on success
+      await clearCart();
+      await clearPackCart();
+
+      // Redirect to home page with success message
+      // Using state to pass success message to home page
+      navigate('/', {
+        state: {
+          orderSuccess: true,
+          orderUniqueId: createdOrder.uniqueId,
+          message: t('cart.orderSuccess') || 'Your order has been placed successfully!'
+        }
+      });
+
+    } catch (error) {
+      console.error('Order submission error:', error);
+
+      // Use error code for translation if available, fallback to error message
+      let errorMessage;
+      if (error.code) {
+        // Try to translate the error code (e.g., 'error.insufficientstock')
+        const translatedError = t(`errors.${error.code}`);
+
+        // If translation exists and is different from the key, use it
+        if (translatedError && translatedError !== `errors.${error.code}`) {
+          errorMessage = translatedError;
+        } else {
+          // Fallback: try without 'errors.' prefix
+          const translatedErrorAlt = t(error.code);
+          errorMessage = translatedErrorAlt !== error.code ? translatedErrorAlt : error.message;
+        }
+      } else {
+        errorMessage = error.message || t('cart.orderError') || 'Failed to place order. Please try again.';
+      }
+
+      setOrderError(errorMessage);
+
+      // Scroll to top to show error message
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } finally {
+      setIsSubmittingOrder(false);
+    }
   };
 
   // Show loading state
@@ -1111,6 +1216,33 @@ export default function CartCheckoutPage() {
         <div className="h-28 md:h-20"></div>
 
         <div className="max-w-4xl mx-auto px-4 py-6 md:py-8">
+          {/* Order Error Alert */}
+          {orderError && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg"
+            >
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 w-5 h-5 rounded-full bg-red-500 flex items-center justify-center mt-0.5">
+                  <X className="w-3 h-3 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-red-800 font-semibold text-fluid-small mb-1">
+                    {t('cart.orderErrorTitle') || 'Order Failed'}
+                  </h3>
+                  <p className="text-red-700 text-fluid-xs">{orderError}</p>
+                </div>
+                <button
+                  onClick={() => setOrderError(null)}
+                  className="flex-shrink-0 text-red-400 hover:text-red-600 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </motion.div>
+          )}
+
           {/* Back to Shopping Link */}
           <motion.button
             initial={{ opacity: 0, x: -20 }}
@@ -1340,7 +1472,10 @@ export default function CartCheckoutPage() {
           {/* Checkout Form Section */}
           <div id="checkout-section">
             {showCheckout && (
-              <CheckoutForm onSubmit={handleOrderSubmit} />
+              <CheckoutForm
+                onSubmit={handleOrderSubmit}
+                isSubmitting={isSubmittingOrder}
+              />
             )}
           </div>
         </div>

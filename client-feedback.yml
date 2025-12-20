@@ -77,8 +77,10 @@ front :
 
 
 
-- cablage n profile : 
+- cablage n profile : done
 - proceed to checkout : 
+- get profile when checkout page and display information:
+- set street adress field to require when home delivery is selected and same for the second option: 
 - cablage n orders : 
 - profile - full name initials as a profile pic :  
 - filter by language for packs, do it like books : 

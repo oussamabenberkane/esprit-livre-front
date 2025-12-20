@@ -187,11 +187,28 @@
     "homeDelivery": "Home delivery",
     "homeDeliveryDesc": "Receive your books directly at home",
     "homeAddressPlaceholder": "Enter your exact address (street, building, apartment)",
+    "homeAddressRequired": "Please enter your home address",
     "pickupPoint": "Pickup point",
     "pickupPointDesc": "Pick up your package at the nearest pickup point",
     "selectProvider": "Select a pickup provider",
+    "providerRequired": "Please select a pickup provider",
     "finalizeOrder": "Finalize order",
-    "deliveryDays": "2–4 days"
+    "submittingOrder": "Placing order...",
+    "deliveryDays": "2–4 days",
+    "emptyCartError": "Your cart is empty. Please add items before placing an order.",
+    "orderSuccess": "Your order has been placed successfully!",
+    "orderSuccessTitle": "Order Placed Successfully!",
+    "orderNumber": "Order #",
+    "orderError": "Failed to place order. Please try again.",
+    "orderErrorTitle": "Order Failed"
+  },
+  "errors": {
+    "error.insufficientstock": "Some items in your cart have insufficient stock. Please update quantities and try again.",
+    "error.validation": "Invalid data. Please check your information and try again.",
+    "error.unauthorized": "You need to be logged in to perform that action. Please sign in and try again.",
+    "error.itemnotfound": "One or more items in your cart are no longer available. Please remove them and try again.",
+    "error.outofstock": "Some items in your cart are out of stock. Please remove them or adjust quantities.",
+    "error.generic": "An error occurred. Please try again or contact customer support."
   },
   "customerService": {
     "title": "Customer Service",

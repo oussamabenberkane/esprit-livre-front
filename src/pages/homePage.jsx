@@ -1,6 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CheckCircle, X } from 'lucide-react';
 import Navbar from '../components/common/Navbar';
 import CategoryCard from '../components/home/CategoryCard';
 import BookCard from '../components/common/BookCard';
@@ -215,6 +217,7 @@ const MainDisplayCarousel = ({ display, onAddToCart, onToggleFavorite, updateScr
 const HomePage = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const location = useLocation();
     const { addToCart } = useCart();
 
     // Hero carousel state (you already have this)
@@ -223,6 +226,11 @@ const HomePage = () => {
     // Cart popup state
     const [showCartPopup, setShowCartPopup] = useState(false);
     const [selectedBook, setSelectedBook] = useState(null);
+
+    // Order success state
+    const [showOrderSuccess, setShowOrderSuccess] = useState(false);
+    const [orderSuccessMessage, setOrderSuccessMessage] = useState('');
+    const [orderUniqueId, setOrderUniqueId] = useState('');
 
     // Navigation handler for categories
     const handleCategoryClick = (categoryTitle) => {
@@ -550,6 +558,25 @@ const HomePage = () => {
         loadAuthors();
     }, []);
 
+    // Check for order success state from navigation
+    useEffect(() => {
+        if (location.state?.orderSuccess) {
+            setShowOrderSuccess(true);
+            setOrderSuccessMessage(location.state.message);
+            setOrderUniqueId(location.state.orderUniqueId);
+
+            // Clear the navigation state to prevent showing the message again on refresh
+            window.history.replaceState({}, document.title);
+
+            // Auto-hide success message after 10 seconds
+            const timer = setTimeout(() => {
+                setShowOrderSuccess(false);
+            }, 10000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [location]);
+
     return (
 
         <main className="w-full max-w-[100vw] overflow-x-hidden">
@@ -559,6 +586,45 @@ const HomePage = () => {
 
 
                 <div className="h-20"></div>
+
+                {/* Order Success Alert */}
+                <AnimatePresence>
+                    {showOrderSuccess && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -50 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -50 }}
+                            className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 w-[90%] max-w-lg"
+                        >
+                            <div className="bg-emerald-50 border-2 border-emerald-500 rounded-lg shadow-lg p-4 md:p-6">
+                                <div className="flex items-start gap-3">
+                                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center">
+                                        <CheckCircle className="w-5 h-5 text-white" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className="text-emerald-900 font-bold text-fluid-h3 mb-1">
+                                            {t('cart.orderSuccessTitle') || 'Order Placed Successfully!'}
+                                        </h3>
+                                        <p className="text-emerald-800 text-fluid-small mb-2">
+                                            {orderSuccessMessage}
+                                        </p>
+                                        {orderUniqueId && (
+                                            <p className="text-emerald-700 text-fluid-xs font-mono bg-emerald-100 px-2 py-1 rounded inline-block">
+                                                {t('cart.orderNumber') || 'Order #'}: {orderUniqueId}
+                                            </p>
+                                        )}
+                                    </div>
+                                    <button
+                                        onClick={() => setShowOrderSuccess(false)}
+                                        className="flex-shrink-0 text-emerald-600 hover:text-emerald-800 transition-colors"
+                                    >
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
                 <section className="w-full mt-[-14px] max-w-[100vw]">
                     <HeroCarousel

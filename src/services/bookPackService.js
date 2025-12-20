@@ -56,12 +56,21 @@ export const getAllBookPacks = async (params = {}) => {
 
     // Add language filter(s) - support both single value and array
     if (params.language) {
+      // Map display names to API enum values
+      const languageMap = {
+        'Français': 'FR',
+        'English': 'EN',
+        'العربية': 'AR'
+      };
+
       if (Array.isArray(params.language)) {
         params.language.forEach(lang => {
-          queryParams.append('language', lang);
+          const apiLang = languageMap[lang] || lang.toUpperCase();
+          queryParams.append('language', apiLang);
         });
       } else {
-        queryParams.append('language', params.language);
+        const apiLang = languageMap[params.language] || params.language.toUpperCase();
+        queryParams.append('language', apiLang);
       }
     }
 

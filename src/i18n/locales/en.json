@@ -200,7 +200,9 @@
     "orderSuccessTitle": "Order Placed Successfully!",
     "orderNumber": "Order #",
     "orderError": "Failed to place order. Please try again.",
-    "orderErrorTitle": "Order Failed"
+    "orderErrorTitle": "Order Failed",
+    "guestCheckoutMessage": "Log in to checkout faster with saved information.",
+    "loginNow": "Log in now"
   },
   "errors": {
     "error.insufficientstock": "Some items in your cart have insufficient stock. Please update quantities and try again.",

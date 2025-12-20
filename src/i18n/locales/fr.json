@@ -200,7 +200,9 @@
     "orderSuccessTitle": "Commande réussie !",
     "orderNumber": "Commande n°",
     "orderError": "Échec de la commande. Veuillez réessayer.",
-    "orderErrorTitle": "Échec de la commande"
+    "orderErrorTitle": "Échec de la commande",
+    "guestCheckoutMessage": "Connectez-vous pour passer commande plus rapidement avec vos informations sauvegardées.",
+    "loginNow": "Se connecter maintenant"
   },
   "errors": {
     "error.insufficientstock": "Certains articles de votre panier ont un stock insuffisant. Veuillez mettre à jour les quantités et réessayer.",

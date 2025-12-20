@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Minus, Plus, Trash2, ExternalLink, ShoppingBag, ChevronDown, Home, MapPin, Truck, X, Search, Package } from 'lucide-react';
+import { ArrowLeft, Minus, Plus, Trash2, ExternalLink, ShoppingBag, ChevronDown, Home, MapPin, Truck, X, Search, Package, LogIn } from 'lucide-react';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import PackBooksPopup from '../components/common/PackBooksPopup';
@@ -11,6 +11,14 @@ import { getLanguageCode, getFullLanguageName } from '../data/booksData';
 import { useCart } from '../contexts/CartContext';
 import { getBookCoverUrl } from '../utils/imageUtils';
 import { buildOrderPayload, createOrder } from '../services/order.service';
+import { getUserProfile } from '../services/user.service';
+import { isAuthenticated } from '../services/authService';
+import { PROVIDER_API_TO_DISPLAY } from '../constants/orderEnums';
+
+// Skeleton Loader Component
+const SkeletonLoader = () => (
+  <div className="animate-pulse bg-gray-200 rounded h-11 w-full"></div>
+);
 
 // Algerian Wilaya data (sample)
 const wilayaData = {
@@ -289,6 +297,7 @@ function CartSummary({ subtotal, shipping, onProceed }) {
 // CheckoutForm Component
 function CheckoutForm({ onSubmit, isSubmitting = false }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -310,6 +319,10 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
   const [homeAddress, setHomeAddress] = useState("");
   const [pickupProvider, setPickupProvider] = useState("");
 
+  // Profile loading state
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
+  const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
+
   // Dropdown states
   const [openDropdown, setOpenDropdown] = useState(null);
   const [wilayaSearch, setWilayaSearch] = useState("");
@@ -319,6 +332,56 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
   const cityInputRef = useRef(null);
 
   const pickupProviders = ["Yalidine", "ZRexpress"];
+
+  // Load profile data on mount if user is authenticated
+  useEffect(() => {
+    const loadProfileData = async () => {
+      const authenticated = isAuthenticated();
+      setIsUserAuthenticated(authenticated);
+
+      // Only fetch profile if authenticated
+      if (!authenticated) return;
+
+      try {
+        setIsLoadingProfile(true);
+        const profile = await getUserProfile();
+
+        // Pre-populate form fields
+        const fullName = `${profile.firstName || ''} ${profile.lastName || ''}`.trim();
+        setFormData({
+          fullName: fullName,
+          email: profile.email || '',
+          phone: profile.phone || '',
+          wilaya: profile.wilaya || '',
+          city: profile.city || ''
+        });
+
+        // Pre-populate shipping preferences
+        if (profile.defaultShippingMethod === 'HOME_DELIVERY') {
+          setShippingPreference('home');
+          setHomeAddress(profile.streetAddress || '');
+        } else if (profile.defaultShippingMethod === 'SHIPPING_PROVIDER') {
+          setShippingPreference('pickup');
+          // Map API enum to display name
+          const displayProvider = PROVIDER_API_TO_DISPLAY[profile.defaultShippingProvider];
+          setPickupProvider(displayProvider || '');
+        }
+
+        // Set available cities based on wilaya
+        if (profile.wilaya && wilayaData[profile.wilaya]) {
+          setAvailableCities(wilayaData[profile.wilaya]);
+        }
+
+      } catch (error) {
+        console.error('Failed to load profile data:', error);
+        // Silently fail - show empty form
+      } finally {
+        setIsLoadingProfile(false);
+      }
+    };
+
+    loadProfileData();
+  }, []);
 
   // Click outside to close dropdowns
   useEffect(() => {
@@ -481,20 +544,51 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
         {t('cart.formTitle')}
       </h2>
 
+      {/* Guest Checkout Message */}
+      {!isUserAuthenticated && !isLoadingProfile && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg"
+        >
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0 w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center mt-0.5">
+              <LogIn className="w-3 h-3 text-white" />
+            </div>
+            <div className="flex-1">
+              <p className="text-blue-900 text-fluid-small">
+                {t('cart.guestCheckoutMessage') || 'Log in to checkout faster with saved information.'}
+              </p>
+              <button
+                type="button"
+                onClick={() => navigate('/auth')}
+                className="mt-2 text-blue-600 hover:text-blue-800 font-semibold text-fluid-xs underline"
+              >
+                {t('cart.loginNow') || 'Log in now'}
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Full Name */}
         <div>
           <label className="block text-[#353535] text-fluid-medium font-[500]  mb-2">
             {t('cart.fullName')}
           </label>
-          <input
-            type="text"
-            required
-            value={formData.fullName}
-            onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-            className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-fluid-small"
-            placeholder={t('cart.fullNamePlaceholder')}
-          />
+          {isLoadingProfile ? (
+            <SkeletonLoader />
+          ) : (
+            <input
+              type="text"
+              required
+              value={formData.fullName}
+              onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+              className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-fluid-small"
+              placeholder={t('cart.fullNamePlaceholder')}
+            />
+          )}
         </div>
 
         {/* Phone */}
@@ -502,20 +596,26 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
           <label className="block text-[#353535] text-fluid-medium font-[500] mb-2">
             {t('cart.phone')}
           </label>
-          <input
-            type="tel"
-            required
-            value={formData.phone}
-            onChange={handlePhoneChange}
-            className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition-all text-fluid-small ${validationErrors.phone
-                ? 'border-red-500 focus:ring-red-500'
-                : 'border-neutral-200 focus:ring-emerald-500'
-              }`}
-            placeholder={t('cart.phonePlaceholder')}
-            maxLength="14"
-          />
-          {validationErrors.phone && (
-            <p className="mt-1 text-fluid-xs text-red-500">{validationErrors.phone}</p>
+          {isLoadingProfile ? (
+            <SkeletonLoader />
+          ) : (
+            <>
+              <input
+                type="tel"
+                required
+                value={formData.phone}
+                onChange={handlePhoneChange}
+                className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition-all text-fluid-small ${validationErrors.phone
+                    ? 'border-red-500 focus:ring-red-500'
+                    : 'border-neutral-200 focus:ring-emerald-500'
+                  }`}
+                placeholder={t('cart.phonePlaceholder')}
+                maxLength="14"
+              />
+              {validationErrors.phone && (
+                <p className="mt-1 text-fluid-xs text-red-500">{validationErrors.phone}</p>
+              )}
+            </>
           )}
         </div>
 
@@ -524,18 +624,24 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
           <label className="block text-[#353535] text-fluid-medium font-[500] mb-2">
             {t('cart.email')} <span className="text-gray-400 text-xs">({t('cart.optional') || 'Optionnel'})</span>
           </label>
-          <input
-            type="email"
-            value={formData.email}
-            onChange={handleEmailChange}
-            className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition-all text-fluid-small ${validationErrors.email
-                ? 'border-red-500 focus:ring-red-500'
-                : 'border-neutral-200 focus:ring-emerald-500'
-              }`}
-            placeholder={t('cart.emailPlaceholder')}
-          />
-          {validationErrors.email && (
-            <p className="mt-1 text-fluid-xs text-red-500">{validationErrors.email}</p>
+          {isLoadingProfile ? (
+            <SkeletonLoader />
+          ) : (
+            <>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={handleEmailChange}
+                className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition-all text-fluid-small ${validationErrors.email
+                    ? 'border-red-500 focus:ring-red-500'
+                    : 'border-neutral-200 focus:ring-emerald-500'
+                  }`}
+                placeholder={t('cart.emailPlaceholder')}
+              />
+              {validationErrors.email && (
+                <p className="mt-1 text-fluid-xs text-red-500">{validationErrors.email}</p>
+              )}
+            </>
           )}
         </div>
 

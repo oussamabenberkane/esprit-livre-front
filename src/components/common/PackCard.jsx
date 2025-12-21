@@ -156,13 +156,13 @@ const PackCard = ({
     // Render book thumbnails with "See More" overlay on 4th book
     const renderBookThumbnails = () => {
         return (
-            <div className="grid grid-cols-2 gap-1 h-full">
+            <div className="grid grid-cols-2 grid-rows-2 gap-1 h-full">
                 {displayedBooks.map((book, index) => {
                     const isLastThumbnail = index === 3 && hasMoreBooks;
                     return (
                         <div
                             key={index}
-                            className="relative overflow-hidden rounded-sm bg-gray-100 cursor-pointer"
+                            className="relative overflow-hidden rounded-sm bg-gray-100 cursor-pointer w-full h-full"
                             onClick={(e) => {
                                 if (isLastThumbnail) {
                                     e.stopPropagation();
@@ -181,7 +181,7 @@ const PackCard = ({
                             <img
                                 src={book.coverImage}
                                 alt={book.title}
-                                className={`w-full h-full object-cover ${isLastThumbnail ? 'blur-sm' : ''}`}
+                                className={`absolute inset-0 w-full h-full object-cover ${isLastThumbnail ? 'blur-sm' : ''}`}
                             />
                             {isLastThumbnail && (
                                 <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex flex-col items-center justify-center">

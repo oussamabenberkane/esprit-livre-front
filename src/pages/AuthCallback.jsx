@@ -16,6 +16,8 @@ const AuthCallback = () => {
   useEffect(() => {
     const handleCallback = async () => {
       try {
+        console.log('[AuthCallback] Starting OAuth callback handling...');
+
         // Extract parameters from URL
         const code = searchParams.get('code');
         const state = searchParams.get('state');
@@ -70,6 +72,11 @@ const AuthCallback = () => {
 
         // Get saved redirect URL or default to home
         const redirectUrl = getAndClearRedirectUrl() || '/';
+        console.log('[AuthCallback] Successfully authenticated, redirecting to:', redirectUrl);
+
+        // CRITICAL: Set a timestamp to prevent AuthPage from interfering
+        // This works reliably even with StrictMode double-invocation
+        sessionStorage.setItem('oauth_completed_at', Date.now().toString());
 
         // Successful authentication - redirect to saved URL or home
         navigate(redirectUrl, { replace: true });

@@ -155,8 +155,11 @@ const PackCard = ({
 
     // Render book thumbnails with "See More" overlay on 4th book
     const renderBookThumbnails = () => {
+        // Special layout for exactly 2 books: side-by-side in a single row
+        const isTwo = books.length === 2;
+
         return (
-            <div className="grid grid-cols-2 grid-rows-2 gap-1 h-full">
+            <div className={isTwo ? "flex gap-1 h-full" : "grid grid-cols-2 grid-rows-2 gap-1 h-full"}>
                 {displayedBooks.map((book, index) => {
                     const isLastThumbnail = index === 3 && hasMoreBooks;
                     return (

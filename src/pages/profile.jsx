@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Edit2, Heart, Package, LogOut, Home, MapPin, ChevronDown, Truck, X, Search } from 'lucide-react';
+import { ArrowLeft, Edit2, Heart, Package, LogOut, Home, MapPin, ChevronDown, Truck, X, Search, CheckCircle } from 'lucide-react';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/common/Navbar';
@@ -24,6 +24,7 @@ export default function Profile() {
   const [shippingPreference, setShippingPreference] = useState("home"); // "home" or "pickup"
   const [homeAddress, setHomeAddress] = useState("");
   const [pickupProvider, setPickupProvider] = useState("");
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   // Dropdown states
   const [openDropdown, setOpenDropdown] = useState(null);
@@ -233,7 +234,14 @@ export default function Profile() {
       setIsEditingPhone(false);
 
       setSaving(false);
-      alert(t('profile.updateSuccess'));
+
+      // Show success message
+      setShowSuccessMessage(true);
+
+      // Auto-dismiss after 5 seconds
+      setTimeout(() => {
+        setShowSuccessMessage(false);
+      }, 2000);
     } catch (err) {
       console.error('Error updating profile:', err);
       setError(err.message || 'Failed to update profile');
@@ -330,6 +338,38 @@ export default function Profile() {
           </div>
         </div>
       </div>
+
+      {/* Success Message */}
+      <AnimatePresence>
+        {showSuccessMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 w-[90%] max-w-lg"
+          >
+            <div className="bg-emerald-50 border-2 border-emerald-500 rounded-lg shadow-lg p-4 md:p-6">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center">
+                  <CheckCircle className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-emerald-900 font-bold text-fluid-h3 mb-1">
+                    {t('profile.updateSuccess')}
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setShowSuccessMessage(false)}
+                  className="flex-shrink-0 text-emerald-600 hover:text-emerald-800 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Main Content */}
       <div className="max-w-2xl mx-auto px-4 -mt-16">
@@ -817,31 +857,33 @@ export default function Profile() {
         </div>
 
         {/* Action Buttons */}
-        <div className="mt-8 mb-12 flex justify-between items-center gap-4">
-          <button
-            onClick={handleSaveProfile}
-            disabled={saving}
-            className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {saving ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                <span>{t('profile.saving')}</span>
-              </>
-            ) : (
-              <>
-                <Edit2 className="w-5 h-5" />
-                <span>{t('profile.saveChanges')}</span>
-              </>
-            )}
-          </button>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all"
-          >
-            <LogOut className="w-5 h-5" />
-            <span>{t('profile.logout')}</span>
-          </button>
+        <div className="mt-12 mb-12 pt-6 border-t border-gray-200">
+          <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-4">
+            <button
+              onClick={handleSaveProfile}
+              disabled={saving}
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-fluid-small sm:text-fluid-body font-medium min-h-[44px]"
+            >
+              {saving ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span>{t('profile.saving')}</span>
+                </>
+              ) : (
+                <>
+                  <Edit2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span>{t('profile.save')}</span>
+                </>
+              )}
+            </button>
+            <button
+              onClick={handleLogout}
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all text-fluid-small sm:text-fluid-body font-medium min-h-[44px]"
+            >
+              <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span>{t('profile.logout')}</span>
+            </button>
+          </div>
         </div>
       </div>
       </div>

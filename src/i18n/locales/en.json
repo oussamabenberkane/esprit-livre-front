@@ -202,7 +202,11 @@
     "orderError": "Failed to place order. Please try again.",
     "orderErrorTitle": "Order Failed",
     "guestCheckoutMessage": "Log in to checkout faster with saved information.",
-    "loginNow": "Log in now"
+    "loginNow": "Log in now",
+    "orderTrackingPromptTitle": "Track your order",
+    "orderTrackingPromptMessage": "Sign in to view and track your orders in your profile.",
+    "signInButton": "Sign in",
+    "laterButton": "Later"
   },
   "errors": {
     "error.insufficientstock": "Some items in your cart have insufficient stock. Please update quantities and try again.",

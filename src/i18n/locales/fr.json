@@ -202,7 +202,11 @@
     "orderError": "Échec de la commande. Veuillez réessayer.",
     "orderErrorTitle": "Échec de la commande",
     "guestCheckoutMessage": "Connectez-vous pour passer commande plus rapidement avec vos informations sauvegardées.",
-    "loginNow": "Se connecter maintenant"
+    "loginNow": "Se connecter maintenant",
+    "orderTrackingPromptTitle": "Suivre votre commande",
+    "orderTrackingPromptMessage": "Connectez-vous pour consulter et suivre vos commandes dans votre profil.",
+    "signInButton": "Se connecter",
+    "laterButton": "Plus tard"
   },
   "errors": {
     "error.insufficientstock": "Certains articles de votre panier ont un stock insuffisant. Veuillez mettre à jour les quantités et réessayer.",

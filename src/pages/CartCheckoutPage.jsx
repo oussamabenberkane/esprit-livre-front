@@ -12,9 +12,84 @@ import { useCart } from '../contexts/CartContext';
 import { getBookCoverUrl } from '../utils/imageUtils';
 import { buildOrderPayload, createOrder } from '../services/order.service';
 import { getUserProfile } from '../services/user.service';
-import { isAuthenticated } from '../services/authService';
+import { isAuthenticated, saveRedirectUrl } from '../services/authService';
 import { PROVIDER_API_TO_DISPLAY } from '../constants/orderEnums';
 import wilayaData from '../utils/wilayaData';
+
+// Order Tracking Prompt Popup Component
+function OrderTrackingPrompt({ isOpen, onSignIn, onLater }) {
+  const { t } = useTranslation();
+
+  if (!isOpen) return null;
+
+  return (
+    <>
+      {/* Backdrop with blur and blue-grey tint */}
+      <div
+        className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-40"
+        onClick={onLater}
+      />
+
+      {/* Popup Container */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div
+          className="bg-white rounded-2xl shadow-2xl w-full max-w-sm animate-fade-in-scale"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Icon and Title */}
+          <div className="flex items-start gap-3 px-6 pt-6 pb-4">
+            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+              <Package className="w-5 h-5 text-blue-600" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-gray-900 font-semibold text-base sm:text-lg">
+                {t('cart.orderTrackingPromptTitle')}
+              </h3>
+            </div>
+          </div>
+
+          {/* Message */}
+          <p className="text-gray-600 text-sm sm:text-base px-6 pb-6 leading-relaxed">
+            {t('cart.orderTrackingPromptMessage')}
+          </p>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 px-6 pb-6">
+            <button
+              onClick={onSignIn}
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-4 rounded-lg transition-colors font-medium text-sm sm:text-base"
+            >
+              {t('cart.signInButton')}
+            </button>
+            <button
+              onClick={onLater}
+              className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 px-4 rounded-lg transition-colors font-medium text-sm sm:text-base"
+            >
+              {t('cart.laterButton')}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <style jsx>{`
+        @keyframes fadeInScale {
+          from {
+            opacity: 0;
+            transform: scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        .animate-fade-in-scale {
+          animation: fadeInScale 0.2s ease-out;
+        }
+      `}</style>
+    </>
+  );
+}
 
 // Skeleton Loader Component
 const SkeletonLoader = () => (
@@ -1105,6 +1180,8 @@ export default function CartCheckoutPage() {
   const [selectedPackForPopup, setSelectedPackForPopup] = useState(null);
   const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
   const [orderError, setOrderError] = useState(null);
+  const [showOrderTrackingPrompt, setShowOrderTrackingPrompt] = useState(false);
+  const [pendingOrderData, setPendingOrderData] = useState(null);
   const navigate = useNavigate();
 
   // Pagination state
@@ -1212,15 +1289,28 @@ export default function CartCheckoutPage() {
       await clearCart();
       await clearPackCart();
 
-      // Redirect to home page with success message
-      // Using state to pass success message to home page
-      navigate('/', {
-        state: {
-          orderSuccess: true,
-          orderUniqueId: createdOrder.uniqueId,
-          message: t('cart.orderSuccess') || 'Your order has been placed successfully!'
-        }
+      // Check if user is authenticated
+      const userIsAuthenticated = isAuthenticated();
+
+      // Store order data for potential use after sign-in
+      setPendingOrderData({
+        orderUniqueId: createdOrder.uniqueId,
+        message: t('cart.orderSuccess') || 'Your order has been placed successfully!'
       });
+
+      if (!userIsAuthenticated) {
+        // Show order tracking prompt for unauthenticated users
+        setShowOrderTrackingPrompt(true);
+      } else {
+        // Authenticated users go directly to home page
+        navigate('/', {
+          state: {
+            orderSuccess: true,
+            orderUniqueId: createdOrder.uniqueId,
+            message: t('cart.orderSuccess') || 'Your order has been placed successfully!'
+          }
+        });
+      }
 
     } catch (error) {
       console.error('Order submission error:', error);
@@ -1249,6 +1339,32 @@ export default function CartCheckoutPage() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setIsSubmittingOrder(false);
+    }
+  };
+
+  // Handle sign-in action from order tracking prompt
+  const handleSignInFromPrompt = () => {
+    setShowOrderTrackingPrompt(false);
+    // Save redirect URL to orders page before navigating to auth
+    saveRedirectUrl('/orders');
+    // Navigate to auth page
+    navigate('/auth');
+  };
+
+  // Handle "Later" action from order tracking prompt
+  const handleLaterFromPrompt = () => {
+    setShowOrderTrackingPrompt(false);
+    // Redirect to home page with success message
+    if (pendingOrderData) {
+      navigate('/', {
+        state: {
+          orderSuccess: true,
+          orderUniqueId: pendingOrderData.orderUniqueId,
+          message: pendingOrderData.message
+        }
+      });
+    } else {
+      navigate('/');
     }
   };
 
@@ -1590,6 +1706,13 @@ export default function CartCheckoutPage() {
           books={selectedPackForPopup.books}
         />
       )}
+
+      {/* Order Tracking Prompt Popup */}
+      <OrderTrackingPrompt
+        isOpen={showOrderTrackingPrompt}
+        onSignIn={handleSignInFromPrompt}
+        onLater={handleLaterFromPrompt}
+      />
     </main>
   );
 }

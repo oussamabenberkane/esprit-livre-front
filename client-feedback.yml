@@ -1,0 +1,41 @@
+
+
+Navbar : 
+ - seacrh suggestion click doesnt work on small screen sizes: done
+ - in searchbar add a clickable button for search : done
+
+Navigation buttons :
+ - do not work on page reload for caroussel sections (1st and last): done
+
+authPage : 
+ - only one page (without sign up button + benefits of signing in): done
+
+favorites : 
+ - decouvrir des livres - redirect to allbooks page: done
+
+profile : 
+ - better error message's ui: done
+ - add validators for input fields: done
+
+orders : 
+ - add image cover for packs (first one) : 
+    - correct endpoint call but no response for the image ( /api/book-packs/{packId}/cover )
+
+packCard : 
+ - pack description i18n : 
+ - always display modal of all books and not just for 4+, use view pack details modal in cartCheckoutPage: 
+
+Add 404 page : 
+
+Specific redirection : 
+ - 
+
+Test responsive design : 
+
+
+
+
+------------------------------------------------------------------------
+
+CLAUDE ANSWERS : 
+

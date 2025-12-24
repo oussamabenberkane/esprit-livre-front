@@ -42,6 +42,18 @@ const transformOrder = (apiOrder) => {
       const isBook = item.bookId != null;
       const isPack = item.bookPackId != null;
 
+      // Get the appropriate image URL
+      let imageUrl;
+      if (isBook) {
+        imageUrl = getBookCoverUrl(item.bookId);
+      } else if (isPack) {
+        // Use the pack cover URL utility - this fetches the pack's cover image from the API
+        imageUrl = getBookPackCoverUrl(item.bookPackId);
+      } else {
+        // Fallback for items that are neither book nor pack
+        imageUrl = 'https://via.placeholder.com/200x300?text=No+Image';
+      }
+
       return {
         // Item identification
         id: isBook ? item.bookId : item.bookPackId,
@@ -50,9 +62,7 @@ const transformOrder = (apiOrder) => {
         // Common fields
         title: isBook ? item.bookTitle : item.bookPackTitle,
         author: isBook ? item.bookAuthor : null,
-        image: isBook
-          ? getBookCoverUrl(item.bookId)
-          : (isPack ? getBookPackCoverUrl(item.bookPackId) : 'https://via.placeholder.com/200x300?text=No+Image'),
+        image: imageUrl,
         quantity: item.quantity || 1,
         unitPrice: item.unitPrice || 0,
         totalPrice: item.totalPrice || 0,

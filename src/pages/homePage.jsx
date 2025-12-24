@@ -279,35 +279,45 @@ const HomePage = () => {
 
     const checkCategoriesScrollPosition = () => {
         const container = categoriesScrollRef.current;
-        if (container) {
-            const scrollLeft = container.scrollLeft;
-            const maxScroll = container.scrollWidth - container.clientWidth;
+        if (!container) return;
 
-            setCanScrollCategoriesLeft(scrollLeft > 0);
-            setCanScrollCategoriesRight(scrollLeft < maxScroll - 10);
+        // Defensive check: ensure we have rendered items before calculating
+        const firstChild = container.firstChild;
+        if (!firstChild || visibleCategories.length === 0) {
+            // Reset to initial state if no items are visible yet
+            setCurrentCategoryIndex(0);
+            setCanScrollCategoriesLeft(false);
+            setCanScrollCategoriesRight(false);
+            return;
+        }
 
-            // If at the very end, set to last index
-            if (scrollLeft >= maxScroll - 5) {
-                setCurrentCategoryIndex(categories.length - 1);
-            }
-            // If at the very start, set to first index
-            else if (scrollLeft <= 5) {
-                setCurrentCategoryIndex(0);
-            }
-            // Otherwise, calculate based on center
-            else {
-                const itemWidth = container.firstChild?.offsetWidth || 0;
-                const gap = parseFloat(getComputedStyle(container).gap) || 0;
-                const containerCenter = scrollLeft + (container.clientWidth / 2);
+        const scrollLeft = container.scrollLeft;
+        const maxScroll = container.scrollWidth - container.clientWidth;
 
-                // Calculate which item is centered
-                let activeIndex = Math.round((containerCenter - (itemWidth / 2)) / (itemWidth + gap));
+        setCanScrollCategoriesLeft(scrollLeft > 0);
+        setCanScrollCategoriesRight(scrollLeft < maxScroll - 10);
 
-                // Clamp between 0 and last index
-                activeIndex = Math.max(0, Math.min(activeIndex, categories.length - 1));
+        // If at the very end, set to last index
+        if (scrollLeft >= maxScroll - 5) {
+            setCurrentCategoryIndex(visibleCategories.length - 1);
+        }
+        // If at the very start, set to first index
+        else if (scrollLeft <= 5) {
+            setCurrentCategoryIndex(0);
+        }
+        // Otherwise, calculate based on center
+        else {
+            const itemWidth = firstChild.offsetWidth || 0;
+            const gap = parseFloat(getComputedStyle(container).gap) || 0;
+            const containerCenter = scrollLeft + (container.clientWidth / 2);
 
-                setCurrentCategoryIndex(activeIndex);
-            }
+            // Calculate which item is centered
+            let activeIndex = Math.round((containerCenter - (itemWidth / 2)) / (itemWidth + gap));
+
+            // Clamp between 0 and last index
+            activeIndex = Math.max(0, Math.min(activeIndex, visibleCategories.length - 1));
+
+            setCurrentCategoryIndex(activeIndex);
         }
     };
 
@@ -329,35 +339,45 @@ const HomePage = () => {
     // Add scroll check function
     const checkAuthorsScrollPosition = () => {
         const container = authorsScrollRef.current;
-        if (container) {
-            const scrollLeft = container.scrollLeft;
-            const maxScroll = container.scrollWidth - container.clientWidth;
+        if (!container) return;
 
-            setCanScrollAuthorsLeft(scrollLeft > 0);
-            setCanScrollAuthorsRight(scrollLeft < maxScroll - 10);
+        // Defensive check: ensure we have rendered items before calculating
+        const firstChild = container.firstChild;
+        if (!firstChild || visibleAuthors.length === 0) {
+            // Reset to initial state if no items are visible yet
+            setCurrentAuthorIndex(0);
+            setCanScrollAuthorsLeft(false);
+            setCanScrollAuthorsRight(false);
+            return;
+        }
 
-            // If at the very end, set to last index
-            if (scrollLeft >= maxScroll - 5) {
-                setCurrentAuthorIndex(authors.length - 1);
-            }
-            // If at the very start, set to first index
-            else if (scrollLeft <= 5) {
-                setCurrentAuthorIndex(0);
-            }
-            // Otherwise, calculate based on center
-            else {
-                const itemWidth = container.firstChild?.offsetWidth || 0;
-                const gap = parseFloat(getComputedStyle(container).gap) || 0;
-                const containerCenter = scrollLeft + (container.clientWidth / 2);
+        const scrollLeft = container.scrollLeft;
+        const maxScroll = container.scrollWidth - container.clientWidth;
 
-                // Calculate which item is centered
-                let activeIndex = Math.round((containerCenter - (itemWidth / 2)) / (itemWidth + gap));
+        setCanScrollAuthorsLeft(scrollLeft > 0);
+        setCanScrollAuthorsRight(scrollLeft < maxScroll - 10);
 
-                // Clamp between 0 and last index
-                activeIndex = Math.max(0, Math.min(activeIndex, authors.length - 1));
+        // If at the very end, set to last index
+        if (scrollLeft >= maxScroll - 5) {
+            setCurrentAuthorIndex(visibleAuthors.length - 1);
+        }
+        // If at the very start, set to first index
+        else if (scrollLeft <= 5) {
+            setCurrentAuthorIndex(0);
+        }
+        // Otherwise, calculate based on center
+        else {
+            const itemWidth = firstChild.offsetWidth || 0;
+            const gap = parseFloat(getComputedStyle(container).gap) || 0;
+            const containerCenter = scrollLeft + (container.clientWidth / 2);
 
-                setCurrentAuthorIndex(activeIndex);
-            }
+            // Calculate which item is centered
+            let activeIndex = Math.round((containerCenter - (itemWidth / 2)) / (itemWidth + gap));
+
+            // Clamp between 0 and last index
+            activeIndex = Math.max(0, Math.min(activeIndex, visibleAuthors.length - 1));
+
+            setCurrentAuthorIndex(activeIndex);
         }
     };
 
@@ -384,7 +404,7 @@ const HomePage = () => {
             container.addEventListener('scroll', checkAuthorsScrollPosition);
             return () => container.removeEventListener('scroll', checkAuthorsScrollPosition);
         }
-    }, [authors.length]);
+    }, [visibleAuthors.length]);
 
     useEffect(() => {
         const categoriesContainer = categoriesScrollRef.current;
@@ -393,7 +413,20 @@ const HomePage = () => {
             categoriesContainer.addEventListener('scroll', checkCategoriesScrollPosition);
             return () => categoriesContainer.removeEventListener('scroll', checkCategoriesScrollPosition);
         }
-    }, [categories.length]);
+    }, [visibleCategories.length]);
+
+    // Initialize scroll state when progressive rendering completes
+    useEffect(() => {
+        if (!isCategoriesRendering && visibleCategories.length > 0) {
+            checkCategoriesScrollPosition();
+        }
+    }, [isCategoriesRendering]);
+
+    useEffect(() => {
+        if (!isAuthorsRendering && visibleAuthors.length > 0) {
+            checkAuthorsScrollPosition();
+        }
+    }, [isAuthorsRendering]);
 
     useEffect(() => {
         const handleResize = () => {

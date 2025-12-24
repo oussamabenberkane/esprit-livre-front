@@ -3,11 +3,11 @@ import { useState } from 'react';
 import GoogleAuthButton from '../components/buttons/GoogleAuthButton';
 import { initiateGoogleLogin } from '../services/oauthService';
 
-export default function SignUp({ onSwitchToSignIn }) {
+export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleGoogleSignUp = async () => {
+  const handleGoogleAuth = async () => {
     setLoading(true);
     setError(null);
 
@@ -15,8 +15,8 @@ export default function SignUp({ onSwitchToSignIn }) {
       await initiateGoogleLogin();
       // Note: This will redirect to Keycloak/Google, so code after won't execute
     } catch (err) {
-      console.error('Sign up error:', err);
-      setError(err.message || 'Failed to start sign-up process. Please try again.');
+      console.error('Authentication error:', err);
+      setError(err.message || 'Failed to start authentication process. Please try again.');
       setLoading(false);
     }
   };
@@ -39,18 +39,18 @@ export default function SignUp({ onSwitchToSignIn }) {
             className="text-center mb-8"
           >
             <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-500 rounded-full mb-4">
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                className="h-8 w-8 text-white" 
-                fill="none" 
-                viewBox="0 0 24 24" 
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-8 w-8 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" 
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
                 />
               </svg>
             </div>
@@ -64,8 +64,8 @@ export default function SignUp({ onSwitchToSignIn }) {
             transition={{ delay: 0.2, duration: 0.4 }}
             className="text-center mb-8"
           >
-            <h2 className="text-gray-800 text-xl mb-2">Create a new account</h2>
-            <p className="text-gray-500 text-sm">Join us today! Sign up to get started</p>
+            <h2 className="text-gray-800 text-xl mb-2">Welcome</h2>
+            <p className="text-gray-500 text-sm">Sign in or create an account to continue</p>
           </motion.div>
 
           {/* Error Message */}
@@ -79,7 +79,7 @@ export default function SignUp({ onSwitchToSignIn }) {
             </motion.div>
           )}
 
-          {/* Google Sign Up Button */}
+          {/* Google Auth Button */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -87,8 +87,8 @@ export default function SignUp({ onSwitchToSignIn }) {
             className="mb-6"
           >
             <GoogleAuthButton
-              text={loading ? "Signing up..." : "Sign up with Google"}
-              onClick={handleGoogleSignUp}
+              text={loading ? "Connecting..." : "Continue with Google"}
+              onClick={handleGoogleAuth}
               disabled={loading}
             />
           </motion.div>
@@ -98,7 +98,7 @@ export default function SignUp({ onSwitchToSignIn }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.4 }}
-            className="space-y-3 mb-6"
+            className="space-y-3"
           >
             <div className="flex items-center gap-3 text-sm text-gray-600">
               <div className="flex-shrink-0 w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center">
@@ -125,46 +125,13 @@ export default function SignUp({ onSwitchToSignIn }) {
               <span>Fast and secure checkout</span>
             </div>
           </motion.div>
-
-          {/* Divider */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.4 }}
-            className="relative my-6"
-          >
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-500">or</span>
-            </div>
-          </motion.div>
-
-          {/* Sign In Link */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.4 }}
-            className="text-center"
-          >
-            <p className="text-gray-600 text-sm">
-              Already have an account?{' '}
-              <button
-                onClick={onSwitchToSignIn}
-                className="text-blue-600 hover:text-blue-700 hover:underline transition-colors"
-              >
-                Sign in
-              </button>
-            </p>
-          </motion.div>
         </div>
 
         {/* Footer Text */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.7, duration: 0.4 }}
+          transition={{ delay: 0.5, duration: 0.4 }}
           className="text-center text-gray-500 text-xs mt-6"
         >
           By continuing, you agree to our Terms of Service and Privacy Policy

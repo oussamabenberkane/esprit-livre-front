@@ -1,14 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import SignIn from './SignIn';
-import SignUp from './SignUp';
+import Auth from './Auth';
 import { isAuthenticated, saveRedirectUrl } from '../services/authService';
 
 export default function AuthPage() {
   console.log('[AuthPage] Component mounting/rendering, location:', window.location.pathname);
 
-  const [currentView, setCurrentView] = useState('signin'); // 'signin' or 'signup'
   const [isAuthChecked, setIsAuthChecked] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -81,29 +78,5 @@ export default function AuthPage() {
     return null;
   }
 
-  return (
-    <AnimatePresence mode="wait">
-      {currentView === 'signin' ? (
-        <motion.div
-          key="signin"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 20 }}
-          transition={{ duration: 0.3 }}
-        >
-          <SignIn onSwitchToSignUp={() => setCurrentView('signup')} />
-        </motion.div>
-      ) : (
-        <motion.div
-          key="signup"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 20 }}
-          transition={{ duration: 0.3 }}
-        >
-          <SignUp onSwitchToSignIn={() => setCurrentView('signin')} />
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
+  return <Auth />;
 }

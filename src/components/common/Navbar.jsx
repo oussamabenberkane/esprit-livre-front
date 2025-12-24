@@ -99,7 +99,8 @@ const Navbar = ({
     const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const searchTimeoutRef = useRef(null);
-    const searchContainerRef = useRef(null);
+    const desktopSearchContainerRef = useRef(null);
+    const mobileSearchContainerRef = useRef(null);
 
     // Login prompt popup state
     const [showLoginPromptDesktop, setShowLoginPromptDesktop] = useState(false);
@@ -253,7 +254,13 @@ const Navbar = ({
     // Click outside to close suggestions
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+            // Check if click is inside either desktop or mobile search container
+            const isInsideDesktop = desktopSearchContainerRef.current?.contains(event.target);
+            const isInsideMobile = mobileSearchContainerRef.current?.contains(event.target);
+
+            // Close suggestions only if click is outside BOTH containers
+            // This handles the case where both exist in DOM but only one is visible
+            if (!isInsideDesktop && !isInsideMobile) {
                 setShowSuggestions(false);
             }
         };
@@ -282,7 +289,7 @@ const Navbar = ({
                     <Logo onClick={handleLogoClick} />
 
                     {/* Search Bar - Always visible but responsive width */}
-                    <div className="flex-1 md:flex-initial relative" ref={searchContainerRef}>
+                    <div className="flex-1 md:flex-initial relative" ref={desktopSearchContainerRef}>
                         <SearchBar
                             placeholder={placeholder}
                             value={searchQuery}
@@ -438,7 +445,7 @@ const Navbar = ({
                 </div>
 
                 {/* Second Line: Search Bar */}
-                <div className="pb-2 relative">
+                <div className="pb-2 relative" ref={mobileSearchContainerRef}>
                     <div className="w-[100%]">
                         <SearchBar
                             placeholder={placeholder}

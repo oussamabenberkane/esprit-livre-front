@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Edit2, Heart, Package, LogOut, Home, MapPin, ChevronDown, Truck, X, Search, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Edit2, Heart, Package, LogOut, Home, MapPin, ChevronDown, Truck, X, Search, CheckCircle, AlertCircle } from 'lucide-react';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/common/Navbar';
@@ -10,6 +10,7 @@ import { getUserProfile, updateUserProfile } from '../services/user.service';
 import { isAuthenticated, logout as authLogout } from '../services/authService';
 import { formatMemberSinceDate } from '../utils/dateUtils';
 import wilayaData from '../utils/wilayaData';
+import { validateProfileData } from '../utils/validation';
 
 export default function Profile() {
   const { t, i18n } = useTranslation();
@@ -25,6 +26,7 @@ export default function Profile() {
   const [homeAddress, setHomeAddress] = useState("");
   const [pickupProvider, setPickupProvider] = useState("");
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({});
 
   // Dropdown states
   const [openDropdown, setOpenDropdown] = useState(null);
@@ -33,6 +35,14 @@ export default function Profile() {
   const dropdownRefs = useRef({});
   const wilayaInputRef = useRef(null);
   const cityInputRef = useRef(null);
+
+  // Refs for scrolling to error fields
+  const firstNameRef = useRef(null);
+  const lastNameRef = useRef(null);
+  const emailRef = useRef(null);
+  const phoneRef = useRef(null);
+  const homeAddressRef = useRef(null);
+  const pickupProviderRef = useRef(null);
 
   const pickupProviders = ["Yalidine", "ZRexpress"];
 
@@ -155,6 +165,10 @@ export default function Profile() {
   const handleProviderSelect = (provider) => {
     setPickupProvider(provider);
     setOpenDropdown(null);
+    // Clear error on selection
+    if (validationErrors.pickupProvider) {
+      setValidationErrors({ ...validationErrors, pickupProvider: null });
+    }
   };
 
   // Get initials for avatar
@@ -192,14 +206,42 @@ export default function Profile() {
   const handleSaveProfile = async () => {
     if (!userData) return;
 
-    // Validate required fields
-    if (!userData.lastName || !userData.lastName.trim()) {
-      alert('Last name is required');
-      return;
-    }
+    // Clear previous validation errors
+    setValidationErrors({});
 
-    if (!userData.phone || !userData.phone.trim()) {
-      alert('Phone number is required');
+    // Validate all fields
+    const validation = validateProfileData(userData, homeAddress, shippingPreference, pickupProvider);
+
+    if (!validation.isValid) {
+      // Set validation errors
+      setValidationErrors(validation.errors);
+
+      // Scroll to the first error field
+      const fieldRefMap = {
+        firstName: firstNameRef,
+        lastName: lastNameRef,
+        email: emailRef,
+        phone: phoneRef,
+        homeAddress: homeAddressRef,
+        pickupProvider: pickupProviderRef,
+      };
+
+      const firstErrorRef = fieldRefMap[validation.firstErrorField];
+      if (firstErrorRef && firstErrorRef.current) {
+        firstErrorRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+
+        // Focus the input if it's focusable
+        const inputElement = firstErrorRef.current.querySelector('input, textarea, button');
+        if (inputElement) {
+          setTimeout(() => {
+            inputElement.focus();
+          }, 500);
+        }
+      }
+
       return;
     }
 
@@ -216,14 +258,14 @@ export default function Profile() {
       // Prepare profile update data matching the API structure
       const updateData = {
         id: userData.id,
-        firstName: userData.firstName || null,
-        lastName: userData.lastName,
-        email: userData.email,
+        firstName: userData.firstName?.trim() || null,
+        lastName: userData.lastName.trim(),
+        email: userData.email.trim(),
         imageUrl: userData.imageUrl,
-        phone: userData.phone,
-        wilaya: userData.wilaya || null,
-        city: userData.city || null,
-        streetAddress: homeAddress || null,
+        phone: userData.phone.trim(),
+        wilaya: userData.wilaya?.trim() || null,
+        city: userData.city?.trim() || null,
+        streetAddress: homeAddress?.trim() || null,
         defaultShippingMethod: shippingPreference === 'home' ? 'HOME_DELIVERY' : 'SHIPPING_PROVIDER',
         defaultShippingProvider: shippingPreference === 'pickup' && pickupProvider ? providerMap[pickupProvider] : null
       };
@@ -232,21 +274,21 @@ export default function Profile() {
 
       // Reset editing states
       setIsEditingPhone(false);
+      setValidationErrors({});
 
       setSaving(false);
 
       // Show success message
       setShowSuccessMessage(true);
 
-      // Auto-dismiss after 5 seconds
+      // Auto-dismiss after 3 seconds
       setTimeout(() => {
         setShowSuccessMessage(false);
-      }, 2000);
+      }, 3000);
     } catch (err) {
       console.error('Error updating profile:', err);
       setError(err.message || 'Failed to update profile');
       setSaving(false);
-      alert(t('profile.updateError'));
     }
   };
 
@@ -351,13 +393,16 @@ export default function Profile() {
           >
             <div className="bg-emerald-50 border-2 border-emerald-500 rounded-lg shadow-lg p-4 md:p-6">
               <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center">
-                  <CheckCircle className="w-5 h-5 text-white" />
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center">
+                  <CheckCircle className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-emerald-900 font-bold text-fluid-h3 mb-1">
+                  <h3 className="text-emerald-900 font-bold text-base md:text-lg mb-1">
                     {t('profile.updateSuccess')}
                   </h3>
+                  <p className="text-emerald-700 text-sm">
+                    {t('profile.updateSuccessMessage')}
+                  </p>
                 </div>
                 <button
                   onClick={() => setShowSuccessMessage(false)}
@@ -378,27 +423,32 @@ export default function Profile() {
           <h2 className="text-lg text-gray-800 mb-4">{t('profile.personalInfo')}</h2>
 
           {/* First Name - Read Only */}
-          <div className="mb-4 p-4 bg-gray-50 rounded-lg">
-            <label className="block text-sm text-gray-600 mb-2">First Name</label>
+          <div ref={firstNameRef} className="mb-4 p-4 bg-gray-50 rounded-lg">
+            <label className="block text-sm text-gray-600 mb-2">{t('profile.firstName')}</label>
             <p className="text-gray-800">{userData.firstName || '-'}</p>
+            <p className="text-xs text-gray-500 mt-1">{t('profile.readOnly')}</p>
           </div>
 
           {/* Last Name - Read Only */}
-          <div className="mb-4 p-4 bg-gray-50 rounded-lg">
-            <label className="block text-sm text-gray-600 mb-2">Last Name</label>
+          <div ref={lastNameRef} className="mb-4 p-4 bg-gray-50 rounded-lg">
+            <label className="block text-sm text-gray-600 mb-2">{t('profile.lastName')}</label>
             <p className="text-gray-800">{userData.lastName || '-'}</p>
+            <p className="text-xs text-gray-500 mt-1">{t('profile.readOnly')}</p>
           </div>
 
           {/* Email - Read Only */}
-          <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+          <div ref={emailRef} className="mb-4 p-4 bg-gray-50 rounded-lg">
             <label className="block text-sm text-gray-600 mb-2">{t('profile.email')}</label>
             <p className="text-gray-800">{userData.email}</p>
+            <p className="text-xs text-gray-500 mt-1">{t('profile.readOnly')}</p>
           </div>
 
           {/* Phone - Editable */}
-          <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+          <div ref={phoneRef} className={`mb-4 p-4 rounded-lg ${validationErrors.phone ? 'bg-red-50 border-2 border-red-300' : 'bg-gray-50'}`}>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-sm text-gray-600">{t('profile.phone')}</label>
+              <label className={`text-sm ${validationErrors.phone ? 'text-red-700 font-medium' : 'text-gray-600'}`}>
+                {t('profile.phone')} <span className="text-red-500">*</span>
+              </label>
               <button
                 onClick={handleEditPhone}
                 className="flex items-center gap-1 text-blue-600 hover:text-blue-700 transition-colors text-sm"
@@ -408,14 +458,41 @@ export default function Profile() {
               </button>
             </div>
             {isEditingPhone ? (
-              <input
-                type="tel"
-                value={userData.phone}
-                onChange={(e) => setUserData({ ...userData, phone: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-              />
+              <>
+                <input
+                  type="tel"
+                  value={userData.phone}
+                  onChange={(e) => {
+                    setUserData({ ...userData, phone: e.target.value });
+                    // Clear error on change
+                    if (validationErrors.phone) {
+                      setValidationErrors({ ...validationErrors, phone: null });
+                    }
+                  }}
+                  placeholder="0555 12 34 56"
+                  className={`w-full px-3 py-2 border rounded-lg text-sm transition-all ${
+                    validationErrors.phone
+                      ? 'border-red-400 focus:ring-2 focus:ring-red-500 focus:border-red-500'
+                      : 'border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                  }`}
+                />
+                {validationErrors.phone && (
+                  <div className="flex items-start gap-1.5 mt-2">
+                    <AlertCircle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-red-600">{validationErrors.phone}</p>
+                  </div>
+                )}
+              </>
             ) : (
-              <p className="text-gray-800">{userData.phone || '-'}</p>
+              <>
+                <p className="text-gray-800">{userData.phone || '-'}</p>
+                {validationErrors.phone && (
+                  <div className="flex items-start gap-1.5 mt-2">
+                    <AlertCircle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-red-600">{validationErrors.phone}</p>
+                  </div>
+                )}
+              </>
             )}
           </div>
 
@@ -672,19 +749,35 @@ export default function Profile() {
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                     className="overflow-hidden"
                   >
-                    <div className="mt-3 px-3">
+                    <div ref={homeAddressRef} className="mt-3 px-3">
                       <div className="relative">
-                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-500 pointer-events-none">
+                        <div className={`absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none ${validationErrors.homeAddress ? 'text-red-500' : 'text-blue-500'}`}>
                           <Home className="w-4 h-4" />
                         </div>
                         <input
                           type="text"
                           value={homeAddress}
-                          onChange={(e) => setHomeAddress(e.target.value)}
+                          onChange={(e) => {
+                            setHomeAddress(e.target.value);
+                            // Clear error on change
+                            if (validationErrors.homeAddress) {
+                              setValidationErrors({ ...validationErrors, homeAddress: null });
+                            }
+                          }}
                           placeholder={t('profile.homeAddressPlaceholder')}
-                          className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-sm transition-all placeholder:text-gray-400"
+                          className={`w-full pl-10 pr-4 py-2.5 border rounded-lg bg-white text-sm transition-all placeholder:text-gray-400 ${
+                            validationErrors.homeAddress
+                              ? 'border-red-400 focus:ring-2 focus:ring-red-500 focus:border-red-500'
+                              : 'border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+                          }`}
                         />
                       </div>
+                      {validationErrors.homeAddress && (
+                        <div className="flex items-start gap-1.5 mt-2">
+                          <AlertCircle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+                          <p className="text-sm text-red-600">{validationErrors.homeAddress}</p>
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 )}
@@ -736,10 +829,12 @@ export default function Profile() {
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                   >
-                    <div className="mt-3 px-3">
+                    <div ref={pickupProviderRef} className="mt-3 px-3">
                       <div className="relative" ref={el => dropdownRefs.current['provider'] = el}>
                         <div className={`flex items-center bg-white rounded-lg border-2 transition-all duration-200 ${
-                          openDropdown === 'provider' ? 'border-blue-500 shadow-md' : 'border-gray-300 hover:border-blue-400'
+                          validationErrors.pickupProvider
+                            ? 'border-red-400'
+                            : openDropdown === 'provider' ? 'border-blue-500 shadow-md' : 'border-gray-300 hover:border-blue-400'
                         }`}>
                           <div
                             className="flex items-center flex-1 h-11 px-3 cursor-pointer"
@@ -811,6 +906,12 @@ export default function Profile() {
                           )}
                         </AnimatePresence>
                       </div>
+                      {validationErrors.pickupProvider && (
+                        <div className="flex items-start gap-1.5 mt-2">
+                          <AlertCircle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+                          <p className="text-sm text-red-600">{validationErrors.pickupProvider}</p>
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 )}
@@ -855,6 +956,27 @@ export default function Profile() {
             <ArrowLeft className="w-5 h-5 text-gray-400 rotate-180" />
           </button>
         </div>
+
+        {/* Validation Error Banner */}
+        {Object.keys(validationErrors).length > 0 && (
+          <div className="mt-6 mb-4">
+            <div className="bg-red-50 border-2 border-red-300 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-red-500 flex items-center justify-center">
+                  <AlertCircle className="w-4 h-4 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-red-900 font-bold text-sm md:text-base mb-1">
+                    {t('profile.validationError')}
+                  </h3>
+                  <p className="text-red-700 text-xs md:text-sm">
+                    {Object.keys(validationErrors).length} {Object.keys(validationErrors).length === 1 ? 'field needs' : 'fields need'} your attention
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Action Buttons */}
         <div className="mt-12 mb-12 pt-6 border-t border-gray-200">

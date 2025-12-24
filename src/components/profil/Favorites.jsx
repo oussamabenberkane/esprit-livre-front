@@ -238,7 +238,7 @@ export default function Favorites() {
                 {t('favorites.emptyMessage')}
               </p>
               <button
-                onClick={handleBack}
+                onClick={() => navigate('/allbooks')}
                 className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
               >
                 {t('favorites.discoverBooks')}

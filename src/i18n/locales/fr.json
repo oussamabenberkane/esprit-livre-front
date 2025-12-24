@@ -346,6 +346,8 @@
     "back": "Retour",
     "memberSince": "Membre depuis",
     "personalInfo": "Informations personnelles",
+    "firstName": "Prénom",
+    "lastName": "Nom",
     "email": "Email",
     "phone": "Téléphone",
     "edit": "Modifier",
@@ -368,7 +370,10 @@
     "saving": "Enregistrement...",
     "logout": "Se déconnecter",
     "updateSuccess": "Profil mis à jour avec succès !",
-    "updateError": "Échec de la mise à jour du profil. Veuillez réessayer."
+    "updateSuccessMessage": "Vos informations personnelles et préférences ont été enregistrées.",
+    "updateError": "Échec de la mise à jour du profil. Veuillez réessayer.",
+    "validationError": "Veuillez corriger les erreurs ci-dessous",
+    "readOnly": "Ce champ ne peut pas être modifié"
   },
   "favorites": {
     "title": "Mes Favoris",

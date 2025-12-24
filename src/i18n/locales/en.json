@@ -346,6 +346,8 @@
     "back": "Back",
     "memberSince": "Member since",
     "personalInfo": "Personal information",
+    "firstName": "First name",
+    "lastName": "Last name",
     "email": "Email",
     "phone": "Phone",
     "edit": "Edit",
@@ -368,7 +370,10 @@
     "saving": "Saving...",
     "logout": "Log out",
     "updateSuccess": "Profile updated successfully!",
-    "updateError": "Failed to update profile. Please try again."
+    "updateSuccessMessage": "Your personal information and preferences have been saved.",
+    "updateError": "Failed to update profile. Please try again.",
+    "validationError": "Please fix the errors below",
+    "readOnly": "This field cannot be edited"
   },
   "favorites": {
     "title": "My Favorites",

@@ -60,12 +60,9 @@ const Logo = ({ onClick }) => (
 );
 
 // SearchBar Component
-const SearchBar = ({ placeholder = "Recherchez...", value, onChange, onFocus, onKeyDown }) => {
+const SearchBar = ({ placeholder = "Recherchez...", value, onChange, onFocus, onKeyDown, onSearchClick }) => {
     return (
         <div className="relative bg-white rounded-lg h-10 md:h-11 w-full md:w-96 flex items-center">
-            <div className="absolute left-3 w-4 h-4 text-slate-500">
-                <Search className="w-full h-full" />
-            </div>
             <input
                 type="text"
                 placeholder={placeholder}
@@ -73,8 +70,16 @@ const SearchBar = ({ placeholder = "Recherchez...", value, onChange, onFocus, on
                 onChange={onChange}
                 onFocus={onFocus}
                 onKeyDown={onKeyDown}
-                className="w-full h-full pl-10 pr-4 text-sm md:text-base text-black bg-transparent border-none outline-none placeholder:text-slate-500 rounded-lg"
+                className="w-full h-full pl-4 pr-10 text-sm md:text-base text-black bg-transparent border-none outline-none placeholder:text-slate-500 rounded-lg"
             />
+            <button
+                onClick={onSearchClick}
+                className="absolute right-3 w-4 h-4 text-slate-500 hover:text-slate-700 transition-colors cursor-pointer"
+                aria-label="Search"
+                type="button"
+            >
+                <Search className="w-full h-full" />
+            </button>
         </div>
     );
 };
@@ -296,6 +301,7 @@ const Navbar = ({
                             onChange={handleSearchChange}
                             onFocus={handleSearchFocus}
                             onKeyDown={handleKeyDown}
+                            onSearchClick={handleSearchSubmit}
                         />
                         {showSuggestions && (
                             <SearchSuggestions
@@ -453,6 +459,7 @@ const Navbar = ({
                             onChange={handleSearchChange}
                             onFocus={handleSearchFocus}
                             onKeyDown={handleKeyDown}
+                            onSearchClick={handleSearchSubmit}
                         />
                         {showSuggestions && (
                             <SearchSuggestions

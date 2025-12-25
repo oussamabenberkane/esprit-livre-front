@@ -432,5 +432,16 @@
     "close": "Close",
     "currency": "DZD",
     "clickToViewDetails": "Click on a book to view its details"
+  },
+  "404": {
+    "title": "Page Not Found",
+    "description": "Sorry, the page you're looking for seems to have disappeared. It may have been moved or no longer exists.",
+    "goBack": "Go Back",
+    "home": "Home",
+    "browseBooks": "Browse Books",
+    "helpfulLinks": "Helpful Links",
+    "promotionalPacks": "Promotional Packs",
+    "team": "Our Team",
+    "customerService": "Customer Service"
   }
 }

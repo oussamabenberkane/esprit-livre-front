@@ -13,6 +13,7 @@ import ServiceClientPage from './pages/ServiceClientPage';
 import PacksPromotionnels from './pages/PacksPromotionnels.jsx';
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
 import TestPage from './pages/TestPage.jsx';
+import NotFound404 from './pages/NotFound404.jsx';
 import { FavoritesProvider } from './contexts/FavoritesContext';
 import { CartProvider } from './contexts/CartContext';
 
@@ -62,6 +63,9 @@ function App() {
 
           {/* Test page for debugging */}
           <Route path="/test" element={<TestPage />} />
+
+          {/* 404 Not Found - Catch all undefined routes */}
+          <Route path="*" element={<NotFound404 />} />
         </Routes>
           </div>
         </CartProvider>

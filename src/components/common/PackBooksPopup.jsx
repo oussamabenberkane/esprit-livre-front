@@ -43,32 +43,29 @@ export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescrip
 
     return (
         <>
-            {/* Backdrop with blur */}
+            {/* Modal Container with Backdrop */}
             <div
-                className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-40"
+                className="fixed inset-0 z-50 flex items-center justify-center p-2 xs:p-4 sm:p-6 bg-gray-900/50 backdrop-blur-sm"
                 onClick={onClose}
-            />
-
-            {/* Modal Container */}
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+            >
                 <div
-                    className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col animate-fade-in-scale"
+                    className="bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-5xl max-h-[95vh] xs:max-h-[90vh] flex flex-col animate-fade-in-scale"
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Header Section - Fixed */}
-                    <div className="relative px-5 sm:px-8 pt-6 pb-5 border-b border-gray-200 flex-shrink-0 bg-gradient-to-r from-[#00417a]/5 to-transparent">
-                        <div className="flex items-start justify-between gap-4">
-                            <div className="flex-1 pr-8">
-                                <h2 className="font-['Poppins'] font-bold text-[#00417a] text-xl sm:text-2xl md:text-3xl mb-2 leading-tight">
+                    <div className="relative px-3 xs:px-5 sm:px-8 pt-4 xs:pt-5 sm:pt-6 pb-3 xs:pb-4 sm:pb-5 border-b border-gray-200 flex-shrink-0 bg-gradient-to-r from-[#00417a]/5 to-transparent">
+                        <div className="flex items-start justify-between gap-2 xs:gap-4">
+                            <div className="flex-1 pr-6 xs:pr-8">
+                                <h2 className="font-['Poppins'] font-bold text-[#00417a] text-base xs:text-lg sm:text-xl md:text-2xl lg:text-3xl mb-1 xs:mb-2 leading-tight">
                                     {packTitle}
                                 </h2>
                                 {packDescription && (
-                                    <p className="text-gray-600 text-sm sm:text-base line-clamp-2 mb-2">
+                                    <p className="text-gray-600 text-xs xs:text-sm sm:text-base line-clamp-2 mb-1 xs:mb-2">
                                         {packDescription}
                                     </p>
                                 )}
                                 <div className="flex items-center gap-2 text-gray-500">
-                                    <span className="text-sm font-medium">
+                                    <span className="text-xs xs:text-sm font-medium">
                                         {books.length} {books.length === 1 ? t('packBooksPopup.book') : t('packBooksPopup.books')}
                                     </span>
                                 </div>
@@ -77,25 +74,25 @@ export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescrip
                             {/* Close Button */}
                             <button
                                 onClick={onClose}
-                                className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors flex-shrink-0"
+                                className="w-8 h-8 xs:w-9 xs:h-9 flex items-center justify-center rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors flex-shrink-0"
                                 aria-label={t('packBooksPopup.close')}
                             >
-                                <X className="w-5 h-5 text-gray-600" />
+                                <X className="w-4 h-4 xs:w-5 xs:h-5 text-gray-600" />
                             </button>
                         </div>
                     </div>
 
                     {/* Books Grid - Scrollable Content */}
-                    <div className="px-4 sm:px-6 md:px-8 py-5 overflow-y-auto flex-1 custom-scrollbar">
-                        <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+                    <div className="px-3 sm:px-6 md:px-8 py-4 sm:py-5 overflow-y-auto flex-1 custom-scrollbar">
+                        <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 xs:gap-3 sm:gap-4">
                             {books.map((book, index) => (
                                 <div
                                     key={book.id || index}
                                     className="bg-white rounded-lg border border-gray-200/80 hover:border-[#00417a]/60 hover:shadow-md hover:-translate-y-1 transition-all duration-300 overflow-hidden group cursor-pointer flex flex-col"
                                     onClick={() => handleBookClick(book.id)}
                                 >
-                                    {/* Book Cover - Smaller on mobile */}
-                                    <div className="relative w-full aspect-[2/3] sm:aspect-[2/3] bg-gray-100 overflow-hidden">
+                                    {/* Book Cover - Reduced height */}
+                                    <div className="relative w-full aspect-[2/2.5] sm:aspect-[2/2.6] bg-gray-100 overflow-hidden">
                                         <img
                                             src={book.coverImage}
                                             alt={book.title}
@@ -117,23 +114,23 @@ export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescrip
                                     </div>
 
                                     {/* Book Info */}
-                                    <div className="p-1.5 sm:p-2.5 flex flex-col gap-0.5 sm:gap-1 flex-1">
+                                    <div className="p-1.5 xs:p-2 sm:p-2.5 flex flex-col gap-0.5 sm:gap-1 flex-1">
                                         {/* Title */}
-                                        <h3 className="font-['Poppins'] font-semibold text-[#00417a] text-[10px] sm:text-sm leading-tight line-clamp-2 group-hover:text-[#003460] transition-colors min-h-[1.5rem] sm:min-h-[2.25rem]">
+                                        <h3 className="font-['Poppins'] font-semibold text-[#00417a] text-[9px] xs:text-[10px] sm:text-sm leading-tight line-clamp-2 group-hover:text-[#003460] transition-colors min-h-[1.3rem] xs:min-h-[1.5rem] sm:min-h-[2.25rem]">
                                             {book.title}
                                         </h3>
 
                                         {/* Author */}
-                                        <p className="text-gray-600 text-[9px] sm:text-xs line-clamp-1 mb-auto">
+                                        <p className="text-gray-600 text-[8px] xs:text-[9px] sm:text-xs line-clamp-1 mb-auto">
                                             {book.author}
                                         </p>
 
                                         {/* Price */}
                                         {book.price && (
-                                            <div className="flex items-baseline justify-between mt-1 sm:mt-1.5 pt-1 sm:pt-1.5 border-t border-gray-100">
-                                                <span className="font-['Poppins'] font-bold text-[#00417a] text-xs sm:text-base">
+                                            <div className="flex items-baseline justify-between mt-0.5 xs:mt-1 sm:mt-1.5 pt-0.5 xs:pt-1 sm:pt-1.5 border-t border-gray-100">
+                                                <span className="font-['Poppins'] font-bold text-[#00417a] text-[10px] xs:text-xs sm:text-base">
                                                     {book.price}
-                                                    <span className="text-[9px] sm:text-xs font-semibold ml-0.5 sm:ml-1">
+                                                    <span className="text-[8px] xs:text-[9px] sm:text-xs font-semibold ml-0.5 sm:ml-1">
                                                         {t('packBooksPopup.currency')}
                                                     </span>
                                                 </span>
@@ -146,8 +143,8 @@ export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescrip
                     </div>
 
                     {/* Footer - Optional */}
-                    <div className="px-5 sm:px-8 py-4 border-t border-gray-200 bg-gray-50 flex-shrink-0 rounded-b-2xl">
-                        <p className="text-center text-sm text-gray-600">
+                    <div className="px-3 xs:px-5 sm:px-8 py-2.5 xs:py-3 sm:py-4 border-t border-gray-200 bg-gray-50 flex-shrink-0 rounded-b-xl sm:rounded-b-2xl">
+                        <p className="text-center text-xs xs:text-sm text-gray-600">
                             {t('packBooksPopup.clickToViewDetails')}
                         </p>
                     </div>

@@ -101,23 +101,23 @@ export default function CartConfirmationPopup({
             />
 
             {/* Popup Container */}
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-2 xs:p-4" onClick={onClose}>
                 <div
-                    className="bg-white rounded-2xl shadow-2xl w-full max-w-md animate-fade-in-scale"
+                    className="bg-white rounded-xl xs:rounded-2xl shadow-2xl w-full max-w-md animate-fade-in-scale"
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Header Section */}
-                    <div className="relative px-6 pt-fluid-xl pb-4 border-b border-gray-100">
-                        <div className="flex items-center gap-3">
+                    <div className="relative px-3 xs:px-6 pt-3 xs:pt-fluid-xl pb-2 xs:pb-4 border-b border-gray-100">
+                        <div className="flex items-center gap-2 xs:gap-3">
                             <div className="relative">
-                                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                                    <ShoppingCart className="w-5 h-5 text-green-600" />
+                                <div className="w-8 h-8 xs:w-10 xs:h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                    <ShoppingCart className="w-4 h-4 xs:w-5 xs:h-5 text-green-600" />
                                 </div>
-                                <div className="absolute -top-1 -right-1 w-5 h-5 bg-green-600 rounded-full flex items-center justify-center">
-                                    <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                                <div className="absolute -top-1 -right-1 w-4 h-4 xs:w-5 xs:h-5 bg-green-600 rounded-full flex items-center justify-center">
+                                    <Check className="w-2.5 h-2.5 xs:w-3 xs:h-3 text-white" strokeWidth={3} />
                                 </div>
                             </div>
-                            <h3 className="font-semibold text-gray-900 text-fluid-h2 lg:text-fluid-lg">
+                            <h3 className="font-semibold text-gray-900 text-sm xs:text-fluid-h2 lg:text-fluid-lg">
                                 {t('cartPopup.title')}
                             </h3>
                         </div>
@@ -125,43 +125,43 @@ export default function CartConfirmationPopup({
                         {/* Close Button */}
                         <button
                             onClick={onClose}
-                            className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+                            className="absolute top-2 right-2 xs:top-3 xs:right-3 w-7 h-7 xs:w-8 xs:h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
                             aria-label={t('cartPopup.close')}
                         >
-                            <X className="w-5 h-5 text-gray-600" />
+                            <X className="w-4 h-4 xs:w-5 xs:h-5 text-gray-600" />
                         </button>
                     </div>
 
                     {/* Book Details Section */}
-                    <div className="px-6 py-5">
-                        <div className="flex gap-4">
+                    <div className="px-3 xs:px-6 py-4 xs:py-6">
+                        <div className="flex gap-3 xs:gap-4">
                             {/* Book Cover */}
                             <div className="flex-shrink-0">
                                 <img
                                     src={book.coverImage}
                                     alt={book.title}
-                                    className="w-20 h-28 object-cover rounded-lg shadow-md"
+                                    className="w-20 h-28 xs:w-24 xs:h-36 object-cover rounded-md xs:rounded-lg shadow-md"
                                 />
                             </div>
 
                             {/* Book Info */}
                             <div className="flex-1 flex flex-col justify-between min-w-0">
                                 <div>
-                                    <h4 className="font-semibold text-gray-900 text-fluid-lg mb-1 line-clamp-2">
+                                    <h4 className="font-semibold text-gray-900 text-xs xs:text-fluid-lg mb-0.5 xs:mb-1 line-clamp-2">
                                         {book.title}
                                     </h4>
                                     {!book.isPack ? (
                                         <>
-                                            <p className="text-gray-600 text-sm mb-2">
+                                            <p className="text-gray-600 text-[0.65rem] xs:text-sm mb-1 xs:mb-2">
                                                 {book.author}
                                             </p>
                                             <button
                                                 onClick={handleViewDetails}
-                                                className="text-blue-600 hover:underline inline-flex items-center gap-1"
+                                                className="text-blue-600 hover:underline inline-flex items-center gap-0.5 xs:gap-1"
                                             >
-                                                <h1 className="text-fluid-medium">{t('cartPopup.bookDetails')}</h1>
+                                                <h1 className="text-[0.65rem] xs:text-fluid-medium">{t('cartPopup.bookDetails')}</h1>
                                                 <svg
-                                                    className="w-3 h-3"
+                                                    className="w-2.5 h-2.5 xs:w-3 xs:h-3"
                                                     fill="none"
                                                     stroke="currentColor"
                                                     viewBox="0 0 24 24"
@@ -177,17 +177,17 @@ export default function CartConfirmationPopup({
                                         </>
                                     ) : (
                                         <>
-                                            <p className="text-gray-600 text-sm mb-2">
+                                            <p className="text-gray-600 text-[0.65rem] xs:text-sm mb-1 xs:mb-2">
                                                 {book.author}
                                             </p>
                                             {/* Book Titles Carousel - Only for packs, positioned below title */}
                                             {packBooks.length > 0 && (
-                                                <div className="mt-2">
-                                                    <div className="flex gap-1.5 overflow-x-auto scrollbar-hide py-1.5">
+                                                <div className="mt-1 xs:mt-2">
+                                                    <div className="flex gap-1 xs:gap-1.5 overflow-x-auto scrollbar-hide py-1 xs:py-1.5">
                                                         {packBooks.map((packBook, index) => (
                                                             <span
                                                                 key={index}
-                                                                className="text-fluid-vsmall md:text-fluid-small bg-blue-50 text-[#00417a] px-3 py-1 rounded-md whitespace-nowrap flex-shrink-0 font-medium"
+                                                                className="text-[0.55rem] xs:text-fluid-vsmall md:text-fluid-small bg-blue-50 text-[#00417a] px-1.5 xs:px-3 py-0.5 xs:py-1 rounded-md whitespace-nowrap flex-shrink-0 font-medium"
                                                             >
                                                                 {packBook.title}
                                                             </span>
@@ -202,14 +202,14 @@ export default function CartConfirmationPopup({
 
                             {/* Price */}
                             <div className="flex-shrink-0 text-right">
-                                <p className="font-bold text-gray-900 text-fluid-lg">
+                                <p className="font-bold text-gray-900 text-sm xs:text-fluid-lg">
                                     {book.price}
                                 </p>
-                                <p className="text-gray-500 text-sm mb-1">
+                                <p className="text-gray-500 text-[0.6rem] xs:text-sm mb-0.5 xs:mb-1">
                                     {t('cartPopup.currency')}
                                 </p>
                                 {book.language && (
-                                    <span className="inline-block px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
+                                    <span className="inline-block px-1.5 xs:px-2 py-0.5 xs:py-1 bg-blue-100 text-blue-700 text-[0.55rem] xs:text-xs font-semibold rounded">
                                         {getLanguageCode(book.language)}
                                     </span>
                                 )}
@@ -218,22 +218,22 @@ export default function CartConfirmationPopup({
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="px-6 pb-6 flex gap-fluid-xl md:gap-fluid-xl">
+                    <div className="px-3 xs:px-6 pb-3 xs:pb-6 flex gap-2 xs:gap-fluid-xl md:gap-fluid-xl">
                         <button
                             onClick={() => {
                                 navigate('/cart');
                                 onClose();
                             }}
-                            className="flex-1 bg-[#1E40AF] hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                            className="flex-1 bg-[#1E40AF] hover:bg-blue-700 text-white font-medium py-2 xs:py-3 px-2 xs:px-4 rounded-md xs:rounded-lg transition-colors flex items-center justify-center gap-1 xs:gap-2"
                         >
-                            <ShoppingCart className="w-5 h-5" />
-                            <h1 className="text-fluid-small">{t('cartPopup.viewCart')}</h1>
+                            <ShoppingCart className="w-3.5 h-3.5 xs:w-5 xs:h-5" />
+                            <h1 className="text-[0.65rem] xs:text-fluid-small">{t('cartPopup.viewCart')}</h1>
                         </button>
                         <button
                             onClick={handleRemoveClick}
-                            className="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium py-fluid-tiny px-fluid-sm rounded-lg transition-colors"
+                            className="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium py-2 xs:py-fluid-tiny px-2 xs:px-fluid-sm rounded-md xs:rounded-lg transition-colors"
                         >
-                            <h1 className="text-fluid-medium">{t('cartPopup.remove')}</h1>
+                            <h1 className="text-[0.65rem] xs:text-fluid-medium">{t('cartPopup.remove')}</h1>
                         </button>
                     </div>
                 </div>

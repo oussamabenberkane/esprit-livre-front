@@ -17,20 +17,49 @@ profile :
  - better error message's ui: done
  - add validators for input fields: done
 
+packCard : 
+ - pack description i18n : done
+ - always display modal of all books and not just for 4+, use view pack details modal in cartCheckoutPage: done
+ - details button --- clean its code + proper bg color : done
+
+Add 404 page : done
+
+
 orders : 
  - add image cover for packs (first one) : 
-    - correct endpoint call but no response for the image ( /api/book-packs/{packId}/cover )
+    - correct endpoint call but no response for the image from the api ( /api/book-packs/{packId}/cover ) 
+    - api response : 302 Found
+    - sollution : The backend is redirecting to the homepage (/) instead of serving the image. This is a security/authentication issue. The Problem:
+Your backend endpoint /api/book-packs/1/cover requires authentication
+Since the image request doesn't include auth headers, it redirects to login/home
+Status 302 with Location: http://localhost:8080/
+Solution (Backend Fix Required): Your backend needs to make /api/book-packs/{id}/cover publicly accessible (no authentication required), just like book covers. Tell your backend developer:
+Make the pack cover endpoint public (remove authentication requirement)
+Similar to how /api/books/{id}/cover is likely already public
+The endpoint should return the image with status 200 and Content-Type: image/jpeg
+Alternative (Frontend Fix): If pack covers MUST be authenticated, you need to fetch them differently (using fetch() with auth headers and convert to blob URLs), but this is more complex and not recommended for images. Bottom line: Backend security configuration is blocking the image requests. The endpoint needs to be made public.
 
-packCard : 
- - pack description i18n : 
- - always display modal of all books and not just for 4+, use view pack details modal in cartCheckoutPage: 
-
-Add 404 page : 
 
 Specific redirection : 
- - 
+ - when the user authenticates for the very first time > he is told that he has to add his phone number > updates the profile > check the response > if  "linkedOrdersCount" superior to 0 > redirect user to orders with a success msg saying orders linked succesfully to you current acocunt or something
 
-Test responsive design : 
+
+
+
+RESPONSIVENESS ( 320 < vw < 375 ) :
+- homePage (i have to leave space between the navigation dots and the navigation arrows): done
+- allBooks (perfect): perfect
+- bookDetails (change header of the recommendations sections): done
+- add to cart popup (reduce buttons sizes): done
+- see pack's details popup (make the bookcards wider and the text more responsive (smaller): done 
+- packCards (description is not appearing withing the screen sometimes, add to cart button too big especially for french translation, no horizontal leveling for the add to cart button and base of he cover images): done
+- our team (perfect): perfect
+- cartCheckoutPage (shipping method buttons too big, estimed delivery duplicated text): done
+- profile (edit button too big, shipping method buttons too big, dropdown arrows outside their select boxes for wilaya and city): done
+- customer services (send message button too big): done
+- login required popup (too big and not withing the screen): done
+- navbar fix for 850-767px: done
+- se connecter button, hamburger menu and logo responsiveness in navbar: done 
 
 
 

@@ -451,10 +451,11 @@ export default function Profile() {
               </label>
               <button
                 onClick={handleEditPhone}
-                className="flex items-center gap-1 text-blue-600 hover:text-blue-700 transition-colors text-sm"
+                className="flex items-center gap-0.5 xs:gap-1 text-blue-600 hover:text-blue-700 transition-colors text-xs xs:text-sm"
               >
-                <Edit2 className="w-4 h-4" />
-                <span>{t('profile.edit')}</span>
+                <Edit2 className="w-3 h-3 xs:w-4 xs:h-4" />
+                <span className="hidden xs:inline">{t('profile.edit')}</span>
+                <span className="inline xs:hidden text-[10px]">{t('profile.edit')}</span>
               </button>
             </div>
             {isEditingPhone ? (
@@ -510,7 +511,7 @@ export default function Profile() {
                   }`}
                 >
                   <div
-                    className="flex items-center flex-1 h-11 px-3 cursor-text"
+                    className="flex items-center flex-1 min-w-0 h-11 px-2.5 xs:px-3 cursor-text"
                     onClick={() => {
                       if (wilayaInputRef.current) {
                         wilayaInputRef.current.focus();
@@ -520,7 +521,7 @@ export default function Profile() {
                       }
                     }}
                   >
-                    <Search className="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" />
+                    <Search className="w-3.5 h-3.5 xs:w-4 xs:h-4 text-gray-400 mr-1.5 xs:mr-2 flex-shrink-0" />
                     <input
                       ref={wilayaInputRef}
                       type="text"
@@ -530,7 +531,7 @@ export default function Profile() {
                         setOpenDropdown('wilaya');
                       }}
                       placeholder={userData.wilaya}
-                      className="flex-1 bg-transparent border-0 outline-none text-sm text-gray-700 placeholder-gray-700 cursor-text font-medium"
+                      className="flex-1 min-w-0 bg-transparent border-0 outline-none text-sm text-gray-700 placeholder-gray-700 cursor-text font-medium"
                     />
                   </div>
                   <button
@@ -540,10 +541,10 @@ export default function Profile() {
                       e.stopPropagation();
                       setOpenDropdown(openDropdown === 'wilaya' ? null : 'wilaya');
                     }}
-                    className="h-11 px-3 hover:bg-gray-100 rounded-r-lg transition-colors flex items-center flex-shrink-0"
+                    className="h-11 px-2 xs:px-3 hover:bg-gray-100 rounded-r-lg transition-colors flex items-center justify-center flex-shrink-0"
                   >
                     <ChevronDown
-                      className={`w-4 h-4 text-gray-500 transform transition-transform duration-200 ${
+                      className={`w-3.5 h-3.5 xs:w-4 xs:h-4 text-gray-500 transform transition-transform duration-200 ${
                         openDropdown === 'wilaya' ? 'rotate-180' : ''
                       }`}
                     />
@@ -604,7 +605,7 @@ export default function Profile() {
                   }`}
                 >
                   <div
-                    className="flex items-center flex-1 h-11 px-3 cursor-text"
+                    className="flex items-center flex-1 min-w-0 h-11 px-2.5 xs:px-3 cursor-text"
                     onClick={() => {
                       if (cityInputRef.current) {
                         cityInputRef.current.focus();
@@ -614,7 +615,7 @@ export default function Profile() {
                       }
                     }}
                   >
-                    <Search className="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" />
+                    <Search className="w-3.5 h-3.5 xs:w-4 xs:h-4 text-gray-400 mr-1.5 xs:mr-2 flex-shrink-0" />
                     <input
                       ref={cityInputRef}
                       type="text"
@@ -624,7 +625,7 @@ export default function Profile() {
                         setOpenDropdown('city');
                       }}
                       placeholder={userData.city || t('profile.cityPlaceholder')}
-                      className={`flex-1 bg-transparent border-0 outline-none text-sm cursor-text ${
+                      className={`flex-1 min-w-0 bg-transparent border-0 outline-none text-sm cursor-text ${
                         userData.city ? 'text-gray-700 placeholder-gray-700 font-medium' : 'text-gray-400 placeholder-gray-400'
                       }`}
                     />
@@ -636,10 +637,10 @@ export default function Profile() {
                       e.stopPropagation();
                       setOpenDropdown(openDropdown === 'city' ? null : 'city');
                     }}
-                    className="h-11 px-3 hover:bg-gray-100 rounded-r-lg transition-colors flex items-center flex-shrink-0"
+                    className="h-11 px-2 xs:px-3 hover:bg-gray-100 rounded-r-lg transition-colors flex items-center justify-center flex-shrink-0"
                   >
                     <ChevronDown
-                      className={`w-4 h-4 text-gray-500 transform transition-transform duration-200 ${
+                      className={`w-3.5 h-3.5 xs:w-4 xs:h-4 text-gray-500 transform transition-transform duration-200 ${
                         openDropdown === 'city' ? 'rotate-180' : ''
                       }`}
                     />
@@ -707,33 +708,33 @@ export default function Profile() {
             <div>
               <button
                 onClick={() => setShippingPreference("home")}
-                className={`w-full p-4 rounded-lg border-2 transition-all ${shippingPreference === "home"
+                className={`w-full p-2.5 xs:p-3 md:p-4 rounded-lg border-2 transition-all ${shippingPreference === "home"
                     ? "border-blue-500 bg-blue-50"
                     : "border-gray-200 bg-gray-50 hover:border-gray-300"
                   }`}
               >
-                <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${shippingPreference === "home" ? "bg-blue-100" : "bg-gray-100"
+                <div className="flex items-center gap-2 xs:gap-3">
+                  <div className={`w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0 ${shippingPreference === "home" ? "bg-blue-100" : "bg-gray-100"
                     }`}>
-                    <Home className={`w-5 h-5 ${shippingPreference === "home" ? "text-blue-600" : "text-gray-600"
+                    <Home className={`w-4 h-4 xs:w-4.5 xs:h-4.5 sm:w-5 sm:h-5 ${shippingPreference === "home" ? "text-blue-600" : "text-gray-600"
                       }`} />
                   </div>
-                  <div className="text-left flex-1">
-                    <h3 className={`font-medium ${shippingPreference === "home" ? "text-blue-900" : "text-gray-800"
+                  <div className="text-left flex-1 min-w-0">
+                    <h3 className={`font-medium text-xs xs:text-sm sm:text-base leading-tight ${shippingPreference === "home" ? "text-blue-900" : "text-gray-800"
                       }`}>
                       {t('profile.homeDelivery')}
                     </h3>
-                    <p className={`text-sm ${shippingPreference === "home" ? "text-blue-600" : "text-gray-500"
+                    <p className={`text-[10px] xs:text-xs sm:text-sm leading-tight mt-0.5 ${shippingPreference === "home" ? "text-blue-600" : "text-gray-500"
                       }`}>
                       {t('profile.homeDeliveryDesc')}
                     </p>
                   </div>
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${shippingPreference === "home"
+                  <div className={`w-4 h-4 xs:w-4.5 xs:h-4.5 sm:w-5 sm:h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${shippingPreference === "home"
                       ? "border-blue-500 bg-blue-500"
                       : "border-gray-300"
                     }`}>
                     {shippingPreference === "home" && (
-                      <div className="w-2 h-2 rounded-full bg-white"></div>
+                      <div className="w-1.5 h-1.5 xs:w-2 xs:h-2 rounded-full bg-white"></div>
                     )}
                   </div>
                 </div>
@@ -788,33 +789,33 @@ export default function Profile() {
             <div>
               <button
                 onClick={() => setShippingPreference("pickup")}
-                className={`w-full p-4 rounded-lg border-2 transition-all ${shippingPreference === "pickup"
+                className={`w-full p-2.5 xs:p-3 md:p-4 rounded-lg border-2 transition-all ${shippingPreference === "pickup"
                     ? "border-blue-500 bg-blue-50"
                     : "border-gray-200 bg-gray-50 hover:border-gray-300"
                   }`}
               >
-                <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${shippingPreference === "pickup" ? "bg-blue-100" : "bg-gray-100"
+                <div className="flex items-center gap-2 xs:gap-3">
+                  <div className={`w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0 ${shippingPreference === "pickup" ? "bg-blue-100" : "bg-gray-100"
                     }`}>
-                    <MapPin className={`w-5 h-5 ${shippingPreference === "pickup" ? "text-blue-600" : "text-gray-600"
+                    <MapPin className={`w-4 h-4 xs:w-4.5 xs:h-4.5 sm:w-5 sm:h-5 ${shippingPreference === "pickup" ? "text-blue-600" : "text-gray-600"
                       }`} />
                   </div>
-                  <div className="text-left flex-1">
-                    <h3 className={`font-medium ${shippingPreference === "pickup" ? "text-blue-900" : "text-gray-800"
+                  <div className="text-left flex-1 min-w-0">
+                    <h3 className={`font-medium text-xs xs:text-sm sm:text-base leading-tight ${shippingPreference === "pickup" ? "text-blue-900" : "text-gray-800"
                       }`}>
                       {t('profile.pickupPoint')}
                     </h3>
-                    <p className={`text-sm ${shippingPreference === "pickup" ? "text-blue-600" : "text-gray-500"
+                    <p className={`text-[10px] xs:text-xs sm:text-sm leading-tight mt-0.5 ${shippingPreference === "pickup" ? "text-blue-600" : "text-gray-500"
                       }`}>
                       {t('profile.pickupPointDesc')}
                     </p>
                   </div>
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${shippingPreference === "pickup"
+                  <div className={`w-4 h-4 xs:w-4.5 xs:h-4.5 sm:w-5 sm:h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${shippingPreference === "pickup"
                       ? "border-blue-500 bg-blue-500"
                       : "border-gray-300"
                     }`}>
                     {shippingPreference === "pickup" && (
-                      <div className="w-2 h-2 rounded-full bg-white"></div>
+                      <div className="w-1.5 h-1.5 xs:w-2 xs:h-2 rounded-full bg-white"></div>
                     )}
                   </div>
                 </div>
@@ -829,7 +830,7 @@ export default function Profile() {
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                   >
-                    <div ref={pickupProviderRef} className="mt-3 px-3">
+                    <div ref={pickupProviderRef} className="mt-2 xs:mt-2.5 sm:mt-3 px-2 xs:px-2.5 sm:px-3 md:px-4">
                       <div className="relative" ref={el => dropdownRefs.current['provider'] = el}>
                         <div className={`flex items-center bg-white rounded-lg border-2 transition-all duration-200 ${
                           validationErrors.pickupProvider
@@ -837,13 +838,13 @@ export default function Profile() {
                             : openDropdown === 'provider' ? 'border-blue-500 shadow-md' : 'border-gray-300 hover:border-blue-400'
                         }`}>
                           <div
-                            className="flex items-center flex-1 h-11 px-3 cursor-pointer"
+                            className="flex items-center flex-1 min-w-0 h-9 xs:h-10 sm:h-11 px-2 xs:px-2.5 sm:px-3 cursor-pointer"
                             onClick={() => {
                               setOpenDropdown(openDropdown === 'provider' ? null : 'provider');
                             }}
                           >
-                            <Truck className="w-4 h-4 text-blue-500 mr-2 flex-shrink-0" />
-                            <span className={`text-sm ${pickupProvider ? 'text-gray-700 font-medium' : 'text-gray-400'}`}>
+                            <Truck className="w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-4 sm:h-4 text-blue-500 mr-1 xs:mr-1.5 sm:mr-2 flex-shrink-0" />
+                            <span className={`text-[11px] xs:text-xs sm:text-sm truncate ${pickupProvider ? 'text-gray-700 font-medium' : 'text-gray-400'}`}>
                               {pickupProvider || t('profile.selectProvider')}
                             </span>
                           </div>
@@ -854,10 +855,10 @@ export default function Profile() {
                               e.stopPropagation();
                               setOpenDropdown(openDropdown === 'provider' ? null : 'provider');
                             }}
-                            className="h-11 px-3 hover:bg-gray-100 rounded-r-lg transition-colors flex items-center flex-shrink-0"
+                            className="h-9 xs:h-10 sm:h-11 px-1.5 xs:px-2 sm:px-3 hover:bg-gray-100 rounded-r-lg transition-colors flex items-center justify-center flex-shrink-0"
                           >
                             <ChevronDown
-                              className={`w-4 h-4 text-blue-500 transform transition-transform duration-200 ${
+                              className={`w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-4 sm:h-4 text-blue-500 transform transition-transform duration-200 ${
                                 openDropdown === 'provider' ? 'rotate-180' : ''
                               }`}
                             />
@@ -871,33 +872,33 @@ export default function Profile() {
                               animate={{ opacity: 1, y: 0, height: 'auto' }}
                               exit={{ opacity: 0, y: -10, height: 0 }}
                               transition={{ duration: 0.2 }}
-                              className="absolute top-full left-0 right-0 z-50 mt-2 overflow-hidden"
+                              className="absolute top-full left-0 right-0 z-50 mt-1.5 xs:mt-2 overflow-hidden"
                             >
                               <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
-                                <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200">
-                                  <span className="text-xs font-medium text-gray-600">
+                                <div className="flex items-center justify-between px-2 xs:px-2.5 sm:px-3 md:px-4 py-1.5 xs:py-2 bg-gray-50 border-b border-gray-200">
+                                  <span className="text-[10px] xs:text-xs sm:text-xs font-medium text-gray-600">
                                     {pickupProviders.length} {pickupProviders.length === 1 ? 'option' : 'options'}
                                   </span>
                                   <button
                                     onClick={() => setOpenDropdown(null)}
                                     className="text-gray-400 hover:text-gray-600 transition-colors"
                                   >
-                                    <X className="w-4 h-4" />
+                                    <X className="w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-4 sm:h-4" />
                                   </button>
                                 </div>
-                                <div className="max-h-52 overflow-y-auto">
+                                <div className="max-h-40 xs:max-h-48 sm:max-h-52 overflow-y-auto">
                                   {pickupProviders.map((provider) => (
                                     <button
                                       key={provider}
                                       onClick={() => handleProviderSelect(provider)}
-                                      className={`w-full text-left px-4 py-3 text-sm hover:bg-blue-50 transition-colors flex items-center border-b border-gray-100 last:border-b-0 ${
+                                      className={`w-full text-left px-2 xs:px-2.5 sm:px-3 md:px-4 py-2 xs:py-2.5 sm:py-3 hover:bg-blue-50 transition-colors flex items-center border-b border-gray-100 last:border-b-0 ${
                                         pickupProvider === provider ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
                                       }`}
                                     >
-                                      <div className={`w-3 h-3 border-2 rounded-full mr-3 flex-shrink-0 ${
+                                      <div className={`w-2.5 h-2.5 xs:w-3 xs:h-3 border-2 rounded-full mr-1.5 xs:mr-2 sm:mr-3 flex-shrink-0 ${
                                         pickupProvider === provider ? 'border-blue-500 bg-blue-500' : 'border-gray-300'
                                       }`}></div>
-                                      <span className="font-medium">{provider}</span>
+                                      <span className="font-medium truncate text-[10px] xs:text-[11px] sm:text-xs md:text-sm">{provider}</span>
                                     </button>
                                   ))}
                                 </div>

@@ -24,9 +24,8 @@ main {
 
 /* Define custom properties first */
 @theme {
-  /* Only CSS custom properties (--variables) allowed here */
+  /* Custom breakpoints for Tailwind screens */
   --breakpoint-xs: 450px;
-  --breakpoint-md: 829px;
 
   /* Fluid Typography */
   --font-size-fluid-hero: clamp(1.75rem, 5vw, 3.5rem);

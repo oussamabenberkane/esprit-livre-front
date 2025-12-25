@@ -38,7 +38,7 @@ const SignInButton = ({ onClick, className = "", highlight = false }) => {
     return (
         <button
             onClick={onClick}
-            className={`bg-white/10 hover:bg-white/20 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg transition-all text-sm font-medium whitespace-nowrap ${
+            className={`bg-white/10 hover:bg-white/20 text-white px-1.5 min-[330px]:px-2 min-[360px]:px-3 md:px-4 py-0.5 min-[330px]:py-1 min-[360px]:py-1.5 md:py-2 rounded-lg transition-all text-[10px] min-[330px]:text-xs min-[360px]:text-sm font-medium whitespace-nowrap ${
                 highlight
                     ? 'ring-2 ring-white ring-offset-2 ring-offset-blue-800 animate-pulse shadow-lg'
                     : ''

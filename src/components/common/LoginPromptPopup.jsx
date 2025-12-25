@@ -45,11 +45,11 @@ const LoginPromptPopup = ({ isOpen, onClose, onLoginClick, position = 'top' }) =
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.9, y: position === 'top' ? -10 : 10 }}
                         transition={{ duration: 0.2 }}
-                        className="absolute z-50 bg-white rounded-lg shadow-xl border border-gray-200 p-3 xs:p-4 w-[calc(100vw-1rem)] max-w-[280px] xs:max-w-xs"
+                        className="absolute z-50 bg-white rounded-lg shadow-xl border border-gray-200 p-3 xs:p-4 w-[calc(100vw-2rem)] max-w-[260px] xs:max-w-xs"
                         style={{
                             top: position === 'top' ? 'auto' : '100%',
                             bottom: position === 'top' ? '100%' : 'auto',
-                            right: '0.5rem',
+                            right: '-8px',
                             marginTop: position === 'top' ? '0' : '18px',
                             marginBottom: position === 'top' ? '8px' : '0'
                         }}

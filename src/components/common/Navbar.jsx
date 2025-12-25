@@ -53,8 +53,8 @@ const SignInButton = ({ onClick, className = "", highlight = false }) => {
 const Logo = ({ onClick }) => (
     <button onClick={onClick} className="text-left">
         <div className="flex flex-col text-white">
-            <div className="text-base md:text-xl font-bold leading-tight">Esprit</div>
-            <div className="text-sm md:text-lg font-bold leading-tight">Livre</div>
+            <div className="text-sm min-[360px]:text-base md:text-xl font-bold leading-tight">Esprit</div>
+            <div className="text-xs min-[360px]:text-sm md:text-lg font-bold leading-tight">Livre</div>
         </div>
     </button>
 );
@@ -475,13 +475,13 @@ const Navbar = ({
                 {/* First Line: Menu, Logo, Sign In, Profile, Cart */}
                 <div className="flex items-center justify-between h-12 mb-2">
                     {/* Left side: Menu + Logo */}
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 min-[360px]:gap-3">
                         {/* Menu Icon */}
                         <button
                             onClick={() => setIsBottomSheetOpen(true)}
                             className="flex-shrink-0"
                         >
-                            <Menu className="w-8 h-8 text-white hover:opacity-80 transition-opacity" />
+                            <Menu className="w-6 min-[360px]:w-8 h-6 min-[360px]:h-8 text-white hover:opacity-80 transition-opacity" />
                         </button>
 
                         {/* Logo */}

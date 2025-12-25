@@ -867,7 +867,7 @@ const BookDetails = () => {
 
                         {/* Pagination Controls */}
                         {!recommendedBooksLoading && recommendedBooks.length > 0 && (
-                            <div className="flex items-center justify-between pr-fluid-lg pt-2 mt-4 mb-4">
+                            <div className="flex items-center justify-between pr-fluid-lg pt-2 mt-4 mb-4 gap-4 xs:gap-6">
                                 <div className="flex-1"></div>
 
                                 <div className="flex-1 flex justify-center">
@@ -967,7 +967,7 @@ const BookDetails = () => {
 
                             {/* Pagination Controls */}
                             {!packsLoading && recommendedPacks.length > 0 && (
-                                <div className="flex items-center justify-between pr-fluid-lg pt-2 mt-4 mb-4">
+                                <div className="flex items-center justify-between pr-fluid-lg pt-2 mt-4 mb-4 gap-4 xs:gap-6">
                                     <div className="flex-1"></div>
 
                                     <div className="flex-1 flex justify-center">

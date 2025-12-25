@@ -152,8 +152,8 @@
     "addToCart": "Add to cart",
     "viewFullDescription": "View full description",
     "fullDescription": "Full Description",
-    "recommendations": "Recommendations:",
-    "packRecommendations": "Pack Recommendations:"
+    "recommendations": "Recommended books: ",
+    "packRecommendations": "Recommended packs: "
   },
   "cart": {
     "title": "Cart ({{count}} item)",

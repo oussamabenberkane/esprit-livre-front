@@ -152,8 +152,8 @@
     "addToCart": "Ajouter au panier",
     "viewFullDescription": "Voir la description complète",
     "fullDescription": "Description complète",
-    "recommendations": "Recommandations :",
-    "packRecommendations": "Recommandations de packs :"
+    "recommendations": "Livres recommandés:",
+    "packRecommendations": "Packs recommandés:"
   },
   "cart": {
     "title": "Panier ({{count}} article)",

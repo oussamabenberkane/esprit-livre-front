@@ -798,11 +798,13 @@ const BookDetails = () => {
                     <div className="container-main container-padding2xl-left-only">
 
                         {/* Header */}
-                        <div className="flex justify-between items-center mb-fluid-sm pr-fluid-lg">
-                            <h2 className="text-brand-blue text-fluid-h2 font-bold">
+                        <div className="flex justify-between items-center mb-fluid-sm pr-fluid-lg gap-2">
+                            <h2 className="text-brand-blue font-bold text-[clamp(0.875rem,3vw,var(--font-size-fluid-h2))]">
                                 {t('bookDetails.recommendations')}
                             </h2>
-                            <SeeMore to="/allbooks" />
+                            <div className="scale-[0.85] xs:scale-100 origin-right">
+                                <SeeMore to="/allbooks" />
+                            </div>
                         </div>
 
                         {/* Horizontal Scroll Container with negative margin */}
@@ -916,11 +918,13 @@ const BookDetails = () => {
                         <div className="container-main container-padding2xl-left-only">
 
                             {/* Header */}
-                            <div className="flex justify-between items-center mb-fluid-sm pr-fluid-lg">
-                                <h2 className="text-brand-blue text-fluid-h2 font-bold">
+                            <div className="flex justify-between items-center mb-fluid-sm pr-fluid-lg gap-2">
+                                <h2 className="text-brand-blue font-bold text-[clamp(0.875rem,3vw,var(--font-size-fluid-h2))]">
                                     {t('bookDetails.packRecommendations')}
                                 </h2>
-                                <SeeMore to="/packs" />
+                                <div className="scale-[0.85] xs:scale-100 origin-right">
+                                    <SeeMore to="/packs" />
+                                </div>
                             </div>
 
                             {/* Horizontal Scroll Container with negative margin */}

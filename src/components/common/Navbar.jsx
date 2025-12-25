@@ -287,8 +287,8 @@ const Navbar = ({
 
     return (
         <>
-            {/* Desktop and Tablet Navbar */}
-            <div className="hidden md:block fixed top-0 left-0 right-0 bg-blue-800 rounded-br-2xl px-4 md:px-6 py-3 h-20 z-40">
+            {/* Desktop Navbar - 850px and above */}
+            <div className="hidden min-[850px]:block fixed top-0 left-0 right-0 bg-blue-800 rounded-br-2xl px-4 md:px-6 py-3 h-20 z-40">
                 <div className="flex items-center w-full h-full gap-4">
                     {/* Logo - Always visible */}
                     <Logo onClick={handleLogoClick} />
@@ -385,8 +385,93 @@ const Navbar = ({
                 </div>
             </div>
 
-            {/* Mobile Navbar */}
-            <div className="md:hidden fixed top-0 left-0 right-0 bg-blue-800 rounded-br-2xl px-4 py-2 z-40">
+            {/* Tablet Navbar - 767px to 849px (mobile-style with search on first line) */}
+            <div className="hidden min-[767px]:block min-[850px]:hidden fixed top-0 left-0 right-0 bg-blue-800 rounded-br-2xl px-4 py-3 h-20 z-40">
+                <div className="flex items-center justify-between h-full gap-3">
+                    {/* Left side: Menu + Logo */}
+                    <div className="flex items-center gap-3 flex-shrink-0">
+                        {/* Menu Icon */}
+                        <button
+                            onClick={() => setIsBottomSheetOpen(true)}
+                            className="flex-shrink-0"
+                        >
+                            <Menu className="w-7 h-7 text-white hover:opacity-80 transition-opacity" />
+                        </button>
+
+                        {/* Logo */}
+                        <Logo onClick={handleLogoClick} />
+                    </div>
+
+                    {/* Center: Search Bar */}
+                    <div className="flex-1 min-w-0 relative" ref={mobileSearchContainerRef}>
+                        <SearchBar
+                            placeholder={placeholder}
+                            value={searchQuery}
+                            onChange={handleSearchChange}
+                            onFocus={handleSearchFocus}
+                            onKeyDown={handleKeyDown}
+                            onSearchClick={handleSearchSubmit}
+                        />
+                        {showSuggestions && (
+                            <SearchSuggestions
+                                suggestions={suggestions}
+                                isLoading={isLoadingSuggestions}
+                                query={searchQuery}
+                                onClose={closeSuggestions}
+                            />
+                        )}
+                    </div>
+
+                    {/* Right side: Sign In, Profile, Cart */}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                        {/* Sign In Button - Hidden when authenticated */}
+                        {!isAuthenticated() && (
+                            <SignInButton
+                                onClick={() => {
+                                    const currentPath = location.pathname + location.search;
+                                    saveRedirectUrl(currentPath);
+                                    navigate('/auth');
+                                }}
+                                highlight={highlightSignInButton}
+                            />
+                        )}
+
+                        {/* User Profile Icon */}
+                        <div className="relative flex-shrink-0" ref={mobileUserButtonRef}>
+                            <button
+                                onClick={(e) => handleUserClick(e, true)}
+                                onTouchStart={(e) => {
+                                    handleUserHover(e, true);
+                                }}
+                                className="hover:opacity-80 transition-opacity"
+                            >
+                                <User className="w-6 h-6 text-white" />
+                            </button>
+                            <LoginPromptPopup
+                                isOpen={showLoginPromptMobile}
+                                onClose={closeLoginPrompt}
+                                onLoginClick={handleLoginFromPopup}
+                                position="bottom"
+                            />
+                        </div>
+
+                        {/* Cart Icon */}
+                        <button onClick={handleCartClick} className="relative flex-shrink-0">
+                            <ShoppingCart className="w-6 h-6 text-white hover:opacity-80 transition-opacity" />
+                            {cartCount > 0 && (
+                                <div className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                                    <span className="text-xs text-white font-bold">
+                                        {cartCount > 9 ? "9+" : cartCount}
+                                    </span>
+                                </div>
+                            )}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Mobile Navbar - Below 767px */}
+            <div className="min-[767px]:hidden fixed top-0 left-0 right-0 bg-blue-800 rounded-br-2xl px-4 py-2 z-40">
                 {/* First Line: Menu, Logo, Sign In, Profile, Cart */}
                 <div className="flex items-center justify-between h-12 mb-2">
                     {/* Left side: Menu + Logo */}

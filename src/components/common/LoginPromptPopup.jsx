@@ -45,11 +45,11 @@ const LoginPromptPopup = ({ isOpen, onClose, onLoginClick, position = 'top' }) =
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.9, y: position === 'top' ? -10 : 10 }}
                         transition={{ duration: 0.2 }}
-                        className="absolute z-50 bg-white rounded-lg shadow-xl border border-gray-200 p-4 w-72"
+                        className="absolute z-50 bg-white rounded-lg shadow-xl border border-gray-200 p-3 xs:p-4 w-[calc(100vw-1rem)] max-w-[280px] xs:max-w-xs"
                         style={{
                             top: position === 'top' ? 'auto' : '100%',
                             bottom: position === 'top' ? '100%' : 'auto',
-                            right: 0,
+                            right: '0.5rem',
                             marginTop: position === 'top' ? '0' : '18px',
                             marginBottom: position === 'top' ? '8px' : '0'
                         }}
@@ -65,18 +65,18 @@ const LoginPromptPopup = ({ isOpen, onClose, onLoginClick, position = 'top' }) =
                         </button>
 
                         {/* Content */}
-                        <div className="pr-6">
-                            <h3 className="text-gray-800 font-semibold mb-2">
+                        <div className="pr-5 xs:pr-6">
+                            <h3 className="text-sm xs:text-base text-gray-800 font-semibold mb-1.5 xs:mb-2">
                                 {t('loginPrompt.title')}
                             </h3>
-                            <p className="text-sm text-gray-600 mb-4">
+                            <p className="text-xs xs:text-sm text-gray-600 mb-3 xs:mb-4 leading-relaxed">
                                 {t('loginPrompt.message')}
                             </p>
 
                             {/* Login button */}
                             <button
                                 onClick={onLoginClick}
-                                className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium"
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white px-3 xs:px-4 py-1.5 xs:py-2 rounded-lg transition-colors text-xs xs:text-sm font-medium"
                             >
                                 {t('loginPrompt.loginButton')}
                             </button>
@@ -87,7 +87,7 @@ const LoginPromptPopup = ({ isOpen, onClose, onLoginClick, position = 'top' }) =
                             className="absolute w-3 h-3 bg-white border-gray-200 transform rotate-45"
                             style={{
                                 [position === 'top' ? 'bottom' : 'top']: '-6px',
-                                right: '5px',
+                                right: '12px',
                                 borderWidth: position === 'top' ? '0 1px 1px 0' : '1px 0 0 1px'
                             }}
                         />

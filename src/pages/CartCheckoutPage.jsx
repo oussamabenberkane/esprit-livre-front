@@ -941,33 +941,33 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
               <button
                 type="button"
                 onClick={() => setShippingPreference("home")}
-                className={`w-full p-3 md:p-4 rounded-lg border-2 transition-all ${shippingPreference === "home"
+                className={`w-full p-2.5 xs:p-3 md:p-4 rounded-lg border-2 transition-all ${shippingPreference === "home"
                     ? "border-emerald-500 bg-emerald-50"
                     : "border-neutral-200 bg-gray-50 hover:border-neutral-300"
                   }`}
               >
-                <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${shippingPreference === "home" ? "bg-emerald-100" : "bg-gray-100"
+                <div className="flex items-center gap-2 xs:gap-3">
+                  <div className={`w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0 ${shippingPreference === "home" ? "bg-emerald-100" : "bg-gray-100"
                     }`}>
-                    <Home className={`w-5 h-5 ${shippingPreference === "home" ? "text-emerald-600" : "text-gray-600"
+                    <Home className={`w-4 h-4 xs:w-4.5 xs:h-4.5 sm:w-5 sm:h-5 ${shippingPreference === "home" ? "text-emerald-600" : "text-gray-600"
                       }`} />
                   </div>
-                  <div className="text-left flex-1">
-                    <h3 className={`font-medium text-fluid-small ${shippingPreference === "home" ? "text-emerald-900" : "text-gray-800"
+                  <div className="text-left flex-1 min-w-0">
+                    <h3 className={`font-medium text-xs xs:text-sm sm:text-fluid-small leading-tight ${shippingPreference === "home" ? "text-emerald-900" : "text-gray-800"
                       }`}>
                       {t('cart.homeDelivery')}
                     </h3>
-                    <p className={`text-fluid-xs ${shippingPreference === "home" ? "text-emerald-600" : "text-gray-500"
+                    <p className={`text-[10px] xs:text-xs sm:text-fluid-xs leading-tight mt-0.5 ${shippingPreference === "home" ? "text-emerald-600" : "text-gray-500"
                       }`}>
                       {t('cart.homeDeliveryDesc')}
                     </p>
                   </div>
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${shippingPreference === "home"
+                  <div className={`w-4 h-4 xs:w-4.5 xs:h-4.5 sm:w-5 sm:h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${shippingPreference === "home"
                       ? "border-emerald-500 bg-emerald-500"
                       : "border-gray-300"
                     }`}>
                     {shippingPreference === "home" && (
-                      <div className="w-2 h-2 rounded-full bg-white"></div>
+                      <div className="w-1.5 h-1.5 xs:w-2 xs:h-2 rounded-full bg-white"></div>
                     )}
                   </div>
                 </div>
@@ -1007,33 +1007,33 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
               <button
                 type="button"
                 onClick={() => setShippingPreference("pickup")}
-                className={`w-full p-3 md:p-4 rounded-lg border-2 transition-all ${shippingPreference === "pickup"
+                className={`w-full p-2.5 xs:p-3 md:p-4 rounded-lg border-2 transition-all ${shippingPreference === "pickup"
                     ? "border-emerald-500 bg-emerald-50"
                     : "border-neutral-200 bg-gray-50 hover:border-neutral-300"
                   }`}
               >
-                <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${shippingPreference === "pickup" ? "bg-emerald-100" : "bg-gray-100"
+                <div className="flex items-center gap-2 xs:gap-3">
+                  <div className={`w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0 ${shippingPreference === "pickup" ? "bg-emerald-100" : "bg-gray-100"
                     }`}>
-                    <MapPin className={`w-5 h-5 ${shippingPreference === "pickup" ? "text-emerald-600" : "text-gray-600"
+                    <MapPin className={`w-4 h-4 xs:w-4.5 xs:h-4.5 sm:w-5 sm:h-5 ${shippingPreference === "pickup" ? "text-emerald-600" : "text-gray-600"
                       }`} />
                   </div>
-                  <div className="text-left flex-1">
-                    <h3 className={`font-medium text-fluid-small ${shippingPreference === "pickup" ? "text-emerald-900" : "text-gray-800"
+                  <div className="text-left flex-1 min-w-0">
+                    <h3 className={`font-medium text-xs xs:text-sm sm:text-fluid-small leading-tight ${shippingPreference === "pickup" ? "text-emerald-900" : "text-gray-800"
                       }`}>
                       {t('cart.pickupPoint')}
                     </h3>
-                    <p className={`text-fluid-xs ${shippingPreference === "pickup" ? "text-emerald-600" : "text-gray-500"
+                    <p className={`text-[10px] xs:text-xs sm:text-fluid-xs leading-tight mt-0.5 ${shippingPreference === "pickup" ? "text-emerald-600" : "text-gray-500"
                       }`}>
                       {t('cart.pickupPointDesc')}
                     </p>
                   </div>
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${shippingPreference === "pickup"
+                  <div className={`w-4 h-4 xs:w-4.5 xs:h-4.5 sm:w-5 sm:h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${shippingPreference === "pickup"
                       ? "border-emerald-500 bg-emerald-500"
                       : "border-gray-300"
                     }`}>
                     {shippingPreference === "pickup" && (
-                      <div className="w-2 h-2 rounded-full bg-white"></div>
+                      <div className="w-1.5 h-1.5 xs:w-2 xs:h-2 rounded-full bg-white"></div>
                     )}
                   </div>
                 </div>
@@ -1048,18 +1048,18 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                   >
-                    <div className="mt-3 px-3 md:px-4">
+                    <div className="mt-2 xs:mt-2.5 sm:mt-3 px-2 xs:px-2.5 sm:px-3 md:px-4">
                       <div className="relative" ref={el => dropdownRefs.current['provider'] = el}>
                         <div className={`flex items-center bg-white rounded-lg border-2 transition-all duration-200 ${openDropdown === 'provider' ? 'border-emerald-500 shadow-md' : 'border-neutral-200 hover:border-emerald-400'
                           }`}>
                           <div
-                            className="flex items-center flex-1 min-w-0 h-11 px-2.5 sm:px-3 cursor-pointer"
+                            className="flex items-center flex-1 min-w-0 h-9 xs:h-10 sm:h-11 px-2 xs:px-2.5 sm:px-3 cursor-pointer"
                             onClick={() => {
                               setOpenDropdown(openDropdown === 'provider' ? null : 'provider');
                             }}
                           >
-                            <Truck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-500 mr-1.5 sm:mr-2 flex-shrink-0" />
-                            <span className={`text-fluid-small truncate ${pickupProvider ? 'text-gray-700 font-medium' : 'text-gray-400'}`}>
+                            <Truck className="w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-4 sm:h-4 text-emerald-500 mr-1 xs:mr-1.5 sm:mr-2 flex-shrink-0" />
+                            <span className={`text-[11px] xs:text-xs sm:text-fluid-small truncate ${pickupProvider ? 'text-gray-700 font-medium' : 'text-gray-400'}`}>
                               {pickupProvider || t('cart.selectProvider')}
                             </span>
                           </div>
@@ -1070,10 +1070,10 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
                               e.stopPropagation();
                               setOpenDropdown(openDropdown === 'provider' ? null : 'provider');
                             }}
-                            className="h-11 px-2 sm:px-3 hover:bg-gray-100 rounded-r-lg transition-colors flex items-center justify-center flex-shrink-0"
+                            className="h-9 xs:h-10 sm:h-11 px-1.5 xs:px-2 sm:px-3 hover:bg-gray-100 rounded-r-lg transition-colors flex items-center justify-center flex-shrink-0"
                           >
                             <ChevronDown
-                              className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-500 transform transition-transform duration-200 ${openDropdown === 'provider' ? 'rotate-180' : ''
+                              className={`w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-4 sm:h-4 text-emerald-500 transform transition-transform duration-200 ${openDropdown === 'provider' ? 'rotate-180' : ''
                                 }`}
                             />
                           </button>
@@ -1086,11 +1086,11 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
                               animate={{ opacity: 1, y: 0, height: 'auto' }}
                               exit={{ opacity: 0, y: -10, height: 0 }}
                               transition={{ duration: 0.2 }}
-                              className="absolute top-full left-0 right-0 z-50 mt-2 overflow-hidden"
+                              className="absolute top-full left-0 right-0 z-50 mt-1.5 xs:mt-2 overflow-hidden"
                             >
                               <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
-                                <div className="flex items-center justify-between px-3 sm:px-4 py-2 bg-gray-50 border-b border-gray-200">
-                                  <span className="text-fluid-xs font-medium text-gray-600">
+                                <div className="flex items-center justify-between px-2 xs:px-2.5 sm:px-3 md:px-4 py-1.5 xs:py-2 bg-gray-50 border-b border-gray-200">
+                                  <span className="text-[10px] xs:text-xs sm:text-fluid-xs font-medium text-gray-600">
                                     {pickupProviders.length} {pickupProviders.length === 1 ? 'option' : 'options'}
                                   </span>
                                   <button
@@ -1098,21 +1098,21 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
                                     onClick={() => setOpenDropdown(null)}
                                     className="text-gray-400 hover:text-gray-600 transition-colors"
                                   >
-                                    <X className="w-4 h-4" />
+                                    <X className="w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-4 sm:h-4" />
                                   </button>
                                 </div>
-                                <div className="max-h-52 overflow-y-auto">
+                                <div className="max-h-40 xs:max-h-48 sm:max-h-52 overflow-y-auto">
                                   {pickupProviders.map((provider) => (
                                     <button
                                       type="button"
                                       key={provider}
                                       onClick={() => handleProviderSelect(provider)}
-                                      className={`w-full text-left px-3 sm:px-4 py-2.5 sm:py-3 text-fluid-small hover:bg-emerald-50 transition-colors flex items-center border-b border-gray-100 last:border-b-0 ${pickupProvider === provider ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700'
+                                      className={`w-full text-left px-2 xs:px-2.5 sm:px-3 md:px-4 py-2 xs:py-2.5 sm:py-3 hover:bg-emerald-50 transition-colors flex items-center border-b border-gray-100 last:border-b-0 ${pickupProvider === provider ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700'
                                         }`}
                                     >
-                                      <div className={`w-3 h-3 border-2 rounded-full mr-2 sm:mr-3 flex-shrink-0 ${pickupProvider === provider ? 'border-emerald-500 bg-emerald-500' : 'border-gray-300'
+                                      <div className={`w-2.5 h-2.5 xs:w-3 xs:h-3 border-2 rounded-full mr-1.5 xs:mr-2 sm:mr-3 flex-shrink-0 ${pickupProvider === provider ? 'border-emerald-500 bg-emerald-500' : 'border-gray-300'
                                         }`}></div>
-                                      <span className="font-medium truncate">{provider}</span>
+                                      <span className="font-medium truncate text-[10px] xs:text-[11px] sm:text-xs md:text-fluid-small">{provider}</span>
                                     </button>
                                   ))}
                                 </div>

@@ -144,8 +144,6 @@ const PackCard = ({
 
     const savings = originalPrice - packPrice;
     const savingsPercentage = Math.round((savings / originalPrice) * 100);
-    const displayedBooks = books.slice(0, 4);
-    const hasMoreBooks = books.length > 4;
 
     // Handle book thumbnail click - navigate to book details
     const handleBookClick = (bookId, e) => {
@@ -153,50 +151,115 @@ const PackCard = ({
         navigate(`/books/${bookId}`);
     };
 
-    // Render book thumbnails with "See More" overlay on 4th book
-    const renderBookThumbnails = () => {
-        // Special layout for exactly 2 books: side-by-side in a single row
-        const isTwo = books.length === 2;
+    // Handle Details button click
+    const handleDetailsClick = (e) => {
+        e.stopPropagation();
+        if (onViewAllBooks) {
+            onViewAllBooks();
+        } else {
+            setShowAllBooksPopup(true);
+        }
+    };
 
-        return (
-            <div className={isTwo ? "flex gap-1 h-full" : "grid grid-cols-2 grid-rows-2 gap-1 h-full"}>
-                {displayedBooks.map((book, index) => {
-                    const isLastThumbnail = index === 3 && hasMoreBooks;
-                    return (
+    // Render book thumbnails with Details button based on pack size
+    const renderBookThumbnails = () => {
+        const bookCount = books.length;
+
+        // 2 books: show both in 2 columns × 1 row, Details button overlays 2nd book
+        if (bookCount === 2) {
+            return (
+                <div className="flex gap-1 h-full">
+                    {books.map((book, index) => (
                         <div
                             key={index}
                             className="relative overflow-hidden rounded-sm bg-gray-100 cursor-pointer w-full h-full"
-                            onClick={(e) => {
-                                if (isLastThumbnail) {
-                                    e.stopPropagation();
-                                    // Use external callback if provided, otherwise use internal state
-                                    if (onViewAllBooks) {
-                                        onViewAllBooks();
-                                    } else {
-                                        setShowAllBooksPopup(true);
-                                    }
-                                } else {
-                                    // Navigate to book details for non-last thumbnails
-                                    handleBookClick(book.id, e);
-                                }
-                            }}
+                            onClick={(e) => handleBookClick(book.id, e)}
                         >
                             <img
                                 src={book.coverImage}
                                 alt={book.title}
-                                className={`absolute inset-0 w-full h-full object-cover ${isLastThumbnail ? 'blur-sm' : ''}`}
+                                className="absolute inset-0 w-full h-full object-cover"
                             />
-                            {isLastThumbnail && (
-                                <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex flex-col items-center justify-center">
-                                    <div className="text-white text-center">
-                                        <p className="text-lg md:text-xl font-bold">+{books.length - 4}</p>
-                                        <p className="text-xs md:text-sm font-medium mt-1">{t('packCard.seeMore')}</p>
-                                    </div>
-                                </div>
+                            {/* Details button overlays the 2nd (last) book */}
+                            {index === 1 && (
+                                <>
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none" />
+                                    <button
+                                        onClick={handleDetailsClick}
+                                        className="absolute bottom-0.5 right-0.5 sm:bottom-1 sm:right-1 bg-[#00417a] hover:bg-[#003460] text-white px-1 py-0.5 sm:px-1.5 sm:py-0.5 rounded-sm transition-all duration-200 shadow-sm hover:shadow-md text-[7px] sm:text-[8px] font-semibold cursor-pointer z-10 active:scale-95"
+                                        aria-label={t('packCard.detailsButton')}
+                                    >
+                                        <span className="whitespace-nowrap">{t('packCard.detailsButton')}</span>
+                                    </button>
+                                </>
                             )}
                         </div>
-                    );
-                })}
+                    ))}
+                </div>
+            );
+        }
+
+        // 3 books: show all 3 in 2×2 grid, Details button in empty 4th cell
+        if (bookCount === 3) {
+            return (
+                <div className="grid grid-cols-2 grid-rows-2 gap-1 h-full">
+                    {books.map((book, index) => (
+                        <div
+                            key={index}
+                            className="relative overflow-hidden rounded-sm bg-gray-100 cursor-pointer w-full h-full"
+                            onClick={(e) => handleBookClick(book.id, e)}
+                        >
+                            <img
+                                src={book.coverImage}
+                                alt={book.title}
+                                className="absolute inset-0 w-full h-full object-cover"
+                            />
+                        </div>
+                    ))}
+                    {/* Empty 4th cell with Details button */}
+                    <div className="relative overflow-hidden rounded-sm bg-gray-100 w-full h-full flex items-end justify-end p-0.5 sm:p-1">
+                        <button
+                            onClick={handleDetailsClick}
+                            className="bg-[#00417a] hover:bg-[#003460] text-white px-1 py-0.5 sm:px-1.5 sm:py-0.5 rounded-sm transition-all duration-200 shadow-sm hover:shadow-md text-[7px] sm:text-[8px] font-semibold cursor-pointer z-10 active:scale-95"
+                            aria-label={t('packCard.detailsButton')}
+                        >
+                            <span className="whitespace-nowrap">{t('packCard.detailsButton')}</span>
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        // 4+ books: show first 4 books in 2×2 grid, Details button overlays 4th book
+        const displayedBooks = books.slice(0, 4);
+        return (
+            <div className="grid grid-cols-2 grid-rows-2 gap-1 h-full">
+                {displayedBooks.map((book, index) => (
+                    <div
+                        key={index}
+                        className="relative overflow-hidden rounded-sm bg-gray-100 cursor-pointer w-full h-full"
+                        onClick={(e) => handleBookClick(book.id, e)}
+                    >
+                        <img
+                            src={book.coverImage}
+                            alt={book.title}
+                            className="absolute inset-0 w-full h-full object-cover"
+                        />
+                        {/* Details button overlays the 4th (last) book */}
+                        {index === 3 && (
+                            <>
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none" />
+                                <button
+                                    onClick={handleDetailsClick}
+                                    className="absolute bottom-0.5 right-0.5 sm:bottom-1 sm:right-1 bg-[#00417a] hover:bg-[#003460] text-white px-1 py-0.5 sm:px-1.5 sm:py-0.5 rounded-sm transition-all duration-200 shadow-sm hover:shadow-md text-[7px] sm:text-[8px] font-semibold cursor-pointer z-10 active:scale-95"
+                                    aria-label={t('packCard.detailsButton')}
+                                >
+                                    <span className="whitespace-nowrap">{t('packCard.detailsButton')}</span>
+                                </button>
+                            </>
+                        )}
+                    </div>
+                ))}
             </div>
         );
     };
@@ -288,7 +351,7 @@ const PackCard = ({
                                 >
                                     <div className="flex justify-between items-start mb-3">
                                         <h4 className="text-lg font-semibold text-[#00417a]">
-                                            {t('packCard.description') || 'Description'}
+                                            {t('packCard.descriptionModal')}
                                         </h4>
                                         {isModalPinned && (
                                             <button

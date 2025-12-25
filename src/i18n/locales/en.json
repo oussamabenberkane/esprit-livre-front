@@ -414,7 +414,9 @@
     "save": "Save",
     "books": "books",
     "seeMore": "See More",
-    "allBooks": "All Books"
+    "allBooks": "All Books",
+    "detailsButton": "Details",
+    "descriptionModal": "Description"
   },
   "packsPage": {
     "title": "Promotional Packs",

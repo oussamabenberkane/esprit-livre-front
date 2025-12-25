@@ -44,21 +44,41 @@ const PackCard = ({
         const descRect = descriptionContainerRef.current.getBoundingClientRect();
         const modalHeight = 200; // Estimated modal height
         const viewportHeight = window.innerHeight;
+        const viewportWidth = window.innerWidth;
         const spaceBelow = viewportHeight - descRect.bottom;
+        const spaceAbove = descRect.top;
         const marginTop = 8; // Space between description and modal
+        const padding = 16; // Screen edge padding
 
         // Check if there's enough space below
-        const shouldCenter = spaceBelow < modalHeight + marginTop + 20;
+        const hasSpaceBelow = spaceBelow >= modalHeight + marginTop + padding;
+        const hasSpaceAbove = spaceAbove >= modalHeight + marginTop + padding;
+
+        // Always center if neither space is sufficient, or if screen is very small
+        const shouldCenter = (!hasSpaceBelow && !hasSpaceAbove) || viewportWidth < 450;
 
         if (shouldCenter) {
             setModalPosition({ centered: true, top: 0, left: 0, width: 0 });
         } else {
-            setModalPosition({
-                centered: false,
-                top: descRect.bottom + marginTop,
-                left: descRect.left,
-                width: Math.max(descRect.width, 280)
-            });
+            // Calculate safe left position to keep modal on screen
+            const safeLeft = Math.max(padding, Math.min(descRect.left, viewportWidth - Math.max(descRect.width, 280) - padding));
+
+            // Use space above if no space below
+            if (!hasSpaceBelow && hasSpaceAbove) {
+                setModalPosition({
+                    centered: false,
+                    top: descRect.top - modalHeight - marginTop,
+                    left: safeLeft,
+                    width: Math.max(descRect.width, 280)
+                });
+            } else {
+                setModalPosition({
+                    centered: false,
+                    top: descRect.bottom + marginTop,
+                    left: safeLeft,
+                    width: Math.max(descRect.width, 280)
+                });
+            }
         }
     };
 
@@ -212,10 +232,10 @@ const PackCard = ({
             {/* Pack Card */}
             <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-visible w-full h-full flex flex-col">
                 {/* Grid Layout: Left (Images) | Right (Details) */}
-                <div className="grid grid-cols-[auto_1fr] gap-fluid-xs md:gap-fluid-sm p-fluid-xs md:p-fluid-sm flex-1 overflow-hidden">
+                <div className="grid grid-cols-[auto_1fr] gap-fluid-xs md:gap-fluid-sm p-fluid-xs md:p-fluid-sm flex-1 overflow-hidden items-end">
 
                     {/* LEFT SECTION - Book Images */}
-                    <div className="relative" style={{ width: 'clamp(120px, 22vw, 160px)' }}>
+                    <div className="relative flex flex-col" style={{ width: 'clamp(120px, 22vw, 160px)' }}>
                         {/* Book Thumbnails Container */}
                         <div className="rounded-md overflow-hidden bg-gray-50" style={{ aspectRatio: '2/3' }}>
                             {renderBookThumbnails()}
@@ -239,7 +259,7 @@ const PackCard = ({
                     </div>
 
                     {/* RIGHT SECTION - Pack Details */}
-                    <div className="flex flex-col justify-between gap-fluid-xxs min-w-0">
+                    <div className="flex flex-col gap-fluid-xxs min-w-0 pb-0">
 
                         {/* Title */}
                         <h3 className="text-fluid-h3 md:text-fluid-h2 font-bold text-[#00417a] leading-tight line-clamp-2">
@@ -270,7 +290,7 @@ const PackCard = ({
                                 {/* Modal */}
                                 <div
                                     ref={modalRef}
-                                    className={`fixed bg-white rounded-2xl shadow-2xl p-5 z-[101] animate-slideUp`}
+                                    className={`fixed bg-white rounded-2xl shadow-2xl p-4 sm:p-5 z-[101] animate-slideUp max-h-[80vh] overflow-y-auto`}
                                     style={{
                                         animation: 'slideUp 0.3s ease-out forwards',
                                         boxShadow: '0 20px 60px rgba(0, 65, 122, 0.2), 0 0 0 1px rgba(0, 65, 122, 0.1)',
@@ -279,12 +299,14 @@ const PackCard = ({
                                             left: '50%',
                                             transform: 'translate(-50%, -50%)',
                                             width: '92%',
-                                            maxWidth: '28rem'
+                                            maxWidth: '28rem',
+                                            maxHeight: '80vh'
                                         } : {
                                             top: `${modalPosition.top}px`,
                                             left: `${modalPosition.left}px`,
                                             width: `${modalPosition.width}px`,
-                                            maxWidth: '32rem'
+                                            maxWidth: '32rem',
+                                            maxHeight: `${Math.min(window.innerHeight * 0.8, 400)}px`
                                         })
                                     }}
                                     onMouseEnter={() => {
@@ -352,15 +374,15 @@ const PackCard = ({
                         </div>
 
                         {/* Price Section */}
-                        <div className="flex items-baseline gap-2 mt-auto">
+                        <div className="flex items-baseline gap-2">
                             <span className="text-fluid-h2 md:text-fluid-h1to2 font-bold text-[#00417a]">
                                 {packPrice}
-                                <span className="text-fluid-small font-bold ml-1">
+                                <span className="text-fluid-vsmall md:text-fluid-small font-bold ml-1">
                                     {t('packCard.currency')}
                                 </span>
                             </span>
                             {originalPrice > packPrice && (
-                                <span className="text-fluid-small text-gray-400 line-through">
+                                <span className="text-fluid-vsmall md:text-fluid-small text-gray-400 line-through">
                                     {originalPrice}
                                 </span>
                             )}
@@ -369,10 +391,10 @@ const PackCard = ({
                         {/* Add to Cart Button */}
                         <button
                             onClick={handleAddToCartClick}
-                            className="bg-[#EE0027] hover:bg-[#d4183d] text-white px-fluid-xs py-fluid-xxs rounded-md transition-colors font-semibold text-fluid-small flex items-center justify-center gap-1 shadow-md hover:shadow-lg w-full mt-1"
+                            className="bg-[#EE0027] hover:bg-[#d4183d] text-white px-2 py-1.5 sm:px-3 sm:py-2 md:px-fluid-xs md:py-fluid-xxs rounded-md transition-colors font-semibold flex items-center justify-center gap-1 shadow-md hover:shadow-lg w-full"
                         >
-                            <ShoppingCart className="w-4 h-4" />
-                            <span>{t('packCard.addToCart')}</span>
+                            <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-4 md:h-4 flex-shrink-0" />
+                            <span className="text-[0.65rem] sm:text-[0.75rem] md:text-fluid-small font-semibold truncate">{t('packCard.addToCart')}</span>
                         </button>
                     </div>
                 </div>

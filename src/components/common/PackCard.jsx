@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Eye } from 'lucide-react';
 import PackBooksPopup from './PackBooksPopup';
 
 const PackCard = ({
@@ -161,11 +161,11 @@ const PackCard = ({
         }
     };
 
-    // Render book thumbnails with Details button based on pack size
+    // Render book thumbnails - simplified layout
     const renderBookThumbnails = () => {
         const bookCount = books.length;
 
-        // 2 books: show both in 2 columns × 1 row, Details button overlays 2nd book
+        // 2 books: show both in 2 columns × 1 row
         if (bookCount === 2) {
             return (
                 <div className="flex gap-1 h-full">
@@ -180,57 +180,13 @@ const PackCard = ({
                                 alt={book.title}
                                 className="absolute inset-0 w-full h-full object-cover"
                             />
-                            {/* Details button overlays the 2nd (last) book */}
-                            {index === 1 && (
-                                <>
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none" />
-                                    <button
-                                        onClick={handleDetailsClick}
-                                        className="absolute bottom-0.5 right-0.5 sm:bottom-1 sm:right-1 bg-[#00417a] hover:bg-[#003460] text-white px-1 py-0.5 sm:px-1.5 sm:py-0.5 rounded-sm transition-all duration-200 shadow-sm hover:shadow-md text-[7px] sm:text-[8px] font-semibold cursor-pointer z-10 active:scale-95"
-                                        aria-label={t('packCard.detailsButton')}
-                                    >
-                                        <span className="whitespace-nowrap">{t('packCard.detailsButton')}</span>
-                                    </button>
-                                </>
-                            )}
                         </div>
                     ))}
                 </div>
             );
         }
 
-        // 3 books: show all 3 in 2×2 grid, Details button in empty 4th cell
-        if (bookCount === 3) {
-            return (
-                <div className="grid grid-cols-2 grid-rows-2 gap-1 h-full">
-                    {books.map((book, index) => (
-                        <div
-                            key={index}
-                            className="relative overflow-hidden rounded-sm bg-gray-100 cursor-pointer w-full h-full"
-                            onClick={(e) => handleBookClick(book.id, e)}
-                        >
-                            <img
-                                src={book.coverImage}
-                                alt={book.title}
-                                className="absolute inset-0 w-full h-full object-cover"
-                            />
-                        </div>
-                    ))}
-                    {/* Empty 4th cell with Details button */}
-                    <div className="relative overflow-hidden rounded-sm bg-gray-100 w-full h-full flex items-end justify-end p-0.5 sm:p-1">
-                        <button
-                            onClick={handleDetailsClick}
-                            className="bg-[#00417a] hover:bg-[#003460] text-white px-1 py-0.5 sm:px-1.5 sm:py-0.5 rounded-sm transition-all duration-200 shadow-sm hover:shadow-md text-[7px] sm:text-[8px] font-semibold cursor-pointer z-10 active:scale-95"
-                            aria-label={t('packCard.detailsButton')}
-                        >
-                            <span className="whitespace-nowrap">{t('packCard.detailsButton')}</span>
-                        </button>
-                    </div>
-                </div>
-            );
-        }
-
-        // 4+ books: show first 4 books in 2×2 grid, Details button overlays 4th book
+        // 3+ books: show in 2×2 grid (first 4 books for packs with more than 3)
         const displayedBooks = books.slice(0, 4);
         return (
             <div className="grid grid-cols-2 grid-rows-2 gap-1 h-full">
@@ -245,19 +201,6 @@ const PackCard = ({
                             alt={book.title}
                             className="absolute inset-0 w-full h-full object-cover"
                         />
-                        {/* Details button overlays the 4th (last) book */}
-                        {index === 3 && (
-                            <>
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none" />
-                                <button
-                                    onClick={handleDetailsClick}
-                                    className="absolute bottom-0.5 right-0.5 sm:bottom-1 sm:right-1 bg-[#00417a] hover:bg-[#003460] text-white px-1 py-0.5 sm:px-1.5 sm:py-0.5 rounded-sm transition-all duration-200 shadow-sm hover:shadow-md text-[7px] sm:text-[8px] font-semibold cursor-pointer z-10 active:scale-95"
-                                    aria-label={t('packCard.detailsButton')}
-                                >
-                                    <span className="whitespace-nowrap">{t('packCard.detailsButton')}</span>
-                                </button>
-                            </>
-                        )}
                     </div>
                 ))}
             </div>
@@ -277,6 +220,15 @@ const PackCard = ({
                         <div className="rounded-md overflow-hidden bg-gray-50" style={{ aspectRatio: '2/3' }}>
                             {renderBookThumbnails()}
                         </div>
+
+                        {/* Centered Eye Icon Button */}
+                        <button
+                            onClick={handleDetailsClick}
+                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-[#1A3D64]/75 hover:bg-[#1A3D64]/90 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-500 ease-in-out hover:scale-105 z-20"
+                            aria-label={t('packCard.viewAllBooks')}
+                        >
+                            <Eye className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                        </button>
 
                         {/* Savings Badge */}
                         {savings > 0 && (

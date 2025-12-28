@@ -608,7 +608,24 @@ const HomePage = () => {
 
             return () => clearTimeout(timer);
         }
-    }, [location]);
+
+        // Check for profile completed state (first-time user with no linked orders)
+        if (location.state?.profileCompleted) {
+            setShowOrderSuccess(true);
+            setOrderSuccessMessage(t('homePage.profileCompleted'));
+            setOrderUniqueId('');
+
+            // Clear the navigation state
+            window.history.replaceState({}, document.title);
+
+            // Auto-hide success message after 5 seconds
+            const timer = setTimeout(() => {
+                setShowOrderSuccess(false);
+            }, 5000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [location, t]);
 
     return (
 

@@ -127,9 +127,9 @@ export const validateAlgerianPhone = (phone) => {
 /**
  * Validates all profile fields
  * @param {Object} userData - User data object
- * @param {string} homeAddress - Home address (optional based on shipping preference)
+ * @param {string} homeAddress - Home address (optional - validated only if provided)
  * @param {string} shippingPreference - Shipping preference ('home' or 'pickup')
- * @param {string} pickupProvider - Pickup provider (optional based on shipping preference)
+ * @param {string} pickupProvider - Pickup provider (optional)
  * @returns {Object} { isValid: boolean, errors: Object, firstErrorField: string }
  */
 export const validateProfileData = (userData, homeAddress, shippingPreference, pickupProvider) => {
@@ -178,12 +178,9 @@ export const validateProfileData = (userData, homeAddress, shippingPreference, p
     if (!firstErrorField) firstErrorField = 'city';
   }
 
-  // Validate home address if home delivery is selected
-  if (shippingPreference === 'home') {
-    if (!homeAddress || !homeAddress.trim()) {
-      errors.homeAddress = 'Home address is required for home delivery';
-      if (!firstErrorField) firstErrorField = 'homeAddress';
-    } else if (homeAddress.trim().length < 10) {
+  // Validate home address if home delivery is selected (optional - only validate if provided)
+  if (shippingPreference === 'home' && homeAddress && homeAddress.trim()) {
+    if (homeAddress.trim().length < 10) {
       errors.homeAddress = 'Please provide a more detailed address (minimum 10 characters)';
       if (!firstErrorField) firstErrorField = 'homeAddress';
     } else if (homeAddress.trim().length > 500) {
@@ -192,13 +189,8 @@ export const validateProfileData = (userData, homeAddress, shippingPreference, p
     }
   }
 
-  // Validate pickup provider if pickup is selected
-  if (shippingPreference === 'pickup') {
-    if (!pickupProvider || !pickupProvider.trim()) {
-      errors.pickupProvider = 'Please select a pickup provider';
-      if (!firstErrorField) firstErrorField = 'pickupProvider';
-    }
-  }
+  // Validate pickup provider if pickup is selected (optional - only validate if provided)
+  // No validation needed - pickup provider is completely optional
 
   return {
     isValid: Object.keys(errors).length === 0,

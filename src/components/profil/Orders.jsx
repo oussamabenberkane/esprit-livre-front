@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Package, Calendar, Eye, PackageOpen } from 'lucide-react';
+import { ArrowLeft, Package, Calendar, Eye, PackageOpen, CheckCircle, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useScrollToTop } from '../../hooks/useScrollToTop';
 import Navbar from '../common/Navbar';
 import Footer from '../common/Footer';
@@ -218,13 +219,37 @@ function OrderCard({ order }) {
 export default function Orders() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const [currentOrders, setCurrentOrders] = useState([]);
   const [orderHistory, setOrderHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showLinkedOrdersSuccess, setShowLinkedOrdersSuccess] = useState(false);
+  const [linkedOrdersData, setLinkedOrdersData] = useState({ linkedOrdersCount: 0, updatedOrdersCount: 0 });
 
   // Scroll to top when page loads
   useScrollToTop();
+
+  // Check for linked orders success state from navigation
+  useEffect(() => {
+    if (location.state?.linkedOrdersSuccess) {
+      setShowLinkedOrdersSuccess(true);
+      setLinkedOrdersData({
+        linkedOrdersCount: location.state.linkedOrdersCount || 0,
+        updatedOrdersCount: location.state.updatedOrdersCount || 0
+      });
+
+      // Clear the navigation state
+      window.history.replaceState({}, document.title);
+
+      // Auto-hide success message after 8 seconds
+      const timer = setTimeout(() => {
+        setShowLinkedOrdersSuccess(false);
+      }, 8000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [location]);
 
   // Fetch orders on component mount
   useEffect(() => {
@@ -291,6 +316,49 @@ export default function Orders() {
 
         {/* Spacer for fixed navbar - larger on mobile for two-line navbar */}
         <div className="h-28 md:h-20"></div>
+
+        {/* Linked Orders Success Message */}
+        <AnimatePresence>
+          {showLinkedOrdersSuccess && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 w-[90%] max-w-lg"
+            >
+              <div className="bg-emerald-50 border-2 border-emerald-500 rounded-lg shadow-lg p-4 md:p-6">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center">
+                    <CheckCircle className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-emerald-900 font-bold text-base md:text-lg mb-1">
+                      {t('orders.linkedSuccess.title')}
+                    </h3>
+                    <p className="text-emerald-700 text-sm mb-2">
+                      {t('orders.linkedSuccess.message', {
+                        count: linkedOrdersData.linkedOrdersCount,
+                        total: linkedOrdersData.updatedOrdersCount
+                      })}
+                    </p>
+                    {linkedOrdersData.linkedOrdersCount !== linkedOrdersData.updatedOrdersCount && (
+                      <p className="text-emerald-600 text-xs">
+                        {t('orders.linkedSuccess.updated', { count: linkedOrdersData.updatedOrdersCount })}
+                      </p>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => setShowLinkedOrdersSuccess(false)}
+                    className="flex-shrink-0 text-emerald-600 hover:text-emerald-800 transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Header */}
         <div className="bg-gradient-to-b from-blue-500 to-blue-600 text-white pt-8 pb-6 px-4 shadow-md">

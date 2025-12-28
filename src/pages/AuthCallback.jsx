@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { validateState, exchangeCodeForTokens } from '../services/oauthService';
-import { getAndClearRedirectUrl, getCurrentUser } from '../services/authService';
+import { getAndClearRedirectUrl, getCurrentUser, saveRedirectUrl } from '../services/authService';
 
 /**
  * OAuth Callback Handler Component
@@ -70,16 +70,29 @@ const AuthCallback = () => {
         const userData = await getCurrentUser();
         console.log('[AuthCallback] User synced successfully:', userData);
 
-        // Get saved redirect URL or default to home
-        const redirectUrl = getAndClearRedirectUrl() || '/';
-        console.log('[AuthCallback] Successfully authenticated, redirecting to:', redirectUrl);
-
         // CRITICAL: Set a timestamp to prevent AuthPage from interfering
         // This works reliably even with StrictMode double-invocation
         sessionStorage.setItem('oauth_completed_at', Date.now().toString());
 
-        // Successful authentication - redirect to saved URL or home
-        navigate(redirectUrl, { replace: true });
+        // Get saved redirect URL (or default to home) before checking phone
+        const redirectUrl = getAndClearRedirectUrl() || '/';
+
+        // Check if this is a first-time user (no phone number)
+        if (!userData.phone) {
+          console.log('[AuthCallback] First-time user detected (no phone number), redirecting to profile...');
+
+          // Save the redirect URL again so we can use it after phone collection
+          if (redirectUrl !== '/profile') {
+            saveRedirectUrl(redirectUrl);
+          }
+
+          // Redirect to profile page with firstLogin flag
+          navigate('/profile?firstLogin=true', { replace: true });
+        } else {
+          // Existing user - redirect to where they originally wanted to go
+          console.log('[AuthCallback] Successfully authenticated, redirecting to:', redirectUrl);
+          navigate(redirectUrl, { replace: true });
+        }
       } catch (err) {
         console.error('OAuth callback error:', err);
         setError(err.message || 'Failed to complete sign-in. Please try again.');

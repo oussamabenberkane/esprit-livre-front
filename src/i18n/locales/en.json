@@ -124,6 +124,7 @@
     "categoriesSubtitle": "Choose from the following categories",
     "recommendedBooks": "Recommended Books",
     "featuredAuthors": "Our Featured Authors",
+    "profileCompleted": "Profile completed successfully! Welcome to Esprit Livre.",
     "hero": {
       "discover": "Discover",
       "newReleases": "New Releases"
@@ -373,7 +374,11 @@
     "updateSuccessMessage": "Your personal information and preferences have been saved.",
     "updateError": "Failed to update profile. Please try again.",
     "validationError": "Please fix the errors below",
-    "readOnly": "This field cannot be edited"
+    "readOnly": "This field cannot be edited",
+    "firstLogin": {
+      "title": "Welcome!",
+      "message": "Add your phone number to track your orders and receive updates"
+    }
   },
   "favorites": {
     "title": "My Favorites",
@@ -405,6 +410,12 @@
       "shipped": "Shipped",
       "delivered": "Delivered",
       "cancelled": "Cancelled"
+    },
+    "linkedSuccess": {
+      "title": "Orders Linked Successfully!",
+      "message": "We found and linked {{count}} of your previous orders to your account.",
+      "updated": "{{count}} order has been updated with your information.",
+      "updated_plural": "{{count}} orders have been updated with your information."
     }
   },
   "packCard": {

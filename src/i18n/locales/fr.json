@@ -124,6 +124,7 @@
     "categoriesSubtitle": "Choisissez parmis les catégories suivantes",
     "recommendedBooks": "Livres recommandés",
     "featuredAuthors": "Nos auteurs phares",
+    "profileCompleted": "Profil complété avec succès ! Bienvenue chez Esprit Livre.",
     "hero": {
       "discover": "Découvrir",
       "newReleases": "Nouveautés"
@@ -373,7 +374,11 @@
     "updateSuccessMessage": "Vos informations personnelles et préférences ont été enregistrées.",
     "updateError": "Échec de la mise à jour du profil. Veuillez réessayer.",
     "validationError": "Veuillez corriger les erreurs ci-dessous",
-    "readOnly": "Ce champ ne peut pas être modifié"
+    "readOnly": "Ce champ ne peut pas être modifié",
+    "firstLogin": {
+      "title": "Bienvenue !",
+      "message": "Ajoutez votre numéro de téléphone pour suivre vos commandes et recevoir des mises à jour"
+    }
   },
   "favorites": {
     "title": "Mes Favoris",
@@ -405,6 +410,12 @@
       "shipped": "Expédiée",
       "delivered": "Livrée",
       "cancelled": "Annulée"
+    },
+    "linkedSuccess": {
+      "title": "Commandes liées avec succès !",
+      "message": "Nous avons trouvé et lié {{count}} de vos commandes précédentes à votre compte.",
+      "updated": "{{count}} commande a été mise à jour avec vos informations.",
+      "updated_plural": "{{count}} commandes ont été mises à jour avec vos informations."
     }
   },
   "packCard": {

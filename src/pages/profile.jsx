@@ -1,13 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Edit2, Heart, Package, LogOut, Home, MapPin, ChevronDown, Truck, X, Search, CheckCircle, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Edit2, Heart, Package, LogOut, Home, MapPin, ChevronDown, Truck, X, Search, CheckCircle, AlertCircle, Info } from 'lucide-react';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import { getUserProfile, updateUserProfile } from '../services/user.service';
-import { isAuthenticated, logout as authLogout } from '../services/authService';
+import { isAuthenticated, logout as authLogout, getAndClearRedirectUrl } from '../services/authService';
 import { formatMemberSinceDate } from '../utils/dateUtils';
 import wilayaData from '../utils/wilayaData';
 import { validateProfileData } from '../utils/validation';
@@ -15,17 +15,22 @@ import { validateProfileData } from '../utils/validation';
 export default function Profile() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
 
-  const [isEditingPhone, setIsEditingPhone] = useState(false);
+  // Check if this is a first-time login from URL parameter
+  const isFirstLoginParam = searchParams.get('firstLogin') === 'true';
+  const [isFirstLogin, setIsFirstLogin] = useState(false); // Will be set after checking if phone exists
+  const [isEditingPhone, setIsEditingPhone] = useState(false); // Auto-expand phone field for first-time users
   const [availableCities, setAvailableCities] = useState([]);
   const [shippingPreference, setShippingPreference] = useState("home"); // "home" or "pickup"
   const [homeAddress, setHomeAddress] = useState("");
   const [pickupProvider, setPickupProvider] = useState("");
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [showFirstLoginBanner, setShowFirstLoginBanner] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
 
   // Dropdown states
@@ -48,6 +53,31 @@ export default function Profile() {
 
   // Scroll to top when page loads
   useScrollToTop();
+
+  // Scroll to phone field and focus it for first-time users
+  useEffect(() => {
+    if (isFirstLogin && phoneRef.current && !loading) {
+      // Remove the firstLogin query parameter from URL
+      searchParams.delete('firstLogin');
+      setSearchParams(searchParams, { replace: true });
+
+      // Scroll to phone field after a short delay to ensure page is rendered
+      setTimeout(() => {
+        phoneRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+
+        // Focus the phone input
+        const phoneInput = phoneRef.current?.querySelector('input[type="tel"]');
+        if (phoneInput) {
+          setTimeout(() => {
+            phoneInput.focus();
+          }, 500);
+        }
+      }, 300);
+    }
+  }, [isFirstLogin, loading]);
 
   // Check authentication and fetch profile data
   useEffect(() => {
@@ -104,6 +134,19 @@ export default function Profile() {
             'ZR': 'ZRexpress',
           };
           setPickupProvider(providerMap[profile.defaultShippingProvider] || '');
+        }
+
+        // Check if this is a first-time login AND user doesn't have a phone number
+        if (isFirstLoginParam && !profile.phone) {
+          setIsFirstLogin(true);
+          setShowFirstLoginBanner(true);
+          setIsEditingPhone(true);
+        } else if (isFirstLoginParam && profile.phone) {
+          // User already has phone number - they shouldn't be here
+          // Redirect them to where they originally wanted to go, or home
+          const redirectUrl = getAndClearRedirectUrl() || '/';
+          navigate(redirectUrl, { replace: true });
+          return; // Stop further execution
         }
 
         setLoading(false);
@@ -270,21 +313,48 @@ export default function Profile() {
         defaultShippingProvider: shippingPreference === 'pickup' && pickupProvider ? providerMap[pickupProvider] : null
       };
 
-      await updateUserProfile(updateData);
+      const updateResponse = await updateUserProfile(updateData);
 
       // Reset editing states
       setIsEditingPhone(false);
       setValidationErrors({});
+      setShowFirstLoginBanner(false); // Hide first login banner after save
 
       setSaving(false);
 
-      // Show success message
-      setShowSuccessMessage(true);
+      // Check if this was a first-time user and orders were linked
+      if (isFirstLogin && updateResponse) {
+        const { linkedOrdersCount = 0, updatedOrdersCount = 0 } = updateResponse;
 
-      // Auto-dismiss after 3 seconds
-      setTimeout(() => {
-        setShowSuccessMessage(false);
-      }, 3000);
+        if (linkedOrdersCount > 0) {
+          // Redirect to orders page with success message
+          navigate('/orders', {
+            replace: true,
+            state: {
+              linkedOrdersSuccess: true,
+              linkedOrdersCount,
+              updatedOrdersCount
+            }
+          });
+        } else {
+          // No linked orders - redirect to where they originally wanted to go, or home
+          const redirectUrl = getAndClearRedirectUrl() || '/';
+          navigate(redirectUrl, {
+            replace: true,
+            state: {
+              profileCompleted: true
+            }
+          });
+        }
+      } else {
+        // Regular profile update - show success message
+        setShowSuccessMessage(true);
+
+        // Auto-dismiss after 3 seconds
+        setTimeout(() => {
+          setShowSuccessMessage(false);
+        }, 3000);
+      }
     } catch (err) {
       console.error('Error updating profile:', err);
       setError(err.message || 'Failed to update profile');
@@ -407,6 +477,41 @@ export default function Profile() {
                 <button
                   onClick={() => setShowSuccessMessage(false)}
                   className="flex-shrink-0 text-emerald-600 hover:text-emerald-800 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* First Login Banner */}
+      <AnimatePresence>
+        {showFirstLoginBanner && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 w-[90%] max-w-lg"
+          >
+            <div className="bg-blue-50 border-2 border-blue-500 rounded-lg shadow-lg p-4 md:p-6">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center">
+                  <Info className="w-6 h-6 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-blue-900 font-bold text-base md:text-lg mb-1">
+                    {t('profile.firstLogin.title')}
+                  </h3>
+                  <p className="text-blue-700 text-sm">
+                    {t('profile.firstLogin.message')}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowFirstLoginBanner(false)}
+                  className="flex-shrink-0 text-blue-600 hover:text-blue-800 transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>

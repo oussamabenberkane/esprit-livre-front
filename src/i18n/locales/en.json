@@ -197,7 +197,7 @@
     "submittingOrder": "Placing order...",
     "deliveryDays": "2–4 days",
     "emptyCartError": "Your cart is empty. Please add items before placing an order.",
-    "orderSuccess": "Your order has been placed successfully!",
+    "orderSuccess": "Order placed successfully! View it anytime in Profile → Orders.",
     "orderSuccessTitle": "Order Placed Successfully!",
     "orderNumber": "Order #",
     "orderError": "Failed to place order. Please try again.",

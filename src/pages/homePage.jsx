@@ -644,31 +644,31 @@ const HomePage = () => {
                             initial={{ opacity: 0, y: -50 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -50 }}
-                            className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 w-[90%] max-w-lg"
+                            className="fixed top-20 xs:top-24 left-1/2 transform -translate-x-1/2 z-50 w-[95%] xs:w-[90%] max-w-lg px-2 xs:px-0"
                         >
-                            <div className="bg-emerald-50 border-2 border-emerald-500 rounded-lg shadow-lg p-4 md:p-6">
-                                <div className="flex items-start gap-3">
-                                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center">
-                                        <CheckCircle className="w-5 h-5 text-white" />
+                            <div className="bg-emerald-50 border-2 border-emerald-500 rounded-lg shadow-lg p-3 xs:p-4 md:p-6">
+                                <div className="flex items-start gap-2 xs:gap-3">
+                                    <div className="flex-shrink-0 w-6 h-6 xs:w-8 xs:h-8 rounded-full bg-emerald-500 flex items-center justify-center">
+                                        <CheckCircle className="w-4 h-4 xs:w-5 xs:h-5 text-white" />
                                     </div>
-                                    <div className="flex-1">
-                                        <h3 className="text-emerald-900 font-bold text-fluid-h3 mb-1">
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="text-emerald-900 font-bold text-sm xs:text-base md:text-fluid-h3 mb-1 leading-tight">
                                             {t('cart.orderSuccessTitle') || 'Order Placed Successfully!'}
                                         </h3>
-                                        <p className="text-emerald-800 text-fluid-small mb-2">
+                                        <p className="text-emerald-800 text-xs xs:text-sm md:text-fluid-small mb-2 leading-relaxed break-words">
                                             {orderSuccessMessage}
                                         </p>
                                         {orderUniqueId && (
-                                            <p className="text-emerald-700 text-fluid-xs font-mono bg-emerald-100 px-2 py-1 rounded inline-block">
+                                            <p className="text-emerald-700 text-[10px] xs:text-xs md:text-fluid-xs font-mono bg-emerald-100 px-1.5 xs:px-2 py-0.5 xs:py-1 rounded inline-block break-all">
                                                 {t('cart.orderNumber') || 'Order #'}: {orderUniqueId}
                                             </p>
                                         )}
                                     </div>
                                     <button
                                         onClick={() => setShowOrderSuccess(false)}
-                                        className="flex-shrink-0 text-emerald-600 hover:text-emerald-800 transition-colors"
+                                        className="flex-shrink-0 text-emerald-600 hover:text-emerald-800 transition-colors p-1"
                                     >
-                                        <X className="w-5 h-5" />
+                                        <X className="w-4 h-4 xs:w-5 xs:h-5" />
                                     </button>
                                 </div>
                             </div>

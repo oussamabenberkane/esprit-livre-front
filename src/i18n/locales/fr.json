@@ -197,7 +197,7 @@
     "submittingOrder": "Commande en cours...",
     "deliveryDays": "2–4 jours",
     "emptyCartError": "Votre panier est vide. Veuillez ajouter des articles avant de passer commande.",
-    "orderSuccess": "Votre commande a été passée avec succès !",
+    "orderSuccess": "Commande passée avec succès ! Consultez-la à tout moment dans Profil → Commandes.",
     "orderSuccessTitle": "Commande réussie !",
     "orderNumber": "Commande n°",
     "orderError": "Échec de la commande. Veuillez réessayer.",

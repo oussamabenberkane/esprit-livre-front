@@ -40,9 +40,11 @@ The endpoint should return the image with status 200 and Content-Type: image/jpe
 Alternative (Frontend Fix): If pack covers MUST be authenticated, you need to fetch them differently (using fetch() with auth headers and convert to blob URLs), but this is more complex and not recommended for images. Bottom line: Backend security configuration is blocking the image requests. The endpoint needs to be made public.
 
 
-Specific redirection : 
+Specific redirection : done
  - when the user authenticates for the very first time > he is told that he has to add his phone number > updates the profile > check the response > if  "linkedOrdersCount" superior to 0 > redirect user to orders with a success msg saying orders linked succesfully to you current acocunt or something
 
+update the current order confirmed popup: 
+ - add some text to show the user when he can find his orders if already authenticated 
 
 
 

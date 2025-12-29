@@ -40,16 +40,18 @@ const transformOrder = (apiOrder) => {
     shippingCost: apiOrder.shippingCost || 0,
     items: apiOrder.orderItems?.map(item => {
       // Determine if this is a book or a pack
-      const isBook = item.bookId != null;
+      // IMPORTANT: Check for pack first, as packs also have bookId (for cover image)
       const isPack = item.bookPackId != null;
+      const isBook = !isPack && item.bookId != null;
 
       // Get the appropriate image URL
       let imageUrl;
-      if (isBook) {
+      if (isPack) {
+        // For packs, use the first book's cover (bookId is the first book's ID from the backend)
+        // Or use the pack cover utility if available
+        imageUrl = item.bookId ? getBookCoverUrl(item.bookId) : getBookPackCoverUrl(item.bookPackId);
+      } else if (isBook) {
         imageUrl = getBookCoverUrl(item.bookId);
-      } else if (isPack) {
-        // Use the pack cover URL utility - this fetches the pack's cover image from the API
-        imageUrl = getBookPackCoverUrl(item.bookPackId);
       } else {
         // Fallback for items that are neither book nor pack
         imageUrl = 'https://via.placeholder.com/200x300?text=No+Image';
@@ -143,9 +145,13 @@ function OrderCard({ order }) {
               className="w-16 h-20 object-cover rounded"
             />
             {item.type === 'pack' && (
-              <div className="absolute -top-1 -right-1 bg-purple-500 rounded-full p-0.5">
-                <PackageOpen className="w-3 h-3 text-white" />
-              </div>
+              <>
+                {/* Pack Badge Overlay */}
+                <div className="absolute top-0.5 right-0.5 bg-blue-600 text-white px-1 py-0.5 rounded text-[10px] font-semibold flex items-center gap-0.5 shadow-md">
+                  <Package className="w-2 h-2" />
+                  <span>Pack</span>
+                </div>
+              </>
             )}
           </div>
         ))}
@@ -163,16 +169,20 @@ function OrderCard({ order }) {
                   className="w-12 h-16 object-cover rounded"
                 />
                 {item.type === 'pack' && (
-                  <div className="absolute -top-1 -right-1 bg-purple-500 rounded-full p-0.5">
-                    <PackageOpen className="w-3 h-3 text-white" />
-                  </div>
+                  <>
+                    {/* Pack Badge Overlay */}
+                    <div className="absolute top-0.5 right-0.5 bg-blue-600 text-white px-1 py-0.5 rounded text-[10px] sm:text-xs font-semibold flex items-center gap-0.5 shadow-md">
+                      <Package className="w-2 h-2 sm:w-2.5 sm:h-2.5" />
+                      <span className="hidden xs:inline">Pack</span>
+                    </div>
+                  </>
                 )}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <h4 className="text-sm text-gray-800 line-clamp-1">{item.title}</h4>
                   {item.type === 'pack' && (
-                    <span className="px-1.5 py-0.5 bg-purple-100 text-purple-700 text-xs font-semibold rounded">
+                    <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded whitespace-nowrap">
                       Pack
                     </span>
                   )}

@@ -404,6 +404,7 @@
     "emptyMessage": "Vous n'avez pas encore passé de commande 📦",
     "startShopping": "Commencer mes achats",
     "errorTitle": "Impossible de charger les commandes",
+    "quantity": "Quantité",
     "status": {
       "pending": "En attente",
       "confirmed": "Confirmée",

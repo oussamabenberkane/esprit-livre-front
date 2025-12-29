@@ -188,11 +188,9 @@ function OrderCard({ order }) {
                   )}
                 </div>
                 {item.author && <p className="text-xs text-gray-500">{item.author}</p>}
-                {item.quantity > 1 && (
-                  <p className="text-xs text-gray-600 mt-0.5">
-                    {t('cart.quantity')}: {item.quantity}
-                  </p>
-                )}
+                <p className="text-xs text-gray-600 mt-0.5">
+                  {t('orders.quantity')}: {item.quantity}
+                </p>
                 {item.language && (
                   <div className="mt-1">
                     <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded">

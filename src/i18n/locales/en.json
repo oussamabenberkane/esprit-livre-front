@@ -404,6 +404,7 @@
     "emptyMessage": "You haven't placed any orders yet 📦",
     "startShopping": "Start shopping",
     "errorTitle": "Unable to Load Orders",
+    "quantity": "Quantity",
     "status": {
       "pending": "Pending",
       "confirmed": "Confirmed",

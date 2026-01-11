@@ -26,7 +26,7 @@ import { useCart } from '../contexts/CartContext';
 
 
 // MainDisplayCarousel component for rendering individual carousels
-const MainDisplayCarousel = ({ display, onAddToCart, onToggleFavorite, updateScrollState, t }) => {
+const MainDisplayCarousel = ({ display, onAddToCart, onToggleFavorite, updateScrollState, t, i18n }) => {
     const scrollRef = useRef(null);
 
     // Progressive rendering for books - show them one at a time
@@ -102,7 +102,10 @@ const MainDisplayCarousel = ({ display, onAddToCart, onToggleFavorite, updateScr
                 {/* Header */}
                 <div className="flex justify-between items-center mb-fluid-sm pr-fluid-lg">
                     <h2 className="text-brand-blue text-fluid-h2 font-bold">
-                        {display.nameFr || display.nameEn || t('homePage.recommendedBooks')}
+                        {i18n.language === 'fr'
+                            ? (display.nameFr || display.nameEn || t('homePage.recommendedBooks'))
+                            : (display.nameEn || display.nameFr || t('homePage.recommendedBooks'))
+                        }
                     </h2>
                     <SeeMore to="/allbooks" />
                 </div>
@@ -215,7 +218,7 @@ const MainDisplayCarousel = ({ display, onAddToCart, onToggleFavorite, updateScr
 };
 
 const HomePage = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
     const { addToCart } = useCart();
@@ -850,6 +853,7 @@ const HomePage = () => {
                             onToggleFavorite={handleToggleFavorite}
                             updateScrollState={updateMainDisplayScrollState}
                             t={t}
+                            i18n={i18n}
                         />
                     ))
                 )}

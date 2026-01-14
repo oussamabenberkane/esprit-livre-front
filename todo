@@ -1,26 +1,2 @@
-Ouss:
-  select icon hard code: Done
-  Sending email: pending
-  i18n: pending
-
-Yani:
-
-- language infos for the book (ad to cart popup, bookdetails, bookcard) --- done
-- mes fovaris routes (retour btn) --- done
-- filtres de langues : fr, arb, ang --- done
-- layout changes from eng to fr in bookdetails --- done
-- add i18n to orders, service client, notre equipe --- done 
-
-
-
-     ----------------------------------------------
-
-
-
-
-
-
-
-
-
-
+- add i18n to : categories (homePage + allBooks filter), etiquettes on bookCards, "results" in packs page, 
+- view pack details modal: displays author uknown 

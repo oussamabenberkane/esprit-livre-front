@@ -1,4 +1,0 @@
-api>cmd>docker compose up -d
-api>cmd>mvnw clean
-api>cmd>mvnw spring-boot:run -Dmaven.test.skip=true
-navigateur>localhost:9080>admin/admin>manage realms>jhipster

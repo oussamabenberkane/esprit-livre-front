@@ -144,97 +144,103 @@ export default function CartConfirmationPopup({
                                 />
                             </div>
 
-                            {/* Book Info */}
-                            <div className="flex-1 flex flex-col justify-between min-w-0">
-                                <div>
-                                    <h4 className="font-semibold text-gray-900 text-xs xs:text-fluid-lg mb-0.5 xs:mb-1 line-clamp-2">
-                                        {book.title}
-                                    </h4>
-                                    {!book.isPack ? (
-                                        <>
-                                            <p className="text-gray-600 text-[0.65rem] xs:text-sm mb-1 xs:mb-2">
-                                                {book.author}
-                                            </p>
-                                            <button
-                                                onClick={handleViewDetails}
-                                                className="text-blue-600 hover:underline inline-flex items-center gap-0.5 xs:gap-1"
-                                            >
-                                                <h1 className="text-[0.65rem] xs:text-fluid-medium">{t('cartPopup.bookDetails')}</h1>
-                                                <svg
-                                                    className="w-2.5 h-2.5 xs:w-3 xs:h-3"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    viewBox="0 0 24 24"
+                            {/* Book Info and Actions - Aligned to cover height */}
+                            <div className="flex-1 flex flex-col min-w-0 h-28 xs:h-36">
+                                {/* Top Section: Title, Author, Price */}
+                                <div className="flex gap-2">
+                                    <div className="flex-1 min-w-0">
+                                        <h4 className="font-semibold text-gray-900 text-xs xs:text-fluid-lg mb-0.5 xs:mb-1 line-clamp-2">
+                                            {book.title}
+                                        </h4>
+                                        {!book.isPack ? (
+                                            <>
+                                                <p className="text-gray-600 text-[0.65rem] xs:text-sm mb-1 xs:mb-2">
+                                                    {book.author}
+                                                </p>
+                                                <button
+                                                    onClick={handleViewDetails}
+                                                    className="text-blue-600 hover:underline inline-flex items-center gap-0.5 xs:gap-1"
                                                 >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokeWidth={2}
-                                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <p className="text-gray-600 text-[0.65rem] xs:text-sm mb-1 xs:mb-2">
-                                                {book.author}
-                                            </p>
-                                            {/* Book Titles Carousel - Only for packs, positioned below title */}
-                                            {packBooks.length > 0 && (
-                                                <div className="mt-1 xs:mt-2">
-                                                    <div className="flex gap-1 xs:gap-1.5 overflow-x-auto scrollbar-hide py-1 xs:py-1.5">
-                                                        {packBooks.map((packBook, index) => (
-                                                            <span
-                                                                key={index}
-                                                                className="text-[0.55rem] xs:text-fluid-vsmall md:text-fluid-small bg-blue-50 text-[#00417a] px-1.5 xs:px-3 py-0.5 xs:py-1 rounded-md whitespace-nowrap flex-shrink-0 font-medium"
-                                                            >
-                                                                {packBook.title}
-                                                            </span>
-                                                        ))}
+                                                    <span className="text-[0.65rem] xs:text-fluid-medium">{t('cartPopup.bookDetails')}</span>
+                                                    <svg
+                                                        className="w-2.5 h-2.5 xs:w-3 xs:h-3"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth={2}
+                                                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                                                        />
+                                                    </svg>
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <p className="text-gray-600 text-[0.65rem] xs:text-sm mb-1 xs:mb-2">
+                                                    {book.author}
+                                                </p>
+                                                {/* Book Titles Carousel - Only for packs */}
+                                                {packBooks.length > 0 && (
+                                                    <div className="mt-1 xs:mt-2">
+                                                        <div className="flex gap-1 xs:gap-1.5 overflow-x-auto scrollbar-hide py-1 xs:py-1.5">
+                                                            {packBooks.map((packBook, index) => (
+                                                                <span
+                                                                    key={index}
+                                                                    className="text-[0.55rem] xs:text-fluid-vsmall md:text-fluid-small bg-blue-50 text-[#00417a] px-1.5 xs:px-3 py-0.5 xs:py-1 rounded-md whitespace-nowrap flex-shrink-0 font-medium"
+                                                                >
+                                                                    {packBook.title}
+                                                                </span>
+                                                            ))}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            )}
-                                        </>
-                                    )}
+                                                )}
+                                            </>
+                                        )}
+                                    </div>
+
+                                    {/* Price */}
+                                    <div className="flex-shrink-0 text-right">
+                                        <p className="font-bold text-gray-900 text-sm xs:text-fluid-lg">
+                                            {book.price}
+                                        </p>
+                                        <p className="text-gray-500 text-[0.6rem] xs:text-sm mb-0.5 xs:mb-1">
+                                            {t('cartPopup.currency')}
+                                        </p>
+                                        {book.language && (
+                                            <span className="inline-block px-1.5 xs:px-2 py-0.5 xs:py-1 bg-blue-100 text-blue-700 text-[0.55rem] xs:text-xs font-semibold rounded">
+                                                {getLanguageCode(book.language)}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Spacer to push buttons to bottom */}
+                                <div className="flex-1"></div>
+
+                                {/* Action Buttons - Aligned to bottom of cover */}
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => {
+                                            navigate('/cart');
+                                            onClose();
+                                        }}
+                                        className="flex-1 bg-[#1E40AF] hover:bg-blue-700 text-white font-medium py-1.5 xs:py-2 px-2 xs:px-3 rounded-md xs:rounded-lg transition-colors flex items-center justify-center gap-1 xs:gap-2"
+                                    >
+                                        <ShoppingCart className="w-3 h-3 xs:w-4 xs:h-4" />
+                                        <span className="text-[0.6rem] xs:text-fluid-small">{t('cartPopup.viewCart')}</span>
+                                    </button>
+                                    <button
+                                        onClick={handleRemoveClick}
+                                        className="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium py-1.5 xs:py-2 px-2 xs:px-3 rounded-md xs:rounded-lg transition-colors"
+                                    >
+                                        <span className="text-[0.6rem] xs:text-fluid-small">{t('cartPopup.remove')}</span>
+                                    </button>
                                 </div>
                             </div>
-
-                            {/* Price */}
-                            <div className="flex-shrink-0 text-right">
-                                <p className="font-bold text-gray-900 text-sm xs:text-fluid-lg">
-                                    {book.price}
-                                </p>
-                                <p className="text-gray-500 text-[0.6rem] xs:text-sm mb-0.5 xs:mb-1">
-                                    {t('cartPopup.currency')}
-                                </p>
-                                {book.language && (
-                                    <span className="inline-block px-1.5 xs:px-2 py-0.5 xs:py-1 bg-blue-100 text-blue-700 text-[0.55rem] xs:text-xs font-semibold rounded">
-                                        {getLanguageCode(book.language)}
-                                    </span>
-                                )}
-                            </div>
                         </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="px-3 xs:px-6 pb-3 xs:pb-6 flex gap-2 xs:gap-fluid-xl md:gap-fluid-xl">
-                        <button
-                            onClick={() => {
-                                navigate('/cart');
-                                onClose();
-                            }}
-                            className="flex-1 bg-[#1E40AF] hover:bg-blue-700 text-white font-medium py-2 xs:py-3 px-2 xs:px-4 rounded-md xs:rounded-lg transition-colors flex items-center justify-center gap-1 xs:gap-2"
-                        >
-                            <ShoppingCart className="w-3.5 h-3.5 xs:w-5 xs:h-5" />
-                            <h1 className="text-[0.65rem] xs:text-fluid-small">{t('cartPopup.viewCart')}</h1>
-                        </button>
-                        <button
-                            onClick={handleRemoveClick}
-                            className="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium py-2 xs:py-fluid-tiny px-2 xs:px-fluid-sm rounded-md xs:rounded-lg transition-colors"
-                        >
-                            <h1 className="text-[0.65rem] xs:text-fluid-medium">{t('cartPopup.remove')}</h1>
-                        </button>
                     </div>
                 </div>
             </div>

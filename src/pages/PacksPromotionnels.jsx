@@ -10,6 +10,7 @@ import CartConfirmationPopup from '../components/common/cartConfirmationPopup';
 import FloatingCartBadge from '../components/common/FloatingCartBadge';
 import PackCardSkeleton from '../components/common/skeletons/PackCardSkeleton';
 import { getAllBookPacks } from '../services/bookPackService';
+import { getBooksByIds } from '../services/books.service';
 import { fetchCategories } from '../services/tags.service';
 import { fetchTopAuthors } from '../services/authors.service';
 import { getBookCoverUrl, getBookPackCoverUrl } from '../utils/imageUtils';
@@ -26,6 +27,7 @@ const PacksPromotionnels = () => {
     // Pack books popup state
     const [showPackBooksPopup, setShowPackBooksPopup] = useState(false);
     const [selectedPackForPopup, setSelectedPackForPopup] = useState(null);
+    const [isLoadingPopupBooks, setIsLoadingPopupBooks] = useState(false);
 
     // Pack data state
     const [packs, setPacks] = useState([]);
@@ -302,9 +304,34 @@ const PacksPromotionnels = () => {
                                             packImage={pack.packImage}
                                             books={pack.books}
                                             onAddToCart={handleAddToCart}
-                                            onViewAllBooks={() => {
+                                            onViewAllBooks={async () => {
+                                                // Show popup immediately with loading state
                                                 setSelectedPackForPopup(pack);
                                                 setShowPackBooksPopup(true);
+                                                setIsLoadingPopupBooks(true);
+
+                                                try {
+                                                    // Fetch full book details
+                                                    const bookIds = pack.books.map(b => b.id);
+                                                    const fullBooks = await getBooksByIds(bookIds);
+
+                                                    // Update pack with full book data including authors
+                                                    setSelectedPackForPopup({
+                                                        ...pack,
+                                                        books: fullBooks.map(book => ({
+                                                            id: book.id,
+                                                            title: book.title,
+                                                            author: book.author?.name || 'Unknown',
+                                                            price: book.price,
+                                                            coverImage: getBookCoverUrl(book.id),
+                                                            language: book.language
+                                                        }))
+                                                    });
+                                                } catch (err) {
+                                                    console.error('Error fetching book details:', err);
+                                                } finally {
+                                                    setIsLoadingPopupBooks(false);
+                                                }
                                             }}
                                         />
                                     </div>
@@ -504,6 +531,7 @@ const PacksPromotionnels = () => {
                     packTitle={selectedPackForPopup.title}
                     packDescription={selectedPackForPopup.description}
                     books={selectedPackForPopup.books}
+                    isLoading={isLoadingPopupBooks}
                 />
             )}
         </div>

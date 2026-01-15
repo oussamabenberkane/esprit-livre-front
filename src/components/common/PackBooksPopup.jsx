@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
 import { getLanguageCode } from '../../data/booksData';
 
-export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescription, books = [] }) {
+export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescription, books = [], isLoading = false }) {
     const { t } = useTranslation();
     const navigate = useNavigate();
 
@@ -84,6 +84,13 @@ export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescrip
 
                     {/* Books Grid - Scrollable Content */}
                     <div className="px-3 sm:px-6 md:px-8 py-4 sm:py-5 overflow-y-auto flex-1 custom-scrollbar">
+                        {/* Loading State */}
+                        {isLoading ? (
+                            <div className="flex flex-col items-center justify-center py-12">
+                                <div className="w-10 h-10 border-3 border-[#00417a]/20 border-t-[#00417a] rounded-full animate-spin mb-4"></div>
+                                <p className="text-gray-500 text-sm">{t('packBooksPopup.loading') || 'Loading books...'}</p>
+                            </div>
+                        ) : (
                         <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 xs:gap-3 sm:gap-4">
                             {books.map((book, index) => (
                                 <div
@@ -114,20 +121,23 @@ export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescrip
                                     </div>
 
                                     {/* Book Info */}
-                                    <div className="p-1.5 xs:p-2 sm:p-2.5 flex flex-col gap-0.5 sm:gap-1 flex-1">
-                                        {/* Title */}
-                                        <h3 className="font-['Poppins'] font-semibold text-[#00417a] text-[9px] xs:text-[10px] sm:text-sm leading-tight line-clamp-2 group-hover:text-[#003460] transition-colors min-h-[1.3rem] xs:min-h-[1.5rem] sm:min-h-[2.25rem]">
-                                            {book.title}
-                                        </h3>
+                                    <div className="p-1.5 xs:p-2 sm:p-2.5 flex flex-col flex-1">
+                                        {/* Title + Author grouped together */}
+                                        <div className="flex-1">
+                                            {/* Title */}
+                                            <h3 className="font-['Poppins'] font-semibold text-[#00417a] text-[9px] xs:text-[10px] sm:text-sm leading-tight line-clamp-2 group-hover:text-[#003460] transition-colors">
+                                                {book.title}
+                                            </h3>
 
-                                        {/* Author */}
-                                        <p className="text-gray-600 text-[8px] xs:text-[9px] sm:text-xs line-clamp-1 mb-auto">
-                                            {book.author}
-                                        </p>
+                                            {/* Author - tight spacing with title */}
+                                            <p className="text-gray-600 text-[8px] xs:text-[9px] sm:text-xs line-clamp-1 mt-0.5">
+                                                {typeof book.author === 'object' ? book.author?.name : book.author}
+                                            </p>
+                                        </div>
 
-                                        {/* Price */}
+                                        {/* Price - separate section */}
                                         {book.price && (
-                                            <div className="flex items-baseline justify-between mt-0.5 xs:mt-1 sm:mt-1.5 pt-0.5 xs:pt-1 sm:pt-1.5 border-t border-gray-100">
+                                            <div className="flex items-baseline justify-between mt-1.5 xs:mt-2 pt-1 xs:pt-1.5 border-t border-gray-100">
                                                 <span className="font-['Poppins'] font-bold text-[#00417a] text-[10px] xs:text-xs sm:text-base">
                                                     {book.price}
                                                     <span className="text-[8px] xs:text-[9px] sm:text-xs font-semibold ml-0.5 sm:ml-1">
@@ -140,6 +150,7 @@ export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescrip
                                 </div>
                             ))}
                         </div>
+                        )}
                     </div>
 
                     {/* Footer - Optional */}

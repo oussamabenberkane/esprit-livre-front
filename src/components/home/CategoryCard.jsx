@@ -1,11 +1,18 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { getCategoryImageUrl } from '../../utils/imageUtils';
 
 const CategoryCard = ({
     categoryId,
-    title,
+    nameFr,
+    nameEn,
     imageSrc
 }) => {
+    const { i18n } = useTranslation();
+
+    // Select the appropriate name based on current language
+    const title = i18n.language === 'en' ? (nameEn || nameFr) : (nameFr || nameEn);
+
     // Use categoryId to generate image URL if provided, otherwise fall back to imageSrc prop
     const imageUrl = categoryId ? getCategoryImageUrl(categoryId) : imageSrc;
     return (

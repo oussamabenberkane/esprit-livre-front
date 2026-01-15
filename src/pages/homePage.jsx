@@ -121,8 +121,9 @@ const MainDisplayCarousel = ({ display, onAddToCart, onToggleFavorite, updateScr
                             // Extract first ETIQUETTE tag for badge
                             const etiquetteTag = book.tags?.find(tag => tag.type === "ETIQUETTE");
                             const badge = etiquetteTag ? {
-                                type: etiquetteTag.nameEn.toLowerCase(),
-                                text: etiquetteTag.nameFr,
+                                type: etiquetteTag.nameEn?.toLowerCase(),
+                                nameFr: etiquetteTag.nameFr,
+                                nameEn: etiquetteTag.nameEn,
                                 colorHex: etiquetteTag.colorHex
                             } : null;
 
@@ -736,7 +737,8 @@ const HomePage = () => {
                                     >
                                         <CategoryCard
                                             categoryId={category.id}
-                                            title={category.nameFr || category.nameEn}
+                                            nameFr={category.nameFr}
+                                            nameEn={category.nameEn}
                                             imageSrc={category.imageUrl} />
                                     </div>
                                 ))}

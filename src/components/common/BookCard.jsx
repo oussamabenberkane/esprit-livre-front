@@ -20,7 +20,16 @@ const BookCard = ({
     onToggleFavorite,
     isFavorited = false
 }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+
+    // Get badge text based on current language
+    const getBadgeText = () => {
+        if (!badge) return null;
+        if (badge.nameFr || badge.nameEn) {
+            return i18n.language === 'en' ? (badge.nameEn || badge.nameFr) : (badge.nameFr || badge.nameEn);
+        }
+        return badge.text; // Fallback for old-style badges
+    };
     const { isFavorited: isBookFavorited, toggleFavorite } = useFavorites();
     const [favorited, setFavorited] = useState(isBookFavorited(id));
     // Get the cover image URL from the API endpoint
@@ -100,7 +109,7 @@ const BookCard = ({
                         className="absolute top-0 left-0 px-3 py-2 rounded-br-2xl text-fluid-tag font-semibold text-white"
                         style={{ backgroundColor: badge.colorHex || '#6B7280' }}
                     >
-                        {badge.text}
+                        {getBadgeText()}
                     </div>
                 )}
                 {/* Preorder Badge when stock is 0 */}

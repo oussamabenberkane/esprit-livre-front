@@ -817,8 +817,9 @@ const BookDetails = () => {
                                 {visibleRecommendedBooks.map((recommendedBook) => {
                                     const etiquetteTag = recommendedBook.tags?.find(tag => tag.type === "ETIQUETTE");
                                     const badge = etiquetteTag ? {
-                                        type: etiquetteTag.nameEn.toLowerCase(),
-                                        text: etiquetteTag.nameFr,
+                                        type: etiquetteTag.nameEn?.toLowerCase(),
+                                        nameFr: etiquetteTag.nameFr,
+                                        nameEn: etiquetteTag.nameEn,
                                         colorHex: etiquetteTag.colorHex
                                     } : null;
 

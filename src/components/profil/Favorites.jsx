@@ -193,8 +193,9 @@ export default function Favorites() {
                 // Extract badge from tags (same logic as BookDetails.jsx)
                 const etiquetteTag = book.tags?.find(tag => tag.type === "ETIQUETTE");
                 const badge = etiquetteTag ? {
-                  type: etiquetteTag.nameEn.toLowerCase(),
-                  text: etiquetteTag.nameFr,
+                  type: etiquetteTag.nameEn?.toLowerCase(),
+                  nameFr: etiquetteTag.nameFr,
+                  nameEn: etiquetteTag.nameEn,
                   colorHex: etiquetteTag.colorHex
                 } : null;
 

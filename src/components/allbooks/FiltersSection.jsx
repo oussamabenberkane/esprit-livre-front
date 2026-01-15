@@ -248,7 +248,7 @@ const FilterDropdown = ({
 };
 
 const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], authorsData = [] }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isMobile, setIsMobile] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [filters, setFilters] = useState({
@@ -289,7 +289,7 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
               if (byId) {
                 return {
                   id: byId.id,
-                  name: byId.nameFr || byId.nameEn || byId.name
+                  name: i18n.language === 'en' ? (byId.nameEn || byId.nameFr || byId.name) : (byId.nameFr || byId.nameEn || byId.name)
                 };
               }
               // Fallback to name matching for backward compatibility
@@ -299,7 +299,7 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
               if (byName) {
                 return {
                   id: byName.id,
-                  name: byName.nameFr || byName.nameEn || byName.name
+                  name: i18n.language === 'en' ? (byName.nameEn || byName.nameFr || byName.name) : (byName.nameFr || byName.nameEn || byName.name)
                 };
               }
               return null;
@@ -409,7 +409,7 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
         }, 100);
       }
     }
-  }, [initialFilters, categoriesData, authorsData]);
+  }, [initialFilters, categoriesData, authorsData, i18n.language]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -773,7 +773,7 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
       options = categoriesData.length > 0
         ? categoriesData.map(cat => ({
           id: cat.id,
-          name: cat.nameFr || cat.nameEn || cat.name
+          name: i18n.language === 'en' ? (cat.nameEn || cat.nameFr || cat.name) : (cat.nameFr || cat.nameEn || cat.name)
         }))
         : (mockFiltersData[type] || []).map((name, idx) => ({ id: idx, name }));
     } else if (type === 'authors') {

@@ -1,19 +1,21 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Minus, Plus, Trash2, ExternalLink, ShoppingBag, ChevronDown, Home, MapPin, Truck, X, Search, Package, LogIn } from 'lucide-react';
+import { ArrowLeft, Minus, Plus, Trash2, ExternalLink, ShoppingBag, ChevronDown, Home, MapPin, Truck, X, Search, Package, LogIn, Building2, Loader2 } from 'lucide-react';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import PackBooksPopup from '../components/common/PackBooksPopup';
 import { useScrollToTop } from '../hooks/useScrollToTop';
+import useDebounce from '../hooks/useDebounce';
 import { getLanguageCode, getFullLanguageName } from '../data/booksData';
 import { useCart } from '../contexts/CartContext';
 import { getBookCoverUrl } from '../utils/imageUtils';
 import { buildOrderPayload, createOrder } from '../services/order.service';
 import { getUserProfile } from '../services/user.service';
 import { isAuthenticated, saveRedirectUrl } from '../services/authService';
-import { PROVIDER_API_TO_DISPLAY } from '../constants/orderEnums';
+import { getRelayPoints, getStopDeskById } from '../services/relayPoints.service';
+import { PROVIDER_API_TO_DISPLAY, PROVIDER_DISPLAY_TO_API, ShippingProvider } from '../constants/orderEnums';
 import wilayaData from '../utils/wilayaData';
 
 // Order Tracking Prompt Popup Component
@@ -375,13 +377,26 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
     phone: '',
     wilaya: '',
     city: '',
-    shipping: ''
+    shipping: '',
+    provider: '',
+    relayPoint: ''
   });
 
   const [availableCities, setAvailableCities] = useState([]);
   const [shippingPreference, setShippingPreference] = useState("home"); // "home" or "pickup"
   const [homeAddress, setHomeAddress] = useState("");
-  const [pickupProvider, setPickupProvider] = useState("");
+  const [pickupProvider, setPickupProvider] = useState("Yalidine"); // Default to Yalidine (always required)
+
+  // Relay point state
+  const [stopDeskId, setStopDeskId] = useState(null);
+  const [selectedRelayPoint, setSelectedRelayPoint] = useState(null);
+  const [relayPoints, setRelayPoints] = useState([]);
+  const [isLoadingRelayPoints, setIsLoadingRelayPoints] = useState(false);
+  const [relayPointsError, setRelayPointsError] = useState(null);
+  const [relayPointSearch, setRelayPointSearch] = useState('');
+  const [isRelayPointTyping, setIsRelayPointTyping] = useState(false);
+  const debouncedRelayPointSearch = useDebounce(relayPointSearch, 300);
+  const relayPointInputRef = useRef(null);
 
   // Profile loading state
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
@@ -426,9 +441,12 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
           setHomeAddress(profile.streetAddress || '');
         } else if (profile.defaultShippingMethod === 'SHIPPING_PROVIDER') {
           setShippingPreference('pickup');
-          // Map API enum to display name
+        }
+
+        // Provider is always required - set from profile or default to Yalidine
+        if (profile.defaultShippingProvider) {
           const displayProvider = PROVIDER_API_TO_DISPLAY[profile.defaultShippingProvider];
-          setPickupProvider(displayProvider || '');
+          setPickupProvider(displayProvider || 'Yalidine');
         }
 
         // Set available cities based on wilaya
@@ -454,10 +472,86 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
       const activeDropdownRef = dropdownRefs.current[openDropdown];
       if (activeDropdownRef && !activeDropdownRef.contains(e.target)) {
         setOpenDropdown(null);
+        setIsRelayPointTyping(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [openDropdown]);
+
+  // Fetch relay points when provider or wilaya changes
+  const fetchRelayPoints = useCallback(async () => {
+    const apiProvider = PROVIDER_DISPLAY_TO_API[pickupProvider];
+    if (!apiProvider || !formData.wilaya) {
+      setRelayPoints([]);
+      return;
+    }
+
+    setIsLoadingRelayPoints(true);
+    setRelayPointsError(null);
+
+    try {
+      const data = await getRelayPoints(apiProvider, formData.wilaya);
+      setRelayPoints(data || []);
+    } catch (err) {
+      console.error('Error fetching relay points:', err);
+      setRelayPointsError(t('cart.relayPointsLoadError'));
+      setRelayPoints([]);
+    } finally {
+      setIsLoadingRelayPoints(false);
+    }
+  }, [pickupProvider, formData.wilaya, t]);
+
+  // Fetch relay points when dependencies change
+  useEffect(() => {
+    fetchRelayPoints();
+  }, [fetchRelayPoints]);
+
+  // Fetch selected relay point details when stopDeskId changes
+  useEffect(() => {
+    const fetchSelectedPoint = async () => {
+      if (!stopDeskId) {
+        setSelectedRelayPoint(null);
+        return;
+      }
+
+      // First check if it's in the current list
+      const pointInList = relayPoints.find(p => p.id === stopDeskId);
+      if (pointInList) {
+        setSelectedRelayPoint(pointInList);
+        return;
+      }
+
+      // Otherwise fetch from API
+      try {
+        const point = await getStopDeskById(stopDeskId);
+        setSelectedRelayPoint(point);
+      } catch (err) {
+        console.error('Error fetching selected stop desk:', err);
+        setSelectedRelayPoint(null);
+      }
+    };
+
+    fetchSelectedPoint();
+  }, [stopDeskId, relayPoints]);
+
+  // Reset relay point selection when provider or wilaya changes
+  useEffect(() => {
+    if (stopDeskId && selectedRelayPoint) {
+      // If the selected point doesn't match the current wilaya, clear it
+      if (formData.wilaya && selectedRelayPoint.wilaya !== formData.wilaya) {
+        setStopDeskId(null);
+        setSelectedRelayPoint(null);
+      }
+    }
+  }, [pickupProvider, formData.wilaya, stopDeskId, selectedRelayPoint]);
+
+  // Reset relay point search when dropdown closes
+  useEffect(() => {
+    if (openDropdown !== 'relayPoint') {
+      setRelayPointSearch('');
+      setIsRelayPointTyping(false);
+    }
   }, [openDropdown]);
 
   // Filter functions
@@ -473,6 +567,17 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
     );
   };
 
+  // Filter relay points based on search query
+  const getFilteredRelayPoints = () => {
+    if (!debouncedRelayPointSearch) return relayPoints;
+    const query = debouncedRelayPointSearch.toLowerCase();
+    return relayPoints.filter(point =>
+      point.name?.toLowerCase().includes(query) ||
+      point.address?.toLowerCase().includes(query) ||
+      point.commune?.toLowerCase().includes(query)
+    );
+  };
+
   const handleWilayaSelect = (wilaya) => {
     setFormData({ ...formData, wilaya, city: '' });
     setAvailableCities(wilayaData[wilaya] || []);
@@ -480,6 +585,9 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
     setOpenDropdown(null);
     // Clear wilaya validation error when selected
     setValidationErrors(prev => ({ ...prev, wilaya: '' }));
+    // Clear relay point when wilaya changes
+    setStopDeskId(null);
+    setSelectedRelayPoint(null);
   };
 
   const handleCitySelect = (city) => {
@@ -493,6 +601,28 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
   const handleProviderSelect = (provider) => {
     setPickupProvider(provider);
     setOpenDropdown(null);
+    // Clear provider validation error when selected
+    setValidationErrors(prev => ({ ...prev, provider: '' }));
+    // Clear relay point when provider changes
+    setStopDeskId(null);
+    setSelectedRelayPoint(null);
+  };
+
+  const handleRelayPointSelect = (point) => {
+    setStopDeskId(point.id);
+    setSelectedRelayPoint(point);
+    setOpenDropdown(null);
+    setRelayPointSearch('');
+    setIsRelayPointTyping(false);
+    // Clear relay point validation error when selected
+    setValidationErrors(prev => ({ ...prev, relayPoint: '' }));
+  };
+
+  const handleClearRelayPoint = (e) => {
+    e.stopPropagation();
+    setStopDeskId(null);
+    setSelectedRelayPoint(null);
+    setRelayPointSearch('');
   };
 
   // Email validation
@@ -545,9 +675,13 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
     const isWilayaValid = formData.wilaya.trim() !== '';
     const isCityValid = formData.city.trim() !== '';
 
+    // Provider is always required
+    const isProviderValid = pickupProvider.trim() !== '';
+
     // Shipping method validation
     const isHomeAddressValid = shippingPreference === 'home' ? homeAddress.trim() !== '' : true;
-    const isProviderValid = shippingPreference === 'pickup' ? pickupProvider.trim() !== '' : true;
+    // Relay point is required only for pickup shipping method
+    const isRelayPointValid = shippingPreference === 'pickup' ? stopDeskId !== null : true;
 
     // Reset validation errors
     let errors = {
@@ -555,7 +689,9 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
       phone: '',
       wilaya: '',
       city: '',
-      shipping: ''
+      shipping: '',
+      provider: '',
+      relayPoint: ''
     };
 
     if (formData.email.trim() !== '' && !isEmailValid) {
@@ -567,32 +703,41 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
     }
 
     if (!isWilayaValid) {
-      errors.wilaya = 'Please enter this field';
+      errors.wilaya = t('cart.fieldRequired');
     }
 
     if (!isCityValid) {
-      errors.city = 'Please enter this field';
+      errors.city = t('cart.fieldRequired');
+    }
+
+    // Provider is always required
+    if (!isProviderValid) {
+      errors.provider = t('cart.providerRequired');
     }
 
     // Validate shipping address for home delivery
     if (shippingPreference === 'home' && !isHomeAddressValid) {
-      errors.shipping = t('cart.homeAddressRequired') || 'Please enter your home address';
+      errors.shipping = t('cart.homeAddressRequired');
     }
 
-    // Validate shipping provider for pickup
-    if (shippingPreference === 'pickup' && !isProviderValid) {
-      errors.shipping = t('cart.providerRequired') || 'Please select a pickup provider';
+    // Validate relay point for pickup
+    if (shippingPreference === 'pickup' && !isRelayPointValid) {
+      errors.relayPoint = t('cart.relayPointRequired');
     }
 
     setValidationErrors(errors);
 
     // Only submit if all validations pass
-    if (isEmailValid && isPhoneValid && isWilayaValid && isCityValid && isHomeAddressValid && isProviderValid) {
+    const hasNoErrors = isEmailValid && isPhoneValid && isWilayaValid && isCityValid &&
+                        isProviderValid && isHomeAddressValid && isRelayPointValid;
+
+    if (hasNoErrors) {
       onSubmit({
         ...formData,
         shippingPreference,
         homeAddress,
-        pickupProvider
+        pickupProvider,
+        stopDeskId
       });
     }
   };
@@ -929,7 +1074,89 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
           )}
         </div>
 
-        {/* Shipping Preference */}
+        {/* Shipping Provider - Always visible and required */}
+        <div className="mt-6">
+          <label className="block text-[#353535] text-fluid-medium font-[500] mb-2">
+            {t('cart.shippingProvider')}
+          </label>
+          <div className="relative" ref={el => dropdownRefs.current['provider'] = el}>
+            <div className={`flex items-center bg-white rounded-lg border-2 transition-all duration-200 ${
+              validationErrors.provider
+                ? 'border-red-500'
+                : openDropdown === 'provider' ? 'border-emerald-500 shadow-md' : 'border-neutral-200 hover:border-neutral-300'
+              }`}>
+              <div
+                className="flex items-center flex-1 min-w-0 h-11 px-3 cursor-pointer"
+                onClick={() => {
+                  setOpenDropdown(openDropdown === 'provider' ? null : 'provider');
+                }}
+              >
+                <Truck className="w-4 h-4 text-emerald-500 mr-2 flex-shrink-0" />
+                <span className={`text-fluid-small truncate ${pickupProvider ? 'text-gray-700 font-medium' : 'text-gray-400'}`}>
+                  {pickupProvider || t('cart.selectProvider')}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setOpenDropdown(openDropdown === 'provider' ? null : 'provider');
+                }}
+                className="h-11 px-3 hover:bg-gray-100 rounded-r-lg transition-colors flex items-center justify-center flex-shrink-0"
+              >
+                <ChevronDown
+                  className={`w-4 h-4 text-gray-500 transform transition-transform duration-200 ${openDropdown === 'provider' ? 'rotate-180' : ''}`}
+                />
+              </button>
+            </div>
+
+            <AnimatePresence>
+              {openDropdown === 'provider' && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10, height: 0 }}
+                  animate={{ opacity: 1, y: 0, height: 'auto' }}
+                  exit={{ opacity: 0, y: -10, height: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute top-full left-0 right-0 z-50 mt-2 overflow-hidden"
+                >
+                  <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                    <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200">
+                      <span className="text-fluid-xs font-medium text-gray-600">
+                        {pickupProviders.length} {pickupProviders.length === 1 ? 'option' : 'options'}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setOpenDropdown(null)}
+                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <div className="max-h-52 overflow-y-auto">
+                      {pickupProviders.map((provider) => (
+                        <button
+                          type="button"
+                          key={provider}
+                          onClick={() => handleProviderSelect(provider)}
+                          className={`w-full text-left px-4 py-3 text-fluid-small hover:bg-emerald-50 transition-colors flex items-center border-b border-gray-100 last:border-b-0 ${pickupProvider === provider ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700'}`}
+                        >
+                          <div className={`w-3 h-3 border-2 rounded-full mr-3 flex-shrink-0 ${pickupProvider === provider ? 'border-emerald-500 bg-emerald-500' : 'border-gray-300'}`}></div>
+                          <span className="font-medium truncate">{provider}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+          {validationErrors.provider && (
+            <p className="mt-1 text-fluid-xs text-red-500">{validationErrors.provider}</p>
+          )}
+        </div>
+
+        {/* Shipping Method */}
         <div className="mt-6">
           <label className="block text-[#353535] text-fluid-medium font-[500] mb-3">
             {t('cart.shippingMethod')}
@@ -1039,7 +1266,7 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
                 </div>
               </button>
 
-              {/* Pickup Provider Select - Appears when Pickup Point is selected */}
+              {/* Relay Point Select - Appears when Pickup Point is selected */}
               <AnimatePresence>
                 {shippingPreference === "pickup" && (
                   <motion.div
@@ -1048,79 +1275,205 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                   >
-                    <div className="mt-2 xs:mt-2.5 sm:mt-3 px-2 xs:px-2.5 sm:px-3 md:px-4">
-                      <div className="relative" ref={el => dropdownRefs.current['provider'] = el}>
-                        <div className={`flex items-center bg-white rounded-lg border-2 transition-all duration-200 ${openDropdown === 'provider' ? 'border-emerald-500 shadow-md' : 'border-neutral-200 hover:border-emerald-400'
-                          }`}>
-                          <div
-                            className="flex items-center flex-1 min-w-0 h-9 xs:h-10 sm:h-11 px-2 xs:px-2.5 sm:px-3 cursor-pointer"
-                            onClick={() => {
-                              setOpenDropdown(openDropdown === 'provider' ? null : 'provider');
-                            }}
-                          >
-                            <Truck className="w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-4 sm:h-4 text-emerald-500 mr-1 xs:mr-1.5 sm:mr-2 flex-shrink-0" />
-                            <span className={`text-[11px] xs:text-xs sm:text-fluid-small truncate ${pickupProvider ? 'text-gray-700 font-medium' : 'text-gray-400'}`}>
-                              {pickupProvider || t('cart.selectProvider')}
-                            </span>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              setOpenDropdown(openDropdown === 'provider' ? null : 'provider');
-                            }}
-                            className="h-9 xs:h-10 sm:h-11 px-1.5 xs:px-2 sm:px-3 hover:bg-gray-100 rounded-r-lg transition-colors flex items-center justify-center flex-shrink-0"
-                          >
-                            <ChevronDown
-                              className={`w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-4 sm:h-4 text-emerald-500 transform transition-transform duration-200 ${openDropdown === 'provider' ? 'rotate-180' : ''
-                                }`}
-                            />
-                          </button>
-                        </div>
+                    <div className="mt-3 px-3 md:px-4">
+                      <label className="block text-[#353535] text-fluid-xs font-[500] mb-2">
+                        {t('cart.selectRelayPoint')}
+                      </label>
 
-                        <AnimatePresence>
-                          {openDropdown === 'provider' && (
-                            <motion.div
-                              initial={{ opacity: 0, y: -10, height: 0 }}
-                              animate={{ opacity: 1, y: 0, height: 'auto' }}
-                              exit={{ opacity: 0, y: -10, height: 0 }}
-                              transition={{ duration: 0.2 }}
-                              className="absolute top-full left-0 right-0 z-50 mt-1.5 xs:mt-2 overflow-hidden"
-                            >
-                              <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
-                                <div className="flex items-center justify-between px-2 xs:px-2.5 sm:px-3 md:px-4 py-1.5 xs:py-2 bg-gray-50 border-b border-gray-200">
-                                  <span className="text-[10px] xs:text-xs sm:text-fluid-xs font-medium text-gray-600">
-                                    {pickupProviders.length} {pickupProviders.length === 1 ? 'option' : 'options'}
-                                  </span>
-                                  <button
-                                    type="button"
-                                    onClick={() => setOpenDropdown(null)}
-                                    className="text-gray-400 hover:text-gray-600 transition-colors"
-                                  >
-                                    <X className="w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-4 sm:h-4" />
-                                  </button>
-                                </div>
-                                <div className="max-h-40 xs:max-h-48 sm:max-h-52 overflow-y-auto">
-                                  {pickupProviders.map((provider) => (
+                      {/* Show message if wilaya not selected */}
+                      {!formData.wilaya ? (
+                        <div className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-400 text-fluid-small">
+                          {t('cart.selectWilayaFirst')}
+                        </div>
+                      ) : (
+                        <div className="relative" ref={el => dropdownRefs.current['relayPoint'] = el}>
+                          <div className="relative">
+                            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
+                            <input
+                              ref={relayPointInputRef}
+                              type="text"
+                              value={isRelayPointTyping ? relayPointSearch : (selectedRelayPoint ? selectedRelayPoint.name : '')}
+                              onChange={(e) => {
+                                setRelayPointSearch(e.target.value);
+                                setIsRelayPointTyping(true);
+                                if (openDropdown !== 'relayPoint') setOpenDropdown('relayPoint');
+                              }}
+                              onFocus={() => {
+                                setOpenDropdown('relayPoint');
+                              }}
+                              placeholder={t('cart.searchRelayPoint')}
+                              disabled={isLoadingRelayPoints}
+                              className={`w-full pl-9 pr-10 py-3 text-fluid-small border-2 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 ${
+                                validationErrors.relayPoint
+                                  ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
+                                  : openDropdown === 'relayPoint'
+                                    ? 'border-emerald-500 focus:ring-emerald-500 shadow-md'
+                                    : 'border-neutral-200 focus:ring-emerald-500 hover:border-neutral-300'
+                              } ${isLoadingRelayPoints ? 'bg-gray-100 cursor-not-allowed' : ''} ${
+                                selectedRelayPoint && !isRelayPointTyping ? 'text-gray-900 font-medium' : 'text-gray-900'
+                              }`}
+                            />
+                            <div className="absolute right-0 top-0 bottom-0 flex items-center">
+                              {isLoadingRelayPoints && (
+                                <Loader2 className="w-4 h-4 text-gray-400 animate-spin mr-2" />
+                              )}
+                              {selectedRelayPoint && !isLoadingRelayPoints && (
+                                <button
+                                  type="button"
+                                  onClick={handleClearRelayPoint}
+                                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                                >
+                                  <X className="w-4 h-4 text-gray-400 hover:text-gray-600" />
+                                </button>
+                              )}
+                              <button
+                                type="button"
+                                onClick={() => !isLoadingRelayPoints && setOpenDropdown(openDropdown === 'relayPoint' ? null : 'relayPoint')}
+                                disabled={isLoadingRelayPoints}
+                                className="px-3 h-full hover:bg-gray-100 rounded-r-lg transition-colors flex items-center"
+                              >
+                                <ChevronDown
+                                  className={`w-4 h-4 text-gray-500 transform transition-transform duration-200 ${
+                                    openDropdown === 'relayPoint' ? 'rotate-180' : ''
+                                  }`}
+                                />
+                              </button>
+                            </div>
+                          </div>
+
+                          <AnimatePresence>
+                            {openDropdown === 'relayPoint' && (
+                              <motion.div
+                                initial={{ opacity: 0, y: -10, height: 0 }}
+                                animate={{ opacity: 1, y: 0, height: 'auto' }}
+                                exit={{ opacity: 0, y: -10, height: 0 }}
+                                transition={{ duration: 0.2 }}
+                                className="absolute top-full left-0 right-0 z-50 mt-2 overflow-hidden"
+                              >
+                                <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                                  {/* Header */}
+                                  <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200">
+                                    <span className="text-fluid-xs font-medium text-gray-600">
+                                      {isLoadingRelayPoints ? (
+                                        <span className="flex items-center gap-2">
+                                          <Loader2 className="w-3 h-3 animate-spin" />
+                                          {t('common.loading')}
+                                        </span>
+                                      ) : (
+                                        <>
+                                          {getFilteredRelayPoints().length === 1
+                                            ? t('cart.relayPointSingular', { count: 1 })
+                                            : t('cart.relayPointPlural', { count: getFilteredRelayPoints().length })}
+                                          {formData.wilaya && <span className="text-gray-400"> {t('cart.inWilaya', { wilaya: formData.wilaya })}</span>}
+                                        </>
+                                      )}
+                                    </span>
                                     <button
                                       type="button"
-                                      key={provider}
-                                      onClick={() => handleProviderSelect(provider)}
-                                      className={`w-full text-left px-2 xs:px-2.5 sm:px-3 md:px-4 py-2 xs:py-2.5 sm:py-3 hover:bg-emerald-50 transition-colors flex items-center border-b border-gray-100 last:border-b-0 ${pickupProvider === provider ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700'
-                                        }`}
+                                      onClick={() => setOpenDropdown(null)}
+                                      className="text-gray-400 hover:text-gray-600 transition-colors"
                                     >
-                                      <div className={`w-2.5 h-2.5 xs:w-3 xs:h-3 border-2 rounded-full mr-1.5 xs:mr-2 sm:mr-3 flex-shrink-0 ${pickupProvider === provider ? 'border-emerald-500 bg-emerald-500' : 'border-gray-300'
-                                        }`}></div>
-                                      <span className="font-medium truncate text-[10px] xs:text-[11px] sm:text-xs md:text-fluid-small">{provider}</span>
+                                      <X className="w-4 h-4" />
                                     </button>
-                                  ))}
+                                  </div>
+
+                                  {/* Options List */}
+                                  <div className="max-h-60 overflow-y-auto">
+                                    {relayPointsError ? (
+                                      <div className="px-4 py-8 text-center">
+                                        <p className="text-fluid-small text-red-500">{relayPointsError}</p>
+                                        <button
+                                          type="button"
+                                          onClick={fetchRelayPoints}
+                                          className="mt-2 text-fluid-small text-emerald-600 hover:underline"
+                                        >
+                                          {t('common.retry')}
+                                        </button>
+                                      </div>
+                                    ) : isLoadingRelayPoints ? (
+                                      <div className="px-4 py-8 text-center">
+                                        <Loader2 className="w-8 h-8 text-emerald-500 mx-auto mb-2 animate-spin" />
+                                        <p className="text-fluid-small text-gray-500">{t('cart.loadingRelayPoints')}</p>
+                                      </div>
+                                    ) : getFilteredRelayPoints().length === 0 ? (
+                                      <div className="px-4 py-8 text-center">
+                                        <MapPin className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                                        <p className="text-fluid-small text-gray-500">
+                                          {relayPointSearch
+                                            ? t('cart.noRelayPointsFound')
+                                            : t('cart.noRelayPointsInWilaya', { wilaya: formData.wilaya })}
+                                        </p>
+                                      </div>
+                                    ) : (
+                                      getFilteredRelayPoints().map((point) => (
+                                        <button
+                                          type="button"
+                                          key={point.id}
+                                          onClick={() => handleRelayPointSelect(point)}
+                                          className={`w-full text-left px-4 py-3 hover:bg-emerald-50 transition-colors border-b border-gray-100 last:border-b-0 ${
+                                            stopDeskId === point.id ? 'bg-emerald-50' : ''
+                                          }`}
+                                        >
+                                          <div className="flex items-start gap-3">
+                                            <div className={`mt-0.5 p-1.5 rounded-lg ${
+                                              stopDeskId === point.id ? 'bg-emerald-500 text-white' : 'bg-gray-100 text-gray-500'
+                                            }`}>
+                                              <Building2 className="w-4 h-4" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                              <div className={`text-fluid-small font-semibold ${
+                                                stopDeskId === point.id ? 'text-emerald-700' : 'text-gray-900'
+                                              }`}>
+                                                {point.name}
+                                              </div>
+                                              <div className="text-fluid-xs text-gray-500 mt-0.5 truncate">
+                                                {point.address}
+                                              </div>
+                                              <div className="flex items-center gap-3 mt-1">
+                                                <span className="text-fluid-xs text-gray-400">
+                                                  {point.commune}
+                                                </span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </button>
+                                      ))
+                                    )}
+                                  </div>
                                 </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      )}
+
+                      {/* Selected Point Details */}
+                      {selectedRelayPoint && openDropdown !== 'relayPoint' && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="mt-2 p-3 bg-emerald-50 border border-emerald-200 rounded-lg"
+                        >
+                          <div className="flex items-start gap-2">
+                            <MapPin className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <div className="text-fluid-small font-medium text-emerald-900">
+                                {selectedRelayPoint.name}
                               </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
+                              <div className="text-fluid-xs text-emerald-700 mt-0.5">
+                                {selectedRelayPoint.address}
+                              </div>
+                              <div className="text-fluid-xs text-emerald-600 mt-0.5">
+                                {selectedRelayPoint.commune}, {selectedRelayPoint.wilaya}
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+
+                      {validationErrors.relayPoint && (
+                        <p className="mt-1 text-fluid-xs text-red-500">{validationErrors.relayPoint}</p>
+                      )}
                     </div>
                   </motion.div>
                 )}

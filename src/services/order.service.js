@@ -140,7 +140,8 @@ export const buildOrderPayload = (formData, cartBooks, cartPacks, shippingCost =
     : ShippingMethod.SHIPPING_PROVIDER;
 
   // Map shipping provider display name to API enum
-  const shippingProvider = formData.shippingPreference === 'pickup' && formData.pickupProvider
+  // Provider is now always required regardless of shipping method
+  const shippingProvider = formData.pickupProvider
     ? PROVIDER_DISPLAY_TO_API[formData.pickupProvider]
     : null;
 
@@ -152,6 +153,7 @@ export const buildOrderPayload = (formData, cartBooks, cartPacks, shippingCost =
     wilaya: formData.wilaya,
     city: formData.city,
     shippingMethod: shippingMethod,
+    shippingProvider: shippingProvider,  // Always include provider
     totalAmount: subtotal + shippingCost,
     shippingCost: shippingCost,
     orderItems: orderItems
@@ -160,12 +162,14 @@ export const buildOrderPayload = (formData, cartBooks, cartPacks, shippingCost =
   // Add streetAddress only if HOME_DELIVERY
   if (shippingMethod === ShippingMethod.HOME_DELIVERY) {
     payload.streetAddress = formData.homeAddress || null;
-    payload.shippingProvider = null;
+    payload.stopDeskId = null;
+    payload.isStopDesk = false;
   }
-  // Add shippingProvider only if SHIPPING_PROVIDER
+  // Add stopDeskId and isStopDesk only if SHIPPING_PROVIDER (pickup point)
   else {
     payload.streetAddress = null;
-    payload.shippingProvider = shippingProvider;
+    payload.stopDeskId = formData.stopDeskId || null;
+    payload.isStopDesk = true;
   }
 
   return payload;

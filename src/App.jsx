@@ -4,6 +4,7 @@ import AllBooks from './pages/AllBooks';
 import BookDetails from './pages/BookDetails';
 import CartCheckoutPage from './pages/CartCheckoutPage.jsx';
 import AuthPage from './pages/AuthPage.jsx';
+import AuthCallback from './pages/AuthCallback.jsx';
 import Profile from './pages/profile.jsx';
 import Orders from './components/profil/Orders.jsx';
 import Favorites from './components/profil/Favorites.jsx';
@@ -11,24 +12,33 @@ import TeamPage from './pages/TeamPage';
 import ServiceClientPage from './pages/ServiceClientPage';
 import PacksPromotionnels from './pages/PacksPromotionnels.jsx';
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
+import TestPage from './pages/TestPage.jsx';
+import NotFound404 from './pages/NotFound404.jsx';
+import { FavoritesProvider } from './contexts/FavoritesContext';
+import { CartProvider } from './contexts/CartContext';
 
 function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen min-w-screen bg-gray-50">
-        <Routes>
+      <FavoritesProvider>
+        <CartProvider>
+          <div className="min-h-screen min-w-screen bg-gray-50">
+          <Routes>
           {/* Home page as entry point - Accessible to both guests and authenticated users */}
-          <Route path="/" element={<PacksPromotionnels />} />
-          
+          <Route path="/" element={<HomePage />} />
 
-           {/* auth page */}
+
+          {/* auth page */}
           <Route path="/auth" element={<AuthPage />} />
+
+          {/* OAuth callback route */}
+          <Route path="/auth/callback" element={<AuthCallback />} />
 
           {/* All books catalog page */}
           <Route path="/allbooks" element={<AllBooks />} />
 
           {/* Promotional packs page */}
-          <Route path="/packs-promotionnels" element={<PacksPromotionnels />} />
+          <Route path="/packs" element={<PacksPromotionnels />} />
 
           {/* Book details page with dynamic ID */}
           <Route path="/books/:id" element={<BookDetails />} />
@@ -50,8 +60,16 @@ function App() {
 
           {/* Service Client page */}
           <Route path="/service-client" element={<ServiceClientPage />} />
+
+          {/* Test page for debugging */}
+          <Route path="/test" element={<TestPage />} />
+
+          {/* 404 Not Found - Catch all undefined routes */}
+          <Route path="*" element={<NotFound404 />} />
         </Routes>
-      </div>
+          </div>
+        </CartProvider>
+      </FavoritesProvider>
     </BrowserRouter>
   );
 }

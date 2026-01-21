@@ -12,14 +12,14 @@ export default function Footer() {
 
     return (
         <footer className="bg-white border-t border-gray-200 py-12">
-            <div className="max-w-7xl mx-auto lg:ml-fluid-2xl px-fluid-2xl">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
                     {/* Social Networks Section */}
-                    <div className="text-center md:text-left">
+                    <div className="text-center">
                         <h3 className="text-fluid-h3 font-semibold text-gray-800 mb-4">
                             {t('footer.socialNetworks')}
                         </h3>
-                        <div className="flex justify-center md:justify-start gap-6">
+                        <div className="flex justify-center gap-6">
                             <a
                                 href="#"
                                 className="text-[#1E40AF] hover:text-blue-700 transition-colors"
@@ -45,14 +45,14 @@ export default function Footer() {
                     </div>
 
                     {/* Who Are We Section */}
-                    <div className="text-center md:text-left">
+                    <div className="text-center">
                         <h3 className="text-fluid-h3 font-semibold text-gray-800 mb-4">
                             {t('footer.whoAreWe.title')}
                         </h3>
                         <Link
                             to="/team"
                             onClick={handleLinkClick}
-                            className="inline-flex items-center gap-2"
+                            className="inline-flex items-center gap-2 justify-center"
                         >
                             <h3 className="text-fluid-small text-[#1E40AF] hover:text-blue-700 transition-colors font-medium">{t('footer.whoAreWe.team')}</h3>
                             <svg
@@ -72,14 +72,14 @@ export default function Footer() {
                     </div>
 
                     {/* Customer Service Section */}
-                    <div className="text-center md:text-left">
+                    <div className="text-center">
                         <h3 className="text-fluid-h3 font-semibold text-gray-800 mb-4">
                             {t('footer.customerService.title')}
                         </h3>
                         <Link
                             to="/service-client"
                             onClick={handleLinkClick}
-                            className="inline-flex items-center gap-2"
+                            className="inline-flex items-center gap-2 justify-center"
                         >
                             <h3 className="text-fluid-small text-[#1E40AF] hover:text-blue-700 transition-colors font-medium">{t('footer.customerService.link')}</h3>
                             <svg

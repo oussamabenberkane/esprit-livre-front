@@ -172,7 +172,7 @@ const FilterDropdown = ({
         </div>
 
         <div
-          className={`${isMobile ? 'overflow-hidden' : 'absolute top-full left-0 right-0 z-50'} transition-all duration-300 ease-in-out ${isActive ? 'max-h-64 mt-2 opacity-100 visible' : 'max-h-0 mt-0 opacity-0 invisible'
+          className={`${isMobile ? 'overflow-hidden' : 'relative z-50'} transition-all duration-300 ease-in-out ${isActive ? 'max-h-64 mt-2 opacity-100 visible' : 'max-h-0 mt-0 opacity-0 invisible'
             }`}
         >
           <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
@@ -190,16 +190,20 @@ const FilterDropdown = ({
 
             <div className="max-h-52 overflow-y-auto">
               {filteredOptions.length > 0 ? (
-                filteredOptions.map((option) => (
-                  <button
-                    key={option}
-                    onClick={() => onAddFilterItem(type, option)}
-                    className="w-full text-left px-4 py-3 text-sm hover:bg-blue-50 transition-colors flex items-center border-b border-gray-100 last:border-b-0"
-                  >
-                    <div className="w-3 h-3 border-2 border-gray-300 rounded-full mr-3 flex-shrink-0"></div>
-                    <span className="text-gray-700">{option}</span>
-                  </button>
-                ))
+                filteredOptions.map((option) => {
+                  const displayText = typeof option === 'object' ? option.name : option;
+                  const key = typeof option === 'object' ? option.id : option;
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => onAddFilterItem(type, option)}
+                      className="w-full text-left px-4 py-3 text-sm hover:bg-blue-50 transition-colors flex items-center border-b border-gray-100 last:border-b-0"
+                    >
+                      <div className="w-3 h-3 border-2 border-gray-300 rounded-full mr-3 flex-shrink-0"></div>
+                      <span className="text-gray-700">{displayText}</span>
+                    </button>
+                  );
+                })
               ) : (
                 <div className="px-4 py-6 text-sm text-gray-500 text-center">
                   {t('filters.noResults')}
@@ -215,22 +219,26 @@ const FilterDropdown = ({
           }`}
       >
         {selectedItems.length > 0 && !searchTerm && (
-          <div className="p-3 bg-blue-50 rounded-lg overflow-x-hidden">
-            <div className="flex gap-2 flex-wrap">
-              {selectedItems.map((item) => (
-                <div
-                  key={item}
-                  className="flex items-center bg-white px-3 py-1.5 rounded-full text-sm whitespace-nowrap flex-shrink-0 shadow-sm border border-blue-200"
-                >
-                  <span className="mr-2 text-gray-700 truncate max-w-[150px]">{item}</span>
-                  <button
-                    onClick={() => onRemoveFilterItem(type, item)}
-                    className="text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
+          <div className="p-3 bg-blue-50 rounded-lg">
+            <div className="flex gap-2 overflow-x-auto pb-2 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-blue-100 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-blue-400 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-blue-500 [&::-webkit-scrollbar-thumb]:transition-colors">
+              {selectedItems.map((item) => {
+                const displayText = typeof item === 'object' ? item.name : item;
+                const key = typeof item === 'object' ? item.id : item;
+                return (
+                  <div
+                    key={key}
+                    className="flex items-center bg-white px-3 py-1.5 rounded-full text-sm whitespace-nowrap flex-shrink-0 shadow-sm border border-blue-200"
                   >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              ))}
+                    <span className="mr-2 text-gray-700">{displayText}</span>
+                    <button
+                      onClick={() => onRemoveFilterItem(type, item)}
+                      className="text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
@@ -239,22 +247,20 @@ const FilterDropdown = ({
   );
 };
 
-const FiltersSection = ({ initialFilters }) => {
-  const { t } = useTranslation();
+const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], authorsData = [] }) => {
+  const { t, i18n } = useTranslation();
   const [isMobile, setIsMobile] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [filters, setFilters] = useState({
     price: { min: 0, max: 10000 },
     categories: [],
     authors: [],
-    titles: [],
     languages: []
   });
 
   const [searchTerms, setSearchTerms] = useState({
     categories: '',
     authors: '',
-    titles: '',
     languages: ''
   });
 
@@ -265,12 +271,145 @@ const FiltersSection = ({ initialFilters }) => {
   // Apply initial filters from URL params
   useEffect(() => {
     if (initialFilters) {
-      setFilters(prev => ({
-        ...prev,
-        ...initialFilters
-      }));
+      const mappedFilters = {};
+
+      // Map category IDs from URL to category objects
+      if (initialFilters.categories && initialFilters.categories.length > 0) {
+        // Check if we already have objects with names (from URL params)
+        const firstCat = initialFilters.categories[0];
+        if (typeof firstCat === 'object' && firstCat.name) {
+          // Already have full objects with names - use them directly
+          mappedFilters.categories = initialFilters.categories;
+        } else if (categoriesData.length > 0) {
+          // Need to look up in categoriesData
+          mappedFilters.categories = initialFilters.categories
+            .map(catId => {
+              // Try to find by ID first (new behavior)
+              const byId = categoriesData.find(cat => cat.id === parseInt(catId) || cat.id === catId);
+              if (byId) {
+                return {
+                  id: byId.id,
+                  name: i18n.language === 'en' ? (byId.nameEn || byId.nameFr || byId.name) : (byId.nameFr || byId.nameEn || byId.name)
+                };
+              }
+              // Fallback to name matching for backward compatibility
+              const byName = categoriesData.find(cat =>
+                (cat.nameFr === catId || cat.nameEn === catId || cat.name === catId)
+              );
+              if (byName) {
+                return {
+                  id: byName.id,
+                  name: i18n.language === 'en' ? (byName.nameEn || byName.nameFr || byName.name) : (byName.nameFr || byName.nameEn || byName.name)
+                };
+              }
+              return null;
+            })
+            .filter(Boolean);
+        }
+        // If we don't have names yet and categoriesData isn't loaded, wait
+      }
+
+      // Map author IDs from URL to author objects
+      if (initialFilters.authors && initialFilters.authors.length > 0) {
+        // Check if we already have objects with names (from URL params)
+        const firstAuthor = initialFilters.authors[0];
+        if (typeof firstAuthor === 'object' && firstAuthor.name) {
+          // Already have full objects with names - use them directly
+          mappedFilters.authors = initialFilters.authors;
+        } else if (authorsData.length > 0) {
+          // Need to look up in authorsData
+          mappedFilters.authors = initialFilters.authors
+            .map(authorId => {
+              // Try to find by ID first (new behavior)
+              const byId = authorsData.find(author => author.id === parseInt(authorId) || author.id === authorId);
+              if (byId) {
+                return {
+                  id: byId.id,
+                  name: byId.name
+                };
+              }
+              // Fallback to name matching for backward compatibility
+              const byName = authorsData.find(author => author.name === authorId);
+              if (byName) {
+                return {
+                  id: byName.id,
+                  name: byName.name
+                };
+              }
+              return null;
+            })
+            .filter(Boolean);
+        }
+        // If we don't have names yet and authorsData isn't loaded, wait
+      }
+
+      // Only update filters if we have mapped data
+      if (Object.keys(mappedFilters).length > 0) {
+        setFilters(prev => {
+          const newFilters = {
+            ...prev,
+            ...mappedFilters
+          };
+
+          // Auto-apply filters when coming from URL (e.g., from search)
+          // This includes search-only cases (no categories/authors)
+          if (initialFilters.search || initialFilters.categories || initialFilters.authors) {
+            // Apply filters immediately with the new filter state
+            setTimeout(() => {
+              // Extract values from filter objects
+              const extractValues = (items, type) => {
+                if (!items || items.length === 0) return [];
+                // For categories, return IDs (API expects categoryId)
+                if (type === 'categories') {
+                  return items.map(item => typeof item === 'object' ? item.id : item);
+                }
+                // For authors, return IDs (API expects authorId)
+                if (type === 'authors') {
+                  return items.map(item => typeof item === 'object' ? item.id : item);
+                }
+                // For other types, return values as-is
+                return items.map(item => typeof item === 'object' ? item.name : item);
+              };
+
+              // Call the parent callback with current filters
+              if (onApplyFilters) {
+                const filterPayload = {
+                  categories: extractValues(newFilters.categories, 'categories'),
+                  authors: extractValues(newFilters.authors, 'authors'),
+                  languages: extractValues(newFilters.languages, 'languages'),
+                  minPrice: newFilters.price.min,
+                  maxPrice: newFilters.price.max
+                };
+
+                // Include search from initialFilters if present
+                if (initialFilters && initialFilters.search) {
+                  filterPayload.search = initialFilters.search;
+                }
+
+                onApplyFilters(filterPayload);
+              }
+            }, 100);
+          }
+
+          return newFilters;
+        });
+      } else if (initialFilters.search) {
+        // If only search is present (no categories/authors to map), apply it directly
+        setTimeout(() => {
+          if (onApplyFilters) {
+            onApplyFilters({
+              categories: [],
+              authors: [],
+              languages: [],
+              minPrice: 0,
+              maxPrice: 10000,
+              search: initialFilters.search
+            });
+          }
+        }, 100);
+      }
     }
-  }, [initialFilters]);
+  }, [initialFilters, categoriesData, authorsData, i18n.language]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -382,13 +521,39 @@ const FiltersSection = ({ initialFilters }) => {
 
   const handlePriceInputBlur = (type) => {
     if (filters.price[type] === '') {
-      setFilters(prev => ({
-        ...prev,
-        price: {
-          ...prev.price,
-          [type]: type === 'min' ? 0 : 10000
+      setFilters(prev => {
+        const newFilters = {
+          ...prev,
+          price: {
+            ...prev.price,
+            [type]: type === 'min' ? 0 : 10000
+          }
+        };
+
+        // Check if all filters are now inactive after this change
+        const allInactive =
+          newFilters.price.min === 0 &&
+          newFilters.price.max === 10000 &&
+          newFilters.categories.length === 0 &&
+          newFilters.authors.length === 0 &&
+          newFilters.languages.length === 0;
+
+        // If all filters are now inactive, trigger reset
+        if (allInactive && onApplyFilters) {
+          setTimeout(() => {
+            onApplyFilters({
+              categories: [],
+              authors: [],
+              languages: [],
+              minPrice: 0,
+              maxPrice: 10000,
+              ...(initialFilters && initialFilters.search ? { search: initialFilters.search } : {})
+            });
+          }, 0);
         }
-      }));
+
+        return newFilters;
+      });
     }
   };
 
@@ -397,13 +562,39 @@ const FiltersSection = ({ initialFilters }) => {
     const maxValue = filters.price.max || 10000;
     // Min should stop 50 before max (one step before)
     const clampedValue = Math.min(value, maxValue - 50);
-    setFilters(prev => ({
-      ...prev,
-      price: {
-        ...prev.price,
-        min: clampedValue
+    setFilters(prev => {
+      const newFilters = {
+        ...prev,
+        price: {
+          ...prev.price,
+          min: clampedValue
+        }
+      };
+
+      // Check if all filters are now inactive after this change
+      const allInactive =
+        newFilters.price.min === 0 &&
+        newFilters.price.max === 10000 &&
+        newFilters.categories.length === 0 &&
+        newFilters.authors.length === 0 &&
+        newFilters.languages.length === 0;
+
+      // If all filters are now inactive, trigger reset
+      if (allInactive && onApplyFilters) {
+        setTimeout(() => {
+          onApplyFilters({
+            categories: [],
+            authors: [],
+            languages: [],
+            minPrice: 0,
+            maxPrice: 10000,
+            ...(initialFilters && initialFilters.search ? { search: initialFilters.search } : {})
+          });
+        }, 0);
       }
-    }));
+
+      return newFilters;
+    });
   };
 
   const handleMaxSliderChange = (e) => {
@@ -411,13 +602,39 @@ const FiltersSection = ({ initialFilters }) => {
     const minValue = filters.price.min || 0;
     // Max should stop 50 after min (one step after)
     const clampedValue = Math.max(value, minValue + 50);
-    setFilters(prev => ({
-      ...prev,
-      price: {
-        ...prev.price,
-        max: clampedValue
+    setFilters(prev => {
+      const newFilters = {
+        ...prev,
+        price: {
+          ...prev.price,
+          max: clampedValue
+        }
+      };
+
+      // Check if all filters are now inactive after this change
+      const allInactive =
+        newFilters.price.min === 0 &&
+        newFilters.price.max === 10000 &&
+        newFilters.categories.length === 0 &&
+        newFilters.authors.length === 0 &&
+        newFilters.languages.length === 0;
+
+      // If all filters are now inactive, trigger reset
+      if (allInactive && onApplyFilters) {
+        setTimeout(() => {
+          onApplyFilters({
+            categories: [],
+            authors: [],
+            languages: [],
+            minPrice: 0,
+            maxPrice: 10000,
+            ...(initialFilters && initialFilters.search ? { search: initialFilters.search } : {})
+          });
+        }, 0);
       }
-    }));
+
+      return newFilters;
+    });
   };
 
   const addFilterItem = (type, item) => {
@@ -431,10 +648,38 @@ const FiltersSection = ({ initialFilters }) => {
   };
 
   const removeFilterItem = (type, item) => {
-    setFilters(prev => ({
-      ...prev,
-      [type]: prev[type].filter(i => i !== item)
-    }));
+    setFilters(prev => {
+      const newFilters = {
+        ...prev,
+        [type]: prev[type].filter(i =>
+          typeof i === 'object' ? i.id !== item.id : i !== item
+        )
+      };
+
+      // Check if all filters are now inactive after this removal
+      const allInactive =
+        newFilters.price.min === 0 &&
+        newFilters.price.max === 10000 &&
+        newFilters.categories.length === 0 &&
+        newFilters.authors.length === 0 &&
+        newFilters.languages.length === 0;
+
+      // If all filters are now inactive, trigger reset
+      if (allInactive && onApplyFilters) {
+        setTimeout(() => {
+          onApplyFilters({
+            categories: [],
+            authors: [],
+            languages: [],
+            minPrice: 0,
+            maxPrice: 10000,
+            ...(initialFilters && initialFilters.search ? { search: initialFilters.search } : {})
+          });
+        }, 0);
+      }
+
+      return newFilters;
+    });
   };
 
   const hasActiveFilters = () => {
@@ -443,42 +688,110 @@ const FiltersSection = ({ initialFilters }) => {
       filters.price.max < 10000 ||
       filters.categories.length > 0 ||
       filters.authors.length > 0 ||
-      filters.titles.length > 0 ||
       filters.languages.length > 0
     );
   };
 
   const resetFilters = () => {
+    // Clear all filter state
     setFilters({
       price: { min: 0, max: 10000 },
       categories: [],
       authors: [],
-      titles: [],
       languages: []
     });
     setSearchTerms({
       categories: '',
       authors: '',
-      titles: '',
       languages: ''
     });
     setActiveDropdown(null);
+
+    // Trigger refetch with empty filters (same as initial page load)
+    if (onApplyFilters) {
+      onApplyFilters({
+        categories: [],
+        authors: [],
+        languages: [],
+        minPrice: 0,
+        maxPrice: 10000
+      });
+    }
+
+    // Close mobile sidebar to show refreshed results
+    if (isMobile) {
+      setIsMenuOpen(false);
+    }
   };
 
   const applyFilters = () => {
     console.log('Applying filters:', filters);
+
+    // Extract values from filter objects
+    const extractValues = (items, type) => {
+      if (!items || items.length === 0) return [];
+      // For categories, return IDs (API expects categoryId)
+      if (type === 'categories') {
+        return items.map(item => typeof item === 'object' ? item.id : item);
+      }
+      // For authors, return IDs (API expects authorId)
+      if (type === 'authors') {
+        return items.map(item => typeof item === 'object' ? item.id : item);
+      }
+      // For other types, return values as-is
+      return items.map(item => typeof item === 'object' ? item.name : item);
+    };
+
+    // Call the parent callback with current filters
+    if (onApplyFilters) {
+      const filterPayload = {
+        categories: extractValues(filters.categories, 'categories'),
+        authors: extractValues(filters.authors, 'authors'),
+        languages: extractValues(filters.languages, 'languages'),
+        minPrice: filters.price.min,
+        maxPrice: filters.price.max
+      };
+
+      // Include search from initialFilters if present
+      if (initialFilters && initialFilters.search) {
+        filterPayload.search = initialFilters.search;
+      }
+
+      onApplyFilters(filterPayload);
+    }
+
     if (isMobile) {
       setIsMenuOpen(false);
     }
   };
 
   const getFilteredOptions = (type, searchTerm) => {
-    const options = mockFiltersData[type] || [];
+    let options = [];
+
+    // Use real data if available, fall back to mock data
+    if (type === 'categories') {
+      options = categoriesData.length > 0
+        ? categoriesData.map(cat => ({
+          id: cat.id,
+          name: i18n.language === 'en' ? (cat.nameEn || cat.nameFr || cat.name) : (cat.nameFr || cat.nameEn || cat.name)
+        }))
+        : (mockFiltersData[type] || []).map((name, idx) => ({ id: idx, name }));
+    } else if (type === 'authors') {
+      options = authorsData.length > 0
+        ? authorsData.map(author => ({
+          id: author.id,
+          name: author.name
+        }))
+        : (mockFiltersData[type] || []).map((name, idx) => ({ id: idx, name }));
+    } else {
+      options = (mockFiltersData[type] || []).map((name, idx) => ({ id: idx, name }));
+    }
+
     const selectedItems = filters[type] || [];
 
     return options.filter(option =>
-      !selectedItems.includes(option) &&
-      option.toLowerCase().includes(searchTerm.toLowerCase())
+      !selectedItems.some(selected => selected.id === option.id) &&
+      option.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
 
@@ -510,32 +823,8 @@ const FiltersSection = ({ initialFilters }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [activeDropdown]);
 
-  // Smooth scroll to bottom with padding when dropdown opens on desktop
-  useEffect(() => {
-    if (!isMobile && activeDropdown && dropdownRefs.current[activeDropdown]) {
-      setTimeout(() => {
-        const dropdownElement = dropdownRefs.current[activeDropdown];
-        if (dropdownElement) {
-          const dropdownRect = dropdownElement.getBoundingClientRect();
-          const viewportHeight = window.innerHeight;
-
-          // Calculate the bottom position of the dropdown (including the options menu)
-          const dropdownBottom = dropdownRect.bottom + 260; // 260px is approximate max-height of dropdown menu
-
-          // If dropdown extends beyond viewport, scroll to show it
-          if (dropdownBottom > viewportHeight) {
-            const extraPadding = 40; // Extra padding at the bottom
-            const scrollAmount = dropdownBottom - viewportHeight + extraPadding;
-
-            window.scrollBy({
-              top: scrollAmount,
-              behavior: 'smooth'
-            });
-          }
-        }
-      }, 100); // Small delay to allow dropdown to render
-    }
-  }, [activeDropdown, isMobile]);
+  // Desktop: No scroll behavior needed - section expands naturally
+  // Mobile scroll behavior handled separately in mobile-specific useEffect
 
   if (isMobile) {
     return (
@@ -651,27 +940,6 @@ const FiltersSection = ({ initialFilters }) => {
                       </div>
                       <div className="w-full min-w-0">
                         <FilterDropdown
-                          type="titles"
-                          label={t('filters.bookTitle.label')}
-                          placeholder={t('filters.bookTitle.placeholder')}
-                          searchable={true}
-                          filters={filters}
-                          searchTerms={searchTerms}
-                          activeDropdown={activeDropdown}
-                          filterRefs={filterRefs}
-                          dropdownRefs={dropdownRefs}
-                          onSearchTermChange={handleSearchTermChange}
-                          onToggleDropdown={toggleDropdown}
-                          onCloseDropdown={closeDropdown}
-                          onSetActiveDropdown={setActiveDropdown}
-                          onAddFilterItem={addFilterItem}
-                          onRemoveFilterItem={removeFilterItem}
-                          getFilteredOptions={getFilteredOptions}
-                          isMobile={true}
-                        />
-                      </div>
-                      <div className="w-full min-w-0">
-                        <FilterDropdown
                           type="languages"
                           label={t('filters.language.label')}
                           placeholder={t('filters.language.placeholder')}
@@ -714,7 +982,7 @@ const FiltersSection = ({ initialFilters }) => {
   }
 
   return (
-    <div className="w-full bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+    <div className="w-full bg-white p-6 overflow-hidden transition-all duration-500 ease-in-out">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Filter className="w-5 h-5 text-blue-600" />
@@ -737,8 +1005,8 @@ const FiltersSection = ({ initialFilters }) => {
         </AnimatePresence>
       </div>
 
-      <div className="flex items-start gap-[clamp(0.75rem,2vw,1.25rem)] flex-wrap">
-        <div className="flex-1 min-w-[clamp(180px,20%,100%)]">
+      <div className="flex items-start gap-[clamp(0.75rem,2vw,1.25rem)] flex-wrap pb-2 transition-all duration-300 ease-in-out">
+        <div className="flex-1 min-w-[clamp(200px,22%,100%)]">
           <PriceFilter
             filters={filters}
             onPriceChange={handlePriceChange}
@@ -748,7 +1016,7 @@ const FiltersSection = ({ initialFilters }) => {
           />
         </div>
 
-        <div className="flex-1 min-w-[clamp(160px,18%,100%)]">
+        <div className="flex-1 min-w-[clamp(180px,22%,100%)]">
           <FilterDropdown
             type="categories"
             label={t('filters.category.label')}
@@ -769,7 +1037,7 @@ const FiltersSection = ({ initialFilters }) => {
           />
         </div>
 
-        <div className="flex-1 min-w-[clamp(160px,18%,100%)]">
+        <div className="flex-1 min-w-[clamp(180px,22%,100%)]">
           <FilterDropdown
             type="authors"
             label={t('filters.author.label')}
@@ -790,28 +1058,7 @@ const FiltersSection = ({ initialFilters }) => {
           />
         </div>
 
-        <div className="flex-1 min-w-[clamp(160px,18%,100%)]">
-          <FilterDropdown
-            type="titles"
-            label={t('filters.bookTitle.label')}
-            placeholder={t('filters.bookTitle.placeholderShort')}
-            searchable={true}
-            filters={filters}
-            searchTerms={searchTerms}
-            activeDropdown={activeDropdown}
-            filterRefs={filterRefs}
-            dropdownRefs={dropdownRefs}
-            onSearchTermChange={handleSearchTermChange}
-            onToggleDropdown={toggleDropdown}
-            onCloseDropdown={closeDropdown}
-            onSetActiveDropdown={setActiveDropdown}
-            onAddFilterItem={addFilterItem}
-            onRemoveFilterItem={removeFilterItem}
-            getFilteredOptions={getFilteredOptions}
-          />
-        </div>
- 
-        <div className="flex-1 min-w-[clamp(140px,15%,100%)]">
+        <div className="flex-1 min-w-[clamp(160px,20%,100%)]">
           <FilterDropdown
             type="languages"
             label={t('filters.language.label')}

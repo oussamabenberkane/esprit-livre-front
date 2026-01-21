@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Heart, ShoppingCart } from 'lucide-react';
 import { getLanguageCode, getFullLanguageName } from '../../data/booksData';
+import { getBookCoverUrl } from '../../utils/imageUtils';
+import { useFavorites } from '../../contexts/FavoritesContext';
 
 const BookCard = ({
     id,
@@ -13,19 +15,49 @@ const BookCard = ({
     badge = null,
     stockStatus = { available: true, text: "en stock" },
     language = null,
+    stock,
     onAddToCart,
     onToggleFavorite,
     isFavorited = false
 }) => {
-    const { t } = useTranslation();
-    const [favorited, setFavorited] = useState(isFavorited);
+    const { t, i18n } = useTranslation();
+
+    // Get badge text based on current language
+    const getBadgeText = () => {
+        if (!badge) return null;
+        if (badge.nameFr || badge.nameEn) {
+            return i18n.language === 'en' ? (badge.nameEn || badge.nameFr) : (badge.nameFr || badge.nameEn);
+        }
+        return badge.text; // Fallback for old-style badges
+    };
+    const { isFavorited: isBookFavorited, toggleFavorite } = useFavorites();
+    const [favorited, setFavorited] = useState(isBookFavorited(id));
+    // Get the cover image URL from the API endpoint
+    const coverImageUrl = getBookCoverUrl(id);
     const navigate = useNavigate();
 
-    const handleFavoriteClick = (e) => {
+    // Update favorited state when context changes
+    useEffect(() => {
+        setFavorited(isBookFavorited(id));
+    }, [id, isBookFavorited]);
+
+    // Determine if book is available based on stock
+    const isAvailable = stock !== 0;
+
+    const handleFavoriteClick = async (e) => {
         e.stopPropagation(); // Prevent card click navigation
-        setFavorited(!favorited);
-        if (onToggleFavorite) {
-            onToggleFavorite(id, !favorited);
+
+        try {
+            // Use context to toggle favorite
+            const isNowFavorited = await toggleFavorite(id);
+            setFavorited(isNowFavorited);
+
+            // Also call the parent callback if provided
+            if (onToggleFavorite) {
+                onToggleFavorite(id, isNowFavorited);
+            }
+        } catch (error) {
+            console.error('Error toggling favorite:', error);
         }
     };
 
@@ -48,7 +80,8 @@ const BookCard = ({
                     coverImage,
                     badge,
                     stockStatus,
-                    language
+                    language,
+                    stockQuantity: stock
                 }
             }
         });
@@ -63,25 +96,29 @@ const BookCard = ({
             <div className="relative pt-fluid-sm pb-auto w-full flex items-center justify-center">
                 <div className="relative book-image-height w-full px-2">
                     <img
-                        src={coverImage}
+                        src={coverImageUrl}
                         alt={title}
                         className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                     />
 
-                    {/* Language Tag */}
-                    {language && (
-                        <div className="absolute bottom-0 right-1 px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded shadow-sm z-10">
-                            {getLanguageCode(language)}
-                        </div>
-                    )}
+
                 </div>
                 {/* Badge */}
-                {badge && (
+                {badge && isAvailable && (
                     <div
                         className="absolute top-0 left-0 px-3 py-2 rounded-br-2xl text-fluid-tag font-semibold text-white"
                         style={{ backgroundColor: badge.colorHex || '#6B7280' }}
                     >
-                        {badge.text}
+                        {getBadgeText()}
+                    </div>
+                )}
+                {/* Preorder Badge when stock is 0 */}
+                {!isAvailable && (
+                    <div
+                        className="absolute top-0 left-0 px-3 py-2 rounded-br-2xl text-fluid-tag font-semibold text-white"
+                        style={{ backgroundColor: '#2563eb' }}
+                    >
+                        Preorder
                     </div>
                 )}
 
@@ -113,17 +150,15 @@ const BookCard = ({
 
                 {/* Stock Status */}
                 <div className="text-fluid-tag font-bold mb-auto">
-                    <span className={`inline-flex items-center ${
-                        stockStatus.available
-                            ? 'text-green-600'
-                            : 'text-blue-600'
+                    <span className={`inline-flex items-center ${(stock !== null && stock !== undefined && stock > 0)
+                        ? 'text-green-600'
+                        : 'text-blue-600'
                         }`}>
-                        <span className={`w-2 h-2 rounded-full mr-1 ${
-                            stockStatus.available
-                                ? 'bg-green-600'
-                                : 'bg-blue-600'
+                        <span className={`w-2 h-2 rounded-full mr-1 ${(stock !== null && stock !== undefined && stock > 0)
+                            ? 'bg-green-600'
+                            : 'bg-blue-600'
                             }`}></span>
-                        {stockStatus.available
+                        {(stock !== null && stock !== undefined && stock > 0)
                             ? t('bookCard.stockStatus.inStock')
                             : t('bookCard.stockStatus.preorder')
                         }

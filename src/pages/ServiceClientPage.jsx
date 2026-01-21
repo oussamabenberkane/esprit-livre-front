@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Mail, Phone, Clock, Send } from 'lucide-react';
@@ -15,6 +15,8 @@ export default function ServiceClientPage() {
     message: ''
   });
   const [formStatus, setFormStatus] = useState(''); // 'success' or 'error'
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   // Build FAQ data from i18n
   const faqData = [
@@ -106,6 +108,17 @@ export default function ServiceClientPage() {
     }
   ];
 
+  // Subject options for custom dropdown
+  const subjectOptions = [
+    { value: '', label: t('customerService.formSubjectPlaceholder') },
+    { value: 'commande', label: t('customerService.formSubjectOrder') },
+    { value: 'livraison', label: t('customerService.formSubjectDelivery') },
+    { value: 'retour', label: t('customerService.formSubjectReturn') },
+    { value: 'produit', label: t('customerService.formSubjectProduct') },
+    { value: 'compte', label: t('customerService.formSubjectAccount') },
+    { value: 'autre', label: t('customerService.formSubjectOther') }
+  ];
+
   const toggleFaq = (index) => {
     setOpenFaqIndex(openFaqIndex === index ? null : index);
   };
@@ -114,6 +127,23 @@ export default function ServiceClientPage() {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
+
+  const handleSubjectSelect = (value) => {
+    setFormData(prev => ({ ...prev, subject: value }));
+    setIsDropdownOpen(false);
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -152,6 +182,7 @@ export default function ServiceClientPage() {
         setFormStatus('success');
         // Reset form on success
         setFormData({ name: '', email: '', subject: '', message: '' });
+        setIsDropdownOpen(false);
         // Clear success message after 5 seconds
         setTimeout(() => setFormStatus(''), 5000);
       } else {
@@ -305,10 +336,10 @@ export default function ServiceClientPage() {
               {t('customerService.contactTitle')}
             </h2>
 
-            <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-md p-8">
-              <div className="space-y-5">
+            <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-md p-4 xs:p-6 md:p-8">
+              <div className="space-y-4 xs:space-y-5">
                 <div>
-                  <label htmlFor="name" className="block text-fluid-body font-medium text-gray-700 mb-2">
+                  <label htmlFor="name" className="block text-[0.875rem] xs:text-fluid-body font-medium text-gray-700 mb-1.5 xs:mb-2">
                     {t('customerService.formName')}
                   </label>
                   <input
@@ -317,14 +348,14 @@ export default function ServiceClientPage() {
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-fluid-small"
+                    className="w-full px-3 py-2.5 xs:px-4 xs:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-[0.875rem] xs:text-fluid-small"
                     placeholder={t('customerService.formNamePlaceholder')}
                     required
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-fluid-body font-medium text-gray-700 mb-2">
+                  <label htmlFor="email" className="block text-[0.875rem] xs:text-fluid-body font-medium text-gray-700 mb-1.5 xs:mb-2">
                     {t('customerService.formEmail')}
                   </label>
                   <input
@@ -333,41 +364,87 @@ export default function ServiceClientPage() {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-fluid-small"
+                    className="w-full px-3 py-2.5 xs:px-4 xs:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-[0.875rem] xs:text-fluid-small"
                     placeholder={t('customerService.formEmailPlaceholder')}
                     required
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="subject" className="block text-fluid-body font-medium text-gray-700 mb-2">
+                  <label htmlFor="subject" className="block text-[0.875rem] xs:text-fluid-body font-medium text-gray-700 mb-1.5 xs:mb-2">
                     {t('customerService.formSubject')}
                   </label>
-                  <div className="relative">
-                    <select
+                  <div className="relative" ref={dropdownRef}>
+                    {/* Custom Dropdown Trigger */}
+                    <button
+                      type="button"
+                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                      className={`w-full px-3 py-2.5 pr-9 xs:px-4 xs:py-3 xs:pr-10 border rounded-lg transition-all text-[0.875rem] xs:text-fluid-small bg-white text-left ${
+                        isDropdownOpen
+                          ? 'border-blue-500 ring-2 ring-blue-500'
+                          : 'border-gray-300 hover:border-gray-400'
+                      } ${!formData.subject ? 'text-gray-400' : 'text-gray-900'}`}
+                    >
+                      {formData.subject
+                        ? subjectOptions.find(opt => opt.value === formData.subject)?.label
+                        : t('customerService.formSubjectPlaceholder')}
+                    </button>
+
+                    {/* Dropdown Arrow */}
+                    <motion.div
+                      animate={{ rotate: isDropdownOpen ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute right-2.5 xs:right-3 top-1/2 -translate-y-1/2 pointer-events-none"
+                    >
+                      <ChevronDown className="w-4 h-4 xs:w-5 xs:h-5 text-gray-500" />
+                    </motion.div>
+
+                    {/* Custom Dropdown Menu */}
+                    <AnimatePresence>
+                      {isDropdownOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          transition={{ duration: 0.2 }}
+                          className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden"
+                        >
+                          <div className="max-h-60 overflow-y-auto">
+                            {subjectOptions.map((option) => (
+                              <button
+                                key={option.value}
+                                type="button"
+                                onClick={() => handleSubjectSelect(option.value)}
+                                className={`w-full px-3 py-2.5 xs:px-4 xs:py-3 text-left text-[0.875rem] xs:text-fluid-small transition-colors ${
+                                  formData.subject === option.value
+                                    ? 'bg-blue-50 text-blue-800 font-medium'
+                                    : option.value === ''
+                                    ? 'text-gray-400 hover:bg-gray-50'
+                                    : 'text-gray-900 hover:bg-gray-50'
+                                }`}
+                                disabled={option.value === ''}
+                              >
+                                {option.label}
+                              </button>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {/* Hidden input for form validation */}
+                    <input
+                      type="hidden"
                       id="subject"
                       name="subject"
                       value={formData.subject}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-fluid-small bg-white appearance-none"
                       required
-                    >
-                      <option value="">{t('customerService.formSubjectPlaceholder')}</option>
-                      <option value="commande">{t('customerService.formSubjectOrder')}</option>
-                      <option value="livraison">{t('customerService.formSubjectDelivery')}</option>
-                      <option value="retour">{t('customerService.formSubjectReturn')}</option>
-                      <option value="produit">{t('customerService.formSubjectProduct')}</option>
-                      <option value="compte">{t('customerService.formSubjectAccount')}</option>
-                      <option value="autre">{t('customerService.formSubjectOther')}</option>
-                    </select>
-
-                    {/* Custom dropdown arrow */}
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+                    />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="message" className="block text-fluid-body font-medium text-gray-700 mb-2">
+                  <label htmlFor="message" className="block text-[0.875rem] xs:text-fluid-body font-medium text-gray-700 mb-1.5 xs:mb-2">
                     {t('customerService.formMessage')}
                   </label>
                   <textarea
@@ -376,7 +453,7 @@ export default function ServiceClientPage() {
                     value={formData.message}
                     onChange={handleInputChange}
                     rows="6"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-fluid-small resize-none"
+                    className="w-full px-3 py-2.5 xs:px-4 xs:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-[0.875rem] xs:text-fluid-small resize-none"
                     placeholder={t('customerService.formMessagePlaceholder')}
                     required
                   />
@@ -385,17 +462,17 @@ export default function ServiceClientPage() {
                 <button
                   type="submit"
                   disabled={formStatus === 'loading'}
-                  className="w-full bg-blue-800 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 text-fluid-body"
+                  className="w-full bg-blue-800 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-4 xs:py-3 xs:px-6 rounded-lg transition-colors flex items-center justify-center gap-1.5 xs:gap-2 text-[0.813rem] xs:text-fluid-body"
                 >
                   {formStatus === 'loading' ? (
                     <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      {t('customerService.formSubmitting') || 'Envoi en cours...'}
+                      <div className="w-4 h-4 xs:w-5 xs:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span className="text-[0.813rem] xs:text-base">{t('customerService.formSubmitting') || 'Envoi en cours...'}</span>
                     </>
                   ) : (
                     <>
-                      <Send className="w-5 h-5" />
-                      {t('customerService.formSubmit')}
+                      <Send className="w-4 h-4 xs:w-5 xs:h-5" />
+                      <span className="text-[0.813rem] xs:text-base">{t('customerService.formSubmit')}</span>
                     </>
                   )}
                 </button>
@@ -407,7 +484,7 @@ export default function ServiceClientPage() {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}
-                      className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-fluid-small"
+                      className="bg-green-50 border border-green-200 text-green-800 px-3 py-2.5 xs:px-4 xs:py-3 rounded-lg text-[0.875rem] xs:text-fluid-small"
                     >
                       {t('customerService.formSuccess')}
                     </motion.div>
@@ -417,7 +494,7 @@ export default function ServiceClientPage() {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}
-                      className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-fluid-small"
+                      className="bg-red-50 border border-red-200 text-red-800 px-3 py-2.5 xs:px-4 xs:py-3 rounded-lg text-[0.875rem] xs:text-fluid-small"
                     >
                       {t('customerService.formError')}
                     </motion.div>
@@ -427,8 +504,8 @@ export default function ServiceClientPage() {
             </form>
 
             {/* Response Time Notice */}
-            <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-fluid-small text-blue-900">
+            <div className="mt-4 xs:mt-6 bg-blue-50 border border-blue-200 rounded-lg p-3 xs:p-4">
+              <p className="text-[0.875rem] xs:text-fluid-small text-blue-900">
                 <span className="font-semibold">{t('customerService.responseTime')}</span> {t('customerService.responseTimeValue')}
               </p>
             </div>

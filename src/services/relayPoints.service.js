@@ -1,0 +1,171 @@
+// Relay Points API Service
+import { API_BASE_URL, getDefaultHeaders } from './apiConfig';
+import { getAccessToken } from './authService';
+
+/**
+ * Get headers for relay points API requests
+ * Supports both authenticated and guest users
+ * @returns {Object} Headers with optional Authorization
+ */
+const getHeaders = () => {
+  const token = getAccessToken();
+  const headers = {
+    ...getDefaultHeaders(),
+  };
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  return headers;
+};
+
+/**
+ * Wilaya mapping for API compatibility
+ * Maps wilaya names to their IDs for API calls
+ * Updated: December 2025 - 69 Wilayas (including 11 new wilayas added November 16, 2025)
+ */
+export const WILAYA_ID_MAP = {
+  // Original 58 Wilayas (1-58)
+  'Adrar': 1,
+  'Chlef': 2,
+  'Laghouat': 3,
+  'Oum El Bouaghi': 4,
+  'Batna': 5,
+  'Béjaïa': 6,
+  'Biskra': 7,
+  'Béchar': 8,
+  'Blida': 9,
+  'Bouira': 10,
+  'Tamanrasset': 11,
+  'Tébessa': 12,
+  'Tlemcen': 13,
+  'Tiaret': 14,
+  'Tizi Ouzou': 15,
+  'Alger': 16,
+  'Djelfa': 17,
+  'Jijel': 18,
+  'Sétif': 19,
+  'Saïda': 20,
+  'Skikda': 21,
+  'Sidi Bel Abbès': 22,
+  'Annaba': 23,
+  'Guelma': 24,
+  'Constantine': 25,
+  'Médéa': 26,
+  'Mostaganem': 27,
+  "M'Sila": 28,
+  'Mascara': 29,
+  'Ouargla': 30,
+  'Oran': 31,
+  'El Bayadh': 32,
+  'Illizi': 33,
+  'Bordj Bou Arréridj': 34,
+  'Boumerdès': 35,
+  'El Tarf': 36,
+  'Tindouf': 37,
+  'Tissemsilt': 38,
+  'El Oued': 39,
+  'Khenchela': 40,
+  'Souk Ahras': 41,
+  'Tipaza': 42,
+  'Mila': 43,
+  'Ain Defla': 44,
+  'Naâma': 45,
+  'Ain Témouchent': 46,
+  'Ghardaïa': 47,
+  'Relizane': 48,
+  'Timimoun': 49,
+  'Bordj Badji Mokhtar': 50,
+  'Ouled Djellal': 51,
+  'Béni Abbès': 52,
+  'In Salah': 53,
+  'In Guezzam': 54,
+  'Touggourt': 55,
+  'Djanet': 56,
+  "El M'Ghair": 57,
+  'El Meniaa': 58,
+  // New 11 Wilayas (59-69) - Added November 16, 2025
+  'Aflou': 59,
+  'Barika': 60,
+  'Ksar Chellala': 61,
+  'Messaad': 62,
+  'Aïn Oussera': 63,
+  'Bou Saâda': 64,
+  'El Abiodh Sidi Cheikh': 65,
+  'El Kantara': 66,
+  'Bir El Ater': 67,
+  'Ksar El Boukhari': 68,
+  'El Aricha': 69,
+};
+
+/**
+ * Get relay points (stopdesks/centers) for a specific provider and wilaya
+ * @param {string} provider - YALIDINE or ZR
+ * @param {string} wilayaName - Name of the wilaya
+ * @returns {Promise<Array>} Array of relay points
+ */
+export const getRelayPoints = async (provider, wilayaName) => {
+  if (!wilayaName) {
+    console.warn('Wilaya name is required');
+    return [];
+  }
+
+  const wilayaId = WILAYA_ID_MAP[wilayaName];
+  // Clean wilaya name by removing diacritics (é -> e, ï -> i, etc.)
+  const cleanWilayaName = wilayaName.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+  try {
+    const params = new URLSearchParams({
+      provider,
+      wilayaName: cleanWilayaName,
+      ...(wilayaId && { wilayaId: wilayaId.toString() }),
+    });
+
+    const response = await fetch(`${API_BASE_URL}/api/relay-points?${params.toString()}`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch relay points: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching relay points:', error);
+    throw error;
+  }
+};
+
+/**
+ * Get a specific stop desk by ID
+ * @param {string} stopDeskId - The stop desk ID
+ * @returns {Promise<Object>} Stop desk data
+ */
+export const getStopDeskById = async (stopDeskId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/relay-points/${stopDeskId}`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new Error('Stop desk not found');
+      }
+      throw new Error(`Failed to fetch stop desk: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(`Error fetching stop desk ${stopDeskId}:`, error);
+    throw error;
+  }
+};
+
+export default {
+  getRelayPoints,
+  getStopDeskById,
+  WILAYA_ID_MAP,
+};

@@ -1,44 +1,64 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ShoppingCart, CheckCircle2, ChevronDown } from 'lucide-react';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import BookCard from '../components/common/BookCard';
+import PackCard from '../components/common/PackCard';
+import PackBooksPopup from '../components/common/PackBooksPopup';
 import SlideScroll from '../components/buttons/SlideScroll';
 import PaginationDots from '../components/common/PaginationDots';
 import SeeMore from '../components/buttons/SeeMore';
 import CartConfirmationPopup from '../components/common/cartConfirmationPopup';
 import FloatingCartBadge from '../components/common/FloatingCartBadge';
+import BookDetailsSkeleton from '../components/common/skeletons/BookDetailsSkeleton';
+import BookCardSkeleton from '../components/common/skeletons/BookCardSkeleton';
+import PackCardSkeleton from '../components/common/skeletons/PackCardSkeleton';
 import { BOOKS_DATA, getLanguageCode } from '../data/booksData';
+import { fetchBookById, fetchBookRecommendations, getBooksByIds } from '../services/books.service';
+import { getRecommendedPacksForBook } from '../services/bookPackService';
+import { getBookCoverUrl, getBookPackCoverUrl } from '../utils/imageUtils';
+import useProgressiveRender from '../hooks/useProgressiveRender';
+import { useCart } from '../contexts/CartContext';
 
 const BookDetails = () => {
     const { t } = useTranslation();
+    const { addToCart, addPackToCart } = useCart();
     const navigate = useNavigate();
+    const location = useLocation();
     const { id } = useParams(); // Get book ID from URL
 
+    // Get book data from navigation state if available
+    const navigationBook = location.state?.book;
+
     // Find the book based on URL parameter
-    const [book, setBook] = useState(null);
+    const [book, setBook] = useState(navigationBook || null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         // Scroll to top when book ID changes
         window.scrollTo(0, 0);
 
-        // Simulate API call - in production, replace with actual API fetch
-        const fetchBook = () => {
+        // Fetch book from API
+        const fetchBook = async () => {
             setLoading(true);
 
-            // Find book by ID (convert string ID from URL to number)
-            const foundBook = BOOKS_DATA.find(b => b.id === parseInt(id));
+            try {
+                // Fetch book by ID from API
+                const foundBook = await fetchBookById(parseInt(id));
 
-            if (foundBook) {
-                setBook(foundBook);
-            } else {
+                if (foundBook) {
+                    setBook(foundBook);
+                } else {
+                    setBook(null);
+                }
+            } catch (error) {
+                console.error('Error fetching book details:', error);
                 setBook(null);
+            } finally {
+                setLoading(false);
             }
-
-            setLoading(false);
         };
 
         fetchBook();
@@ -60,24 +80,146 @@ const BookDetails = () => {
     const [showCartPopup, setShowCartPopup] = useState(false);
     const [selectedBook, setSelectedBook] = useState(null);
 
-    // Floating cart badge state
-    const [showFloatingBadge, setShowFloatingBadge] = useState(false);
-    const [cartItemCount, setCartItemCount] = useState(0);
-
     // Recommended books - exclude current book (backend will provide this later)
     const [recommendedBooks, setRecommendedBooks] = useState([]);
+    const [recommendedBooksLoading, setRecommendedBooksLoading] = useState(true);
+
+    // Progressive rendering for recommended books
+    const { visibleItems: visibleRecommendedBooks, isRendering: isRecommendedBooksRendering } = useProgressiveRender(
+        recommendedBooks,
+        recommendedBooksLoading,
+        80 // 80ms delay between each book appearing
+    );
 
     // Load recommended books when ID changes
     useEffect(() => {
-        // Simulate backend call - replace with actual API call
-        const books = BOOKS_DATA.filter(b => b.id !== parseInt(id)).slice(0, 8);
-        setRecommendedBooks(books);
+        // Fetch recommended books from API
+        const fetchRecommendations = async () => {
+            try {
+                setRecommendedBooksLoading(true);
+                const recommendations = await fetchBookRecommendations(parseInt(id));
+                setRecommendedBooks(recommendations);
+            } catch (error) {
+                console.error('Error fetching recommendations:', error);
+                // Fallback to empty array on error
+                setRecommendedBooks([]);
+            } finally {
+                setRecommendedBooksLoading(false);
+            }
+        };
+
+        fetchRecommendations();
     }, [id]);
+
+    // Pack recommendations state
+    const [recommendedPacks, setRecommendedPacks] = useState([]);
+    const [currentPackIndex, setCurrentPackIndex] = useState(0);
+    const packsScrollRef = useRef(null);
+    const [canScrollPacksLeft, setCanScrollPacksLeft] = useState(false);
+    const [canScrollPacksRight, setCanScrollPacksRight] = useState(true);
+    const [packsLoading, setPacksLoading] = useState(true);
+
+    // Progressive rendering for recommended packs
+    const { visibleItems: visibleRecommendedPacks, isRendering: isRecommendedPacksRendering } = useProgressiveRender(
+        recommendedPacks,
+        packsLoading,
+        100 // 100ms delay between each pack appearing
+    );
+
+    // Fetch pack recommendations for the current book
+    useEffect(() => {
+        const fetchPacks = async () => {
+            // Don't fetch if no book is loaded
+            if (!book?.id) {
+                setRecommendedPacks([]);
+                setPacksLoading(false);
+                return;
+            }
+
+            try {
+                setPacksLoading(true);
+
+                // Fetch recommended packs for the current book
+                const response = await getRecommendedPacksForBook(book.id, {
+                    page: 0,
+                    size: 8
+                });
+                const packsData = response.content || response;
+
+                // For each pack, fetch the full book details
+                const packsWithBooks = await Promise.all(
+                    packsData.map(async (pack) => {
+                        try {
+                            // Extract book IDs - handle both array of objects and array of IDs
+                            let bookIds = pack.books || [];
+
+                            // If books is an array of objects with id property, extract just the IDs
+                            if (bookIds.length > 0 && typeof bookIds[0] === 'object') {
+                                bookIds = bookIds.map(book => book.id || book);
+                            }
+
+                            // Skip fetching if no books in pack
+                            if (bookIds.length === 0) {
+                                return {
+                                    ...pack,
+                                    books: [],
+                                    originalPrice: parseFloat(pack.price) || 0,
+                                    packPrice: parseFloat(pack.price) || 0,
+                                    packImage: pack.coverImageUrl || null
+                                };
+                            }
+
+                            // Fetch full details for all books in the pack
+                            const booksDetails = await getBooksByIds(bookIds);
+
+                            // Calculate original price from individual book prices
+                            const originalPrice = booksDetails.reduce((sum, book) => {
+                                return sum + (parseFloat(book.price) || 0);
+                            }, 0);
+
+                            return {
+                                ...pack,
+                                books: booksDetails.map(book => ({
+                                    id: book.id,
+                                    title: book.title,
+                                    author: book.author?.name || 'Unknown',
+                                    price: parseFloat(book.price) || 0,
+                                    coverImage: getBookCoverUrl(book.id)
+                                })),
+                                originalPrice: originalPrice,
+                                packPrice: parseFloat(pack.price) || 0,
+                                packImage: pack.coverImageUrl || null
+                            };
+                        } catch (err) {
+                            console.error(`Error fetching books for pack ${pack.id}:`, err);
+                            // Return pack with minimal data if book fetching fails
+                            return {
+                                ...pack,
+                                books: [],
+                                originalPrice: parseFloat(pack.price) || 0,
+                                packPrice: parseFloat(pack.price) || 0,
+                                packImage: pack.coverImageUrl || null
+                            };
+                        }
+                    })
+                );
+
+                setRecommendedPacks(packsWithBooks);
+            } catch (err) {
+                console.error('Error fetching recommended packs:', err);
+                setRecommendedPacks([]);
+            } finally {
+                setPacksLoading(false);
+            }
+        };
+
+        fetchPacks();
+    }, [book?.id]); // Re-fetch when the book ID changes
 
     // Scroll handlers
     const checkBooksScrollPosition = () => {
         const container = booksScrollRef.current;
-        if (!container || recommendedBooks.length === 0) return;
+        if (!container || visibleRecommendedBooks.length === 0) return;
 
         const scrollLeft = container.scrollLeft;
         const maxScroll = container.scrollWidth - container.clientWidth;
@@ -85,9 +227,12 @@ const BookDetails = () => {
         setCanScrollBooksLeft(scrollLeft > 0);
         setCanScrollBooksRight(scrollLeft < maxScroll - 10);
 
+        // Calculate total items for pagination (visible + loading)
+        const totalItems = recommendedBooksLoading ? 10 : recommendedBooks.length;
+
         // If at the very end, set to last index
         if (scrollLeft >= maxScroll - 5) {
-            setCurrentBookIndex(recommendedBooks.length - 1);
+            setCurrentBookIndex(totalItems - 1);
         }
         // If at the very start, set to first index
         else if (scrollLeft <= 5) {
@@ -103,7 +248,7 @@ const BookDetails = () => {
             let activeIndex = Math.round((containerCenter - (itemWidth / 2)) / (itemWidth + gap));
 
             // Clamp between 0 and last index
-            activeIndex = Math.max(0, Math.min(activeIndex, recommendedBooks.length - 1));
+            activeIndex = Math.max(0, Math.min(activeIndex, totalItems - 1));
 
             setCurrentBookIndex(activeIndex);
         }
@@ -123,9 +268,53 @@ const BookDetails = () => {
         }
     };
 
+    // Pack scroll handlers
+    const checkPacksScrollPosition = () => {
+        const container = packsScrollRef.current;
+        if (!container || visibleRecommendedPacks.length === 0) return;
+
+        const scrollLeft = container.scrollLeft;
+        const maxScroll = container.scrollWidth - container.clientWidth;
+
+        setCanScrollPacksLeft(scrollLeft > 0);
+        setCanScrollPacksRight(scrollLeft < maxScroll - 10);
+
+        // Calculate total items for pagination (visible + loading)
+        const totalItems = packsLoading ? 8 : recommendedPacks.length;
+
+        if (scrollLeft >= maxScroll - 5) {
+            setCurrentPackIndex(totalItems - 1);
+        } else if (scrollLeft <= 5) {
+            setCurrentPackIndex(0);
+        } else {
+            const itemWidth = container.firstChild?.offsetWidth || 0;
+            const gap = parseFloat(getComputedStyle(container).gap) || 0;
+            const containerCenter = scrollLeft + (container.clientWidth / 2);
+
+            let activeIndex = Math.round((containerCenter - (itemWidth / 2)) / (itemWidth + gap));
+            activeIndex = Math.max(0, Math.min(activeIndex, totalItems - 1));
+
+            setCurrentPackIndex(activeIndex);
+        }
+    };
+
+    const scrollPacks = (direction) => {
+        const container = packsScrollRef.current;
+        if (container) {
+            const itemWidth = container.firstChild?.offsetWidth || 0;
+            const gap = parseFloat(getComputedStyle(container).gap) || 0;
+
+            const scrollAmount = itemWidth + gap;
+            container.scrollBy({
+                left: direction === 'left' ? -scrollAmount : scrollAmount,
+                behavior: 'smooth'
+            });
+        }
+    };
+
     // Setup scroll listeners when recommended books are loaded
     useEffect(() => {
-        if (recommendedBooks.length === 0) return;
+        if (visibleRecommendedBooks.length === 0 && !recommendedBooksLoading) return;
 
         setCurrentBookIndex(0);
         if (booksScrollRef.current) {
@@ -145,45 +334,102 @@ const BookDetails = () => {
                 window.removeEventListener('resize', handleResize);
             };
         }
-    }, [recommendedBooks]);
+    }, [visibleRecommendedBooks.length, recommendedBooksLoading]);
 
-    const handleAddToCart = (bookId) => {
+    // Setup scroll listeners for packs when loaded
+    useEffect(() => {
+        if (visibleRecommendedPacks.length === 0 && !packsLoading) return;
+
+        setCurrentPackIndex(0);
+        if (packsScrollRef.current) {
+            packsScrollRef.current.scrollLeft = 0;
+        }
+
+        const packsContainer = packsScrollRef.current;
+        if (packsContainer) {
+            checkPacksScrollPosition();
+            packsContainer.addEventListener('scroll', checkPacksScrollPosition);
+
+            const handleResize = () => checkPacksScrollPosition();
+            window.addEventListener('resize', handleResize);
+
+            return () => {
+                packsContainer.removeEventListener('scroll', checkPacksScrollPosition);
+                window.removeEventListener('resize', handleResize);
+            };
+        }
+    }, [visibleRecommendedPacks.length, packsLoading]);
+
+    const handleAddToCart = async (bookId) => {
         console.log(`Added book ${bookId} to cart`);
         const bookToAdd = recommendedBooks.find(b => b.id === bookId);
         if (bookToAdd) {
+            // Add to cart using CartContext
+            await addToCart(bookId, 1);
+
             setSelectedBook({
                 ...bookToAdd,
-                coverImage: bookToAdd.coverImageUrl
+                coverImage: getBookCoverUrl(bookToAdd.id)
             });
+            setPackBooks([]); // Clear pack books for regular books
             setShowCartPopup(true);
-            // Increment cart count
-            setCartItemCount(prev => prev + 1);
         }
     };
 
     const handleClosePopup = () => {
         setShowCartPopup(false);
-        // Show floating badge after popup closes
-        setShowFloatingBadge(true);
     };
 
     const handleToggleFavorite = (bookId, isFavorited) => {
         console.log(`Book ${bookId} favorited: ${isFavorited}`);
     };
 
+    // Pack books for popup (store separately from selectedBook)
+    const [packBooks, setPackBooks] = useState([]);
+
+    const handleAddPackToCart = async (packId) => {
+        const pack = recommendedPacks.find(p => p.id === packId);
+        if (pack) {
+            try {
+                // Add pack to cart using context
+                await addPackToCart(packId, 1);
+
+                // Convert pack to book-like format for the popup
+                const packAsBook = {
+                    id: pack.id,
+                    title: pack.title,
+                    author: `${pack.books.length} ${t('packCard.books')}`,
+                    price: pack.packPrice,
+                    coverImage: pack.books[0]?.coverImage || pack.packImage || 'https://picsum.photos/seed/default/400/600',
+                    language: null,
+                    isPack: true
+                };
+
+                setSelectedBook(packAsBook);
+                setPackBooks(pack.books); // Store the books array for the popup
+                setShowCartPopup(true);
+            } catch (error) {
+                console.error('Error adding pack to cart:', error);
+            }
+        }
+    };
+
     const handleBackClick = () => {
         navigate(-1);
     };
 
-    const handleAddMainBookToCart = () => {
+    const handleAddMainBookToCart = async () => {
         console.log(`Added main book ${book.id} to cart`);
+
+        // Add to cart using CartContext
+        await addToCart(book.id, 1);
+
         setSelectedBook({
             ...book,
-            coverImage: book.coverImageUrl
+            coverImage: getBookCoverUrl(book.id)
         });
+        setPackBooks([]); // Clear pack books for regular books
         setShowCartPopup(true);
-        // Increment cart count
-        setCartItemCount(prev => prev + 1);
     };
 
     const handleToggleDescription = () => {
@@ -228,16 +474,14 @@ const BookDetails = () => {
         return (
             <main className="w-full max-w-[100vw] overflow-x-hidden">
                 <div className="min-h-screen bg-white">
-                    <section className="w-full max-w-[100vw] overflow-x-hidden">
-                        <Navbar />
-                    </section>
+                    <Navbar />
                     <div className="h-20"></div>
-                    <div className="flex items-center justify-center min-h-[60vh]">
-                        <div className="text-center">
-                            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#00417a] mx-auto mb-4"></div>
-                            <p className="font-['Poppins'] text-[#626e82] text-fluid-body">{t('bookDetails.loading')}</p>
-                        </div>
-                    </div>
+
+                    {/* Book Details Skeleton */}
+                    <section className="w-full section-spacing">
+                        <BookDetailsSkeleton />
+                    </section>
+
                     <Footer />
                 </div>
             </main>
@@ -249,9 +493,7 @@ const BookDetails = () => {
         return (
             <main className="w-full max-w-[100vw] overflow-x-hidden">
                 <div className="min-h-screen bg-white">
-                    <section className="w-full max-w-[100vw] overflow-x-hidden">
-                        <Navbar />
-                    </section>
+                    <Navbar />
                     <div className="h-20"></div>
                     <div className="flex items-center justify-center min-h-[60vh]">
                         <div className="text-center">
@@ -279,9 +521,7 @@ const BookDetails = () => {
         <main className="w-full max-w-[100vw] overflow-x-hidden">
             <div className="min-h-screen bg-white">
                 {/* Navbar */}
-                <section className="w-full max-w-[100vw] overflow-x-hidden">
-                    <Navbar />
-                </section>
+                <Navbar />
 
                 <div className="h-20"></div>
 
@@ -309,10 +549,10 @@ const BookDetails = () => {
                         </p>
 
                         {/* Book Image */}
-                        <div className="flex justify-center mb-fluid-md">
-                            <div className="w-[150px] aspect-[5/7] rounded-md shadow-[0px_5px_20px_0px_rgba(0,0,0,0.25)] overflow-hidden">
+                        <div className="flex justify-center mb-fluid-lg">
+                            <div className="w-[200px] xs:w-[220px] aspect-[5/7] rounded-md shadow-[0px_5px_20px_0px_rgba(0,0,0,0.25)] overflow-hidden">
                                 <img
-                                    src={book.coverImageUrl}
+                                    src={getBookCoverUrl(book.id)}
                                     alt={book.title}
                                     className="w-full h-full object-cover"
                                 />
@@ -350,18 +590,23 @@ const BookDetails = () => {
                                     {t('bookDetails.soldBy', { seller: book.seller })}
                                 </p>
 
-                                {/* Condition */}
-                                <div className="flex items-center gap-2 mb-fluid-sm">
-                                    <p className="font-['Poppins'] font-semibold lg:font-bold text-[#1c2d55] text-fluid-small">
-                                        {t('bookDetails.condition', { condition: book.condition })}
-                                    </p>
-                                </div>
+                                {/* Category */}
+                                {book.tags && book.tags.find(tag => tag.type === "CATEGORY") && (
+                                    <div className="flex items-center gap-2 mb-fluid-sm">
+                                        <p className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-small">
+                                            {t('bookDetails.categoryLabel')}:
+                                        </p>
+                                        <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
+                                            {book.tags.find(tag => tag.type === "CATEGORY").nameFr}
+                                        </span>
+                                    </div>
+                                )}
 
                                 {/* Stock Status */}
                                 <div className="flex items-center gap-1 mb-fluid-xs">
-                                    <CheckCircle2 className="w-3 h-3 text-[#198919]" />
-                                    <span className="font-['Poppins'] font-bold text-[#198919] text-fluid-tag">
-                                        {t('bookDetails.inStock')}
+                                    <CheckCircle2 className={`w-3 h-3 ${book.stockQuantity > 0 ? 'text-[#198919]' : 'text-blue-600'}`} />
+                                    <span className={`font-['Poppins'] font-bold text-fluid-tag ${book.stockQuantity > 0 ? 'text-[#198919]' : 'text-blue-600'}`}>
+                                        {book.stockQuantity > 0 ? t('bookCard.stockStatus.inStock') : t('bookCard.stockStatus.preorder')}
                                     </span>
                                 </div>
 
@@ -391,9 +636,9 @@ const BookDetails = () => {
                         </div>
                     </div>
 
-                    {/* Tablet & Desktop Layout (>= md) - Horizontal with Side Margins */}
+                    {/* Tablet & Desktop Layout (>= md) - Horizontal Centered */}
                     <div className="hidden md:block">
-                        <div className="container-main px-fluid-xl lg:px-[8rem]">
+                        <div className="container-main px-fluid-md">
                             {/* Back Button */}
                             <button
                                 onClick={handleBackClick}
@@ -413,22 +658,22 @@ const BookDetails = () => {
                                 {t('bookDetails.author')} {book.author.name}
                             </p>
 
-                            {/* Horizontal Layout with Equal Left Margins */}
-                            <div className="flex gap-fluid-md items-stretch max-w-5xl ml-fluid-2xl">
+                            {/* Horizontal Layout - Centered */}
+                            <div className="flex gap-fluid-lg items-stretch max-w-6xl mx-auto">
                                 {/* Left Column - Book Image with Description Link */}
-                                <div className="flex-shrink-0 flex flex-col gap-fluid-sm pl-fluid-sm">
-                                    <div className="w-[180px] lg:w-[220px] aspect-[5/7] rounded-md shadow-[0px_5px_20px_0px_rgba(0,0,0,0.25)] overflow-hidden">
+                                <div className="flex-shrink-0 flex flex-col justify-between w-[240px] lg:w-[280px]">
+                                    <div className="w-full aspect-[5/7] rounded-md shadow-[0px_5px_20px_0px_rgba(0,0,0,0.25)] overflow-hidden">
                                         <img
-                                            src={book.coverImageUrl}
+                                            src={getBookCoverUrl(book.id)}
                                             alt={book.title}
                                             className="w-full h-full object-cover"
                                         />
                                     </div>
 
-                                    {/* View Full Description Link - Below Image on Desktop */}
+                                    {/* View Full Description Link - Aligned to Bottom of Details Card */}
                                     <button
                                         onClick={handleToggleDescription}
-                                        className="font-['Poppins'] font-medium text-[#626e82] text-fluid-vsmall hover:text-[#1c2d55] transition-colors flex items-center gap-1 w-full"
+                                        className="font-['Poppins'] font-medium text-[#626e82] text-fluid-vsmall hover:text-[#1c2d55] transition-colors flex items-center gap-1 w-full mt-fluid-sm"
                                     >
                                         <span className="flex-1 text-left"><h1 className='text-fluid-h3 whitespace-nowrap'>{t('bookDetails.viewFullDescription')}</h1></span>
                                         <ChevronDown className={`w-3 h-3 flex-shrink-0 transition-transform duration-300 ${showFullDescription ? 'rotate-180' : ''}`} />
@@ -436,7 +681,7 @@ const BookDetails = () => {
                                 </div>
 
                                 {/* Right Column - Book Information (Extended Height) */}
-                                <div className="flex flex-col gap-fluid-sm flex-1 min-w-0 pl-fluid-sm">
+                                <div className="flex flex-col gap-fluid-sm flex-1 min-w-0">
                                     {/* Price Card */}
                                     <div className="bg-neutral-100 rounded-md p-fluid-sm">
                                         <div className="flex items-start justify-between gap-4 mb-2">
@@ -467,18 +712,23 @@ const BookDetails = () => {
                                                 {t('bookDetails.soldBy', { seller: book.seller })}
                                             </p>
 
-                                            {/* Condition */}
-                                            <div className="flex items-center gap-2 mb-fluid-md">
-                                                <p className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-small">
-                                                    {t('bookDetails.condition', { condition: book.condition })}
-                                                </p>
-                                            </div>
+                                            {/* Category */}
+                                            {book.tags && book.tags.find(tag => tag.type === "CATEGORY") && (
+                                                <div className="flex items-center gap-2 mb-fluid-md">
+                                                    <p className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-small">
+                                                        {t('bookDetails.categoryLabel')}:
+                                                    </p>
+                                                    <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
+                                                        {book.tags.find(tag => tag.type === "CATEGORY").nameFr}
+                                                    </span>
+                                                </div>
+                                            )}
 
                                             {/* Stock Status */}
                                             <div className="flex items-center gap-1 mb-fluid-xxs">
-                                                <CheckCircle2 className="w-3 h-3 text-[#198919]" />
-                                                <span className="font-['Poppins'] font-bold text-[#198919] text-fluid-vsmall">
-                                                    {t('bookDetails.inStock')}
+                                                <CheckCircle2 className={`w-3 h-3 ${book.stockQuantity > 0 ? 'text-[#198919]' : 'text-blue-600'}`} />
+                                                <span className={`font-['Poppins'] font-bold text-fluid-vsmall ${book.stockQuantity > 0 ? 'text-[#198919]' : 'text-blue-600'}`}>
+                                                    {book.stockQuantity > 0 ? t('bookCard.stockStatus.inStock') : t('bookCard.stockStatus.preorder')}
                                                 </span>
                                             </div>
 
@@ -506,11 +756,10 @@ const BookDetails = () => {
                     {showFullDescription && (
                         <div
                             ref={descriptionRef}
-                            className={`mt-fluid-lg transition-all duration-300 ease-in-out ${
-                                isAnimatingOut
-                                    ? 'animate-fade-out'
-                                    : 'animate-fade-in'
-                            }`}
+                            className={`mt-fluid-lg transition-all duration-300 ease-in-out ${isAnimatingOut
+                                ? 'animate-fade-out'
+                                : 'animate-fade-in'
+                                }`}
                             style={{ animationDuration: '300ms' }}
                         >
                             {/* Mobile Layout */}
@@ -527,8 +776,8 @@ const BookDetails = () => {
 
                             {/* Desktop Layout - Match width of image + details box */}
                             <div className="hidden md:block">
-                                <div className="container-main px-fluid-xl lg:px-[8rem]">
-                                    <div className="max-w-5xl ml-fluid-2xl">
+                                <div className="container-main px-fluid-md">
+                                    <div className="max-w-6xl mx-auto">
                                         <div className="bg-gray-50 rounded-md p-fluid-md border border-gray-200 shadow-sm">
                                             <h3 className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-h3 mb-fluid-sm">
                                                 {t('bookDetails.fullDescription')}
@@ -549,11 +798,13 @@ const BookDetails = () => {
                     <div className="container-main container-padding2xl-left-only">
 
                         {/* Header */}
-                        <div className="flex justify-between items-center mb-fluid-sm pr-fluid-lg">
-                            <h2 className="text-brand-blue text-fluid-h2 font-bold">
+                        <div className="flex justify-between items-center mb-fluid-sm pr-fluid-lg gap-2">
+                            <h2 className="text-brand-blue font-bold text-[clamp(0.875rem,3vw,var(--font-size-fluid-h2))]">
                                 {t('bookDetails.recommendations')}
                             </h2>
-                            <SeeMore to="/allbooks" />
+                            <div className="scale-[0.85] xs:scale-100 origin-right">
+                                <SeeMore to="/allbooks" />
+                            </div>
                         </div>
 
                         {/* Horizontal Scroll Container with negative margin */}
@@ -562,17 +813,19 @@ const BookDetails = () => {
                                 ref={booksScrollRef}
                                 className="flex pt-fluid-xs pr-fluid-lg pl-fluid-2xl gap-fluid-md overflow-x-auto scrollbar-hide pb-4"
                             >
-                                {recommendedBooks.map((recommendedBook) => {
-                                    const etiquetteTag = recommendedBook.tags.find(tag => tag.type === "ETIQUETTE");
+                                {/* Render visible books */}
+                                {visibleRecommendedBooks.map((recommendedBook) => {
+                                    const etiquetteTag = recommendedBook.tags?.find(tag => tag.type === "ETIQUETTE");
                                     const badge = etiquetteTag ? {
-                                        type: etiquetteTag.nameEn.toLowerCase(),
-                                        text: etiquetteTag.nameFr,
+                                        type: etiquetteTag.nameEn?.toLowerCase(),
+                                        nameFr: etiquetteTag.nameFr,
+                                        nameEn: etiquetteTag.nameEn,
                                         colorHex: etiquetteTag.colorHex
                                     } : null;
 
                                     const stockStatus = {
                                         available: recommendedBook.stockQuantity > 0,
-                                        text: recommendedBook.stockQuantity > 0 ? t('bookCard.stockStatus.inStock') : t('bookCard.stockStatus.outOfStock')
+                                        text: recommendedBook.stockQuantity > 0 ? t('bookCard.stockStatus.inStock') : t('bookCard.stockStatus.preorder')
                                     };
 
                                     return (
@@ -583,12 +836,13 @@ const BookDetails = () => {
                                             <BookCard
                                                 id={recommendedBook.id}
                                                 title={recommendedBook.title}
-                                                author={recommendedBook.author.name}
+                                                author={recommendedBook.author?.name || 'Unknown'}
                                                 price={recommendedBook.price}
                                                 coverImage={recommendedBook.coverImageUrl}
                                                 badge={badge}
                                                 stockStatus={stockStatus}
                                                 language={recommendedBook.language}
+                                                stock={recommendedBook.stockQuantity}
                                                 onAddToCart={handleAddToCart}
                                                 onToggleFavorite={handleToggleFavorite}
                                                 isFavorited={recommendedBook.isLikedByCurrentUser}
@@ -596,51 +850,171 @@ const BookDetails = () => {
                                         </div>
                                     );
                                 })}
+
+                                {/* Render skeleton placeholders for remaining items */}
+                                {(() => {
+                                    const totalItems = recommendedBooksLoading ? 10 : recommendedBooks.length;
+                                    const skeletonCount = recommendedBooksLoading ? 10 : Math.max(0, totalItems - visibleRecommendedBooks.length);
+
+                                    return Array.from({ length: skeletonCount }).map((_, index) => (
+                                        <div
+                                            key={`skeleton-${index}`}
+                                            className="flex-shrink-0 snap-start book-card-width"
+                                        >
+                                            <BookCardSkeleton />
+                                        </div>
+                                    ));
+                                })()}
                             </div>
                         </div>
 
                         {/* Pagination Controls */}
-                        <div className="flex items-center justify-between pr-fluid-lg pt-2 mt-4 mb-4">
-                            <div className="flex-1"></div>
+                        {!recommendedBooksLoading && recommendedBooks.length > 0 && (
+                            <div className="flex items-center justify-between pr-fluid-lg pt-2 mt-4 mb-4 gap-4 xs:gap-6">
+                                <div className="flex-1"></div>
 
-                            <div className="flex-1 flex justify-center">
-                                <PaginationDots
-                                    totalDots={recommendedBooks.length}
-                                    currentIndex={currentBookIndex}
-                                    onDotClick={(index) => {
-                                        const container = booksScrollRef.current;
-                                        if (container) {
-                                            const itemWidth = container.firstChild?.offsetWidth || 0;
-                                            const gap = parseFloat(getComputedStyle(container).gap) || 0;
+                                <div className="flex-1 flex justify-center">
+                                    <PaginationDots
+                                        totalDots={recommendedBooks.length}
+                                        currentIndex={currentBookIndex}
+                                        onDotClick={(index) => {
+                                            const container = booksScrollRef.current;
+                                            if (container) {
+                                                const itemWidth = container.firstChild?.offsetWidth || 0;
+                                                const gap = parseFloat(getComputedStyle(container).gap) || 0;
 
-                                            let scrollAmount;
-                                            if (index === 0) {
-                                                scrollAmount = 0;
-                                            } else if (index === recommendedBooks.length - 1) {
-                                                scrollAmount = container.scrollWidth - container.clientWidth;
-                                            } else {
-                                                const itemPosition = index * (itemWidth + gap);
-                                                const centerOffset = (container.clientWidth - itemWidth) / 2;
-                                                scrollAmount = itemPosition - centerOffset;
+                                                let scrollAmount;
+                                                if (index === 0) {
+                                                    scrollAmount = 0;
+                                                } else if (index === recommendedBooks.length - 1) {
+                                                    scrollAmount = container.scrollWidth - container.clientWidth;
+                                                } else {
+                                                    const itemPosition = index * (itemWidth + gap);
+                                                    const centerOffset = (container.clientWidth - itemWidth) / 2;
+                                                    scrollAmount = itemPosition - centerOffset;
+                                                }
+
+                                                container.scrollTo({ left: scrollAmount, behavior: 'smooth' });
                                             }
+                                        }}
+                                    />
+                                </div>
 
-                                            container.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-                                        }
-                                    }}
-                                />
+                                <div className="flex-1 flex justify-end">
+                                    <SlideScroll
+                                        onPrevious={() => scrollBooks('left')}
+                                        onNext={() => scrollBooks('right')}
+                                        canScrollLeft={canScrollBooksLeft}
+                                        canScrollRight={canScrollBooksRight}
+                                    />
+                                </div>
                             </div>
-
-                            <div className="flex-1 flex justify-end">
-                                <SlideScroll
-                                    onPrevious={() => scrollBooks('left')}
-                                    onNext={() => scrollBooks('right')}
-                                    canScrollLeft={canScrollBooksLeft}
-                                    canScrollRight={canScrollBooksRight}
-                                />
-                            </div>
-                        </div>
+                        )}
                     </div>
                 </section>
+
+                {/* Pack Recommendations Section */}
+                {(packsLoading || recommendedPacks.length > 0) && (
+                    <section className="w-full section-spacing bg-white">
+                        <div className="container-main container-padding2xl-left-only">
+
+                            {/* Header */}
+                            <div className="flex justify-between items-center mb-fluid-sm pr-fluid-lg gap-2">
+                                <h2 className="text-brand-blue font-bold text-[clamp(0.875rem,3vw,var(--font-size-fluid-h2))]">
+                                    {t('bookDetails.packRecommendations')}
+                                </h2>
+                                <div className="scale-[0.85] xs:scale-100 origin-right">
+                                    <SeeMore to="/packs" />
+                                </div>
+                            </div>
+
+                            {/* Horizontal Scroll Container with negative margin */}
+                            <div className="relative -ml-fluid-2xl">
+                                <div
+                                    ref={packsScrollRef}
+                                    className="flex pt-fluid-xs pr-fluid-lg pl-fluid-2xl gap-fluid-md overflow-x-auto scrollbar-hide pb-4"
+                                >
+                                    {/* Render visible packs */}
+                                    {visibleRecommendedPacks.map((pack) => (
+                                        <div
+                                            key={pack.id}
+                                            className="flex-shrink-0 snap-start w-[clamp(280px,85vw,400px)] sm:w-[clamp(320px,60vw,450px)] md:w-[clamp(360px,45vw,500px)]"
+                                        >
+                                            <PackCard
+                                                id={pack.id}
+                                                title={pack.title}
+                                                description={pack.description}
+                                                originalPrice={pack.originalPrice}
+                                                packPrice={pack.packPrice}
+                                                packImage={pack.packImage}
+                                                books={pack.books}
+                                                onAddToCart={handleAddPackToCart}
+                                            />
+                                        </div>
+                                    ))}
+
+                                    {/* Render skeleton placeholders for remaining items */}
+                                    {(() => {
+                                        const totalItems = packsLoading ? 8 : recommendedPacks.length;
+                                        const skeletonCount = packsLoading ? 8 : Math.max(0, totalItems - visibleRecommendedPacks.length);
+
+                                        return Array.from({ length: skeletonCount }).map((_, index) => (
+                                            <div
+                                                key={`skeleton-${index}`}
+                                                className="flex-shrink-0 snap-start w-[clamp(280px,85vw,400px)] sm:w-[clamp(320px,60vw,450px)] md:w-[clamp(360px,45vw,500px)]"
+                                            >
+                                                <PackCardSkeleton />
+                                            </div>
+                                        ));
+                                    })()}
+                                </div>
+                            </div>
+
+                            {/* Pagination Controls */}
+                            {!packsLoading && recommendedPacks.length > 0 && (
+                                <div className="flex items-center justify-between pr-fluid-lg pt-2 mt-4 mb-4 gap-4 xs:gap-6">
+                                    <div className="flex-1"></div>
+
+                                    <div className="flex-1 flex justify-center">
+                                        <PaginationDots
+                                            totalDots={recommendedPacks.length}
+                                            currentIndex={currentPackIndex}
+                                            onDotClick={(index) => {
+                                                const container = packsScrollRef.current;
+                                                if (container) {
+                                                    const itemWidth = container.firstChild?.offsetWidth || 0;
+                                                    const gap = parseFloat(getComputedStyle(container).gap) || 0;
+
+                                                    let scrollAmount;
+                                                    if (index === 0) {
+                                                        scrollAmount = 0;
+                                                    } else if (index === recommendedPacks.length - 1) {
+                                                        scrollAmount = container.scrollWidth - container.clientWidth;
+                                                    } else {
+                                                        const itemPosition = index * (itemWidth + gap);
+                                                        const centerOffset = (container.clientWidth - itemWidth) / 2;
+                                                        scrollAmount = itemPosition - centerOffset;
+                                                    }
+
+                                                    container.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+                                                }
+                                            }}
+                                        />
+                                    </div>
+
+                                    <div className="flex-1 flex justify-end">
+                                        <SlideScroll
+                                            onPrevious={() => scrollPacks('left')}
+                                            onNext={() => scrollPacks('right')}
+                                            canScrollLeft={canScrollPacksLeft}
+                                            canScrollRight={canScrollPacksRight}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </section>
+                )}
             </div>
 
             <Footer />
@@ -650,23 +1024,21 @@ const BookDetails = () => {
                 <CartConfirmationPopup
                     isOpen={showCartPopup}
                     onClose={handleClosePopup}
-                    book={{
+                    book={selectedBook.isPack ? selectedBook : {
                         id: selectedBook.id,
                         title: selectedBook.title,
-                        author: selectedBook.author.name,
+                        author: selectedBook.author?.name || 'Unknown',
                         price: selectedBook.price,
-                        coverImage: selectedBook.coverImageUrl,
+                        coverImage: getBookCoverUrl(selectedBook.id),
                         language: selectedBook.language
                     }}
+                    packBooks={selectedBook.isPack ? packBooks : []}
                 />
             )}
 
-            {/* Floating Cart Badge - Shows after popup is dismissed */}
+            {/* Floating Cart Badge - Self-managed, syncs with cart state */}
             <FloatingCartBadge
-                isVisible={showFloatingBadge}
-                onDismiss={() => setShowFloatingBadge(false)}
                 onGoToCart={() => navigate('/cart')}
-                itemCount={cartItemCount}
             />
         </main>
     );

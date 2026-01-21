@@ -1,273 +1,230 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Navbar from '../components/common/Navbar';
 import FiltersSection from '../components/allbooks/FiltersSection';
 import Footer from '../components/common/Footer';
 import PackCard from '../components/common/PackCard';
+import PackBooksPopup from '../components/common/PackBooksPopup';
 import CartConfirmationPopup from '../components/common/cartConfirmationPopup';
+import FloatingCartBadge from '../components/common/FloatingCartBadge';
+import PackCardSkeleton from '../components/common/skeletons/PackCardSkeleton';
+import { getAllBookPacks } from '../services/bookPackService';
+import { getBooksByIds } from '../services/books.service';
+import { fetchCategories } from '../services/tags.service';
+import { fetchTopAuthors } from '../services/authors.service';
+import { getBookCoverUrl, getBookPackCoverUrl } from '../utils/imageUtils';
+import useProgressiveRender from '../hooks/useProgressiveRender';
+import { useCart } from '../contexts/CartContext';
 
-// Mock data for promotional packs
-const mockPacks = [
-    {
-        id: 'pack-1',
-        title: 'Pack Classiques Français',
-        description: 'Découvrez les plus grands chefs-d\'œuvre de la littérature française dans ce pack exceptionnel.',
-        originalPrice: 2800,
-        packPrice: 1999,
-        packImage: null, // Will use composite image
-        books: [
-            {
-                id: '1',
-                title: 'L\'Étranger',
-                author: 'Albert Camus',
-                price: 700,
-                coverImage: 'https://picsum.photos/seed/book1/400/600'
-            },
-            {
-                id: '2',
-                title: 'Les Misérables',
-                author: 'Victor Hugo',
-                price: 900,
-                coverImage: 'https://picsum.photos/seed/book2/400/600'
-            },
-            {
-                id: '3',
-                title: 'Le Petit Prince',
-                author: 'Antoine de Saint-Exupéry',
-                price: 600,
-                coverImage: 'https://picsum.photos/seed/book3/400/600'
-            },
-            {
-                id: '4',
-                title: 'Madame Bovary',
-                author: 'Gustave Flaubert',
-                price: 600,
-                coverImage: 'https://picsum.photos/seed/book4/400/600'
-            }
-        ]
-    },
-    {
-        id: 'pack-2',
-        title: 'Pack Science-Fiction Moderne',
-        description: 'Plongez dans des univers futuristes captivants avec cette sélection de romans de science-fiction contemporains.',
-        originalPrice: 3200,
-        packPrice: 2399,
-        packImage: null,
-        books: [
-            {
-                id: '5',
-                title: 'Dune',
-                author: 'Frank Herbert',
-                price: 1000,
-                coverImage: 'https://picsum.photos/seed/scifi1/400/600'
-            },
-            {
-                id: '6',
-                title: 'Foundation',
-                author: 'Isaac Asimov',
-                price: 800,
-                coverImage: 'https://picsum.photos/seed/scifi2/400/600'
-            },
-            {
-                id: '7',
-                title: 'Neuromancer',
-                author: 'William Gibson',
-                price: 750,
-                coverImage: 'https://picsum.photos/seed/scifi3/400/600'
-            },
-            {
-                id: '8',
-                title: 'The Martian',
-                author: 'Andy Weir',
-                price: 650,
-                coverImage: 'https://picsum.photos/seed/scifi4/400/600'
-            }
-        ]
-    },
-    {
-        id: 'pack-3',
-        title: 'Pack Philosophie Contemporaine',
-        description: 'Explorez les grandes questions existentielles avec ces œuvres philosophiques essentielles.',
-        originalPrice: 2500,
-        packPrice: 1799,
-        packImage: null,
-        books: [
-            {
-                id: '9',
-                title: 'L\'Être et le Néant',
-                author: 'Jean-Paul Sartre',
-                price: 900,
-                coverImage: 'https://picsum.photos/seed/philo1/400/600'
-            },
-            {
-                id: '10',
-                title: 'Le Deuxième Sexe',
-                author: 'Simone de Beauvoir',
-                price: 850,
-                coverImage: 'https://picsum.photos/seed/philo2/400/600'
-            },
-            {
-                id: '11',
-                title: 'Ainsi parlait Zarathoustra',
-                author: 'Friedrich Nietzsche',
-                price: 750,
-                coverImage: 'https://picsum.photos/seed/philo3/400/600'
-            }
-        ]
-    },
-    {
-        id: 'pack-4',
-        title: 'Pack Romans Policiers',
-        description: 'Résolvez les énigmes les plus captivantes avec cette collection de romans policiers.',
-        originalPrice: 2100,
-        packPrice: 1499,
-        packImage: null,
-        books: [
-            {
-                id: '12',
-                title: 'Le Chien des Baskerville',
-                author: 'Arthur Conan Doyle',
-                price: 600,
-                coverImage: 'https://picsum.photos/seed/police1/400/600'
-            },
-            {
-                id: '13',
-                title: 'Meurtre sur le Nil',
-                author: 'Agatha Christie',
-                price: 700,
-                coverImage: 'https://picsum.photos/seed/police2/400/600'
-            },
-            {
-                id: '14',
-                title: 'La Vérité sur l\'affaire Harry Quebert',
-                author: 'Joël Dicker',
-                price: 800,
-                coverImage: 'https://picsum.photos/seed/police3/400/600'
-            }
-        ]
-    },
-    {
-        id: 'pack-5',
-        title: 'Pack Fantasy Épique',
-        description: 'Embarquez pour des aventures extraordinaires dans des mondes magiques et fantastiques.',
-        originalPrice: 3500,
-        packPrice: 2699,
-        packImage: null,
-        books: [
-            {
-                id: '15',
-                title: 'Le Seigneur des Anneaux',
-                author: 'J.R.R. Tolkien',
-                price: 1200,
-                coverImage: 'https://picsum.photos/seed/fantasy1/400/600'
-            },
-            {
-                id: '16',
-                title: 'Harry Potter',
-                author: 'J.K. Rowling',
-                price: 1000,
-                coverImage: 'https://picsum.photos/seed/fantasy2/400/600'
-            },
-            {
-                id: '17',
-                title: 'Le Nom du Vent',
-                author: 'Patrick Rothfuss',
-                price: 900,
-                coverImage: 'https://picsum.photos/seed/fantasy3/400/600'
-            },
-            {
-                id: '18',
-                title: 'Chroniques de Narnia',
-                author: 'C.S. Lewis',
-                price: 400,
-                coverImage: 'https://picsum.photos/seed/fantasy4/400/600'
-            }
-        ]
-    },
-    {
-        id: 'pack-6',
-        title: 'Pack Développement Personnel',
-        description: 'Transformez votre vie avec ces ouvrages inspirants de développement personnel.',
-        originalPrice: 1800,
-        packPrice: 1299,
-        packImage: null,
-        books: [
-            {
-                id: '19',
-                title: 'Les 7 habitudes des gens efficaces',
-                author: 'Stephen Covey',
-                price: 650,
-                coverImage: 'https://picsum.photos/seed/devpers1/400/600'
-            },
-            {
-                id: '20',
-                title: 'Père riche, père pauvre',
-                author: 'Robert Kiyosaki',
-                price: 600,
-                coverImage: 'https://picsum.photos/seed/devpers2/400/600'
-            },
-            {
-                id: '21',
-                title: 'L\'homme qui voulait être heureux',
-                author: 'Laurent Gounelle',
-                price: 550,
-                coverImage: 'https://picsum.photos/seed/devpers3/400/600'
-            }
-        ]
-    }
-];
 
 const PacksPromotionnels = () => {
     const { t } = useTranslation();
-    const [searchQuery, setSearchQuery] = useState('');
+    const navigate = useNavigate();
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedPack, setSelectedPack] = useState(null);
-    const [cartCount, setCartCount] = useState(0);
 
-    const handleSearch = (e) => {
-        setSearchQuery(e.target.value);
-    };
+    // Pack books popup state
+    const [showPackBooksPopup, setShowPackBooksPopup] = useState(false);
+    const [selectedPackForPopup, setSelectedPackForPopup] = useState(null);
+    const [isLoadingPopupBooks, setIsLoadingPopupBooks] = useState(false);
 
-    const handleAddToCart = (packId) => {
-        const pack = mockPacks.find(p => p.id === packId);
+    // Pack data state
+    const [packs, setPacks] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPacks, setTotalPacks] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const packsPerPage = 12;
+
+    // Applied filters state (what's currently being used for API calls)
+    const [appliedFilters, setAppliedFilters] = useState(null);
+
+    const [packBooks, setPackBooks] = useState([]);
+
+    // Filter data state
+    const [categories, setCategories] = useState([]);
+    const [authors, setAuthors] = useState([]);
+
+    // Progressive rendering for packs - show them one at a time
+    const { visibleItems: visiblePacks, isRendering } = useProgressiveRender(
+        packs,
+        loading,
+        100 // 100ms delay between each pack appearing
+    );
+
+    // Calculate total items to show (visible packs + remaining skeletons)
+    const totalItems = loading ? packsPerPage : packs.length;
+    const skeletonCount = loading ? packsPerPage : Math.max(0, totalItems - visiblePacks.length);
+
+    // Fetch filter data (categories and authors) on mount
+    useEffect(() => {
+        const loadFilterData = async () => {
+            try {
+                const [categoriesData, authorsData] = await Promise.all([
+                    fetchCategories(100), // Fetch up to 100 categories
+                    fetchTopAuthors(100)  // Fetch up to 100 authors
+                ]);
+                setCategories(categoriesData);
+                setAuthors(authorsData);
+            } catch (err) {
+                console.error('Failed to fetch filter data:', err);
+                // Continue without filter data
+            }
+        };
+
+        loadFilterData();
+    }, []);
+
+    // Fetch packs with filters
+    useEffect(() => {
+        const fetchPacks = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+
+                // Build query params from applied filters
+                const params = {
+                    page: currentPage - 1, // API uses 0-based indexing
+                    size: packsPerPage,
+                };
+
+                // Add all server-side filters (backend supports all of these!)
+                if (appliedFilters) {
+                    // Add price filters if they differ from defaults
+                    if (appliedFilters.minPrice > 0) {
+                        params.minPrice = appliedFilters.minPrice;
+                    }
+                    if (appliedFilters.maxPrice < 10000) {
+                        params.maxPrice = appliedFilters.maxPrice;
+                    }
+
+                    // Add search query
+                    if (appliedFilters.search) {
+                        params.search = appliedFilters.search;
+                    }
+
+                    // Add author filter (backend supports this via 'author' parameter)
+                    if (appliedFilters.authors && appliedFilters.authors.length > 0) {
+                        params.author = appliedFilters.authors;
+                    }
+
+                    // Add category filters (backend supports multiple categoryId parameters)
+                    if (appliedFilters.categories && appliedFilters.categories.length > 0) {
+                        params.categories = appliedFilters.categories;
+                    }
+
+                    // Add language filter (backend supports this via 'language' parameter)
+                    if (appliedFilters.languages && appliedFilters.languages.length > 0) {
+                        params.language = appliedFilters.languages;
+                    }
+                }
+
+                // Fetch packs from API
+                const response = await getAllBookPacks(params);
+                const packsData = response.content || response;
+
+                // Process packs - books are already included in the response
+                const processedPacks = packsData.map(pack => {
+                    // Books are already populated by the backend
+                    const books = (pack.books || []).map(book => ({
+                        id: book.id,
+                        title: book.title,
+                        author: book.author?.name || 'Unknown',
+                        authorId: book.author?.id || null,
+                        price: parseFloat(book.price) || 0,
+                        coverImage: getBookCoverUrl(book.id)
+                    }));
+
+                    // Calculate original price (sum of all book prices)
+                    const originalPrice = books.reduce((sum, book) => {
+                        return sum + book.price;
+                    }, 0);
+
+                    return {
+                        ...pack,
+                        books: books,
+                        originalPrice: originalPrice,
+                        packPrice: parseFloat(pack.price) || 0,
+                        packImage: getBookPackCoverUrl(pack.id) || null
+                    };
+                });
+
+                // No client-side filtering needed - backend handles everything!
+                setPacks(processedPacks);
+                setTotalPacks(response.totalElements || processedPacks.length);
+                setTotalPages(response.totalPages || Math.ceil(processedPacks.length / packsPerPage));
+            } catch (err) {
+                console.error('Error fetching packs:', err);
+                setError(err.message);
+                setPacks([]);
+                setTotalPacks(0);
+                setTotalPages(0);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchPacks();
+    }, [appliedFilters, currentPage, packsPerPage]);
+
+    const { addPackToCart } = useCart();
+
+    const handleAddToCart = async (packId) => {
+        // Find pack in the main packs array (not visiblePacks)
+        const pack = packs.find(p => p.id === packId);
         if (pack) {
-            // Convert pack to book-like format for the popup
-            const packAsBook = {
-                id: pack.id,
-                title: pack.title,
-                author: `${pack.books.length} ${t('packCard.books')}`,
-                price: pack.packPrice,
-                coverImage: pack.books[0]?.coverImage || 'https://picsum.photos/seed/default/400/600',
-                language: null
-            };
+            try {
+                // Add pack to cart using context
+                await addPackToCart(packId, 1);
 
-            setSelectedPack(packAsBook);
-            setIsPopupOpen(true);
-            setCartCount(prev => prev + 1);
+                // Convert pack to book-like format for the popup
+                const packAsBook = {
+                    id: pack.id,
+                    title: pack.title,
+                    author: `${pack.books.length} ${t('packCard.books')}`,
+                    price: pack.packPrice,
+                    coverImage: pack.books[0]?.coverImage || pack.packImage || 'https://picsum.photos/seed/default/400/600',
+                    language: null,
+                    isPack: true // Flag to identify this is a pack
+                };
+
+                setSelectedPack(packAsBook);
+                setPackBooks(pack.books); // Store the books array
+                setIsPopupOpen(true);
+            } catch (error) {
+                console.error('Error adding pack to cart:', error);
+            }
         }
     };
 
-    // Filter packs based on search query
-    const filteredPacks = mockPacks.filter(pack =>
-        pack.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        pack.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        pack.books.some(book =>
-            book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            book.author.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-    );
+    const handleClosePopup = () => {
+        setIsPopupOpen(false);
+    };
+
+    const handleApplyFilters = (filters) => {
+        console.log('Filters applied:', filters);
+        // Update applied filters state - this will trigger useEffect to fetch with new filters
+        setAppliedFilters(filters);
+        // Reset to page 1 when filters change
+        setCurrentPage(1);
+        // Scroll to top when filters are applied
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Navbar */}
-            <Navbar
-                searchPlaceholder={t('packsPage.searchPlaceholder')}
-                cartCount={cartCount}
-                onSearch={handleSearch}
-            />
+            <Navbar />
+
+            {/* Responsive spacing for navbar - taller on mobile due to two-line layout */}
+            <div className="h-36"></div>
 
             {/* Main Content */}
-            <main className="pt-24 md:pt-28 pb-12">
+            <main className="pb-12">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Page Header */}
                     <div className="mb-8">
@@ -281,58 +238,264 @@ const PacksPromotionnels = () => {
 
                     {/* Filters Section */}
                     <div className="mb-8">
-                        <FiltersSection />
+                        <FiltersSection
+                            onApplyFilters={handleApplyFilters}
+                            categoriesData={categories}
+                            authorsData={authors}
+                        />
+                    </div>
+
+                    {/* Results Section */}
+                    <div className="mb-8">
+                        <div className="flex items-center justify-between flex-wrap gap-2">
+                            <h2 className="text-[#00417a] text-2xl md:text-3xl font-['poppins'] font-semibold">
+                                {t('packsPage.resultsTitle', 'Results')}
+                            </h2>
+                            {!loading && (
+                                <div className="text-sm text-gray-600">
+                                    {t('allBooks.resultsCount', {
+                                        start: totalPacks > 0 ? (currentPage - 1) * packsPerPage + 1 : 0,
+                                        end: Math.min(currentPage * packsPerPage, totalPacks),
+                                        total: totalPacks
+                                    })}
+                                    <span className="hidden sm:inline ml-2 text-gray-400">•</span>
+                                    <span className="hidden sm:inline ml-2">
+                                        {t('allBooks.page', { current: currentPage, total: totalPages || 1 })}
+                                    </span>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     {/* Packs Grid */}
-                    <div className="space-y-4">
-                        {/* Results Count */}
-                        <div className="flex items-center justify-between mb-4">
-                            <p className="text-gray-600">
-                                <span className="font-semibold text-[#00417a]">{filteredPacks.length}</span> {t('packsPage.packsFound')}
-                            </p>
-                        </div>
+                    <section className="pb-12">
+                        {/* Error State */}
+                        {error && !loading && (
+                            <div className="flex justify-center items-center py-20">
+                                <div className="text-center max-w-md">
+                                    <div className="text-red-500 text-5xl mb-4">⚠</div>
+                                    <h3 className="text-xl font-semibold text-gray-800 mb-2">{t('common.error', 'Error')}</h3>
+                                    <p className="text-gray-600 mb-4">{error}</p>
+                                    <button
+                                        onClick={() => window.location.reload()}
+                                        className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                    >
+                                        {t('common.retry', 'Retry')}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
 
-                        {/* Packs List - 2 columns on desktop, 1 on mobile */}
-                        {filteredPacks.length > 0 ? (
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                {filteredPacks.map((pack) => (
-                                    <PackCard
+                        {/* Packs Grid - Show skeletons while loading, then progressively render packs */}
+                        {!error && (
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 auto-rows-fr">
+                                {/* Render visible packs */}
+                                {visiblePacks.map((pack) => (
+                                    <div
                                         key={pack.id}
-                                        id={pack.id}
-                                        title={pack.title}
-                                        description={pack.description}
-                                        originalPrice={pack.originalPrice}
-                                        packPrice={pack.packPrice}
-                                        packImage={pack.packImage}
-                                        books={pack.books}
-                                        onAddToCart={handleAddToCart}
-                                    />
+                                        className="h-full"
+                                    >
+                                        <PackCard
+                                            id={pack.id}
+                                            title={pack.title}
+                                            description={pack.description}
+                                            originalPrice={pack.originalPrice}
+                                            packPrice={pack.packPrice}
+                                            packImage={pack.packImage}
+                                            books={pack.books}
+                                            onAddToCart={handleAddToCart}
+                                            onViewAllBooks={async () => {
+                                                // Show popup immediately with loading state
+                                                setSelectedPackForPopup(pack);
+                                                setShowPackBooksPopup(true);
+                                                setIsLoadingPopupBooks(true);
+
+                                                try {
+                                                    // Fetch full book details
+                                                    const bookIds = pack.books.map(b => b.id);
+                                                    const fullBooks = await getBooksByIds(bookIds);
+
+                                                    // Update pack with full book data including authors
+                                                    setSelectedPackForPopup({
+                                                        ...pack,
+                                                        books: fullBooks.map(book => ({
+                                                            id: book.id,
+                                                            title: book.title,
+                                                            author: book.author?.name || 'Unknown',
+                                                            price: book.price,
+                                                            coverImage: getBookCoverUrl(book.id),
+                                                            language: book.language
+                                                        }))
+                                                    });
+                                                } catch (err) {
+                                                    console.error('Error fetching book details:', err);
+                                                } finally {
+                                                    setIsLoadingPopupBooks(false);
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                ))}
+
+                                {/* Render skeleton placeholders for remaining items */}
+                                {Array.from({ length: skeletonCount }).map((_, index) => (
+                                    <div
+                                        key={`skeleton-${index}`}
+                                        className="h-full"
+                                    >
+                                        <PackCardSkeleton />
+                                    </div>
                                 ))}
                             </div>
-                        ) : (
-                            <div className="text-center py-16">
-                                <div className="text-gray-400 mb-4">
-                                    <svg
-                                        className="w-20 h-20 mx-auto"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={1.5}
-                                            d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                        />
-                                    </svg>
+                        )}
+
+                        {/* End of results */}
+                        {!loading && !error && currentPage >= totalPages && packs.length > 0 && (
+                            <div className="text-center text-gray-500 text-sm mt-12 animate-fade-in">
+                                <div className="inline-block px-6 py-3 bg-gray-50 rounded-lg border border-gray-200">
+                                    {t('allBooks.endOfResults')}
                                 </div>
-                                <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                                    {t('packsPage.noPacksFound')}
-                                </h3>
-                                <p className="text-gray-500">
-                                    {t('packsPage.tryDifferentSearch')}
-                                </p>
+                            </div>
+                        )}
+
+                        {/* No packs found */}
+                        {!loading && !error && packs.length === 0 && (
+                            <div className="text-center text-gray-500 py-20">
+                                <div className="text-6xl mb-4">📦</div>
+                                <p className="text-xl font-medium">{t('packsPage.noPacksFound', 'No packs found')}</p>
+                            </div>
+                        )}
+                    </section>
+
+                    {/* Bottom Navigation */}
+                    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 py-8 border-t border-gray-200 text-sm">
+                        <div></div>
+
+                        {/* Pagination Controls */}
+                        {totalPages > 1 && (
+                            <div className="flex items-center gap-2">
+                                {/* Previous Button */}
+                                <button
+                                    onClick={() => {
+                                        setCurrentPage(prev => Math.max(1, prev - 1))
+                                        window.scrollTo({ top: 0, behavior: 'smooth' })
+                                    }}
+                                    disabled={currentPage === 1}
+                                    className={`flex items-center justify-center w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 ${currentPage === 1
+                                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                        : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+                                        }`}
+                                    aria-label="Previous page"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                    </svg>
+                                </button>
+
+                                {/* Page Numbers */}
+                                <div className="flex gap-1">
+                                    {(() => {
+                                        const pageNumbers = []
+                                        const showEllipsisStart = currentPage > 3
+                                        const showEllipsisEnd = currentPage < totalPages - 2
+
+                                        // Always show first page
+                                        pageNumbers.push(
+                                            <button
+                                                key={1}
+                                                onClick={() => {
+                                                    setCurrentPage(1)
+                                                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                                                }}
+                                                className={`min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${currentPage === 1
+                                                    ? "bg-blue-600 text-white shadow-md"
+                                                    : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+                                                    }`}
+                                            >
+                                                1
+                                            </button>
+                                        )
+
+                                        // Show ellipsis after first page if needed
+                                        if (showEllipsisStart) {
+                                            pageNumbers.push(
+                                                <span key="ellipsis-start" className="flex items-center justify-center w-9 h-9 text-gray-400">
+                                                    ...
+                                                </span>
+                                            )
+                                        }
+
+                                        // Show pages around current page
+                                        const startPage = Math.max(2, currentPage - 1)
+                                        const endPage = Math.min(totalPages - 1, currentPage + 1)
+
+                                        for (let i = startPage; i <= endPage; i++) {
+                                            pageNumbers.push(
+                                                <button
+                                                    key={i}
+                                                    onClick={() => {
+                                                        setCurrentPage(i)
+                                                        window.scrollTo({ top: 0, behavior: 'smooth' })
+                                                    }}
+                                                    className={`min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${currentPage === i
+                                                        ? "bg-blue-600 text-white shadow-md"
+                                                        : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+                                                        }`}
+                                                >
+                                                    {i}
+                                                </button>
+                                            )
+                                        }
+
+                                        // Show ellipsis before last page if needed
+                                        if (showEllipsisEnd) {
+                                            pageNumbers.push(
+                                                <span key="ellipsis-end" className="flex items-center justify-center w-9 h-9 text-gray-400">
+                                                    ...
+                                                </span>
+                                            )
+                                        }
+
+                                        // Always show last page if more than 1 page
+                                        if (totalPages > 1) {
+                                            pageNumbers.push(
+                                                <button
+                                                    key={totalPages}
+                                                    onClick={() => {
+                                                        setCurrentPage(totalPages)
+                                                        window.scrollTo({ top: 0, behavior: 'smooth' })
+                                                    }}
+                                                    className={`min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${currentPage === totalPages
+                                                        ? "bg-blue-600 text-white shadow-md"
+                                                        : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+                                                        }`}
+                                                >
+                                                    {totalPages}
+                                                </button>
+                                            )
+                                        }
+
+                                        return pageNumbers
+                                    })()}
+                                </div>
+
+                                {/* Next Button */}
+                                <button
+                                    onClick={() => {
+                                        setCurrentPage(prev => Math.min(totalPages, prev + 1))
+                                        window.scrollTo({ top: 0, behavior: 'smooth' })
+                                    }}
+                                    disabled={currentPage === totalPages}
+                                    className={`flex items-center justify-center w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 ${currentPage === totalPages
+                                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                        : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+                                        }`}
+                                    aria-label="Next page"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </button>
                             </div>
                         )}
                     </div>
@@ -346,8 +509,29 @@ const PacksPromotionnels = () => {
             {selectedPack && (
                 <CartConfirmationPopup
                     isOpen={isPopupOpen}
-                    onClose={() => setIsPopupOpen(false)}
+                    onClose={handleClosePopup}
                     book={selectedPack}
+                    packBooks={packBooks}
+                />
+            )}
+
+            {/* Floating Cart Badge - Self-managed, syncs with cart state */}
+            <FloatingCartBadge
+                onGoToCart={() => navigate('/cart')}
+            />
+
+            {/* Pack Books Popup - Shows all books in selected pack */}
+            {selectedPackForPopup && (
+                <PackBooksPopup
+                    isOpen={showPackBooksPopup}
+                    onClose={() => {
+                        setShowPackBooksPopup(false);
+                        setSelectedPackForPopup(null);
+                    }}
+                    packTitle={selectedPackForPopup.title}
+                    packDescription={selectedPackForPopup.description}
+                    books={selectedPackForPopup.books}
+                    isLoading={isLoadingPopupBooks}
                 />
             )}
         </div>

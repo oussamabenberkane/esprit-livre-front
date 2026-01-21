@@ -1,10 +1,14 @@
 import React from 'react';
+import { getAuthorPictureUrl } from '../../utils/imageUtils';
 
 const AuthorComponent = ({
+    authorId,
     authorImage,
     authorName,
     size = 'fluid'
 }) => {
+    // Use authorId to generate image URL if provided, otherwise fall back to authorImage prop
+    const imageUrl = authorId ? getAuthorPictureUrl(authorId) : authorImage;
     // Size variants
     const sizeClasses = {
         sm: 'w-16 h-16',
@@ -20,7 +24,7 @@ const AuthorComponent = ({
             {/* Background Image */}
             <div
                 className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                style={{ backgroundImage: `url(${authorImage})` }}
+                style={{ backgroundImage: `url(${imageUrl})` }}
             />
 
             {/* Blur Mask Overlay */}

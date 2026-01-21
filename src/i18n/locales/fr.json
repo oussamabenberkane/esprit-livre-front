@@ -7,9 +7,15 @@
       "en": "EN"
     }
   },
+  "loginPrompt": {
+    "title": "Connexion requise",
+    "message": "Vous devez être connecté pour accéder à votre profil.",
+    "loginButton": "Se connecter"
+  },
   "bookCard": {
     "addToCart": "Ajouter\nau\u00A0panier",
     "currency": "DZD",
+    "unknownAuthor": "Auteur inconnu",
     "stockStatus": {
       "inStock": "en stock",
       "outOfStock": "rupture de stock",
@@ -19,6 +25,7 @@
   "allBooks": {
     "pageTitle": "Tous les livres",
     "pageSubtitle": "Découvrez notre collection complète de livres",
+    "resultsFor": "Résultats pour \"{{query}}\"",
     "resultsTitle": "Résultats",
     "resultsCount": "{{start}} - {{end}} sur {{total}} livres",
     "page": "Page {{current}}/{{total}}",
@@ -90,19 +97,34 @@
     "bookDetails": "Détails du livre",
     "currency": "DZD",
     "viewCart": "Voir le panier",
-    "remove": "Retirer"
+    "remove": "Retirer",
+    "removeConfirmTitle": "Retirer du panier ?",
+    "removeConfirmMessage": "Êtes-vous sûr de vouloir retirer ce livre de votre panier ?",
+    "confirmRemove": "Oui, retirer",
+    "cancelRemove": "Annuler",
+    "removedSuccess": "Livre retiré du panier avec succès",
+    "removedError": "Échec de la suppression du livre. Veuillez réessayer."
   },
   "common": {
     "loading": "Chargement...",
     "error": "Une erreur s'est produite",
     "retry": "Réessayer",
-    "seeMore": "Voir plus"
+    "seeMore": "Voir plus",
+    "noData": "Aucune donnée disponible"
+  },
+  "search": {
+    "noResults": "Aucun résultat trouvé",
+    "viewAllResults": "Voir tous les résultats pour \"{{query}}\"",
+    "bookTitle": "Livre",
+    "author": "Auteur",
+    "category": "Catégorie"
   },
   "homePage": {
     "greeting": "Bonjour",
     "categoriesSubtitle": "Choisissez parmis les catégories suivantes",
     "recommendedBooks": "Livres recommandés",
     "featuredAuthors": "Nos auteurs phares",
+    "profileCompleted": "Profil complété avec succès ! Bienvenue chez Esprit Livre.",
     "hero": {
       "discover": "Découvrir",
       "newReleases": "Nouveautés"
@@ -123,14 +145,16 @@
     "backToHome": "Retour à l'accueil",
     "back": "Retour",
     "author": "auteur :",
-    "soldBy": "Vendu et expedié par {{seller}}",
+    "categoryLabel": "Catégorie",
+    "soldBy": "Vendu et expedié par Esprit Livre",
     "condition": "Etat : {{condition}}",
     "inStock": "en stock",
-    "estimatedDelivery": "Livraison estimé pour le : {{date}}",
+    "estimatedDelivery": "Livraison estimé pour 2-4 jours",
     "addToCart": "Ajouter au panier",
     "viewFullDescription": "Voir la description complète",
     "fullDescription": "Description complète",
-    "recommendations": "Recommandations :"
+    "recommendations": "Livres recommandés:",
+    "packRecommendations": "Packs recommandés:"
   },
   "cart": {
     "title": "Panier ({{count}} article)",
@@ -138,6 +162,8 @@
     "empty": "Votre panier est vide",
     "continueShop": "Continuer mes achats",
     "bookDetails": "Détails du livre",
+    "viewPackBooks": "Voir les livres du pack",
+    "books": "livres",
     "delete": "Supprimer",
     "subtotal": "Sous-total :",
     "shipping": "Frais de livraison :",
@@ -150,6 +176,7 @@
     "email": "Email",
     "emailPlaceholder": "exemple@email.com",
     "emailError": "Veuillez entrer une adresse email valide",
+    "optional": "Optionnel",
     "phone": "Numéro de téléphone",
     "phonePlaceholder": "0555 00 00 00",
     "phoneError": "Le numéro doit contenir 10 chiffres (ex: 0555 00 00 00)",
@@ -161,11 +188,46 @@
     "homeDelivery": "Livraison à domicile",
     "homeDeliveryDesc": "Recevez vos livres directement chez vous",
     "homeAddressPlaceholder": "Entrez votre adresse exacte (rue, immeuble, appartement)",
+    "homeAddressRequired": "Veuillez entrer votre adresse de domicile",
     "pickupPoint": "Point de relais",
     "pickupPointDesc": "Retirez votre colis au point relais le plus proche",
-    "selectProvider": "Sélectionnez un point de relais",
+    "selectProvider": "Sélectionnez un transporteur",
+    "providerRequired": "Veuillez sélectionner un transporteur",
+    "shippingProvider": "Transporteur",
+    "selectRelayPoint": "Sélectionnez un point de relais",
+    "searchRelayPoint": "Rechercher un point de relais...",
+    "selectWilayaFirst": "Veuillez d'abord sélectionner une wilaya",
+    "relayPointRequired": "Veuillez sélectionner un point de relais",
+    "relayPointSingular": "{{count}} point de relais",
+    "relayPointPlural": "{{count}} points de relais",
+    "inWilaya": "à {{wilaya}}",
+    "loadingRelayPoints": "Chargement des points de relais...",
+    "noRelayPointsFound": "Aucun point de relais trouvé",
+    "noRelayPointsInWilaya": "Aucun point de relais disponible dans cette wilaya",
+    "relayPointsLoadError": "Échec du chargement des points de relais",
     "finalizeOrder": "Finaliser la commande",
-    "deliveryDays": "2–4 jours"
+    "submittingOrder": "Commande en cours...",
+    "deliveryDays": "2–4 jours",
+    "emptyCartError": "Votre panier est vide. Veuillez ajouter des articles avant de passer commande.",
+    "orderSuccess": "Commande passée avec succès ! Consultez-la à tout moment dans Profil → Commandes.",
+    "orderSuccessTitle": "Commande réussie !",
+    "orderNumber": "Commande n°",
+    "orderError": "Échec de la commande. Veuillez réessayer.",
+    "orderErrorTitle": "Échec de la commande",
+    "guestCheckoutMessage": "Connectez-vous pour passer commande plus rapidement avec vos informations sauvegardées.",
+    "loginNow": "Se connecter maintenant",
+    "orderTrackingPromptTitle": "Suivre votre commande",
+    "orderTrackingPromptMessage": "Connectez-vous pour consulter et suivre vos commandes dans votre profil.",
+    "signInButton": "Se connecter",
+    "laterButton": "Plus tard"
+  },
+  "errors": {
+    "error.insufficientstock": "Certains articles de votre panier ont un stock insuffisant. Veuillez mettre à jour les quantités et réessayer.",
+    "error.validation": "Données invalides. Veuillez vérifier vos informations et réessayer.",
+    "error.unauthorized": "Vous devez être connecté pour faire cette action. Veuillez vous connecter et réessayer.",
+    "error.itemnotfound": "Un ou plusieurs articles de votre panier ne sont plus disponibles. Veuillez les retirer et réessayer.",
+    "error.outofstock": "Certains articles de votre panier sont en rupture de stock. Veuillez les retirer ou ajuster les quantités.",
+    "error.generic": "Une erreur s'est produite. Veuillez réessayer ou contacter le service client."
   },
   "customerService": {
     "title": "Service Client",
@@ -278,7 +340,7 @@
     "members": {
       "lhadi": {
         "name": "Lhadi Talentikit",
-        "role": "Propriétaire / Visionnaire",
+        "role": "CEO / Propriétaire",
         "description": "Leader guidant la mission d'Esprit Livre pour rendre la lecture accessible."
       },
       "oussama": {
@@ -295,8 +357,10 @@
   },
   "profile": {
     "back": "Retour",
-    "memberSince": "Membre depuis 2024",
+    "memberSince": "Membre depuis",
     "personalInfo": "Informations personnelles",
+    "firstName": "Prénom",
+    "lastName": "Nom",
     "email": "Email",
     "phone": "Téléphone",
     "edit": "Modifier",
@@ -314,7 +378,19 @@
     "favoritesSaved": "Livres sauvegardés",
     "myOrders": "Mes Commandes",
     "ordersHistory": "Historique d'achats",
-    "logout": "Se déconnecter"
+    "save": "Enregistrer",
+    "saveChanges": "Enregistrer les modifications",
+    "saving": "Enregistrement...",
+    "logout": "Se déconnecter",
+    "updateSuccess": "Profil mis à jour avec succès !",
+    "updateSuccessMessage": "Vos informations personnelles et préférences ont été enregistrées.",
+    "updateError": "Échec de la mise à jour du profil. Veuillez réessayer.",
+    "validationError": "Veuillez corriger les erreurs ci-dessous",
+    "readOnly": "Ce champ ne peut pas être modifié",
+    "firstLogin": {
+      "title": "Bienvenue !",
+      "message": "Ajoutez votre numéro de téléphone pour suivre vos commandes et recevoir des mises à jour"
+    }
   },
   "favorites": {
     "title": "Mes Favoris",
@@ -335,15 +411,24 @@
     "viewDetails": "Voir les détails",
     "hideDetails": "Masquer",
     "currency": "DZD",
+    "loading": "Chargement de vos commandes...",
     "emptyTitle": "Aucune commande",
     "emptyMessage": "Vous n'avez pas encore passé de commande 📦",
     "startShopping": "Commencer mes achats",
+    "errorTitle": "Impossible de charger les commandes",
+    "quantity": "Quantité",
     "status": {
       "pending": "En attente",
       "confirmed": "Confirmée",
       "shipped": "Expédiée",
       "delivered": "Livrée",
       "cancelled": "Annulée"
+    },
+    "linkedSuccess": {
+      "title": "Commandes liées avec succès !",
+      "message": "Nous avons trouvé et lié {{count}} de vos commandes précédentes à votre compte.",
+      "updated": "{{count}} commande a été mise à jour avec vos informations.",
+      "updated_plural": "{{count}} commandes ont été mises à jour avec vos informations."
     }
   },
   "packCard": {
@@ -351,14 +436,37 @@
     "currency": "DZD",
     "booksIncluded": "Livres inclus",
     "save": "Économisez",
-    "books": "livres"
+    "books": "livres",
+    "seeMore": "Voir plus",
+    "allBooks": "Tous les livres",
+    "detailsButton": "Détails",
+    "descriptionModal": "Description"
   },
   "packsPage": {
     "title": "Packs Promotionnels",
     "subtitle": "Découvrez nos offres spéciales et économisez sur vos achats de livres",
     "searchPlaceholder": "Rechercher un pack...",
+    "resultsTitle": "Résultats",
     "packsFound": "packs trouvés",
     "noPacksFound": "Aucun pack trouvé",
     "tryDifferentSearch": "Essayez une recherche différente ou ajustez vos filtres"
+  },
+  "packBooksPopup": {
+    "book": "livre",
+    "books": "livres",
+    "close": "Fermer",
+    "currency": "DZD",
+    "clickToViewDetails": "Cliquez sur un livre pour voir ses détails"
+  },
+  "404": {
+    "title": "Page non trouvée",
+    "description": "Désolé, la page que vous recherchez semble avoir disparu. Elle a peut-être été déplacée ou n'existe plus.",
+    "goBack": "Retour",
+    "home": "Accueil",
+    "browseBooks": "Parcourir les livres",
+    "helpfulLinks": "Liens utiles",
+    "promotionalPacks": "Packs promotionnels",
+    "team": "Notre équipe",
+    "customerService": "Service client"
   }
 }

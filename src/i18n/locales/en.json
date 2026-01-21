@@ -7,9 +7,15 @@
       "en": "EN"
     }
   },
+  "loginPrompt": {
+    "title": "Login Required",
+    "message": "You need to be logged in to access your profile.",
+    "loginButton": "Log in"
+  },
   "bookCard": {
     "addToCart": "Add to\ncart",
     "currency": "DZD",
+    "unknownAuthor": "Unknown Author",
     "stockStatus": {
       "inStock": "in stock",
       "outOfStock": "out of stock",
@@ -19,6 +25,7 @@
   "allBooks": {
     "pageTitle": "All Books",
     "pageSubtitle": "Discover our complete collection of books",
+    "resultsFor": "Results for \"{{query}}\"",
     "resultsTitle": "Results",
     "resultsCount": "{{start}} - {{end}} of {{total}} books",
     "page": "Page {{current}}/{{total}}",
@@ -90,19 +97,34 @@
     "bookDetails": "Book details",
     "currency": "DZD",
     "viewCart": "View cart",
-    "remove": "Remove"
+    "remove": "Remove",
+    "removeConfirmTitle": "Remove from cart?",
+    "removeConfirmMessage": "Are you sure you want to remove this book from your cart?",
+    "confirmRemove": "Yes, remove",
+    "cancelRemove": "Cancel",
+    "removedSuccess": "Book successfully removed from cart",
+    "removedError": "Failed to remove book from cart. Please try again."
   },
   "common": {
     "loading": "Loading...",
     "error": "An error occurred",
     "retry": "Retry",
-    "seeMore": "See more"
+    "seeMore": "See more",
+    "noData": "No data available"
+  },
+  "search": {
+    "noResults": "No results found",
+    "viewAllResults": "View all results for \"{{query}}\"",
+    "bookTitle": "Book",
+    "author": "Author",
+    "category": "Category"
   },
   "homePage": {
     "greeting": "Hello",
     "categoriesSubtitle": "Choose from the following categories",
     "recommendedBooks": "Recommended Books",
     "featuredAuthors": "Our Featured Authors",
+    "profileCompleted": "Profile completed successfully! Welcome to Esprit Livre.",
     "hero": {
       "discover": "Discover",
       "newReleases": "New Releases"
@@ -123,14 +145,16 @@
     "backToHome": "Back to home",
     "back": "Back",
     "author": "author:",
-    "soldBy": "Sold and shipped by {{seller}}",
+    "categoryLabel": "Category",
+    "soldBy": "Sold and shipped by Esprit Livre",
     "condition": "Condition: {{condition}}",
     "inStock": "in stock",
-    "estimatedDelivery": "Estimated delivery: {{date}}",
+    "estimatedDelivery": "Estimated delivery: 2-4 days",
     "addToCart": "Add to cart",
     "viewFullDescription": "View full description",
     "fullDescription": "Full Description",
-    "recommendations": "Recommendations:"
+    "recommendations": "Recommended books: ",
+    "packRecommendations": "Recommended packs: "
   },
   "cart": {
     "title": "Cart ({{count}} item)",
@@ -138,10 +162,12 @@
     "empty": "Your cart is empty",
     "continueShop": "Continue shopping",
     "bookDetails": "Book details",
+    "viewPackBooks": "View pack books",
+    "books": "books",
     "delete": "Delete",
     "subtotal": "Subtotal:",
     "shipping": "Shipping:",
-    "estimatedDelivery": "Estimated delivery:",
+    "estimatedDelivery": "Estimated delivery: ",
     "total": "Total:",
     "proceedToCheckout": "Proceed to checkout",
     "formTitle": "Please fill in your personal information",
@@ -150,6 +176,7 @@
     "email": "Email",
     "emailPlaceholder": "example@email.com",
     "emailError": "Please enter a valid email address",
+    "optional": "Optional",
     "phone": "Phone number",
     "phonePlaceholder": "0555 00 00 00",
     "phoneError": "Number must contain 10 digits (e.g. 0555 00 00 00)",
@@ -161,11 +188,46 @@
     "homeDelivery": "Home delivery",
     "homeDeliveryDesc": "Receive your books directly at home",
     "homeAddressPlaceholder": "Enter your exact address (street, building, apartment)",
+    "homeAddressRequired": "Please enter your home address",
     "pickupPoint": "Pickup point",
     "pickupPointDesc": "Pick up your package at the nearest pickup point",
     "selectProvider": "Select a pickup provider",
+    "providerRequired": "Please select a pickup provider",
+    "shippingProvider": "Shipping provider",
+    "selectRelayPoint": "Select a relay point",
+    "searchRelayPoint": "Search for a relay point...",
+    "selectWilayaFirst": "Please select a wilaya first",
+    "relayPointRequired": "Please select a relay point",
+    "relayPointSingular": "{{count}} relay point",
+    "relayPointPlural": "{{count}} relay points",
+    "inWilaya": "in {{wilaya}}",
+    "loadingRelayPoints": "Loading relay points...",
+    "noRelayPointsFound": "No relay points found",
+    "noRelayPointsInWilaya": "No relay points available in this wilaya",
+    "relayPointsLoadError": "Failed to load relay points",
     "finalizeOrder": "Finalize order",
-    "deliveryDays": "2–4 days"
+    "submittingOrder": "Placing order...",
+    "deliveryDays": "2–4 days",
+    "emptyCartError": "Your cart is empty. Please add items before placing an order.",
+    "orderSuccess": "Order placed successfully! View it anytime in Profile → Orders.",
+    "orderSuccessTitle": "Order Placed Successfully!",
+    "orderNumber": "Order #",
+    "orderError": "Failed to place order. Please try again.",
+    "orderErrorTitle": "Order Failed",
+    "guestCheckoutMessage": "Log in to checkout faster with saved information.",
+    "loginNow": "Log in now",
+    "orderTrackingPromptTitle": "Track your order",
+    "orderTrackingPromptMessage": "Sign in to view and track your orders in your profile.",
+    "signInButton": "Sign in",
+    "laterButton": "Later"
+  },
+  "errors": {
+    "error.insufficientstock": "Some items in your cart have insufficient stock. Please update quantities and try again.",
+    "error.validation": "Invalid data. Please check your information and try again.",
+    "error.unauthorized": "You need to be logged in to perform that action. Please sign in and try again.",
+    "error.itemnotfound": "One or more items in your cart are no longer available. Please remove them and try again.",
+    "error.outofstock": "Some items in your cart are out of stock. Please remove them or adjust quantities.",
+    "error.generic": "An error occurred. Please try again or contact customer support."
   },
   "customerService": {
     "title": "Customer Service",
@@ -278,7 +340,7 @@
     "members": {
       "lhadi": {
         "name": "Lhadi Talentikit",
-        "role": "Owner / Visionary",
+        "role": "CEO / Owner",
         "description": "Leader guiding Esprit Livre's mission to make reading accessible."
       },
       "oussama": {
@@ -295,8 +357,10 @@
   },
   "profile": {
     "back": "Back",
-    "memberSince": "Member since 2024",
+    "memberSince": "Member since",
     "personalInfo": "Personal information",
+    "firstName": "First name",
+    "lastName": "Last name",
     "email": "Email",
     "phone": "Phone",
     "edit": "Edit",
@@ -314,7 +378,19 @@
     "favoritesSaved": "Saved books",
     "myOrders": "My Orders",
     "ordersHistory": "Order history",
-    "logout": "Log out"
+    "save": "Save",
+    "saveChanges": "Save Changes",
+    "saving": "Saving...",
+    "logout": "Log out",
+    "updateSuccess": "Profile updated successfully!",
+    "updateSuccessMessage": "Your personal information and preferences have been saved.",
+    "updateError": "Failed to update profile. Please try again.",
+    "validationError": "Please fix the errors below",
+    "readOnly": "This field cannot be edited",
+    "firstLogin": {
+      "title": "Welcome!",
+      "message": "Add your phone number to track your orders and receive updates"
+    }
   },
   "favorites": {
     "title": "My Favorites",
@@ -335,15 +411,24 @@
     "viewDetails": "View details",
     "hideDetails": "Hide",
     "currency": "DZD",
+    "loading": "Loading your orders...",
     "emptyTitle": "No orders",
     "emptyMessage": "You haven't placed any orders yet 📦",
     "startShopping": "Start shopping",
+    "errorTitle": "Unable to Load Orders",
+    "quantity": "Quantity",
     "status": {
       "pending": "Pending",
       "confirmed": "Confirmed",
       "shipped": "Shipped",
       "delivered": "Delivered",
       "cancelled": "Cancelled"
+    },
+    "linkedSuccess": {
+      "title": "Orders Linked Successfully!",
+      "message": "We found and linked {{count}} of your previous orders to your account.",
+      "updated": "{{count}} order has been updated with your information.",
+      "updated_plural": "{{count}} orders have been updated with your information."
     }
   },
   "packCard": {
@@ -351,14 +436,37 @@
     "currency": "DZD",
     "booksIncluded": "Books included",
     "save": "Save",
-    "books": "books"
+    "books": "books",
+    "seeMore": "See More",
+    "allBooks": "All Books",
+    "detailsButton": "Details",
+    "descriptionModal": "Description"
   },
   "packsPage": {
     "title": "Promotional Packs",
     "subtitle": "Discover our special offers and save on your book purchases",
     "searchPlaceholder": "Search for a pack...",
+    "resultsTitle": "Results",
     "packsFound": "packs found",
     "noPacksFound": "No packs found",
     "tryDifferentSearch": "Try a different search or adjust your filters"
+  },
+  "packBooksPopup": {
+    "book": "book",
+    "books": "books",
+    "close": "Close",
+    "currency": "DZD",
+    "clickToViewDetails": "Click on a book to view its details"
+  },
+  "404": {
+    "title": "Page Not Found",
+    "description": "Sorry, the page you're looking for seems to have disappeared. It may have been moved or no longer exists.",
+    "goBack": "Go Back",
+    "home": "Home",
+    "browseBooks": "Browse Books",
+    "helpfulLinks": "Helpful Links",
+    "promotionalPacks": "Promotional Packs",
+    "team": "Our Team",
+    "customerService": "Customer Service"
   }
 }

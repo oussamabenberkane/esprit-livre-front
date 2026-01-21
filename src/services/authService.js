@@ -1,63 +1,24 @@
-// Temporary authentication service using OAuth Password Grant
-// This will be replaced with Google OAuth later
+// Authentication service for managing tokens and user session
+// Uses Google OAuth through Keycloak Identity Provider
 
-const KEYCLOAK_URL = 'https://honest-coats-enter.loca.lt';
-const REALM = 'jhipster';
-const TOKEN_URL = `${KEYCLOAK_URL}/realms/${REALM}/protocol/openid-connect/token`;
+import { API_BASE_URL } from './apiConfig';
 
 // Token storage keys
 const ACCESS_TOKEN_KEY = 'el_access_token';
-const REFRESH_TOKEN_KEY = 'el_refresh_token';
+const ID_TOKEN_KEY = 'el_id_token';
+const REDIRECT_URL_KEY = 'el_redirect_url';
 
 /**
- * Authenticate using OAuth Password Grant (temporary implementation)
- * @param {string} username
- * @param {string} password
- * @returns {Promise<Object>} Token response
- */
-export const loginWithPassword = async (username, password) => {
-  try {
-    const response = await fetch(TOKEN_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        grant_type: 'password',
-        username: username,
-        password: password,
-        client_id: 'web_app',
-        client_secret: 'ASoXbE72eEiIpZmvGBObIpN2dNhiyM26',
-        scope: 'openid profile email',
-      }),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error_description || 'Authentication failed');
-    }
-
-    const data = await response.json();
-
-    // Store tokens
-    localStorage.setItem(ACCESS_TOKEN_KEY, data.access_token);
-    if (data.refresh_token) {
-      localStorage.setItem(REFRESH_TOKEN_KEY, data.refresh_token);
-    }
-
-    return data;
-  } catch (error) {
-    console.error('Login error:', error);
-    throw error;
-  }
-};
-
-/**
- * Logout and clear tokens
+ * Logout and clear all tokens (frontend-only logout)
+ * Note: This does not invalidate the Keycloak/Google session
+ * For full logout including Keycloak, use oauthService.logoutFromKeycloak()
  */
 export const logout = () => {
   localStorage.removeItem(ACCESS_TOKEN_KEY);
-  localStorage.removeItem(REFRESH_TOKEN_KEY);
+  localStorage.removeItem(ID_TOKEN_KEY);
+
+  // Dispatch custom event to notify components of auth change
+  window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated: false } }));
 };
 
 /**
@@ -66,6 +27,14 @@ export const logout = () => {
  */
 export const getAccessToken = () => {
   return localStorage.getItem(ACCESS_TOKEN_KEY);
+};
+
+/**
+ * Get stored ID token
+ * @returns {string|null}
+ */
+export const getIdToken = () => {
+  return localStorage.getItem(ID_TOKEN_KEY);
 };
 
 /**
@@ -86,7 +55,7 @@ export const getCurrentUser = async () => {
     throw new Error('Not authenticated');
   }
 
-  const response = await fetch('https://sharp-crabs-allow.loca.lt/api/account', {
+  const response = await fetch(`${API_BASE_URL}/api/account`, {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
@@ -97,4 +66,31 @@ export const getCurrentUser = async () => {
   }
 
   return response.json();
+};
+
+/**
+ * Save the URL to redirect to after login
+ * @param {string} url - The URL to redirect to after successful login
+ */
+export const saveRedirectUrl = (url) => {
+  if (url && url !== '/auth') {
+    localStorage.setItem(REDIRECT_URL_KEY, url);
+  }
+};
+
+/**
+ * Get and clear the saved redirect URL
+ * @returns {string|null} The saved redirect URL, or null if none exists
+ */
+export const getAndClearRedirectUrl = () => {
+  const url = localStorage.getItem(REDIRECT_URL_KEY);
+  localStorage.removeItem(REDIRECT_URL_KEY);
+  return url;
+};
+
+/**
+ * Clear the saved redirect URL without retrieving it
+ */
+export const clearRedirectUrl = () => {
+  localStorage.removeItem(REDIRECT_URL_KEY);
 };

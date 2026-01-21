@@ -24,7 +24,7 @@ main {
 
 /* Define custom properties first */
 @theme {
-  /* Only CSS custom properties (--variables) allowed here */
+  /* Custom breakpoints for Tailwind screens */
   --breakpoint-xs: 450px;
 
   /* Fluid Typography */

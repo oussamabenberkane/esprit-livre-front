@@ -384,7 +384,7 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
   const [availableCities, setAvailableCities] = useState([]);
   const [shippingPreference, setShippingPreference] = useState("home"); // "home" or "pickup"
   const [homeAddress, setHomeAddress] = useState("");
-  const [pickupProvider, setPickupProvider] = useState("Yalidine"); // Default to Yalidine (always required)
+  const [pickupProvider, setPickupProvider] = useState("ZRexpress"); // Default to ZR Express (always required)
 
   // Relay point state
   const [stopDeskId, setStopDeskId] = useState(null);
@@ -430,14 +430,21 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
         if (profile.defaultShippingMethod === 'HOME_DELIVERY') {
           setShippingPreference('home');
           setHomeAddress(profile.streetAddress || '');
+          // Home delivery forces ZRexpress
+          setPickupProvider('ZRexpress');
         } else if (profile.defaultShippingMethod === 'SHIPPING_PROVIDER') {
           setShippingPreference('pickup');
-        }
-
-        // Provider is always required - set from profile or default to Yalidine
-        if (profile.defaultShippingProvider) {
-          const displayProvider = PROVIDER_API_TO_DISPLAY[profile.defaultShippingProvider];
-          setPickupProvider(displayProvider || 'Yalidine');
+          // For pickup, set provider from profile or default to ZRexpress
+          if (profile.defaultShippingProvider) {
+            const displayProvider = PROVIDER_API_TO_DISPLAY[profile.defaultShippingProvider];
+            setPickupProvider(displayProvider || 'ZRexpress');
+          }
+        } else {
+          // No shipping method in profile - set provider from profile or default
+          if (profile.defaultShippingProvider) {
+            const displayProvider = PROVIDER_API_TO_DISPLAY[profile.defaultShippingProvider];
+            setPickupProvider(displayProvider || 'ZRexpress');
+          }
         }
 
         // Set available cities based on wilaya
@@ -526,7 +533,7 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
     const email = e.target.value;
     setFormData({ ...formData, email });
 
-    // Only validate if email is not empty
+    // Real-time validation: show error while typing if non-empty and invalid
     if (email.trim() !== '' && !validateEmail(email)) {
       setValidationErrors(prev => ({ ...prev, email: t('cart.emailError') }));
     } else {
@@ -966,13 +973,15 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
           </label>
           <div className="relative" ref={el => dropdownRefs.current['provider'] = el}>
             <div className={`flex items-center bg-white rounded-lg border-2 transition-all duration-200 ${
+              shippingPreference === 'home' ? 'opacity-60 cursor-not-allowed bg-gray-50' :
               validationErrors.provider
                 ? 'border-red-500'
                 : openDropdown === 'provider' ? 'border-emerald-500 shadow-md' : 'border-neutral-200 hover:border-neutral-300'
               }`}>
               <div
-                className="flex items-center flex-1 min-w-0 h-11 px-3 cursor-pointer"
+                className={`flex items-center flex-1 min-w-0 h-11 px-3 ${shippingPreference === 'home' ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                 onClick={() => {
+                  if (shippingPreference === 'home') return;
                   setOpenDropdown(openDropdown === 'provider' ? null : 'provider');
                 }}
               >
@@ -983,12 +992,14 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
               </div>
               <button
                 type="button"
+                disabled={shippingPreference === 'home'}
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
+                  if (shippingPreference === 'home') return;
                   setOpenDropdown(openDropdown === 'provider' ? null : 'provider');
                 }}
-                className="h-11 px-3 hover:bg-gray-100 rounded-r-lg transition-colors flex items-center justify-center flex-shrink-0"
+                className={`h-11 px-3 rounded-r-lg transition-colors flex items-center justify-center flex-shrink-0 ${shippingPreference === 'home' ? 'cursor-not-allowed' : 'hover:bg-gray-100'}`}
               >
                 <ChevronDown
                   className={`w-4 h-4 text-gray-500 transform transition-transform duration-200 ${openDropdown === 'provider' ? 'rotate-180' : ''}`}
@@ -1052,7 +1063,11 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
             <div>
               <button
                 type="button"
-                onClick={() => setShippingPreference("home")}
+                onClick={() => {
+                  setShippingPreference("home");
+                  setPickupProvider("ZRexpress");
+                  setStopDeskId(null);
+                }}
                 className={`w-full p-2.5 xs:p-3 md:p-4 rounded-lg border-2 transition-all ${shippingPreference === "home"
                     ? "border-emerald-500 bg-emerald-50"
                     : "border-neutral-200 bg-gray-50 hover:border-neutral-300"
@@ -1118,7 +1133,10 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
             <div>
               <button
                 type="button"
-                onClick={() => setShippingPreference("pickup")}
+                onClick={() => {
+                  setShippingPreference("pickup");
+                  setPickupProvider("ZRexpress");
+                }}
                 className={`w-full p-2.5 xs:p-3 md:p-4 rounded-lg border-2 transition-all ${shippingPreference === "pickup"
                     ? "border-emerald-500 bg-emerald-50"
                     : "border-neutral-200 bg-gray-50 hover:border-neutral-300"

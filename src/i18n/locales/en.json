@@ -175,7 +175,7 @@
     "fullNamePlaceholder": "Enter your full name",
     "email": "Email",
     "emailPlaceholder": "example@email.com",
-    "emailError": "Please enter a valid email address",
+    "emailError": "Invalid address",
     "optional": "Optional",
     "phone": "Phone number",
     "phonePlaceholder": "0555 00 00 00",

@@ -1,0 +1,6 @@
+user : 
+- Livraison avant champs optionnels + hide adresse si point de relais:
+- Remove code postal:
+- Ch0oice between providers on point de relais uniquement, when a domicile auto choose ZR (admin+user):
+- Telephone validation en temps reel:
+- Frais de livraison dependant on products minimum frais de livraison des produits (ajouter champs frais de livr livre et pack) -> on book creation choice between value or livreur for frais de livr:

@@ -176,6 +176,39 @@ export const buildOrderPayload = (formData, cartBooks, cartPacks, shippingCost =
 };
 
 /**
+ * Calculate shipping fee for the current cart
+ * @param {Object} params
+ * @param {string} params.shippingProvider - API provider enum ('YALIDINE' | 'ZR')
+ * @param {string} params.wilaya - Wilaya name
+ * @param {string|null} params.city - City/commune name
+ * @param {boolean} params.isStopDesk - true for pickup point, false for home delivery
+ * @param {Array} params.cartBooks - Cart books with id and quantity
+ * @param {Array} params.cartPacks - Cart packs with id and quantity
+ * @returns {Promise<Object>} { success, fee, method, provider } or { success: false, errorMessage }
+ */
+export const calculateDeliveryFee = async ({ shippingProvider, wilaya, city, isStopDesk, cartBooks, cartPacks }) => {
+  const items = [
+    ...cartBooks.map(b => ({ bookId: b.id, quantity: b.quantity })),
+    ...cartPacks.map(p => ({ bookPackId: p.id, quantity: p.quantity })),
+  ];
+
+  const response = await fetch(`${API_BASE_URL}/api/delivery-fee/calculate`, {
+    method: 'POST',
+    headers: getDefaultHeaders(),
+    body: JSON.stringify({
+      shippingProvider,
+      wilaya,
+      city: city || null,
+      isStopDesk,
+      items,
+    }),
+  });
+
+  const data = await response.json();
+  return data;
+};
+
+/**
  * Create a new order
  * @param {Object} orderData - Order data (use buildOrderPayload to construct)
  * @returns {Promise<Object>} Created order with uniqueId

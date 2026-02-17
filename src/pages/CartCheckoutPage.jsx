@@ -11,7 +11,7 @@ import { useScrollToTop } from '../hooks/useScrollToTop';
 import { getLanguageCode, getFullLanguageName } from '../data/booksData';
 import { useCart } from '../contexts/CartContext';
 import { getBookCoverUrl } from '../utils/imageUtils';
-import { buildOrderPayload, createOrder } from '../services/order.service';
+import { buildOrderPayload, createOrder, calculateDeliveryFee } from '../services/order.service';
 import { getUserProfile } from '../services/user.service';
 import { isAuthenticated, saveRedirectUrl } from '../services/authService';
 import { PROVIDER_API_TO_DISPLAY, PROVIDER_DISPLAY_TO_API } from '../constants/orderEnums';
@@ -304,9 +304,8 @@ function PackItem({ item, onUpdateQuantity, onRemove, onViewBooks }) {
 }
 
 // CartSummary Component
-function CartSummary({ subtotal, shipping, onProceed }) {
+function CartSummary({ subtotal, onProceed }) {
   const { t } = useTranslation();
-  const total = subtotal + shipping;
 
   return (
     <motion.div
@@ -324,25 +323,9 @@ function CartSummary({ subtotal, shipping, onProceed }) {
           </span>
         </div>
 
-        <div className="flex justify-between items-center text-[#353535]">
-          <span className="text-fluid-body font-[500]">{t('cart.shipping')}</span>
-          <span className="text-fluid-body font-[600]">
-            {shipping} <span className="text-xs">DZD</span>
-          </span>
-        </div>
-
         <div className="flex justify-between items-center text-[#353535] text-fluid-body font-[500]">
           <span>{t('cart.estimatedDelivery')}</span>
           <span className="text-emerald-600">{t('cart.deliveryDays')}</span>
-        </div>
-
-        <div className="border-t border-gray-300 pt-3 mt-3">
-          <div className="flex justify-between items-center">
-            <span className="text-[#353535] text-fluid-body font-semibold">{t('cart.total')}</span>
-            <span className="text-fluid-body font-[600]">
-              {total} <span className="text-xs">DZD</span>
-            </span>
-          </div>
         </div>
       </div>
 
@@ -360,7 +343,7 @@ function CartSummary({ subtotal, shipping, onProceed }) {
 }
 
 // CheckoutForm Component
-function CheckoutForm({ onSubmit, isSubmitting = false }) {
+function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPacks = [], subtotal = 0, fixedShippingFee = 700 }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -388,6 +371,10 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
 
   // Relay point state
   const [stopDeskId, setStopDeskId] = useState(null);
+
+  // Shipping fee calculation state
+  const [calculatedFee, setCalculatedFee] = useState(null);
+  const [isCalculatingFee, setIsCalculatingFee] = useState(false);
 
   // Profile loading state
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
@@ -475,6 +462,41 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [openDropdown]);
+
+  // Reactive shipping fee calculation
+  useEffect(() => {
+    // Prerequisites: wilaya, city, provider, and at least one cart item
+    if (!formData.wilaya || !formData.city || !pickupProvider || (cartBooks.length === 0 && cartPacks.length === 0)) {
+      setCalculatedFee(null);
+      return;
+    }
+
+    setIsCalculatingFee(true);
+
+    const timer = setTimeout(async () => {
+      try {
+        const result = await calculateDeliveryFee({
+          shippingProvider: PROVIDER_DISPLAY_TO_API[pickupProvider],
+          wilaya: formData.wilaya,
+          city: formData.city,
+          isStopDesk: shippingPreference === 'pickup',
+          cartBooks,
+          cartPacks,
+        });
+
+        setCalculatedFee(result.success ? result.fee : fixedShippingFee);
+      } catch {
+        setCalculatedFee(fixedShippingFee);
+      } finally {
+        setIsCalculatingFee(false);
+      }
+    }, 600);
+
+    return () => {
+      clearTimeout(timer);
+      setIsCalculatingFee(false);
+    };
+  }, [formData.wilaya, formData.city, pickupProvider, shippingPreference, cartBooks, cartPacks, fixedShippingFee]);
 
   // Filter functions
   const getFilteredWilayas = () => {
@@ -629,7 +651,8 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
         shippingPreference,
         homeAddress,
         pickupProvider,
-        stopDeskId
+        stopDeskId,
+        shippingFee: calculatedFee ?? fixedShippingFee
       });
     }
   };
@@ -1209,6 +1232,44 @@ function CheckoutForm({ onSubmit, isSubmitting = false }) {
           )}
         </div>
 
+        {/* Order Cost Summary */}
+        <div className="mt-6 bg-neutral-100 rounded-lg p-4">
+          <div className="space-y-2">
+            <div className="flex justify-between items-center text-[#353535]">
+              <span className="text-fluid-body font-[500]">{t('cart.subtotal')}</span>
+              <span className="text-fluid-body font-[600]">
+                {subtotal} <span className="text-xs">DZD</span>
+              </span>
+            </div>
+            <div className="flex justify-between items-center text-[#353535]">
+              <span className="text-fluid-body font-[500]">{t('cart.shipping')}</span>
+              <span className="text-fluid-body font-[600]">
+                {isCalculatingFee ? (
+                  <span className="inline-block w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin align-middle" />
+                ) : calculatedFee !== null ? (
+                  <>{calculatedFee} <span className="text-xs">DZD</span></>
+                ) : (
+                  <span className="text-gray-400">—</span>
+                )}
+              </span>
+            </div>
+            <div className="border-t border-gray-300 pt-2 mt-2">
+              <div className="flex justify-between items-center">
+                <span className="text-[#353535] text-fluid-body font-semibold">{t('cart.total')}</span>
+                <span className="text-fluid-body font-[600]">
+                  {isCalculatingFee ? (
+                    <span className="inline-block w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin align-middle" />
+                  ) : calculatedFee !== null ? (
+                    <>{subtotal + calculatedFee} <span className="text-xs">DZD</span></>
+                  ) : (
+                    <span className="text-gray-400">—</span>
+                  )}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Submit Button */}
         <motion.button
           whileHover={!isSubmitting ? { scale: 1.02 } : {}}
@@ -1351,8 +1412,11 @@ export default function CartCheckoutPage() {
       setIsSubmittingOrder(true);
       setOrderError(null);
 
+      // Use the calculated fee passed from CheckoutForm, fall back to fixed fee
+      const resolvedShippingFee = formData.shippingFee ?? shippingFee;
+
       // Build order payload using the service helper
-      const orderPayload = buildOrderPayload(formData, cartBooks, cartPacks, shippingFee);
+      const orderPayload = buildOrderPayload(formData, cartBooks, cartPacks, resolvedShippingFee);
 
       // Log payload for debugging (remove in production)
       console.log('Submitting order:', orderPayload);
@@ -1751,7 +1815,6 @@ export default function CartCheckoutPage() {
             {allCartItems.length > 0 && (
               <CartSummary
                 subtotal={subtotal}
-                shipping={shippingFee}
                 onProceed={handleProceedToCheckout}
               />
             )}
@@ -1763,6 +1826,10 @@ export default function CartCheckoutPage() {
               <CheckoutForm
                 onSubmit={handleOrderSubmit}
                 isSubmitting={isSubmittingOrder}
+                cartBooks={cartBooks}
+                cartPacks={cartPacks}
+                subtotal={subtotal}
+                fixedShippingFee={shippingFee}
               />
             )}
           </div>

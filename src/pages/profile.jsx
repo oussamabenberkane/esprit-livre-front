@@ -544,7 +544,7 @@ export default function Profile() {
           {/* Email - Read Only */}
           <div ref={emailRef} className="mb-4 p-4 bg-gray-50 rounded-lg">
             <label className="block text-sm text-gray-600 mb-2">{t('profile.email')}</label>
-            <p className="text-gray-800">{userData.email}</p>
+            <p className="text-gray-800 overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">{userData.email}</p>
             <p className="text-xs text-gray-500 mt-1">{t('profile.readOnly')}</p>
           </div>
 

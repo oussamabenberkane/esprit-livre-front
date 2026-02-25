@@ -45,11 +45,11 @@ export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescrip
         <>
             {/* Modal Container with Backdrop */}
             <div
-                className="fixed inset-0 z-50 flex items-center justify-center p-2 xs:p-4 sm:p-6 bg-gray-900/50 backdrop-blur-sm"
+                className="fixed inset-0 z-50 flex items-center justify-center p-4 xs:p-5 sm:p-6 bg-gray-900/50 backdrop-blur-sm"
                 onClick={onClose}
             >
                 <div
-                    className="bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-5xl max-h-[95vh] xs:max-h-[90vh] flex flex-col animate-fade-in-scale"
+                    className="bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-5xl max-h-[85vh] xs:max-h-[88vh] flex flex-col animate-fade-in-scale"
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Header Section - Fixed */}

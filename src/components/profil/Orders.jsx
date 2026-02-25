@@ -275,8 +275,8 @@ export default function Orders() {
         // Fetch all orders (API will paginate, we'll fetch first page for now)
         const response = await getUserOrders(0, 100);
 
-        if (response && response.content) {
-          const allOrders = response.content.map(transformOrder);
+        if (response && response.page?.content) {
+          const allOrders = response.page.content.map(transformOrder);
 
           // Separate current orders (pending, confirmed, shipped) from history (delivered, cancelled)
           const current = allOrders.filter(order =>

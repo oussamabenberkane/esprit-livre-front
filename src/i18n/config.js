@@ -8,8 +8,30 @@ const resources = {
   en: { translation: en }
 };
 
-// Get language from localStorage or default to French
-const savedLanguage = localStorage.getItem('language') || 'fr';
+const VALID_LANGUAGES = ['fr', 'en'];
+
+function readSavedLanguage() {
+  // Primary: localStorage (fast, synchronous)
+  try {
+    const stored = localStorage.getItem('language');
+    if (VALID_LANGUAGES.includes(stored)) return stored;
+  } catch {}
+
+  // Secondary: cookie (survives WebKit storage eviction)
+  const match = document.cookie.match(/(?:^|;\s*)language=([^;]+)/);
+  if (match && VALID_LANGUAGES.includes(match[1])) return match[1];
+
+  return 'fr';
+}
+
+function persistLanguage(lng) {
+  try { localStorage.setItem('language', lng); } catch {}
+  document.cookie = `language=${lng};max-age=31536000;path=/;SameSite=Lax`;
+  document.documentElement.setAttribute('lang', lng);
+}
+
+const savedLanguage = readSavedLanguage();
+document.documentElement.setAttribute('lang', savedLanguage);
 
 i18n
   .use(initReactI18next)
@@ -25,9 +47,6 @@ i18n
     }
   });
 
-// Save language to localStorage whenever it changes
-i18n.on('languageChanged', (lng) => {
-  localStorage.setItem('language', lng);
-});
+i18n.on('languageChanged', persistLanguage);
 
 export default i18n;

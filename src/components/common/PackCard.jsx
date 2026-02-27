@@ -232,10 +232,10 @@ const PackCard = ({
             {/* Pack Card */}
             <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-visible w-full h-full flex flex-col">
                 {/* Grid Layout: Left (Images) | Right (Details) */}
-                <div className="grid grid-cols-[auto_1fr] gap-fluid-xs md:gap-fluid-sm p-fluid-xs md:p-fluid-sm flex-1 overflow-hidden items-end">
+                <div className="grid grid-cols-[auto_1fr] gap-fluid-xs md:gap-fluid-sm p-fluid-xs md:p-fluid-sm flex-1 overflow-hidden items-stretch">
 
                     {/* LEFT SECTION - Book Images */}
-                    <div className="relative flex flex-col" style={{ width: 'clamp(120px, 22vw, 160px)' }}>
+                    <div className="relative flex flex-col self-start" style={{ width: 'clamp(120px, 22vw, 160px)' }}>
                         {/* Book Thumbnails Container */}
                         <div className="rounded-md overflow-hidden bg-gray-50" style={{ aspectRatio: '2/3' }}>
                             {renderBookThumbnails()}
@@ -252,150 +252,158 @@ const PackCard = ({
 
                         {/* Savings Badge */}
                         {savings > 0 && (
-                            <div className="absolute -top-1 -left-1 bg-red-500 text-white px-2 py-0.5 rounded-br-md rounded-tl-md text-fluid-vsmall font-bold shadow-md z-10">
+                            <div className="absolute -top-1 -left-1 bg-red-500 text-white px-2.5 py-1 rounded-br-md rounded-tl-md text-fluid-small font-bold shadow-md z-10">
                                 -{savingsPercentage}%
                             </div>
                         )}
                     </div>
 
                     {/* RIGHT SECTION - Pack Details */}
-                    <div className="flex flex-col gap-fluid-xxs min-w-0 pb-0">
+                    <div className="flex flex-col justify-between min-w-0 h-full">
 
-                        {/* Title */}
-                        <h3 className="text-fluid-h3 md:text-fluid-h2 font-bold text-[#00417a] leading-tight line-clamp-2">
-                            {title}
-                        </h3>
+                        {/* TOP GROUP - Title, Description, Books */}
+                        <div className="flex flex-col gap-fluid-xxs">
 
-                        {/* Description with Unified Modal */}
-                        {description && (
-                            <div
-                                ref={descriptionContainerRef}
-                                className="relative"
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
-                            >
-                                <p
-                                    ref={descriptionRef}
-                                    onClick={handleDescriptionClick}
-                                    className={`text-fluid-h3 md:text-fluid-small lg:text-fluid-h3 text-gray-600 line-clamp-2 ${isDescriptionTruncated ? 'cursor-pointer' : ''}`}
-                                >
-                                    {description}
-                                </p>
-                            </div>
-                        )}
+                            {/* Title */}
+                            <h3 className="text-fluid-h3 md:text-fluid-h2 font-bold text-[#00417a] leading-tight line-clamp-2">
+                                {title}
+                            </h3>
 
-                        {/* Unified Description Modal - Shows on hover and click */}
-                        {isDescriptionTruncated && showDescriptionModal && (
-                            <>
-                                {/* Modal */}
+                            {/* Description with Unified Modal */}
+                            {description && (
                                 <div
-                                    ref={modalRef}
-                                    className={`fixed bg-white rounded-2xl shadow-2xl p-4 sm:p-5 z-[101] animate-slideUp max-h-[80vh] overflow-y-auto`}
-                                    style={{
-                                        animation: 'slideUp 0.3s ease-out forwards',
-                                        boxShadow: '0 20px 60px rgba(0, 65, 122, 0.2), 0 0 0 1px rgba(0, 65, 122, 0.1)',
-                                        ...(modalPosition.centered ? {
-                                            top: '50%',
-                                            left: '50%',
-                                            transform: 'translate(-50%, -50%)',
-                                            width: '92%',
-                                            maxWidth: '28rem',
-                                            maxHeight: '80vh'
-                                        } : {
-                                            top: `${modalPosition.top}px`,
-                                            left: `${modalPosition.left}px`,
-                                            width: `${modalPosition.width}px`,
-                                            maxWidth: '32rem',
-                                            maxHeight: `${Math.min(window.innerHeight * 0.8, 400)}px`
-                                        })
-                                    }}
-                                    onMouseEnter={() => {
-                                        // Keep modal open when hovering over it
-                                        if (hoverTimeoutRef.current) {
-                                            clearTimeout(hoverTimeoutRef.current);
-                                            hoverTimeoutRef.current = null;
-                                        }
-                                    }}
-                                    onMouseLeave={() => {
-                                        // Close when leaving modal (if not pinned)
-                                        if (!isModalPinned) {
-                                            setShowDescriptionModal(false);
-                                        }
-                                    }}
+                                    ref={descriptionContainerRef}
+                                    className="relative"
+                                    onMouseEnter={handleMouseEnter}
+                                    onMouseLeave={handleMouseLeave}
                                 >
-                                    <div className="flex justify-between items-start mb-3">
-                                        <h4 className="text-lg font-semibold text-[#00417a]">
-                                            {t('packCard.descriptionModal')}
-                                        </h4>
-                                        {isModalPinned && (
-                                            <button
-                                                onClick={closeModal}
-                                                className="text-gray-400 hover:text-gray-600 transition-colors duration-200 text-2xl leading-none w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
-                                            >
-                                                ×
-                                            </button>
-                                        )}
-                                    </div>
-                                    <p className="text-sm text-gray-700 leading-relaxed">
+                                    <p
+                                        ref={descriptionRef}
+                                        onClick={handleDescriptionClick}
+                                        className={`text-fluid-h3 md:text-fluid-small lg:text-fluid-h3 text-gray-600 line-clamp-2 ${isDescriptionTruncated ? 'cursor-pointer' : ''}`}
+                                    >
                                         {description}
                                     </p>
                                 </div>
-
-                                {/* CSS Keyframes for animations */}
-                                <style>{`
-                                    @keyframes slideUp {
-                                        from {
-                                            opacity: 0;
-                                            transform: ${modalPosition.centered
-                                                ? 'translate(-50%, -48%) scale(0.95)'
-                                                : 'translateY(-8px) scale(0.95)'};
-                                        }
-                                        to {
-                                            opacity: 1;
-                                            transform: ${modalPosition.centered
-                                                ? 'translate(-50%, -50%) scale(1)'
-                                                : 'translateY(0) scale(1)'};
-                                        }
-                                    }
-                                `}</style>
-                            </>
-                        )}
-
-                        {/* Book Titles as Scrollable Tags */}
-                        <div className="flex gap-1.5 overflow-x-auto scrollbar-hide py-1.5">
-                            {books.map((book, index) => (
-                                <span
-                                    key={index}
-                                    className="text-fluid-vsmall md:text-fluid-small bg-blue-50 text-[#00417a] px-3 py-1 rounded-md whitespace-nowrap flex-shrink-0 font-medium"
-                                >
-                                    {book.title}
-                                </span>
-                            ))}
-                        </div>
-
-                        {/* Price Section */}
-                        <div className="flex items-baseline gap-2">
-                            <span className="text-fluid-h2 md:text-fluid-h1to2 font-bold text-[#00417a]">
-                                {packPrice}
-                                <span className="text-fluid-vsmall md:text-fluid-small font-bold ml-1">
-                                    {t('packCard.currency')}
-                                </span>
-                            </span>
-                            {originalPrice > packPrice && (
-                                <span className="text-fluid-vsmall md:text-fluid-small text-gray-400 line-through">
-                                    {originalPrice}
-                                </span>
                             )}
+
+                            {/* Unified Description Modal - Shows on hover and click */}
+                            {isDescriptionTruncated && showDescriptionModal && (
+                                <>
+                                    {/* Modal */}
+                                    <div
+                                        ref={modalRef}
+                                        className={`fixed bg-white rounded-2xl shadow-2xl p-4 sm:p-5 z-[101] animate-slideUp max-h-[80vh] overflow-y-auto`}
+                                        style={{
+                                            animation: 'slideUp 0.3s ease-out forwards',
+                                            boxShadow: '0 20px 60px rgba(0, 65, 122, 0.2), 0 0 0 1px rgba(0, 65, 122, 0.1)',
+                                            ...(modalPosition.centered ? {
+                                                top: '50%',
+                                                left: '50%',
+                                                transform: 'translate(-50%, -50%)',
+                                                width: '92%',
+                                                maxWidth: '28rem',
+                                                maxHeight: '80vh'
+                                            } : {
+                                                top: `${modalPosition.top}px`,
+                                                left: `${modalPosition.left}px`,
+                                                width: `${modalPosition.width}px`,
+                                                maxWidth: '32rem',
+                                                maxHeight: `${Math.min(window.innerHeight * 0.8, 400)}px`
+                                            })
+                                        }}
+                                        onMouseEnter={() => {
+                                            // Keep modal open when hovering over it
+                                            if (hoverTimeoutRef.current) {
+                                                clearTimeout(hoverTimeoutRef.current);
+                                                hoverTimeoutRef.current = null;
+                                            }
+                                        }}
+                                        onMouseLeave={() => {
+                                            // Close when leaving modal (if not pinned)
+                                            if (!isModalPinned) {
+                                                setShowDescriptionModal(false);
+                                            }
+                                        }}
+                                    >
+                                        <div className="flex justify-between items-start mb-3">
+                                            <h4 className="text-lg font-semibold text-[#00417a]">
+                                                {t('packCard.descriptionModal')}
+                                            </h4>
+                                            {isModalPinned && (
+                                                <button
+                                                    onClick={closeModal}
+                                                    className="text-gray-400 hover:text-gray-600 transition-colors duration-200 text-2xl leading-none w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
+                                                >
+                                                    ×
+                                                </button>
+                                            )}
+                                        </div>
+                                        <p className="text-sm text-gray-700 leading-relaxed">
+                                            {description}
+                                        </p>
+                                    </div>
+
+                                    {/* CSS Keyframes for animations */}
+                                    <style>{`
+                                        @keyframes slideUp {
+                                            from {
+                                                opacity: 0;
+                                                transform: ${modalPosition.centered
+                                                    ? 'translate(-50%, -48%) scale(0.95)'
+                                                    : 'translateY(-8px) scale(0.95)'};
+                                            }
+                                            to {
+                                                opacity: 1;
+                                                transform: ${modalPosition.centered
+                                                    ? 'translate(-50%, -50%) scale(1)'
+                                                    : 'translateY(0) scale(1)'};
+                                            }
+                                        }
+                                    `}</style>
+                                </>
+                            )}
+
+                            {/* Book Titles as Scrollable Tags */}
+                            <div className="flex gap-1.5 overflow-x-auto scrollbar-hide py-1.5">
+                                {books.map((book, index) => (
+                                    <span
+                                        key={index}
+                                        className="text-fluid-vsmall md:text-fluid-small bg-blue-50 text-[#00417a] px-3 py-1 rounded-md whitespace-nowrap flex-shrink-0 font-medium"
+                                    >
+                                        {book.title}
+                                    </span>
+                                ))}
+                            </div>
                         </div>
 
-                        {/* Add to Cart Button */}
-                        <button
-                            onClick={handleAddToCartClick}
-                            className="bg-[#EE0027] hover:bg-[#d4183d] text-white px-2 py-1.5 sm:px-3 sm:py-2 md:px-fluid-xs md:py-fluid-xxs rounded-md transition-colors font-semibold flex items-center justify-center gap-1 shadow-md hover:shadow-lg w-full"
-                        >
-                            <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-4 md:h-4 flex-shrink-0" />
-                            <span className="text-[0.65rem] sm:text-[0.75rem] md:text-fluid-small font-semibold truncate">{t('packCard.addToCart')}</span>
-                        </button>
+                        {/* BOTTOM GROUP - Price + Add to Cart */}
+                        <div className="flex flex-col gap-fluid-xxs">
+
+                            {/* Price Section */}
+                            <div className="flex items-baseline gap-2">
+                                <span className="text-fluid-h2 md:text-fluid-h1to2 font-bold text-[#00417a]">
+                                    {packPrice}
+                                    <span className="text-fluid-vsmall md:text-fluid-small font-bold ml-1">
+                                        {t('packCard.currency')}
+                                    </span>
+                                </span>
+                                {originalPrice > packPrice && (
+                                    <span className="text-fluid-vsmall md:text-fluid-small text-gray-400 line-through">
+                                        {originalPrice}
+                                    </span>
+                                )}
+                            </div>
+
+                            {/* Add to Cart Button */}
+                            <button
+                                onClick={handleAddToCartClick}
+                                className="bg-[#EE0027] hover:bg-[#d4183d] text-white px-2 py-1.5 sm:px-3 sm:py-2 md:px-fluid-xs md:py-fluid-xxs rounded-md transition-colors font-semibold flex items-center justify-center gap-1 shadow-md hover:shadow-lg w-full"
+                            >
+                                <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-4 md:h-4 flex-shrink-0" />
+                                <span className="text-[0.65rem] sm:text-[0.75rem] md:text-fluid-small font-semibold truncate">{t('packCard.addToCart')}</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

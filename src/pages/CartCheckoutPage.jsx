@@ -771,310 +771,6 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
 
 
 
-        {/* Wilaya */}
-        <div>
-          <label className="block text-[#353535] text-fluid-medium font-[500] mb-2">
-            {t('cart.wilaya')}
-          </label>
-
-          <div className="relative" ref={el => dropdownRefs.current['wilaya'] = el}>
-            <div
-              className={`flex items-center bg-white rounded-lg border-2 transition-all duration-200 ${
-                validationErrors.wilaya
-                  ? 'border-red-500'
-                  : openDropdown === 'wilaya' ? 'border-emerald-500 shadow-md' : 'border-neutral-200 hover:border-neutral-300'
-                }`}
-            >
-              <div
-                className="flex items-center flex-1 min-w-0 h-11 px-2.5 sm:px-3 cursor-text"
-                onClick={() => {
-                  if (wilayaInputRef.current) {
-                    wilayaInputRef.current.focus();
-                  }
-                  if (openDropdown !== 'wilaya') {
-                    setOpenDropdown('wilaya');
-                  }
-                }}
-              >
-                <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 mr-1.5 sm:mr-2 flex-shrink-0" />
-                <input
-                  ref={wilayaInputRef}
-                  type="text"
-                  value={wilayaSearch}
-                  onChange={(e) => setWilayaSearch(e.target.value)}
-                  onFocus={() => {
-                    setOpenDropdown('wilaya');
-                  }}
-                  placeholder={formData.wilaya || t('cart.wilayaPlaceholder')}
-                  className={`flex-1 min-w-0 bg-transparent border-0 outline-none text-fluid-small cursor-text ${formData.wilaya ? 'text-gray-700 placeholder-gray-700 font-medium' : 'text-gray-400 placeholder-gray-400'
-                    }`}
-                />
-              </div>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setOpenDropdown(openDropdown === 'wilaya' ? null : 'wilaya');
-                }}
-                className="h-11 px-2 sm:px-3 hover:bg-gray-100 rounded-r-lg transition-colors flex items-center justify-center flex-shrink-0"
-              >
-                <ChevronDown
-                  className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-500 transform transition-transform duration-200 ${openDropdown === 'wilaya' ? 'rotate-180' : ''
-                    }`}
-                />
-              </button>
-            </div>
-
-            <AnimatePresence>
-              {openDropdown === 'wilaya' && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10, height: 0 }}
-                  animate={{ opacity: 1, y: 0, height: 'auto' }}
-                  exit={{ opacity: 0, y: -10, height: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute top-full left-0 right-0 z-50 mt-2 overflow-hidden"
-                >
-                  <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
-                    <div className="flex items-center justify-between px-3 sm:px-4 py-2 bg-gray-50 border-b border-gray-200">
-                      <span className="text-fluid-xs font-medium text-gray-600">
-                        {getFilteredWilayas().length} {getFilteredWilayas().length === 1 ? 'résultat' : 'résultats'}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => setOpenDropdown(null)}
-                        className="text-gray-400 hover:text-gray-600 transition-colors"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                    <div className="max-h-52 overflow-y-auto">
-                      {getFilteredWilayas().map((wilaya) => (
-                        <button
-                          type="button"
-                          key={wilaya}
-                          onClick={() => handleWilayaSelect(wilaya)}
-                          className={`w-full text-left px-3 sm:px-4 py-2.5 sm:py-3 text-fluid-small hover:bg-emerald-50 transition-colors flex items-center border-b border-gray-100 last:border-b-0 ${formData.wilaya === wilaya ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700'
-                            }`}
-                        >
-                          <div className={`w-3 h-3 border-2 rounded-full mr-2 sm:mr-3 flex-shrink-0 ${formData.wilaya === wilaya ? 'border-emerald-500 bg-emerald-500' : 'border-gray-300'
-                            }`}></div>
-                          <span className="font-medium truncate">{wilaya}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-          {validationErrors.wilaya && (
-            <p className="mt-1 text-fluid-xs text-red-500">{validationErrors.wilaya}</p>
-          )}
-        </div>
-
-        {/* City/Commune */}
-        <div>
-          <label className="block text-[#353535] text-fluid-medium font-[500] mb-2">
-            {t('cart.city')}
-          </label>
-
-          <div className="relative" ref={el => dropdownRefs.current['city'] = el}>
-            <div
-              className={`flex items-center bg-white rounded-lg border-2 transition-all duration-200 ${
-                !formData.wilaya ? 'bg-gray-100 cursor-not-allowed' :
-                validationErrors.city ? 'border-red-500' :
-                openDropdown === 'city' ? 'border-emerald-500 shadow-md' : 'border-neutral-200 hover:border-neutral-300'
-                }`}
-            >
-              <div
-                className={`flex items-center flex-1 min-w-0 h-11 px-2.5 sm:px-3 ${formData.wilaya ? 'cursor-text' : 'cursor-not-allowed'}`}
-                onClick={() => {
-                  if (!formData.wilaya) return;
-                  if (cityInputRef.current) {
-                    cityInputRef.current.focus();
-                  }
-                  if (openDropdown !== 'city') {
-                    setOpenDropdown('city');
-                  }
-                }}
-              >
-                <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 mr-1.5 sm:mr-2 flex-shrink-0" />
-                <input
-                  ref={cityInputRef}
-                  type="text"
-                  value={citySearch}
-                  onChange={(e) => setCitySearch(e.target.value)}
-                  onFocus={() => {
-                    if (formData.wilaya) {
-                      setOpenDropdown('city');
-                    }
-                  }}
-                  disabled={!formData.wilaya}
-                  placeholder={formData.city || t('cart.cityPlaceholder')}
-                  className={`flex-1 min-w-0 bg-transparent border-0 outline-none text-fluid-small cursor-text disabled:cursor-not-allowed ${formData.city ? 'text-gray-700 placeholder-gray-700 font-medium' : 'text-gray-400 placeholder-gray-400'
-                    }`}
-                />
-              </div>
-              <button
-                type="button"
-                disabled={!formData.wilaya}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  if (formData.wilaya) {
-                    setOpenDropdown(openDropdown === 'city' ? null : 'city');
-                  }
-                }}
-                className={`h-11 px-2 sm:px-3 rounded-r-lg transition-colors flex items-center justify-center flex-shrink-0 ${formData.wilaya ? 'hover:bg-gray-100' : 'cursor-not-allowed'
-                  }`}
-              >
-                <ChevronDown
-                  className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-500 transform transition-transform duration-200 ${openDropdown === 'city' ? 'rotate-180' : ''
-                    }`}
-                />
-              </button>
-            </div>
-
-            <AnimatePresence>
-              {openDropdown === 'city' && formData.wilaya && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10, height: 0 }}
-                  animate={{ opacity: 1, y: 0, height: 'auto' }}
-                  exit={{ opacity: 0, y: -10, height: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute top-full left-0 right-0 z-50 mt-2 overflow-hidden"
-                >
-                  <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
-                    <div className="flex items-center justify-between px-3 sm:px-4 py-2 bg-gray-50 border-b border-gray-200">
-                      <span className="text-fluid-xs font-medium text-gray-600">
-                        {getFilteredCities().length} {getFilteredCities().length === 1 ? 'résultat' : 'résultats'}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => setOpenDropdown(null)}
-                        className="text-gray-400 hover:text-gray-600 transition-colors"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                    <div className="max-h-52 overflow-y-auto">
-                      {getFilteredCities().length > 0 ? (
-                        getFilteredCities().map((city) => (
-                          <button
-                            type="button"
-                            key={city}
-                            onClick={() => handleCitySelect(city)}
-                            className={`w-full text-left px-3 sm:px-4 py-2.5 sm:py-3 text-fluid-small hover:bg-emerald-50 transition-colors flex items-center border-b border-gray-100 last:border-b-0 ${formData.city === city ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700'
-                              }`}
-                          >
-                            <div className={`w-3 h-3 border-2 rounded-full mr-2 sm:mr-3 flex-shrink-0 ${formData.city === city ? 'border-emerald-500 bg-emerald-500' : 'border-gray-300'
-                              }`}></div>
-                            <span className="font-medium truncate">{city}</span>
-                          </button>
-                        ))
-                      ) : (
-                        <div className="px-3 sm:px-4 py-6 text-fluid-small text-gray-500 text-center">
-                          Aucun résultat
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-          {validationErrors.city && (
-            <p className="mt-1 text-fluid-xs text-red-500">{validationErrors.city}</p>
-          )}
-        </div>
-
-        {/* Shipping Provider - Always visible and required */}
-        <div className="mt-6">
-          <label className="block text-[#353535] text-fluid-medium font-[500] mb-2">
-            {t('cart.shippingProvider')}
-          </label>
-          <div className="relative" ref={el => dropdownRefs.current['provider'] = el}>
-            <div className={`flex items-center bg-white rounded-lg border-2 transition-all duration-200 ${
-              shippingPreference === 'home' ? 'opacity-60 cursor-not-allowed bg-gray-50' :
-              validationErrors.provider
-                ? 'border-red-500'
-                : openDropdown === 'provider' ? 'border-emerald-500 shadow-md' : 'border-neutral-200 hover:border-neutral-300'
-              }`}>
-              <div
-                className={`flex items-center flex-1 min-w-0 h-11 px-3 ${shippingPreference === 'home' ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                onClick={() => {
-                  if (shippingPreference === 'home') return;
-                  setOpenDropdown(openDropdown === 'provider' ? null : 'provider');
-                }}
-              >
-                <Truck className="w-4 h-4 text-emerald-500 mr-2 flex-shrink-0" />
-                <span className={`text-fluid-small truncate ${pickupProvider ? 'text-gray-700 font-medium' : 'text-gray-400'}`}>
-                  {pickupProvider || t('cart.selectProvider')}
-                </span>
-              </div>
-              <button
-                type="button"
-                disabled={shippingPreference === 'home'}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  if (shippingPreference === 'home') return;
-                  setOpenDropdown(openDropdown === 'provider' ? null : 'provider');
-                }}
-                className={`h-11 px-3 rounded-r-lg transition-colors flex items-center justify-center flex-shrink-0 ${shippingPreference === 'home' ? 'cursor-not-allowed' : 'hover:bg-gray-100'}`}
-              >
-                <ChevronDown
-                  className={`w-4 h-4 text-gray-500 transform transition-transform duration-200 ${openDropdown === 'provider' ? 'rotate-180' : ''}`}
-                />
-              </button>
-            </div>
-
-            <AnimatePresence>
-              {openDropdown === 'provider' && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10, height: 0 }}
-                  animate={{ opacity: 1, y: 0, height: 'auto' }}
-                  exit={{ opacity: 0, y: -10, height: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute top-full left-0 right-0 z-50 mt-2 overflow-hidden"
-                >
-                  <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
-                    <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200">
-                      <span className="text-fluid-xs font-medium text-gray-600">
-                        {pickupProviders.length} {pickupProviders.length === 1 ? 'option' : 'options'}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => setOpenDropdown(null)}
-                        className="text-gray-400 hover:text-gray-600 transition-colors"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                    <div className="max-h-52 overflow-y-auto">
-                      {pickupProviders.map((provider) => (
-                        <button
-                          type="button"
-                          key={provider}
-                          onClick={() => handleProviderSelect(provider)}
-                          className={`w-full text-left px-4 py-3 text-fluid-small hover:bg-emerald-50 transition-colors flex items-center border-b border-gray-100 last:border-b-0 ${pickupProvider === provider ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700'}`}
-                        >
-                          <div className={`w-3 h-3 border-2 rounded-full mr-3 flex-shrink-0 ${pickupProvider === provider ? 'border-emerald-500 bg-emerald-500' : 'border-gray-300'}`}></div>
-                          <span className="font-medium truncate">{provider}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-          {validationErrors.provider && (
-            <p className="mt-1 text-fluid-xs text-red-500">{validationErrors.provider}</p>
-          )}
-        </div>
-
         {/* Shipping Method */}
         <div className="mt-6">
           <label className="block text-[#353535] text-fluid-medium font-[500] mb-3">
@@ -1123,7 +819,7 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
                 </div>
               </button>
 
-              {/* Home Address Input - Appears when Home Delivery is selected */}
+              {/* Home Delivery Fields - Wilaya, Commune, Adresse */}
               <AnimatePresence>
                 {shippingPreference === "home" && (
                   <motion.div
@@ -1133,18 +829,242 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                     className="overflow-hidden"
                   >
-                    <div className="mt-3 px-3 md:px-4">
-                      <div className="relative">
-                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500 pointer-events-none">
-                          <Home className="w-4 h-4" />
+                    <div className="mt-3 space-y-4 px-3 md:px-4">
+                      {/* Wilaya */}
+                      <div>
+                        <label className="block text-[#353535] text-fluid-medium font-[500] mb-2">
+                          {t('cart.wilaya')}
+                        </label>
+                        <div className="relative" ref={el => dropdownRefs.current['wilaya'] = el}>
+                          <div
+                            className={`flex items-center bg-white rounded-lg border-2 transition-all duration-200 ${
+                              validationErrors.wilaya
+                                ? 'border-red-500'
+                                : openDropdown === 'wilaya' ? 'border-emerald-500 shadow-md' : 'border-neutral-200 hover:border-neutral-300'
+                              }`}
+                          >
+                            <div
+                              className="flex items-center flex-1 min-w-0 h-11 px-2.5 sm:px-3 cursor-text"
+                              onClick={() => {
+                                if (wilayaInputRef.current) {
+                                  wilayaInputRef.current.focus();
+                                }
+                                if (openDropdown !== 'wilaya') {
+                                  setOpenDropdown('wilaya');
+                                }
+                              }}
+                            >
+                              <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 mr-1.5 sm:mr-2 flex-shrink-0" />
+                              <input
+                                ref={wilayaInputRef}
+                                type="text"
+                                value={wilayaSearch}
+                                onChange={(e) => setWilayaSearch(e.target.value)}
+                                onFocus={() => {
+                                  setOpenDropdown('wilaya');
+                                }}
+                                placeholder={formData.wilaya || t('cart.wilayaPlaceholder')}
+                                className={`flex-1 min-w-0 bg-transparent border-0 outline-none text-fluid-small cursor-text ${formData.wilaya ? 'text-gray-700 placeholder-gray-700 font-medium' : 'text-gray-400 placeholder-gray-400'
+                                  }`}
+                              />
+                            </div>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setOpenDropdown(openDropdown === 'wilaya' ? null : 'wilaya');
+                              }}
+                              className="h-11 px-2 sm:px-3 hover:bg-gray-100 rounded-r-lg transition-colors flex items-center justify-center flex-shrink-0"
+                            >
+                              <ChevronDown
+                                className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-500 transform transition-transform duration-200 ${openDropdown === 'wilaya' ? 'rotate-180' : ''
+                                  }`}
+                              />
+                            </button>
+                          </div>
+                          <AnimatePresence>
+                            {openDropdown === 'wilaya' && (
+                              <motion.div
+                                initial={{ opacity: 0, y: -10, height: 0 }}
+                                animate={{ opacity: 1, y: 0, height: 'auto' }}
+                                exit={{ opacity: 0, y: -10, height: 0 }}
+                                transition={{ duration: 0.2 }}
+                                className="absolute top-full left-0 right-0 z-50 mt-2 overflow-hidden"
+                              >
+                                <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                                  <div className="flex items-center justify-between px-3 sm:px-4 py-2 bg-gray-50 border-b border-gray-200">
+                                    <span className="text-fluid-xs font-medium text-gray-600">
+                                      {getFilteredWilayas().length} {getFilteredWilayas().length === 1 ? 'résultat' : 'résultats'}
+                                    </span>
+                                    <button
+                                      type="button"
+                                      onClick={() => setOpenDropdown(null)}
+                                      className="text-gray-400 hover:text-gray-600 transition-colors"
+                                    >
+                                      <X className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                  <div className="max-h-52 overflow-y-auto">
+                                    {getFilteredWilayas().map((wilaya) => (
+                                      <button
+                                        type="button"
+                                        key={wilaya}
+                                        onClick={() => handleWilayaSelect(wilaya)}
+                                        className={`w-full text-left px-3 sm:px-4 py-2.5 sm:py-3 text-fluid-small hover:bg-emerald-50 transition-colors flex items-center border-b border-gray-100 last:border-b-0 ${formData.wilaya === wilaya ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700'
+                                          }`}
+                                      >
+                                        <div className={`w-3 h-3 border-2 rounded-full mr-2 sm:mr-3 flex-shrink-0 ${formData.wilaya === wilaya ? 'border-emerald-500 bg-emerald-500' : 'border-gray-300'
+                                          }`}></div>
+                                        <span className="font-medium truncate">{wilaya}</span>
+                                      </button>
+                                    ))}
+                                  </div>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
                         </div>
-                        <input
-                          type="text"
-                          value={homeAddress}
-                          onChange={(e) => setHomeAddress(e.target.value)}
-                          placeholder={t('cart.homeAddressPlaceholder')}
-                          className="w-full pl-10 pr-4 py-2.5 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white text-fluid-small transition-all placeholder:text-gray-400"
-                        />
+                        {validationErrors.wilaya && (
+                          <p className="mt-1 text-fluid-xs text-red-500">{validationErrors.wilaya}</p>
+                        )}
+                      </div>
+
+                      {/* Commune */}
+                      <div>
+                        <label className="block text-[#353535] text-fluid-medium font-[500] mb-2">
+                          {t('cart.city')}
+                        </label>
+                        <div className="relative" ref={el => dropdownRefs.current['city'] = el}>
+                          <div
+                            className={`flex items-center bg-white rounded-lg border-2 transition-all duration-200 ${
+                              !formData.wilaya ? 'bg-gray-100 cursor-not-allowed' :
+                              validationErrors.city ? 'border-red-500' :
+                              openDropdown === 'city' ? 'border-emerald-500 shadow-md' : 'border-neutral-200 hover:border-neutral-300'
+                              }`}
+                          >
+                            <div
+                              className={`flex items-center flex-1 min-w-0 h-11 px-2.5 sm:px-3 ${formData.wilaya ? 'cursor-text' : 'cursor-not-allowed'}`}
+                              onClick={() => {
+                                if (!formData.wilaya) return;
+                                if (cityInputRef.current) {
+                                  cityInputRef.current.focus();
+                                }
+                                if (openDropdown !== 'city') {
+                                  setOpenDropdown('city');
+                                }
+                              }}
+                            >
+                              <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 mr-1.5 sm:mr-2 flex-shrink-0" />
+                              <input
+                                ref={cityInputRef}
+                                type="text"
+                                value={citySearch}
+                                onChange={(e) => setCitySearch(e.target.value)}
+                                onFocus={() => {
+                                  if (formData.wilaya) {
+                                    setOpenDropdown('city');
+                                  }
+                                }}
+                                disabled={!formData.wilaya}
+                                placeholder={formData.city || t('cart.cityPlaceholder')}
+                                className={`flex-1 min-w-0 bg-transparent border-0 outline-none text-fluid-small cursor-text disabled:cursor-not-allowed ${formData.city ? 'text-gray-700 placeholder-gray-700 font-medium' : 'text-gray-400 placeholder-gray-400'
+                                  }`}
+                              />
+                            </div>
+                            <button
+                              type="button"
+                              disabled={!formData.wilaya}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                if (formData.wilaya) {
+                                  setOpenDropdown(openDropdown === 'city' ? null : 'city');
+                                }
+                              }}
+                              className={`h-11 px-2 sm:px-3 rounded-r-lg transition-colors flex items-center justify-center flex-shrink-0 ${formData.wilaya ? 'hover:bg-gray-100' : 'cursor-not-allowed'
+                                }`}
+                            >
+                              <ChevronDown
+                                className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-500 transform transition-transform duration-200 ${openDropdown === 'city' ? 'rotate-180' : ''
+                                  }`}
+                              />
+                            </button>
+                          </div>
+                          <AnimatePresence>
+                            {openDropdown === 'city' && formData.wilaya && (
+                              <motion.div
+                                initial={{ opacity: 0, y: -10, height: 0 }}
+                                animate={{ opacity: 1, y: 0, height: 'auto' }}
+                                exit={{ opacity: 0, y: -10, height: 0 }}
+                                transition={{ duration: 0.2 }}
+                                className="absolute top-full left-0 right-0 z-50 mt-2 overflow-hidden"
+                              >
+                                <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                                  <div className="flex items-center justify-between px-3 sm:px-4 py-2 bg-gray-50 border-b border-gray-200">
+                                    <span className="text-fluid-xs font-medium text-gray-600">
+                                      {getFilteredCities().length} {getFilteredCities().length === 1 ? 'résultat' : 'résultats'}
+                                    </span>
+                                    <button
+                                      type="button"
+                                      onClick={() => setOpenDropdown(null)}
+                                      className="text-gray-400 hover:text-gray-600 transition-colors"
+                                    >
+                                      <X className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                  <div className="max-h-52 overflow-y-auto">
+                                    {getFilteredCities().length > 0 ? (
+                                      getFilteredCities().map((city) => (
+                                        <button
+                                          type="button"
+                                          key={city}
+                                          onClick={() => handleCitySelect(city)}
+                                          className={`w-full text-left px-3 sm:px-4 py-2.5 sm:py-3 text-fluid-small hover:bg-emerald-50 transition-colors flex items-center border-b border-gray-100 last:border-b-0 ${formData.city === city ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700'
+                                            }`}
+                                        >
+                                          <div className={`w-3 h-3 border-2 rounded-full mr-2 sm:mr-3 flex-shrink-0 ${formData.city === city ? 'border-emerald-500 bg-emerald-500' : 'border-gray-300'
+                                            }`}></div>
+                                          <span className="font-medium truncate">{city}</span>
+                                        </button>
+                                      ))
+                                    ) : (
+                                      <div className="px-3 sm:px-4 py-6 text-fluid-small text-gray-500 text-center">
+                                        Aucun résultat
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                        {validationErrors.city && (
+                          <p className="mt-1 text-fluid-xs text-red-500">{validationErrors.city}</p>
+                        )}
+                      </div>
+
+                      {/* Adresse */}
+                      <div>
+                        <label className="block text-[#353535] text-fluid-medium font-[500] mb-2">
+                          {t('cart.address')}
+                        </label>
+                        <div className="relative">
+                          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500 pointer-events-none">
+                            <Home className="w-4 h-4" />
+                          </div>
+                          <input
+                            type="text"
+                            required
+                            value={homeAddress}
+                            onChange={(e) => setHomeAddress(e.target.value)}
+                            placeholder={t('cart.homeAddressPlaceholder')}
+                            className="w-full pl-10 pr-4 py-2.5 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white text-fluid-small transition-all placeholder:text-gray-400"
+                          />
+                        </div>
+                        {validationErrors.shipping && (
+                          <p className="mt-1 text-fluid-xs text-red-500">{validationErrors.shipping}</p>
+                        )}
                       </div>
                     </div>
                   </motion.div>
@@ -1192,7 +1112,7 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
                 </div>
               </button>
 
-              {/* Relay Point Select - Appears when Pickup Point is selected */}
+              {/* Pickup Fields - Wilaya, Transporter, Relay Point */}
               <AnimatePresence>
                 {shippingPreference === "pickup" && (
                   <motion.div
@@ -1201,35 +1121,215 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                   >
-                    <div className="mt-3 px-3 md:px-4">
-                      <label className="block text-[#353535] text-fluid-xs font-[500] mb-2">
-                        {t('cart.selectRelayPoint')}
-                      </label>
+                    <div className="mt-3 space-y-4 px-3 md:px-4">
+                      {/* Wilaya */}
+                      <div>
+                        <label className="block text-[#353535] text-fluid-medium font-[500] mb-2">
+                          {t('cart.wilaya')}
+                        </label>
+                        <div className="relative" ref={el => dropdownRefs.current['wilaya'] = el}>
+                          <div
+                            className={`flex items-center bg-white rounded-lg border-2 transition-all duration-200 ${
+                              validationErrors.wilaya
+                                ? 'border-red-500'
+                                : openDropdown === 'wilaya' ? 'border-emerald-500 shadow-md' : 'border-neutral-200 hover:border-neutral-300'
+                              }`}
+                          >
+                            <div
+                              className="flex items-center flex-1 min-w-0 h-11 px-2.5 sm:px-3 cursor-text"
+                              onClick={() => {
+                                if (wilayaInputRef.current) {
+                                  wilayaInputRef.current.focus();
+                                }
+                                if (openDropdown !== 'wilaya') {
+                                  setOpenDropdown('wilaya');
+                                }
+                              }}
+                            >
+                              <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 mr-1.5 sm:mr-2 flex-shrink-0" />
+                              <input
+                                ref={wilayaInputRef}
+                                type="text"
+                                value={wilayaSearch}
+                                onChange={(e) => setWilayaSearch(e.target.value)}
+                                onFocus={() => {
+                                  setOpenDropdown('wilaya');
+                                }}
+                                placeholder={formData.wilaya || t('cart.wilayaPlaceholder')}
+                                className={`flex-1 min-w-0 bg-transparent border-0 outline-none text-fluid-small cursor-text ${formData.wilaya ? 'text-gray-700 placeholder-gray-700 font-medium' : 'text-gray-400 placeholder-gray-400'
+                                  }`}
+                              />
+                            </div>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setOpenDropdown(openDropdown === 'wilaya' ? null : 'wilaya');
+                              }}
+                              className="h-11 px-2 sm:px-3 hover:bg-gray-100 rounded-r-lg transition-colors flex items-center justify-center flex-shrink-0"
+                            >
+                              <ChevronDown
+                                className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-500 transform transition-transform duration-200 ${openDropdown === 'wilaya' ? 'rotate-180' : ''
+                                  }`}
+                              />
+                            </button>
+                          </div>
+                          <AnimatePresence>
+                            {openDropdown === 'wilaya' && (
+                              <motion.div
+                                initial={{ opacity: 0, y: -10, height: 0 }}
+                                animate={{ opacity: 1, y: 0, height: 'auto' }}
+                                exit={{ opacity: 0, y: -10, height: 0 }}
+                                transition={{ duration: 0.2 }}
+                                className="absolute top-full left-0 right-0 z-50 mt-2 overflow-hidden"
+                              >
+                                <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                                  <div className="flex items-center justify-between px-3 sm:px-4 py-2 bg-gray-50 border-b border-gray-200">
+                                    <span className="text-fluid-xs font-medium text-gray-600">
+                                      {getFilteredWilayas().length} {getFilteredWilayas().length === 1 ? 'résultat' : 'résultats'}
+                                    </span>
+                                    <button
+                                      type="button"
+                                      onClick={() => setOpenDropdown(null)}
+                                      className="text-gray-400 hover:text-gray-600 transition-colors"
+                                    >
+                                      <X className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                  <div className="max-h-52 overflow-y-auto">
+                                    {getFilteredWilayas().map((wilaya) => (
+                                      <button
+                                        type="button"
+                                        key={wilaya}
+                                        onClick={() => handleWilayaSelect(wilaya)}
+                                        className={`w-full text-left px-3 sm:px-4 py-2.5 sm:py-3 text-fluid-small hover:bg-emerald-50 transition-colors flex items-center border-b border-gray-100 last:border-b-0 ${formData.wilaya === wilaya ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700'
+                                          }`}
+                                      >
+                                        <div className={`w-3 h-3 border-2 rounded-full mr-2 sm:mr-3 flex-shrink-0 ${formData.wilaya === wilaya ? 'border-emerald-500 bg-emerald-500' : 'border-gray-300'
+                                          }`}></div>
+                                        <span className="font-medium truncate">{wilaya}</span>
+                                      </button>
+                                    ))}
+                                  </div>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                        {validationErrors.wilaya && (
+                          <p className="mt-1 text-fluid-xs text-red-500">{validationErrors.wilaya}</p>
+                        )}
+                      </div>
 
-                      <RelayPointSelect
-                        value={stopDeskId}
-                        onChange={(id) => {
-                          setStopDeskId(id);
-                          if (id) {
-                            setValidationErrors(prev => ({ ...prev, relayPoint: '' }));
-                          }
-                        }}
-                        provider={PROVIDER_DISPLAY_TO_API[pickupProvider]}
-                        wilaya={formData.wilaya}
-                        error={!!validationErrors.relayPoint}
-                      />
-                      {validationErrors.relayPoint && (
-                        <p className="mt-1 text-fluid-xs text-red-500">{validationErrors.relayPoint}</p>
-                      )}
+                      {/* Transporter */}
+                      <div>
+                        <label className="block text-[#353535] text-fluid-medium font-[500] mb-2">
+                          {t('cart.shippingProvider')}
+                        </label>
+                        <div className="relative" ref={el => dropdownRefs.current['provider'] = el}>
+                          <div className={`flex items-center bg-white rounded-lg border-2 transition-all duration-200 ${
+                            validationErrors.provider
+                              ? 'border-red-500'
+                              : openDropdown === 'provider' ? 'border-emerald-500 shadow-md' : 'border-neutral-200 hover:border-neutral-300'
+                            }`}>
+                            <div
+                              className="flex items-center flex-1 min-w-0 h-11 px-3 cursor-pointer"
+                              onClick={() => {
+                                setOpenDropdown(openDropdown === 'provider' ? null : 'provider');
+                              }}
+                            >
+                              <Truck className="w-4 h-4 text-emerald-500 mr-2 flex-shrink-0" />
+                              <span className={`text-fluid-small truncate ${pickupProvider ? 'text-gray-700 font-medium' : 'text-gray-400'}`}>
+                                {pickupProvider || t('cart.selectProvider')}
+                              </span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setOpenDropdown(openDropdown === 'provider' ? null : 'provider');
+                              }}
+                              className="h-11 px-3 rounded-r-lg transition-colors flex items-center justify-center flex-shrink-0 hover:bg-gray-100"
+                            >
+                              <ChevronDown
+                                className={`w-4 h-4 text-gray-500 transform transition-transform duration-200 ${openDropdown === 'provider' ? 'rotate-180' : ''}`}
+                              />
+                            </button>
+                          </div>
+                          <AnimatePresence>
+                            {openDropdown === 'provider' && (
+                              <motion.div
+                                initial={{ opacity: 0, y: -10, height: 0 }}
+                                animate={{ opacity: 1, y: 0, height: 'auto' }}
+                                exit={{ opacity: 0, y: -10, height: 0 }}
+                                transition={{ duration: 0.2 }}
+                                className="absolute top-full left-0 right-0 z-50 mt-2 overflow-hidden"
+                              >
+                                <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                                  <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200">
+                                    <span className="text-fluid-xs font-medium text-gray-600">
+                                      {pickupProviders.length} {pickupProviders.length === 1 ? 'option' : 'options'}
+                                    </span>
+                                    <button
+                                      type="button"
+                                      onClick={() => setOpenDropdown(null)}
+                                      className="text-gray-400 hover:text-gray-600 transition-colors"
+                                    >
+                                      <X className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                  <div className="max-h-52 overflow-y-auto">
+                                    {pickupProviders.map((provider) => (
+                                      <button
+                                        type="button"
+                                        key={provider}
+                                        onClick={() => handleProviderSelect(provider)}
+                                        className={`w-full text-left px-4 py-3 text-fluid-small hover:bg-emerald-50 transition-colors flex items-center border-b border-gray-100 last:border-b-0 ${pickupProvider === provider ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700'}`}
+                                      >
+                                        <div className={`w-3 h-3 border-2 rounded-full mr-3 flex-shrink-0 ${pickupProvider === provider ? 'border-emerald-500 bg-emerald-500' : 'border-gray-300'}`}></div>
+                                        <span className="font-medium truncate">{provider}</span>
+                                      </button>
+                                    ))}
+                                  </div>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                        {validationErrors.provider && (
+                          <p className="mt-1 text-fluid-xs text-red-500">{validationErrors.provider}</p>
+                        )}
+                      </div>
+
+                      {/* Sélection du point de relais */}
+                      <div>
+                        <label className="block text-[#353535] text-fluid-xs font-[500] mb-2">
+                          {t('cart.selectRelayPoint')}
+                        </label>
+                        <RelayPointSelect
+                          value={stopDeskId}
+                          onChange={(id) => {
+                            setStopDeskId(id);
+                            if (id) {
+                              setValidationErrors(prev => ({ ...prev, relayPoint: '' }));
+                            }
+                          }}
+                          provider={PROVIDER_DISPLAY_TO_API[pickupProvider]}
+                          wilaya={formData.wilaya}
+                          error={!!validationErrors.relayPoint}
+                        />
+                        {validationErrors.relayPoint && (
+                          <p className="mt-1 text-fluid-xs text-red-500">{validationErrors.relayPoint}</p>
+                        )}
+                      </div>
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
           </div>
-          {validationErrors.shipping && (
-            <p className="mt-2 text-fluid-xs text-red-500">{validationErrors.shipping}</p>
-          )}
         </div>
 
         {/* Order Cost Summary */}

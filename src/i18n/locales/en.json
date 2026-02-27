@@ -184,6 +184,7 @@
     "wilayaPlaceholder": "Select your wilaya",
     "city": "City",
     "cityPlaceholder": "Select your city",
+    "address": "Address",
     "shippingMethod": "Shipping method",
     "homeDelivery": "Home delivery",
     "homeDeliveryDesc": "Receive your books directly at home",

@@ -398,7 +398,7 @@ const PackCard = ({
                             {/* Add to Cart Button */}
                             <button
                                 onClick={handleAddToCartClick}
-                                className="bg-[#EE0027] hover:bg-[#d4183d] text-white px-2 py-1.5 sm:px-3 sm:py-2 md:px-fluid-xs md:py-fluid-xxs rounded-md transition-colors font-semibold flex items-center justify-center gap-1 shadow-md hover:shadow-lg w-full"
+                                className="bg-[#EE0027] hover:bg-[#d4183d] text-white px-2 py-2 sm:px-3 sm:py-2.5 md:px-fluid-xs md:py-3 rounded-md transition-colors font-semibold flex items-center justify-center gap-1 shadow-md hover:shadow-lg w-full max-w-[380px] mx-auto"
                             >
                                 <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-4 md:h-4 flex-shrink-0" />
                                 <span className="text-[0.65rem] sm:text-[0.75rem] md:text-fluid-small font-semibold truncate">{t('packCard.addToCart')}</span>

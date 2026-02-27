@@ -60,8 +60,8 @@ main {
   --image-height: calc(var(--image-width) * 1.33);
 
   /* Button dimensions */
-  --button-width: clamp(65px, 12vw, 95px);
-  --button-height: clamp(35px, 7vw, 50px);
+  --button-width: clamp(70px, 13vw, 100px);
+  --button-height: clamp(40px, 9vw, 60px);
 
   /*hero height */
   --hero-height: clamp(240px, 30vw, 350px);

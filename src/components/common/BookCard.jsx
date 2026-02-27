@@ -183,7 +183,7 @@ const BookCard = ({
                 onClick={handleAddToCartClick}
                 className="bg-[#EE0027] absolute bottom-0 mb-0 right-0 text-white px-4 py-3 rounded-tl-xl rounded-br-sm hover:bg-[#d4183d] transition-colors button-card-size flex items-center justify-center flex-shrink-0"
             >
-                <span className="text-fluid-vsmall font-semibold text-center leading-tight" style={{ whiteSpace: 'pre-line' }}>
+                <span className="text-fluid-small font-semibold text-center leading-tight" style={{ whiteSpace: 'pre-line' }}>
                     {t('bookCard.addToCart')}
                 </span>
             </button>

@@ -2,6 +2,7 @@
 // Handles Google Sign-In through Keycloak Identity Provider
 
 import { KEYCLOAK_URL, KEYCLOAK_REALM, KEYCLOAK_CLIENT_ID } from './apiConfig';
+import { notifyAuthChange } from './authService';
 
 // OAuth endpoints
 const AUTH_URL = `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/auth`;
@@ -167,8 +168,7 @@ export const exchangeCodeForTokens = async (code, redirectUri = null) => {
       localStorage.setItem(ID_TOKEN_KEY, tokens.id_token);
     }
 
-    // Dispatch custom event to notify components of auth change
-    window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated: true } }));
+    notifyAuthChange(true);
 
     return tokens;
   } catch (error) {
@@ -200,8 +200,7 @@ export const logoutFromKeycloak = (idToken, redirectUri = null) => {
   localStorage.removeItem(ACCESS_TOKEN_KEY);
   localStorage.removeItem(ID_TOKEN_KEY);
 
-  // Dispatch custom event to notify components
-  window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated: false } }));
+  notifyAuthChange(false);
 
   // Redirect to Keycloak logout
   window.location.href = logoutUrl;

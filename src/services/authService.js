@@ -8,6 +8,38 @@ const ACCESS_TOKEN_KEY = 'el_access_token';
 const ID_TOKEN_KEY = 'el_id_token';
 const REDIRECT_URL_KEY = 'el_redirect_url';
 
+// Cross-tab auth sync via BroadcastChannel (with storage event as fallback)
+const authChannel = typeof BroadcastChannel !== 'undefined'
+  ? new BroadcastChannel('el_auth_channel')
+  : null;
+
+/**
+ * Notify current tab and all other tabs of an auth state change.
+ * Replaces raw window.dispatchEvent calls — use this everywhere.
+ * @param {boolean} authenticated
+ */
+export const notifyAuthChange = (authenticated) => {
+  window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated } }));
+  authChannel?.postMessage({ type: 'AUTH_STATE_CHANGED', authenticated });
+};
+
+// Receive auth changes broadcast from other tabs (BroadcastChannel path)
+if (authChannel) {
+  authChannel.onmessage = ({ data }) => {
+    if (data?.type === 'AUTH_STATE_CHANGED') {
+      window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated: data.authenticated } }));
+    }
+  };
+}
+
+// Storage event fallback: fires in other tabs when localStorage changes.
+// Only used when BroadcastChannel is unavailable to avoid double-firing.
+window.addEventListener('storage', ({ key, newValue }) => {
+  if (key === ACCESS_TOKEN_KEY && !authChannel) {
+    window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated: newValue !== null } }));
+  }
+});
+
 /**
  * Logout and clear all tokens (frontend-only logout)
  * Note: This does not invalidate the Keycloak/Google session
@@ -16,9 +48,7 @@ const REDIRECT_URL_KEY = 'el_redirect_url';
 export const logout = () => {
   localStorage.removeItem(ACCESS_TOKEN_KEY);
   localStorage.removeItem(ID_TOKEN_KEY);
-
-  // Dispatch custom event to notify components of auth change
-  window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated: false } }));
+  notifyAuthChange(false);
 };
 
 /**

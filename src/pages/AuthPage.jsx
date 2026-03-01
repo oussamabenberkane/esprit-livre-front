@@ -69,7 +69,20 @@ export default function AuthPage() {
       }
     };
 
+    // Re-run auth check when Safari restores this page from bfcache.
+    // If the user completed OAuth in another tab/window and then navigates
+    // back here, we need to detect the new auth state and redirect them away.
+    const handlePageShow = (e) => {
+      if (e.persisted) {
+        console.log('[AuthPage] Restored from bfcache, re-checking auth...');
+        setIsAuthChecked(false);
+        checkAuth();
+      }
+    };
+
     checkAuth();
+    window.addEventListener('pageshow', handlePageShow);
+    return () => window.removeEventListener('pageshow', handlePageShow);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Run only once on mount, ignore location/navigate changes
 

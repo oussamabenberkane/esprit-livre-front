@@ -1,11 +1,25 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import GoogleAuthButton from '../components/buttons/GoogleAuthButton';
 import { initiateGoogleLogin } from '../services/oauthService';
 
 export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Reset loading state when Safari restores this page from bfcache.
+  // Without this, the button stays frozen as "Connecting..." / disabled
+  // because the state snapshot was taken right before window.location.href fired.
+  useEffect(() => {
+    const handlePageShow = (e) => {
+      if (e.persisted) {
+        setLoading(false);
+        setError(null);
+      }
+    };
+    window.addEventListener('pageshow', handlePageShow);
+    return () => window.removeEventListener('pageshow', handlePageShow);
+  }, []);
 
   const handleGoogleAuth = async () => {
     setLoading(true);

@@ -84,7 +84,7 @@ export default function Profile() {
     const fetchProfile = async () => {
       // Check if user is authenticated
       if (!isAuthenticated()) {
-        navigate('/auth', { state: { from: '/profile' } });
+        navigate('/auth', { replace: true, state: { from: '/profile' } });
         return;
       }
 
@@ -158,7 +158,7 @@ export default function Profile() {
         // If unauthorized, redirect to login
         if (err.message.includes('Unauthorized')) {
           authLogout();
-          navigate('/auth', { state: { from: '/profile' } });
+          navigate('/auth', { replace: true, state: { from: '/profile' } });
         }
       }
     };

@@ -34,9 +34,10 @@ export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescrip
     }, [isOpen]);
 
     const handleBookClick = (bookId) => {
-        // Navigate to book details page
+        // Navigate to book details page — do NOT call onClose() so the
+        // calling page's sessionStorage entry is preserved for restoration
+        // when the user navigates back.
         navigate(`/books/${bookId}`);
-        onClose();
     };
 
     if (!isOpen) return null;

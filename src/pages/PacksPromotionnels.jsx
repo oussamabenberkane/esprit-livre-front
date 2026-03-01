@@ -19,6 +19,8 @@ import { useCart } from '../contexts/CartContext';
 import { useFilterPersistence, hasActiveFilters } from '../hooks/useFilterPersistence';
 
 
+const POPUP_STORAGE_KEY = 'packs_openPopupPackId';
+
 const PacksPromotionnels = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -29,6 +31,8 @@ const PacksPromotionnels = () => {
     const [showPackBooksPopup, setShowPackBooksPopup] = useState(false);
     const [selectedPackForPopup, setSelectedPackForPopup] = useState(null);
     const [isLoadingPopupBooks, setIsLoadingPopupBooks] = useState(false);
+    // Ensures popup restoration from sessionStorage only runs once per mount
+    const [popupRestored, setPopupRestored] = useState(false);
 
     // Pack data state
     const [packs, setPacks] = useState([]);
@@ -222,6 +226,78 @@ const PacksPromotionnels = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    // Open the pack books popup and persist the pack ID so it can be
+    // restored when the user navigates back from a book details page.
+    const handleViewAllBooks = async (pack) => {
+        setSelectedPackForPopup(pack);
+        setShowPackBooksPopup(true);
+        setIsLoadingPopupBooks(true);
+        try { sessionStorage.setItem(POPUP_STORAGE_KEY, String(pack.id)); } catch { /* ignore */ }
+
+        try {
+            const bookIds = pack.books.map(b => b.id);
+            const fullBooks = await getBooksByIds(bookIds);
+            setSelectedPackForPopup({
+                ...pack,
+                books: fullBooks.map(book => ({
+                    id: book.id,
+                    title: book.title,
+                    author: book.author?.name || 'Unknown',
+                    price: book.price,
+                    coverImage: getBookCoverUrl(book.id),
+                    language: book.language
+                }))
+            });
+        } catch (err) {
+            console.error('Error fetching book details:', err);
+        } finally {
+            setIsLoadingPopupBooks(false);
+        }
+    };
+
+    // Close popup and clear persistence so it does not reopen on next visit.
+    const handleClosePackPopup = () => {
+        setShowPackBooksPopup(false);
+        setSelectedPackForPopup(null);
+        try { sessionStorage.removeItem(POPUP_STORAGE_KEY); } catch { /* ignore */ }
+    };
+
+    // Restore popup when navigating back: runs once after the initial pack
+    // fetch completes and reads the persisted pack ID from sessionStorage.
+    useEffect(() => {
+        if (loading || popupRestored) return;
+        setPopupRestored(true);
+
+        let savedPackId;
+        try { savedPackId = sessionStorage.getItem(POPUP_STORAGE_KEY); } catch { return; }
+        if (!savedPackId || packs.length === 0) return;
+
+        const pack = packs.find(p => String(p.id) === savedPackId);
+        if (!pack) return;
+
+        setSelectedPackForPopup(pack);
+        setShowPackBooksPopup(true);
+        setIsLoadingPopupBooks(true);
+
+        getBooksByIds(pack.books.map(b => b.id))
+            .then(fullBooks => {
+                setSelectedPackForPopup({
+                    ...pack,
+                    books: fullBooks.map(book => ({
+                        id: book.id,
+                        title: book.title,
+                        author: book.author?.name || 'Unknown',
+                        price: book.price,
+                        coverImage: getBookCoverUrl(book.id),
+                        language: book.language
+                    }))
+                });
+            })
+            .catch(err => console.error('Error restoring pack popup:', err))
+            .finally(() => setIsLoadingPopupBooks(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [loading, packs, popupRestored]);
+
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Navbar */}
@@ -312,35 +388,7 @@ const PacksPromotionnels = () => {
                                             packImage={pack.packImage}
                                             books={pack.books}
                                             onAddToCart={handleAddToCart}
-                                            onViewAllBooks={async () => {
-                                                // Show popup immediately with loading state
-                                                setSelectedPackForPopup(pack);
-                                                setShowPackBooksPopup(true);
-                                                setIsLoadingPopupBooks(true);
-
-                                                try {
-                                                    // Fetch full book details
-                                                    const bookIds = pack.books.map(b => b.id);
-                                                    const fullBooks = await getBooksByIds(bookIds);
-
-                                                    // Update pack with full book data including authors
-                                                    setSelectedPackForPopup({
-                                                        ...pack,
-                                                        books: fullBooks.map(book => ({
-                                                            id: book.id,
-                                                            title: book.title,
-                                                            author: book.author?.name || 'Unknown',
-                                                            price: book.price,
-                                                            coverImage: getBookCoverUrl(book.id),
-                                                            language: book.language
-                                                        }))
-                                                    });
-                                                } catch (err) {
-                                                    console.error('Error fetching book details:', err);
-                                                } finally {
-                                                    setIsLoadingPopupBooks(false);
-                                                }
-                                            }}
+                                            onViewAllBooks={() => handleViewAllBooks(pack)}
                                         />
                                     </div>
                                 ))}
@@ -532,10 +580,7 @@ const PacksPromotionnels = () => {
             {selectedPackForPopup && (
                 <PackBooksPopup
                     isOpen={showPackBooksPopup}
-                    onClose={() => {
-                        setShowPackBooksPopup(false);
-                        setSelectedPackForPopup(null);
-                    }}
+                    onClose={handleClosePackPopup}
                     packTitle={selectedPackForPopup.title}
                     packDescription={selectedPackForPopup.description}
                     books={selectedPackForPopup.books}

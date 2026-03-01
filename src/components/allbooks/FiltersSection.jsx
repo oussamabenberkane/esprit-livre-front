@@ -343,6 +343,22 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
         // If we don't have names yet and authorsData isn't loaded, wait
       }
 
+      // Map price from persisted filters (only when non-default)
+      if (
+        (initialFilters.minPrice !== undefined && initialFilters.minPrice > 0) ||
+        (initialFilters.maxPrice !== undefined && initialFilters.maxPrice < 10000)
+      ) {
+        mappedFilters.price = {
+          min: initialFilters.minPrice ?? 0,
+          max: initialFilters.maxPrice ?? 10000
+        };
+      }
+
+      // Map languages from persisted filters (stored as plain strings)
+      if (initialFilters.languages && initialFilters.languages.length > 0) {
+        mappedFilters.languages = initialFilters.languages;
+      }
+
       // Only update filters if we have mapped data
       if (Object.keys(mappedFilters).length > 0) {
         setFilters(prev => {
@@ -351,9 +367,13 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
             ...mappedFilters
           };
 
-          // Auto-apply filters when coming from URL (e.g., from search)
-          // This includes search-only cases (no categories/authors)
-          if (initialFilters.search || initialFilters.categories || initialFilters.authors) {
+          const hasPriceFilter =
+            (initialFilters.minPrice !== undefined && initialFilters.minPrice > 0) ||
+            (initialFilters.maxPrice !== undefined && initialFilters.maxPrice < 10000);
+          const hasLanguageFilter = initialFilters.languages && initialFilters.languages.length > 0;
+
+          // Auto-apply filters when coming from URL or persisted state
+          if (initialFilters.search || initialFilters.categories || initialFilters.authors || hasPriceFilter || hasLanguageFilter) {
             // Apply filters immediately with the new filter state
             setTimeout(() => {
               // Extract values from filter objects

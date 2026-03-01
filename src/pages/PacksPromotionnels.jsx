@@ -16,6 +16,7 @@ import { fetchTopAuthors } from '../services/authors.service';
 import { getBookCoverUrl, getBookPackCoverUrl } from '../utils/imageUtils';
 import useProgressiveRender from '../hooks/useProgressiveRender';
 import { useCart } from '../contexts/CartContext';
+import { useFilterPersistence, hasActiveFilters } from '../hooks/useFilterPersistence';
 
 
 const PacksPromotionnels = () => {
@@ -40,8 +41,12 @@ const PacksPromotionnels = () => {
     const [totalPages, setTotalPages] = useState(0);
     const packsPerPage = 12;
 
+    // Filter persistence - restore filters when navigating back to this page
+    const { savedFilters, saveFilters } = useFilterPersistence('packs_filters');
+
     // Applied filters state (what's currently being used for API calls)
-    const [appliedFilters, setAppliedFilters] = useState(null);
+    // Initialise from sessionStorage so results are correct on first render
+    const [appliedFilters, setAppliedFilters] = useState(savedFilters);
 
     const [packBooks, setPackBooks] = useState([]);
 
@@ -211,6 +216,8 @@ const PacksPromotionnels = () => {
         setAppliedFilters(filters);
         // Reset to page 1 when filters change
         setCurrentPage(1);
+        // Persist filters so they survive navigation (clear when back to defaults)
+        saveFilters(hasActiveFilters(filters) ? filters : null);
         // Scroll to top when filters are applied
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -239,6 +246,7 @@ const PacksPromotionnels = () => {
                     {/* Filters Section */}
                     <div className="mb-8">
                         <FiltersSection
+                            initialFilters={savedFilters}
                             onApplyFilters={handleApplyFilters}
                             categoriesData={categories}
                             authorsData={authors}

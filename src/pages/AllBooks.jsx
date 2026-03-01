@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next"
 import { getBookCoverUrl } from '../utils/imageUtils'
 import useProgressiveRender from '../hooks/useProgressiveRender'
 import { useCart } from '../contexts/CartContext'
+import { useFilterPersistence, hasActiveFilters } from '../hooks/useFilterPersistence'
 
 export default function AllBooks() {
     const { t } = useTranslation()
@@ -21,6 +22,7 @@ export default function AllBooks() {
     const { addToCart } = useCart()
     const [currentPage, setCurrentPage] = useState(1)
     const [searchParams] = useSearchParams()
+    const { savedFilters, saveFilters } = useFilterPersistence('allbooks_filters')
     const [initialFilters, setInitialFilters] = useState(null)
     const [appliedFilters, setAppliedFilters] = useState(null)
     const [showCartPopup, setShowCartPopup] = useState(false)
@@ -114,9 +116,10 @@ export default function AllBooks() {
             setSearchContext(context)
             setInitialFilters(filters)
         } else {
-            // Reset to default when no search params
+            // No URL params — restore saved filters from sessionStorage if available
             setPageTitle(null)
             setSearchContext(null)
+            setInitialFilters(savedFilters || null)
         }
     }, [searchParams, t])
 
@@ -181,6 +184,8 @@ export default function AllBooks() {
         setCurrentPage(1)
         // Update applied filters state
         setAppliedFilters(filters)
+        // Persist filters so they survive navigation (clear when back to defaults)
+        saveFilters(hasActiveFilters(filters) ? filters : null)
         // Scroll to top when filters are applied
         window.scrollTo({ top: 0, behavior: 'smooth' })
     }

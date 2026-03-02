@@ -15,7 +15,6 @@
   "bookCard": {
     "addToCart": "Add to\ncart",
     "currency": "DZD",
-    "unknownAuthor": "Unknown Author",
     "stockStatus": {
       "inStock": "in stock",
       "outOfStock": "out of stock",
@@ -31,8 +30,7 @@
     "page": "Page {{current}}/{{total}}",
     "seeMore": "See more",
     "endOfResults": "✓ You have reached the end of results",
-    "digitalLibrary": "Digital Library",
-    "customerService": "Customer Service"
+    "noBooksFound": "No books found"
   },
   "filters": {
     "heading": "Filters",
@@ -135,7 +133,6 @@
     "itemAdded": "{{count}} item added",
     "itemsAdded": "{{count}} items added",
     "cart": "cart →",
-    "dragToClose": "Drag to close",
     "dragToDelete": "Drag here to delete"
   },
   "bookDetails": {
@@ -149,7 +146,7 @@
     "soldBy": "Sold and shipped by Esprit Livre",
     "condition": "Condition: {{condition}}",
     "inStock": "in stock",
-    "estimatedDelivery": "Estimated delivery: 2-4 days",
+    "estimatedDelivery": "Estimated delivery: 1-2 days",
     "addToCart": "Add to cart",
     "viewFullDescription": "View full description",
     "fullDescription": "Full Description",
@@ -208,7 +205,7 @@
     "relayPointsLoadError": "Failed to load relay points",
     "finalizeOrder": "Finalize order",
     "submittingOrder": "Placing order...",
-    "deliveryDays": "2–4 days",
+    "deliveryDays": "1–2 days",
     "emptyCartError": "Your cart is empty. Please add items before placing an order.",
     "orderSuccess": "Order placed successfully! View it anytime in Profile → Orders.",
     "orderSuccessTitle": "Order Placed Successfully!",
@@ -435,13 +432,9 @@
   "packCard": {
     "addToCart": "Add to cart",
     "currency": "DZD",
-    "booksIncluded": "Books included",
-    "save": "Save",
     "books": "books",
-    "seeMore": "See More",
-    "allBooks": "All Books",
-    "detailsButton": "Details",
-    "descriptionModal": "Description"
+    "descriptionModal": "Description",
+    "viewAllBooks": "View all books"
   },
   "packsPage": {
     "title": "Promotional Packs",
@@ -457,7 +450,8 @@
     "books": "books",
     "close": "Close",
     "currency": "DZD",
-    "clickToViewDetails": "Click on a book to view its details"
+    "clickToViewDetails": "Click on a book to view its details",
+    "loading": "Loading books..."
   },
   "404": {
     "title": "Page Not Found",
@@ -469,5 +463,28 @@
     "promotionalPacks": "Promotional Packs",
     "team": "Our Team",
     "customerService": "Customer Service"
+  },
+  "auth": {
+    "welcome": "Welcome",
+    "subtitle": "Sign in or create an account to continue",
+    "connecting": "Connecting...",
+    "continueWithGoogle": "Continue with Google",
+    "feature1": "Access thousands of books",
+    "feature2": "Save your favorite books",
+    "feature3": "Fast and secure checkout",
+    "termsText": "By continuing, you agree to our Terms of Service and Privacy Policy",
+    "errorFallback": "Failed to start authentication process. Please try again."
+  },
+  "aria": {
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
+    "back": "Back",
+    "previousSlide": "Previous slide",
+    "nextSlide": "Next slide",
+    "search": "Search",
+    "goToSet": "Go to set {{index}}"
+  },
+  "navigation": {
+    "noItems": "No items to display"
   }
 }

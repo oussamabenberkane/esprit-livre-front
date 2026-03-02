@@ -118,7 +118,7 @@ const BookCard = ({
                         className="absolute top-0 left-0 px-3 py-2 rounded-br-2xl text-fluid-tag font-semibold text-white"
                         style={{ backgroundColor: '#2563eb' }}
                     >
-                        Preorder
+                        {t('bookCard.stockStatus.preorder')}
                     </div>
                 )}
 

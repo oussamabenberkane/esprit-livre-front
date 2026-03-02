@@ -16,10 +16,10 @@ import { getBookCoverUrl, getBookPackCoverUrl } from '../../utils/imageUtils';
  * @param {string} dateString - ISO date string
  * @returns {string} Formatted date
  */
-const formatOrderDate = (dateString) => {
+const formatOrderDate = (dateString, locale = 'fr-FR') => {
   if (!dateString) return '';
   const date = new Date(dateString);
-  return date.toLocaleDateString('fr-FR', {
+  return date.toLocaleDateString(locale, {
     day: 'numeric',
     month: 'short',
     year: 'numeric'
@@ -31,10 +31,10 @@ const formatOrderDate = (dateString) => {
  * @param {Object} apiOrder - Order from API
  * @returns {Object} Transformed order for UI
  */
-const transformOrder = (apiOrder) => {
+const transformOrder = (apiOrder, locale = 'fr-FR') => {
   return {
     id: apiOrder.uniqueId || apiOrder.id,
-    date: formatOrderDate(apiOrder.createdAt),
+    date: formatOrderDate(apiOrder.createdAt, locale),
     status: apiOrder.status?.toLowerCase() || 'pending',
     total: apiOrder.totalAmount || 0,
     shippingCost: apiOrder.shippingCost || 0,
@@ -225,7 +225,7 @@ function OrderCard({ order }) {
 }
 
 export default function Orders() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const [currentOrders, setCurrentOrders] = useState([]);
@@ -276,7 +276,7 @@ export default function Orders() {
         const response = await getUserOrders(0, 100);
 
         if (response && response.page?.content) {
-          const allOrders = response.page.content.map(transformOrder);
+          const allOrders = response.page.content.map(o => transformOrder(o, i18n.language));
 
           // Separate current orders (pending, confirmed, shipped) from history (delivered, cancelled)
           const current = allOrders.filter(order =>
@@ -397,7 +397,7 @@ export default function Orders() {
           // Loading State
           <div className="flex flex-col items-center justify-center py-20">
             <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p className="text-gray-600">{t('orders.loading') || 'Loading orders...'}</p>
+            <p className="text-gray-600">{t('orders.loading')}</p>
           </div>
         ) : error ? (
           // Error State
@@ -405,7 +405,7 @@ export default function Orders() {
             <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mb-6">
               <Package className="w-12 h-12 text-red-500" />
             </div>
-            <h2 className="text-xl text-gray-800 mb-2">{t('orders.errorTitle') || 'Error Loading Orders'}</h2>
+            <h2 className="text-xl text-gray-800 mb-2">{t('orders.errorTitle')}</h2>
             <p className="text-gray-500 text-center max-w-md mb-6">{error}</p>
             <button
               onClick={handleBack}

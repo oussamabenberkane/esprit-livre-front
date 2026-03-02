@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const HeroCarousel = ({
@@ -7,6 +8,7 @@ const HeroCarousel = ({
     currentSlide = 0,
     onSlideChange
 }) => {
+    const { t } = useTranslation();
     const scrollContainerRef = useRef(null);
     const [rightArrowOffset, setRightArrowOffset] = useState(16); // Default 1rem in px
 
@@ -141,7 +143,7 @@ const HeroCarousel = ({
                     <button
                         onClick={() => scroll('left')}
                         className="absolute left-4 sm:left-6 md:left-8 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all z-10"
-                        aria-label="Previous slide"
+                        aria-label={t('aria.previousSlide')}
                     >
                         <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-gray-800" />
                     </button>
@@ -151,7 +153,7 @@ const HeroCarousel = ({
                         onClick={() => scroll('right')}
                         className="absolute top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all z-10"
                         style={{ right: `${rightArrowOffset}px` }}
-                        aria-label="Next slide"
+                        aria-label={t('aria.nextSlide')}
                     >
                         <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-gray-800" />
                     </button>

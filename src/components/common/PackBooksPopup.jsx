@@ -89,7 +89,7 @@ export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescrip
                         {isLoading ? (
                             <div className="flex flex-col items-center justify-center py-12">
                                 <div className="w-10 h-10 border-3 border-[#00417a]/20 border-t-[#00417a] rounded-full animate-spin mb-4"></div>
-                                <p className="text-gray-500 text-sm">{t('packBooksPopup.loading') || 'Loading books...'}</p>
+                                <p className="text-gray-500 text-sm">{t('packBooksPopup.loading')}</p>
                             </div>
                         ) : (
                         <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 xs:gap-3 sm:gap-4">

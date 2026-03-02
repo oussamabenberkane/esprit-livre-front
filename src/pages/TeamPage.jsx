@@ -14,7 +14,7 @@ export default function TeamPage() {
       name: t('team.members.lhadi.name'),
       role: t('team.members.lhadi.role'),
       image: '/assets/team/lhadi.jpg',
-      description: 'Leader guidant la mission d\'Esprit Livre pour rendre la lecture accessible.',
+      description: t('team.members.lhadi.description'),
       color: 'from-blue-500 to-blue-700',
       portfolioUrl: null,
       contacts: {
@@ -28,7 +28,7 @@ export default function TeamPage() {
       name: t('team.members.oussama.name'),
       role: t('team.members.oussama.role'),
       image: '/assets/team/ouss.jpg',
-      description: 'Conçoit des systèmes backend fiables et évolutifs qui propulsent notre plateforme.',
+      description: t('team.members.oussama.description'),
       color: 'from-purple-500 to-purple-700',
       portfolioUrl: 'https://oussamabenberkane.com',
       contacts: {
@@ -38,10 +38,10 @@ export default function TeamPage() {
       }
     },
     {
-      name: 'Yani Ferhaten',
-      role: 'Développeur Frontend',
+      name: t('team.members.yani.name'),
+      role: t('team.members.yani.role'),
       image: '/assets/team/yani.jpg',
-      description: 'Crée des interfaces modernes, intuitives et agréables pour nos utilisateurs.',
+      description: t('team.members.yani.description'),
       color: 'from-teal-500 to-teal-700',
       portfolioUrl: 'https://yaniferhaten.com',
       contacts: {

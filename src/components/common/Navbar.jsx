@@ -61,6 +61,7 @@ const Logo = ({ onClick }) => (
 
 // SearchBar Component
 const SearchBar = ({ placeholder = "Recherchez...", value, onChange, onFocus, onKeyDown, onSearchClick }) => {
+    const { t } = useTranslation();
     return (
         <div className="relative bg-white rounded-lg h-10 md:h-11 w-full md:w-96 flex items-center">
             <input
@@ -75,7 +76,7 @@ const SearchBar = ({ placeholder = "Recherchez...", value, onChange, onFocus, on
             <button
                 onClick={onSearchClick}
                 className="absolute right-3 w-4 h-4 text-slate-500 hover:text-slate-700 transition-colors cursor-pointer"
-                aria-label="Search"
+                aria-label={t('aria.search')}
                 type="button"
             >
                 <Search className="w-full h-full" />

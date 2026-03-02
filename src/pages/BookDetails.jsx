@@ -533,7 +533,7 @@ const BookDetails = () => {
                         <button
                             onClick={handleBackClick}
                             className="flex items-center gap-2 text-[#626e82] hover:text-[#1c2d55] transition-colors mb-fluid-md"
-                            aria-label="Retour"
+                            aria-label={t('aria.back')}
                         >
                             <ChevronLeft className="w-5 h-5" />
                         </button>
@@ -643,7 +643,7 @@ const BookDetails = () => {
                             <button
                                 onClick={handleBackClick}
                                 className="flex items-center gap-2 text-[#626e82] hover:text-[#1c2d55] transition-colors mb-fluid-md"
-                                aria-label="Retour"
+                                aria-label={t('aria.back')}
                             >
                                 <ChevronLeft className="w-5 h-5" />
                             </button>

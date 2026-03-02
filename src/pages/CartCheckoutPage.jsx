@@ -1792,7 +1792,7 @@ export default function CartCheckoutPage() {
                         ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                         : "bg-gray-100 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 active:scale-95"
                     }`}
-                    aria-label="Previous page"
+                    aria-label={t('aria.previousPage')}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -1901,7 +1901,7 @@ export default function CartCheckoutPage() {
                         ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                         : "bg-gray-100 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 active:scale-95"
                     }`}
-                    aria-label="Next page"
+                    aria-label={t('aria.nextPage')}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

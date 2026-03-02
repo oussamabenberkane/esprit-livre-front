@@ -15,7 +15,6 @@
   "bookCard": {
     "addToCart": "Ajouter\nau\u00A0panier",
     "currency": "DZD",
-    "unknownAuthor": "Auteur inconnu",
     "stockStatus": {
       "inStock": "en stock",
       "outOfStock": "rupture de stock",
@@ -31,8 +30,7 @@
     "page": "Page {{current}}/{{total}}",
     "seeMore": "Voir plus",
     "endOfResults": "✓ Vous avez atteint la fin des résultats",
-    "digitalLibrary": "Bibliothèque numérique",
-    "customerService": "Service clientèle"
+    "noBooksFound": "Aucun livre trouvé"
   },
   "filters": {
     "heading": "Filtres",
@@ -135,7 +133,6 @@
     "itemAdded": "{{count}} article ajouté",
     "itemsAdded": "{{count}} articles ajoutés",
     "cart": "panier →",
-    "dragToClose": "Glissez pour fermer",
     "dragToDelete": "Glissez ici pour supprimer"
   },
   "bookDetails": {
@@ -146,15 +143,15 @@
     "back": "Retour",
     "author": "auteur :",
     "categoryLabel": "Catégorie",
-    "soldBy": "Vendu et expedié par Esprit Livre",
-    "condition": "Etat : {{condition}}",
+    "soldBy": "Vendu et expédié par Esprit Livre",
+    "condition": "État : {{condition}}",
     "inStock": "en stock",
     "estimatedDelivery": "Livraison estimé pour 1-2 jours",
     "addToCart": "Ajouter au panier",
     "viewFullDescription": "Voir la description complète",
     "fullDescription": "Description complète",
-    "recommendations": "Livres recommandés:",
-    "packRecommendations": "Packs recommandés:"
+    "recommendations": "Livres recommandés: ",
+    "packRecommendations": "Packs recommandés: "
   },
   "cart": {
     "title": "Panier ({{count}} article)",
@@ -435,13 +432,9 @@
   "packCard": {
     "addToCart": "Ajouter au panier",
     "currency": "DZD",
-    "booksIncluded": "Livres inclus",
-    "save": "Économisez",
     "books": "livres",
-    "seeMore": "Voir plus",
-    "allBooks": "Tous les livres",
-    "detailsButton": "Détails",
-    "descriptionModal": "Description"
+    "descriptionModal": "Description",
+    "viewAllBooks": "Voir tous les livres"
   },
   "packsPage": {
     "title": "Packs Promotionnels",
@@ -457,7 +450,8 @@
     "books": "livres",
     "close": "Fermer",
     "currency": "DZD",
-    "clickToViewDetails": "Cliquez sur un livre pour voir ses détails"
+    "clickToViewDetails": "Cliquez sur un livre pour voir ses détails",
+    "loading": "Chargement des livres..."
   },
   "404": {
     "title": "Page non trouvée",
@@ -469,5 +463,28 @@
     "promotionalPacks": "Packs promotionnels",
     "team": "Notre équipe",
     "customerService": "Service client"
+  },
+  "auth": {
+    "welcome": "Bienvenue",
+    "subtitle": "Connectez-vous ou créez un compte pour continuer",
+    "connecting": "Connexion...",
+    "continueWithGoogle": "Continuer avec Google",
+    "feature1": "Accédez à des milliers de livres",
+    "feature2": "Enregistrez vos livres préférés",
+    "feature3": "Paiement rapide et sécurisé",
+    "termsText": "En continuant, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialité",
+    "errorFallback": "Échec du démarrage du processus d'authentification. Veuillez réessayer."
+  },
+  "aria": {
+    "previousPage": "Page précédente",
+    "nextPage": "Page suivante",
+    "back": "Retour",
+    "previousSlide": "Diapositive précédente",
+    "nextSlide": "Diapositive suivante",
+    "search": "Rechercher",
+    "goToSet": "Aller à l'ensemble {{index}}"
+  },
+  "navigation": {
+    "noItems": "Aucun élément à afficher"
   }
 }

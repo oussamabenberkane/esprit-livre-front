@@ -250,13 +250,13 @@ export default function AllBooks() {
                             <div className="flex justify-center items-center py-20">
                                 <div className="text-center max-w-md">
                                     <div className="text-red-500 text-5xl mb-4">⚠</div>
-                                    <h3 className="text-xl font-semibold text-gray-800 mb-2">{t('common.error', 'Error')}</h3>
+                                    <h3 className="text-xl font-semibold text-gray-800 mb-2">{t('common.error')}</h3>
                                     <p className="text-gray-600 mb-4">{error}</p>
                                     <button
                                         onClick={() => window.location.reload()}
                                         className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                                     >
-                                        {t('common.retry', 'Retry')}
+                                        {t('common.retry')}
                                     </button>
                                 </div>
                             </div>
@@ -350,7 +350,7 @@ export default function AllBooks() {
                         {!isLoading && !error && books.length === 0 && (
                             <div className="text-center text-gray-500 py-20">
                                 <div className="text-6xl mb-4">📚</div>
-                                <p className="text-xl font-medium">{t('allBooks.noBooksFound', 'No books found')}</p>
+                                <p className="text-xl font-medium">{t('allBooks.noBooksFound')}</p>
                             </div>
                         )}
                     </section>
@@ -374,7 +374,7 @@ export default function AllBooks() {
                                             ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                                             : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
                                     }`}
-                                    aria-label="Previous page"
+                                    aria-label={t('aria.previousPage')}
                                 >
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -483,7 +483,7 @@ export default function AllBooks() {
                                             ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                                             : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
                                     }`}
-                                    aria-label="Next page"
+                                    aria-label={t('aria.nextPage')}
                                 >
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

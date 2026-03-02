@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import SlideScroll from '../buttons/SlideScroll'; // Import your existing component
 
 const ScrollNavigator = forwardRef(({
@@ -18,6 +19,7 @@ const ScrollNavigator = forwardRef(({
   gapClass = '',
   onSetChange = () => { }
 }, ref) => {
+  const { t } = useTranslation();
   const [currentSetIndex, setCurrentSetIndex] = useState(0);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -131,7 +133,7 @@ const ScrollNavigator = forwardRef(({
   }, [currentSetIndex, totalSets, totalItems]);
 
   if (!childrenArray.length) {
-    return <div className="text-gray-500 text-center py-8">No items to display</div>;
+    return <div className="text-gray-500 text-center py-8">{t('navigation.noItems')}</div>;
   }
 
   // Calculate visible width for items
@@ -218,7 +220,7 @@ const ScrollNavigator = forwardRef(({
                   padding: 0,
                   cursor: 'pointer'
                 }}
-                aria-label={`Go to set ${setIndex + 1}`}
+                aria-label={t('aria.goToSet', { index: setIndex + 1 })}
               />
             ))}
           </div>

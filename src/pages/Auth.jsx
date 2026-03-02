@@ -1,9 +1,11 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import GoogleAuthButton from '../components/buttons/GoogleAuthButton';
 import { initiateGoogleLogin } from '../services/oauthService';
 
 export default function Auth() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -30,7 +32,7 @@ export default function Auth() {
       // Note: This will redirect to Keycloak/Google, so code after won't execute
     } catch (err) {
       console.error('Authentication error:', err);
-      setError(err.message || 'Failed to start authentication process. Please try again.');
+      setError(err.message || t('auth.errorFallback'));
       setLoading(false);
     }
   };
@@ -78,8 +80,8 @@ export default function Auth() {
             transition={{ delay: 0.2, duration: 0.4 }}
             className="text-center mb-8"
           >
-            <h2 className="text-gray-800 text-xl mb-2">Welcome</h2>
-            <p className="text-gray-500 text-sm">Sign in or create an account to continue</p>
+            <h2 className="text-gray-800 text-xl mb-2">{t('auth.welcome')}</h2>
+            <p className="text-gray-500 text-sm">{t('auth.subtitle')}</p>
           </motion.div>
 
           {/* Error Message */}
@@ -101,7 +103,7 @@ export default function Auth() {
             className="mb-6"
           >
             <GoogleAuthButton
-              text={loading ? "Connecting..." : "Continue with Google"}
+              text={loading ? t('auth.connecting') : t('auth.continueWithGoogle')}
               onClick={handleGoogleAuth}
               disabled={loading}
             />
@@ -120,7 +122,7 @@ export default function Auth() {
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <span>Access thousands of books</span>
+              <span>{t('auth.feature1')}</span>
             </div>
             <div className="flex items-center gap-3 text-sm text-gray-600">
               <div className="flex-shrink-0 w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center">
@@ -128,7 +130,7 @@ export default function Auth() {
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <span>Save your favorite books</span>
+              <span>{t('auth.feature2')}</span>
             </div>
             <div className="flex items-center gap-3 text-sm text-gray-600">
               <div className="flex-shrink-0 w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center">
@@ -136,7 +138,7 @@ export default function Auth() {
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <span>Fast and secure checkout</span>
+              <span>{t('auth.feature3')}</span>
             </div>
           </motion.div>
         </div>
@@ -148,7 +150,7 @@ export default function Auth() {
           transition={{ delay: 0.5, duration: 0.4 }}
           className="text-center text-gray-500 text-xs mt-6"
         >
-          By continuing, you agree to our Terms of Service and Privacy Policy
+          {t('auth.termsText')}
         </motion.p>
       </motion.div>
     </div>

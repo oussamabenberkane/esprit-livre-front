@@ -107,7 +107,7 @@ export default function CartConfirmationPopup({
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Header Section */}
-                    <div className="relative px-3 xs:px-6 pt-3 xs:pt-fluid-xl pb-2 xs:pb-4 border-b border-gray-100">
+                    <div className="relative px-3 xs:px-6 pt-3 xs:pt-4 pb-2 xs:pb-4 border-b border-gray-100">
                         <div className="flex items-center gap-2 xs:gap-3">
                             <div className="relative">
                                 <div className="w-8 h-8 xs:w-10 xs:h-10 bg-green-100 rounded-full flex items-center justify-center">
@@ -230,13 +230,13 @@ export default function CartConfirmationPopup({
                                         className="flex-1 bg-[#1E40AF] hover:bg-blue-700 text-white font-medium py-1.5 xs:py-2 px-2 xs:px-3 rounded-md xs:rounded-lg transition-colors flex items-center justify-center gap-1 xs:gap-2"
                                     >
                                         <ShoppingCart className="w-3 h-3 xs:w-4 xs:h-4" />
-                                        <span className="text-[0.6rem] xs:text-fluid-small">{t('cartPopup.viewCart')}</span>
+                                        <span className="text-xs xs:text-fluid-medium">{t('cartPopup.viewCart')}</span>
                                     </button>
                                     <button
                                         onClick={handleRemoveClick}
                                         className="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium py-1.5 xs:py-2 px-2 xs:px-3 rounded-md xs:rounded-lg transition-colors"
                                     >
-                                        <span className="text-[0.6rem] xs:text-fluid-small">{t('cartPopup.remove')}</span>
+                                        <span className="text-xs xs:text-fluid-medium">{t('cartPopup.remove')}</span>
                                     </button>
                                 </div>
                             </div>

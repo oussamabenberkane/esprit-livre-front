@@ -217,7 +217,13 @@
     "orderTrackingPromptTitle": "Track your order",
     "orderTrackingPromptMessage": "Sign in to view and track your orders in your profile.",
     "signInButton": "Sign in",
-    "laterButton": "Later"
+    "laterButton": "Later",
+    "orderConfirmedTitle": "Thank you for your order!",
+    "orderConfirmedSubtitle": "Your order has been confirmed successfully.",
+    "accountPitchMessage": "Create your account and unlock exclusive member benefits",
+    "accountBenefit1": "Exclusive offers and promotions",
+    "accountBenefit2": "Track your orders in real time",
+    "createAccountButton": "Create my account"
   },
   "errors": {
     "error.insufficientstock": "Some items in your cart have insufficient stock. Please update quantities and try again.",

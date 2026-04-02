@@ -217,7 +217,13 @@
     "orderTrackingPromptTitle": "Suivre votre commande",
     "orderTrackingPromptMessage": "Connectez-vous pour consulter et suivre vos commandes dans votre profil.",
     "signInButton": "Se connecter",
-    "laterButton": "Plus tard"
+    "laterButton": "Plus tard",
+    "orderConfirmedTitle": "Merci pour votre commande !",
+    "orderConfirmedSubtitle": "Votre commande a été confirmée avec succès.",
+    "accountPitchMessage": "Créez votre compte et débloquez des avantages réservés à nos membres",
+    "accountBenefit1": "Offres et promotions exclusives",
+    "accountBenefit2": "Suivi de vos commandes en temps réel",
+    "createAccountButton": "Créer mon compte"
   },
   "errors": {
     "error.insufficientstock": "Certains articles de votre panier ont un stock insuffisant. Veuillez mettre à jour les quantités et réessayer.",

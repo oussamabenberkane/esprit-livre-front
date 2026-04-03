@@ -541,35 +541,35 @@ export default function Profile() {
       {/* Main Content */}
       <div className="max-w-3xl mx-auto px-4 -mt-14 sm:-mt-16">
         {/* Quick Access Cards */}
-        <div className="grid grid-cols-2 gap-3 mb-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
           {/* Orders */}
           <button
             onClick={navigateToOrders}
-            className="group bg-white rounded-xl shadow-md p-3.5 sm:p-5 flex items-center gap-3 sm:gap-4 hover:shadow-lg hover:scale-[1.01] transition-all text-left"
+            className="group bg-white rounded-xl shadow-md p-4 sm:p-5 flex items-center gap-4 hover:shadow-lg transition-all text-left border-l-4 border-[#00417a]"
           >
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#00417a]/8 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-[#00417a]/12 transition-colors">
-              <Package className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#00417a]" />
+            <div className="w-11 h-11 sm:w-12 sm:h-12 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0">
+              <Package className="w-5 h-5 sm:w-6 sm:h-6 text-[#00417a]" />
             </div>
-            <div className="min-w-0">
-              <h3 className="text-gray-900 text-sm sm:text-base font-semibold truncate">{t('profile.myOrders')}</h3>
-              <p className="text-xs sm:text-sm text-gray-500 truncate">{t('profile.ordersHistory')}</p>
+            <div className="flex-1">
+              <h3 className="text-gray-900 text-fluid-body font-semibold">{t('profile.myOrders')}</h3>
+              <p className="text-fluid-small text-gray-500">{t('profile.ordersHistory')}</p>
             </div>
-            <ArrowLeft className="w-4 h-4 text-gray-300 rotate-180 ml-auto flex-shrink-0 hidden sm:block group-hover:text-gray-500 transition-colors" />
+            <ArrowLeft className="w-5 h-5 text-gray-300 rotate-180 flex-shrink-0 group-hover:text-[#00417a] transition-colors" />
           </button>
 
           {/* Favorites */}
           <button
             onClick={navigateToFavorites}
-            className="group bg-white rounded-xl shadow-md p-3.5 sm:p-5 flex items-center gap-3 sm:gap-4 hover:shadow-lg hover:scale-[1.01] transition-all text-left"
+            className="group bg-white rounded-xl shadow-md p-4 sm:p-5 flex items-center gap-4 hover:shadow-lg transition-all text-left border-l-4 border-[#EE0027]"
           >
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-red-100 transition-colors">
-              <Heart className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-red-500" />
+            <div className="w-11 h-11 sm:w-12 sm:h-12 bg-red-50 rounded-xl flex items-center justify-center flex-shrink-0">
+              <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-[#EE0027]" />
             </div>
-            <div className="min-w-0">
-              <h3 className="text-gray-900 text-sm sm:text-base font-semibold truncate">{t('profile.myFavorites')}</h3>
-              <p className="text-xs sm:text-sm text-gray-500 truncate">{t('profile.favoritesSaved')}</p>
+            <div className="flex-1">
+              <h3 className="text-gray-900 text-fluid-body font-semibold">{t('profile.myFavorites')}</h3>
+              <p className="text-fluid-small text-gray-500">{t('profile.favoritesSaved')}</p>
             </div>
-            <ArrowLeft className="w-4 h-4 text-gray-300 rotate-180 ml-auto flex-shrink-0 hidden sm:block group-hover:text-gray-500 transition-colors" />
+            <ArrowLeft className="w-5 h-5 text-gray-300 rotate-180 flex-shrink-0 group-hover:text-[#EE0027] transition-colors" />
           </button>
         </div>
 
@@ -1082,30 +1082,6 @@ export default function Profile() {
                         </div>
                       )}
 
-                      {/* Relay Point Selection - appears after provider is chosen */}
-                      <AnimatePresence>
-                        {pickupProvider && userData.wilaya && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.3, ease: 'easeInOut' }}
-                            className="overflow-hidden"
-                          >
-                            <div className="mt-3">
-                              <label className="block text-xs text-gray-500 mb-1.5">
-                                {t('profile.selectRelayPoint')}
-                              </label>
-                              <RelayPointSelect
-                                value={stopDeskId}
-                                onChange={(id) => setStopDeskId(id)}
-                                provider={pickupProvider === 'Yalidine' ? 'YALIDINE' : 'ZR'}
-                                wilaya={userData.wilaya}
-                              />
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
                     </div>
                   </motion.div>
                 )}
@@ -1157,7 +1133,7 @@ export default function Profile() {
             </button>
             <button
               onClick={handleLogout}
-              className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 rounded-xl transition-all text-sm sm:text-base font-medium min-h-[48px]"
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-[#EE0027] hover:bg-[#d4183d] text-white rounded-xl transition-all text-sm sm:text-base font-medium min-h-[48px]"
             >
               <LogOut className="w-4 h-4" />
               <span>{t('profile.logout')}</span>

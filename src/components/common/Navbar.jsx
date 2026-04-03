@@ -167,11 +167,12 @@ const Navbar = ({
         // Popup will handle its own closing
     };
 
-    // Close login prompt popup
+    // Close login prompt popup and go back
     const closeLoginPrompt = () => {
         setShowLoginPromptDesktop(false);
         setShowLoginPromptMobile(false);
         setHighlightSignInButton(false);
+        navigate(-1);
     };
 
     // Handle login button click from popup

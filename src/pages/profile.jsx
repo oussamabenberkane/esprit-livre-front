@@ -437,11 +437,8 @@ export default function Profile() {
           <Navbar />
         </section>
 
-        {/* Responsive spacing for navbar - taller on mobile due to two-line layout */}
-        <div className="h-28 md:h-20"></div>
-
-        {/* Header */}
-        <div className="bg-gradient-to-br from-[#00417a] via-[#00518f] to-[#0065a8] text-white pt-6 sm:pt-8 pb-20 sm:pb-24 px-4">
+        {/* Header - extends behind navbar spacer to fill rounded corner gap */}
+        <div className="bg-gradient-to-br from-[#00417a] via-[#00518f] to-[#0065a8] text-white pt-34 sm:pt-28 pb-20 sm:pb-24 px-4">
           <div className="max-w-3xl mx-auto">
             {/* Back Button */}
             <button

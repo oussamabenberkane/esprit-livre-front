@@ -31,27 +31,24 @@ const LoginPromptPopup = ({ isOpen, onClose, onLoginClick, position = 'top' }) =
         <AnimatePresence>
             {isOpen && (
                 <>
-                    {/* Backdrop for click outside */}
-                    <div
-                        className="fixed inset-0 z-40"
+                    {/* Backdrop - blurred on mobile for focus */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="fixed inset-0 z-40 sm:bg-transparent bg-black/30 sm:backdrop-blur-none backdrop-blur-sm"
                         onClick={handleBackdropClick}
                         onTouchEnd={handleBackdropClick}
                     />
 
-                    {/* Popup */}
+                    {/* Popup - centered on mobile, anchored on desktop */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.92, y: position === 'top' ? -10 : 10 }}
+                        initial={{ opacity: 0, scale: 0.92, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.92, y: position === 'top' ? -10 : 10 }}
-                        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                        className="absolute z-50 bg-white rounded-xl shadow-2xl border border-neutral-200 overflow-hidden w-[calc(100vw-2rem)] max-w-[300px] xs:max-w-sm"
-                        style={{
-                            top: position === 'top' ? 'auto' : '100%',
-                            bottom: position === 'top' ? '100%' : 'auto',
-                            right: '-8px',
-                            marginTop: position === 'top' ? '0' : '18px',
-                            marginBottom: position === 'top' ? '8px' : '0'
-                        }}
+                        exit={{ opacity: 0, scale: 0.92, y: 20 }}
+                        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                        className={`fixed sm:absolute z-50 bg-white rounded-2xl sm:rounded-xl shadow-2xl border border-neutral-200 overflow-hidden w-[calc(100vw-2rem)] max-w-[340px] sm:max-w-sm left-1/2 sm:left-auto -translate-x-1/2 sm:translate-x-0 bottom-6 sm:bottom-auto sm:right-[-8px] ${position === 'top' ? 'sm:bottom-full sm:mb-2' : 'sm:top-full sm:mt-[18px]'}`}
                         onClick={(e) => e.stopPropagation()}
                         onTouchEnd={(e) => e.stopPropagation()}
                     >
@@ -101,9 +98,9 @@ const LoginPromptPopup = ({ isOpen, onClose, onLoginClick, position = 'top' }) =
                             </button>
                         </div>
 
-                        {/* Arrow indicator */}
+                        {/* Arrow indicator - hidden on mobile */}
                         <div
-                            className="absolute w-3 h-3 bg-white border-neutral-200 transform rotate-45"
+                            className="hidden sm:block absolute w-3 h-3 bg-white border-neutral-200 transform rotate-45"
                             style={{
                                 [position === 'top' ? 'bottom' : 'top']: '-6px',
                                 right: '12px',

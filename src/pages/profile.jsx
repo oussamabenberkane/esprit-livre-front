@@ -545,9 +545,9 @@ export default function Profile() {
           {/* Orders */}
           <button
             onClick={navigateToOrders}
-            className="group bg-white rounded-xl shadow-md p-4 sm:p-5 flex items-center gap-4 hover:shadow-lg transition-all text-left border-l-4 border-[#00417a]"
+            className="group bg-white rounded-xl shadow-md p-4 sm:p-5 flex items-center gap-4 hover:shadow-lg transition-all text-left"
           >
-            <div className="w-11 h-11 sm:w-12 sm:h-12 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 bg-[#00417a]/8 rounded-xl flex items-center justify-center flex-shrink-0">
               <Package className="w-5 h-5 sm:w-6 sm:h-6 text-[#00417a]" />
             </div>
             <div className="flex-1">
@@ -560,9 +560,9 @@ export default function Profile() {
           {/* Favorites */}
           <button
             onClick={navigateToFavorites}
-            className="group bg-white rounded-xl shadow-md p-4 sm:p-5 flex items-center gap-4 hover:shadow-lg transition-all text-left border-l-4 border-[#EE0027]"
+            className="group bg-white rounded-xl shadow-md p-4 sm:p-5 flex items-center gap-4 hover:shadow-lg transition-all text-left"
           >
-            <div className="w-11 h-11 sm:w-12 sm:h-12 bg-red-50 rounded-xl flex items-center justify-center flex-shrink-0">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 bg-[#EE0027]/8 rounded-xl flex items-center justify-center flex-shrink-0">
               <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-[#EE0027]" />
             </div>
             <div className="flex-1">

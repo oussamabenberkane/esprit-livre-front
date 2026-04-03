@@ -8,8 +8,10 @@
     }
   },
   "loginPrompt": {
-    "title": "Connexion requise",
-    "message": "Vous devez être connecté pour accéder à votre profil.",
+    "title": "Votre espace lecteur vous attend",
+    "message": "Connectez-vous et accédez à des avantages exclusifs.",
+    "benefit1": "Offres réservées aux membres",
+    "benefit2": "Suivi de vos commandes",
     "loginButton": "Se connecter"
   },
   "bookCard": {
@@ -378,6 +380,8 @@
     "pickupPoint": "Point de relais",
     "pickupPointDesc": "Retirez votre colis au point relais le plus proche",
     "selectProvider": "Sélectionnez un point de relais",
+    "selectRelayPoint": "Choisissez votre point de retrait",
+    "infoSectionMessage": "Renseignez vos informations une seule fois et profitez d'un passage en caisse instantané à chaque commande.",
     "myFavorites": "Mes Favoris",
     "favoritesSaved": "Livres sauvegardés",
     "myOrders": "Mes Commandes",

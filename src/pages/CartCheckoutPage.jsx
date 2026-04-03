@@ -524,6 +524,14 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
           setAvailableCities(wilayaData[profile.wilaya]);
         }
 
+        // Pre-fill saved relay point from localStorage
+        if (profile.defaultShippingMethod === 'SHIPPING_PROVIDER') {
+          const savedStopDeskId = localStorage.getItem('defaultStopDeskId');
+          if (savedStopDeskId) {
+            setStopDeskId(savedStopDeskId);
+          }
+        }
+
       } catch (error) {
         console.error('Failed to load profile data:', error);
         // Silently fail - show empty form
@@ -752,33 +760,6 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
       <h2 className="text-black text-fluid-h2 font-[550] text-center mt-fluid-md mb-6">
         {t('cart.formTitle')}
       </h2>
-
-      {/* Guest Checkout Message */}
-      {!isUserAuthenticated && !isLoadingProfile && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg"
-        >
-          <div className="flex items-start gap-3">
-            <div className="flex-shrink-0 w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center mt-0.5">
-              <LogIn className="w-3 h-3 text-white" />
-            </div>
-            <div className="flex-1">
-              <p className="text-blue-900 text-fluid-small">
-                {t('cart.guestCheckoutMessage') || 'Log in to checkout faster with saved information.'}
-              </p>
-              <button
-                type="button"
-                onClick={() => navigate('/auth')}
-                className="mt-2 text-blue-600 hover:text-blue-800 font-semibold text-fluid-xs underline"
-              >
-                {t('cart.loginNow') || 'Log in now'}
-              </button>
-            </div>
-          </div>
-        </motion.div>
-      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Full Name */}

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Edit2, Heart, Package, LogOut, Home, MapPin, ChevronDown, Truck, X, Search, CheckCircle, AlertCircle, Info } from 'lucide-react';
+import { ArrowLeft, Edit2, Heart, Package, LogOut, Home, MapPin, ChevronDown, Truck, X, Search, CheckCircle, AlertCircle, Info, Zap } from 'lucide-react';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/common/Navbar';
@@ -11,6 +11,7 @@ import { isAuthenticated, logout as authLogout, getAndClearRedirectUrl } from '.
 import { formatMemberSinceDate } from '../utils/dateUtils';
 import wilayaData from '../utils/wilayaData';
 import { validateProfileData } from '../utils/validation';
+import RelayPointSelect from '../components/common/RelayPointSelect';
 
 export default function Profile() {
   const { t, i18n } = useTranslation();
@@ -29,6 +30,7 @@ export default function Profile() {
   const [shippingPreference, setShippingPreference] = useState("home"); // "home" or "pickup"
   const [homeAddress, setHomeAddress] = useState("");
   const [pickupProvider, setPickupProvider] = useState("");
+  const [stopDeskId, setStopDeskId] = useState(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showFirstLoginBanner, setShowFirstLoginBanner] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
@@ -136,6 +138,12 @@ export default function Profile() {
           setPickupProvider(providerMap[profile.defaultShippingProvider] || '');
         }
 
+        // Load saved relay point from localStorage
+        const savedStopDeskId = localStorage.getItem('defaultStopDeskId');
+        if (savedStopDeskId) {
+          setStopDeskId(savedStopDeskId);
+        }
+
         // Check if this is a first-time login AND user doesn't have a phone number
         if (isFirstLoginParam && !profile.phone) {
           setIsFirstLogin(true);
@@ -195,6 +203,7 @@ export default function Profile() {
   const handleWilayaSelect = (wilaya) => {
     setUserData({ ...userData, wilaya, city: '' });
     setAvailableCities(wilayaData[wilaya] || []);
+    setStopDeskId(null);
     setWilayaSearch("");
     setOpenDropdown(null);
   };
@@ -207,6 +216,7 @@ export default function Profile() {
 
   const handleProviderSelect = (provider) => {
     setPickupProvider(provider);
+    setStopDeskId(null);
     setOpenDropdown(null);
     // Clear error on selection
     if (validationErrors.pickupProvider) {
@@ -314,6 +324,13 @@ export default function Profile() {
       };
 
       const updateResponse = await updateUserProfile(updateData);
+
+      // Save relay point preference to localStorage
+      if (shippingPreference === 'pickup' && stopDeskId) {
+        localStorage.setItem('defaultStopDeskId', stopDeskId);
+      } else {
+        localStorage.removeItem('defaultStopDeskId');
+      }
 
       // Reset editing states
       setIsEditingPhone(false);
@@ -523,6 +540,45 @@ export default function Profile() {
 
       {/* Main Content */}
       <div className="max-w-2xl mx-auto px-4 -mt-16">
+        {/* Quick Access Cards */}
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          {/* Orders */}
+          <button
+            onClick={navigateToOrders}
+            className="bg-white rounded-xl shadow-md p-4 flex flex-col items-center gap-2 hover:shadow-lg hover:scale-[1.02] transition-all"
+          >
+            <div className="w-11 h-11 bg-blue-100 rounded-full flex items-center justify-center">
+              <Package className="w-5 h-5 text-blue-600" />
+            </div>
+            <div className="text-center">
+              <h3 className="text-gray-800 text-sm font-medium">{t('profile.myOrders')}</h3>
+              <p className="text-xs text-gray-500">{t('profile.ordersHistory')}</p>
+            </div>
+          </button>
+
+          {/* Favorites */}
+          <button
+            onClick={navigateToFavorites}
+            className="bg-white rounded-xl shadow-md p-4 flex flex-col items-center gap-2 hover:shadow-lg hover:scale-[1.02] transition-all"
+          >
+            <div className="w-11 h-11 bg-red-100 rounded-full flex items-center justify-center">
+              <Heart className="w-5 h-5 text-red-500" />
+            </div>
+            <div className="text-center">
+              <h3 className="text-gray-800 text-sm font-medium">{t('profile.myFavorites')}</h3>
+              <p className="text-xs text-gray-500">{t('profile.favoritesSaved')}</p>
+            </div>
+          </button>
+        </div>
+
+        {/* Info Section Marketing Banner */}
+        <div className="flex items-center gap-2.5 px-4 py-3 mb-4 bg-[#00417a]/5 border border-[#00417a]/10 rounded-xl">
+          <Zap className="w-4 h-4 text-[#00417a] flex-shrink-0" />
+          <p className="text-[#00417a] text-fluid-small leading-relaxed">
+            {t('profile.infoSectionMessage')}
+          </p>
+        </div>
+
         {/* Personal Information Card */}
         <div className="bg-white rounded-xl shadow-md p-6 mb-4">
           <h2 className="text-lg text-gray-800 mb-4">{t('profile.personalInfo')}</h2>
@@ -1018,49 +1074,37 @@ export default function Profile() {
                           <p className="text-sm text-red-600">{validationErrors.pickupProvider}</p>
                         </div>
                       )}
+
+                      {/* Relay Point Selection - appears after provider is chosen */}
+                      <AnimatePresence>
+                        {pickupProvider && userData.wilaya && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3, ease: 'easeInOut' }}
+                            className="overflow-hidden"
+                          >
+                            <div className="mt-3">
+                              <label className="block text-xs text-gray-500 mb-1.5">
+                                {t('profile.selectRelayPoint')}
+                              </label>
+                              <RelayPointSelect
+                                value={stopDeskId}
+                                onChange={(id) => setStopDeskId(id)}
+                                provider={pickupProvider === 'Yalidine' ? 'YALIDINE' : 'ZR'}
+                                wilaya={userData.wilaya}
+                              />
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
           </div>
-        </div>
-
-        {/* Navigation Cards */}
-        <div className="space-y-3">
-          {/* Favorites */}
-          <button
-            onClick={navigateToFavorites}
-            className="w-full bg-white rounded-xl shadow-md p-4 flex items-center justify-between hover:shadow-lg hover:scale-[1.02] transition-all"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                <Heart className="w-5 h-5 text-red-600" />
-              </div>
-              <div className="text-left">
-                <h3 className="text-gray-800">{t('profile.myFavorites')}</h3>
-                <p className="text-sm text-gray-500">{t('profile.favoritesSaved')}</p>
-              </div>
-            </div>
-            <ArrowLeft className="w-5 h-5 text-gray-400 rotate-180" />
-          </button>
-
-          {/* Orders */}
-          <button
-            onClick={navigateToOrders}
-            className="w-full bg-white rounded-xl shadow-md p-4 flex items-center justify-between hover:shadow-lg hover:scale-[1.02] transition-all"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                <Package className="w-5 h-5 text-blue-600" />
-              </div>
-              <div className="text-left">
-                <h3 className="text-gray-800">{t('profile.myOrders')}</h3>
-                <p className="text-sm text-gray-500">{t('profile.ordersHistory')}</p>
-              </div>
-            </div>
-            <ArrowLeft className="w-5 h-5 text-gray-400 rotate-180" />
-          </button>
         </div>
 
         {/* Validation Error Banner */}

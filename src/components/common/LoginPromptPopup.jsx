@@ -92,7 +92,7 @@ const LoginPromptPopup = ({ isOpen, onClose, onLoginClick, position = 'top' }) =
                             {/* Login button */}
                             <button
                                 onClick={onLoginClick}
-                                className="w-full bg-[#EE0027] hover:bg-[#d4183d] active:scale-[0.98] text-white py-2.5 rounded-xl transition-all text-fluid-small font-semibold"
+                                className="w-full bg-[#16A34A] hover:bg-[#15803d] active:scale-[0.98] text-white py-2.5 rounded-xl transition-all text-fluid-small font-semibold"
                             >
                                 {t('loginPrompt.loginButton')}
                             </button>

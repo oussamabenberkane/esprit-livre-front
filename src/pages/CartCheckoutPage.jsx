@@ -864,13 +864,13 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
                 setPickupProvider("ZRexpress");
                 setStopDeskId(null);
               }}
-              className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-fluid-small font-semibold transition-all duration-200 ${
+              className={`flex items-center justify-center gap-1 sm:gap-1 py-2 px-2.5 sm:px-4 rounded-xl text-[11px] sm:text-fluid-small font-normal sm:font-semibold transition-all duration-200 whitespace-nowrap ${
                 shippingPreference === "home"
                   ? "bg-emerald-500 text-white shadow-md shadow-emerald-200"
                   : "bg-white border-2 border-neutral-200 text-gray-500 hover:border-emerald-300 hover:text-emerald-600"
               }`}
             >
-              <Home className="w-4 h-4 flex-shrink-0" />
+              <Home className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
               {t('cart.homeDelivery')}
             </button>
             <button
@@ -879,13 +879,13 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
                 setShippingPreference("pickup");
                 setPickupProvider("ZRexpress");
               }}
-              className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-fluid-small font-semibold transition-all duration-200 ${
+              className={`flex items-center justify-center gap-1 sm:gap-1 py-2 px-2.5 sm:px-4 rounded-xl text-[11px] sm:text-fluid-small font-normal sm:font-semibold transition-all duration-200 whitespace-nowrap ${
                 shippingPreference === "pickup"
                   ? "bg-emerald-500 text-white shadow-md shadow-emerald-200"
                   : "bg-white border-2 border-neutral-200 text-gray-500 hover:border-emerald-300 hover:text-emerald-600"
               }`}
             >
-              <MapPin className="w-4 h-4 flex-shrink-0" />
+              <MapPin className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
               {t('cart.pickupPoint')}
             </button>
           </div>

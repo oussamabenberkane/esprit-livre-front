@@ -137,19 +137,19 @@ const BookCard = ({
             </div>
 
             {/* Book Info */}
-            <div className="px-fluid-xs mt-fluid-xs sm:px-fluid-sm pb-fluid-md relative flex flex-col gap-fluid-tiny sm:gap-fluid-xs md:gap-fluid-xs">
+            <div className="px-fluid-xs mt-fluid-xs sm:px-fluid-sm pb-12 sm:pb-16 relative flex flex-col gap-fluid-xxs sm:gap-fluid-xs md:gap-fluid-xs">
                 {/* Title */}
-                <h3 className="font-semibold text-[#00417a] leading-none sm:leading-normal text-fluid-h3 min-[450px]:text-fluid-h2 line-clamp-2 hover:text-blue-600 transition-colors cursor-pointer">
+                <h3 className="font-semibold text-[#00417a] leading-tight text-fluid-h2 line-clamp-2 hover:text-blue-600 transition-colors cursor-pointer">
                     {title}
                 </h3>
 
                 {/* Author */}
-                <p className="text-gray-600 text-fluid-small mb-fluid-tiny sm:mb-fluid-xxs">
+                <p className="text-gray-600 text-fluid-small">
                     {author}
                 </p>
 
                 {/* Stock Status */}
-                <div className="text-fluid-small font-bold mb-auto">
+                <div className="text-fluid-small font-medium mb-auto">
                     <span className={`inline-flex items-center ${(stock !== null && stock !== undefined && stock > 0)
                         ? 'text-green-600'
                         : 'text-blue-600'

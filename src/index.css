@@ -34,17 +34,17 @@ main {
   --font-size-fluid-h2: clamp(1rem, 2.5vw, 1.5rem);
   --font-size-fluid-h3: clamp(0.875rem, 1.5vw, 1.125rem);
   --font-size-fluid-body: clamp(0.875rem, 1.5vw, 1rem);
-  --font-size-fluid-price: clamp(1rem, 1.8vw, 1.25rem);
+  --font-size-fluid-price: clamp(1.125rem, 1.8vw, 1.375rem);
   --font-size-fluid-medium: clamp(0.8rem, 1.3vw, 1rem);
   --font-size-fluid-small: clamp(0.75rem, 1.2vw, 0.875rem);
   --font-size-fluid-vsmall: clamp(0.5rem, 1vw, 0.775rem);
   --font-size-fluid-tag: clamp(0.5rem, 0.6vw, 0.65rem);
 
   /* Card dimensions */
-  --card-min-width: 170px;
-  --card-max-width: 275px;
-  --card-width: clamp(var(--card-min-width), calc(170px + (100vw - 320px) * 0.13), var(--card-max-width));
-  --card-height: clamp(315px, calc(var(--card-width) * 1.8), 490px);
+  --card-min-width: 155px;
+  --card-max-width: 235px;
+  --card-width: clamp(var(--card-min-width), calc(155px + (100vw - 320px) * 0.13), var(--card-max-width));
+  --card-height: clamp(295px, calc(var(--card-width) * 1.9), 445px);
 
   /* CardCategory dimensions */
   --cat-min-width: 140px;

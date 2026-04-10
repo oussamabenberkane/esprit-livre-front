@@ -838,10 +838,15 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
 
 
         {/* Shipping Method */}
-        <div className="mt-6">
-          <label className="block text-[#353535] text-fluid-medium font-[500] mb-3">
-            {t('cart.shippingMethod')}
-          </label>
+        <div className="mt-6 rounded-2xl border border-neutral-200 bg-neutral-50 p-4 md:p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
+              <Truck className="w-3.5 h-3.5 text-emerald-600" />
+            </div>
+            <label className="text-[#353535] text-fluid-medium font-[600]">
+              {t('cart.shippingMethod')}
+            </label>
+          </div>
 
           {/* Tab Selector */}
           <div className="grid grid-cols-2 gap-2.5 mb-4">
@@ -855,7 +860,7 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
               className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-fluid-small font-semibold transition-all duration-200 ${
                 shippingPreference === "home"
                   ? "bg-emerald-500 text-white shadow-md shadow-emerald-200"
-                  : "bg-white border-2 border-neutral-200 text-gray-500 hover:border-emerald-200 hover:text-emerald-600"
+                  : "bg-white border-2 border-neutral-200 text-gray-500 hover:border-emerald-300 hover:text-emerald-600"
               }`}
             >
               <Home className="w-4 h-4 flex-shrink-0" />
@@ -870,7 +875,7 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
               className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-fluid-small font-semibold transition-all duration-200 ${
                 shippingPreference === "pickup"
                   ? "bg-emerald-500 text-white shadow-md shadow-emerald-200"
-                  : "bg-white border-2 border-neutral-200 text-gray-500 hover:border-emerald-200 hover:text-emerald-600"
+                  : "bg-white border-2 border-neutral-200 text-gray-500 hover:border-emerald-300 hover:text-emerald-600"
               }`}
             >
               <MapPin className="w-4 h-4 flex-shrink-0" />
@@ -888,7 +893,7 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.2 }}
               >
-                    <div className="mt-3 space-y-4 px-3 md:px-4">
+                    <div className="space-y-4">
                       {/* Wilaya */}
                       <div>
                         <label className="block text-[#353535] text-fluid-medium font-[500] mb-2">
@@ -1137,7 +1142,7 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.2 }}
               >
-                    <div className="mt-3 space-y-4 px-3 md:px-4">
+                    <div className="space-y-4">
                       {/* Wilaya */}
                       <div>
                         <label className="block text-[#353535] text-fluid-medium font-[500] mb-2">

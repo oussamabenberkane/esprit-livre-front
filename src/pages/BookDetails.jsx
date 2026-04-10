@@ -544,7 +544,7 @@ const BookDetails = () => {
                         </h1>
 
                         {/* Author */}
-                        <p className="font-['Poppins'] font-semibold text-[#626e82] text-fluid-small mb-fluid-md">
+                        <p className="font-['Poppins'] font-semibold text-[#626e82] text-sm mb-fluid-md">
                             {t('bookDetails.author')} {book.author.name}
                         </p>
 
@@ -564,7 +564,7 @@ const BookDetails = () => {
                             {/* Price Card */}
                             <div className="bg-neutral-100 rounded-md p-fluid-sm">
                                 <div className="flex items-start justify-between gap-2 mb-2">
-                                    <h2 className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-medium leading-tight flex-1">
+                                    <h2 className="font-['Poppins'] font-semibold text-[#1c2d55] text-sm leading-tight flex-1">
                                         {book.title}
                                     </h2>
                                     {book.language && (
@@ -574,10 +574,10 @@ const BookDetails = () => {
                                     )}
                                 </div>
                                 <div className="text-right">
-                                    <span className="font-['Poppins'] font-extrabold text-[#1c2d55] text-fluid-medium">
+                                    <span className="font-['Poppins'] font-extrabold text-[#1c2d55] text-base">
                                         {book.price}
                                     </span>
-                                    <span className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-vsmall ml-1">
+                                    <span className="font-['Poppins'] font-semibold text-[#1c2d55] text-sm ml-1">
                                         DZD
                                     </span>
                                 </div>
@@ -586,14 +586,14 @@ const BookDetails = () => {
                             {/* Details Card */}
                             <div className="border border-[#c9cfd8] rounded-md p-fluid-sm">
                                 {/* Seller */}
-                                <p className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-medium md:text-fluid-medium mb-fluid-xxs">
+                                <p className="font-['Poppins'] font-semibold text-[#1c2d55] text-sm mb-fluid-xxs">
                                     {t('bookDetails.soldBy', { seller: book.seller })}
                                 </p>
 
                                 {/* Category */}
                                 {book.tags && book.tags.find(tag => tag.type === "CATEGORY") && (
                                     <div className="flex items-center gap-2 mb-fluid-sm">
-                                        <p className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-small">
+                                        <p className="font-['Poppins'] font-semibold text-[#1c2d55] text-sm">
                                             {t('bookDetails.categoryLabel')}:
                                         </p>
                                         <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
@@ -603,22 +603,22 @@ const BookDetails = () => {
                                 )}
 
                                 {/* Stock Status */}
-                                <div className="flex items-center gap-1 mb-fluid-xs">
-                                    <CheckCircle2 className={`w-3 h-3 ${book.stockQuantity > 0 ? 'text-[#198919]' : 'text-blue-600'}`} />
-                                    <span className={`font-['Poppins'] font-bold text-fluid-tag ${book.stockQuantity > 0 ? 'text-[#198919]' : 'text-blue-600'}`}>
+                                <div className="flex items-center gap-1.5 mb-fluid-xs">
+                                    <CheckCircle2 className={`w-4 h-4 flex-shrink-0 ${book.stockQuantity > 0 ? 'text-[#198919]' : 'text-blue-600'}`} />
+                                    <span className={`font-['Poppins'] font-bold text-sm ${book.stockQuantity > 0 ? 'text-[#198919]' : 'text-blue-600'}`}>
                                         {book.stockQuantity > 0 ? t('bookCard.stockStatus.inStock') : t('bookCard.stockStatus.preorder')}
                                     </span>
                                 </div>
 
                                 {/* Delivery Estimate */}
-                                <p className="font-['Poppins'] font-semibold text-[#626e82] text-fluid-small mb-fluid-md">
+                                <p className="font-['Poppins'] font-semibold text-[#626e82] text-sm mb-fluid-md">
                                     {t('bookDetails.estimatedDelivery', { date: book.estimatedDelivery })}
                                 </p>
 
                                 {/* Add to Cart Button */}
                                 <button
                                     onClick={handleAddMainBookToCart}
-                                    className="w-[85%] mx-auto bg-[#ee0027] hover:bg-[#d00022] text-white font-['Poppins'] font-extrabold text-fluid-vsmall rounded-md py-2 px-4 flex items-center justify-center gap-2 transition-colors"
+                                    className="w-[85%] mx-auto bg-[#ee0027] hover:bg-[#d00022] text-white font-['Poppins'] font-extrabold text-sm rounded-md py-2.5 px-4 flex items-center justify-center gap-2 transition-colors"
                                 >
                                     <span>{t('bookDetails.addToCart')}</span>
                                     <ShoppingCart className="w-4 h-4" />
@@ -628,10 +628,10 @@ const BookDetails = () => {
                             {/* View Full Description Link - Below Details on Mobile */}
                             <button
                                 onClick={handleToggleDescription}
-                                className="font-['Poppins'] font-medium text-[#626e82] text-fluid-vsmall hover:text-[#1c2d55] transition-colors flex items-center gap-1 w-full"
+                                className="font-['Poppins'] font-medium text-[#626e82] hover:text-[#1c2d55] transition-colors flex items-center gap-1 w-full"
                             >
-                                <span className="flex-1 text-left"><h1 className="text-fluid-body whitespace-nowrap">{t('bookDetails.viewFullDescription')}</h1></span>
-                                <ChevronDown className={`w-6 h-6 flex-shrink-0 transition-transform duration-300 ${showFullDescription ? 'rotate-180' : ''}`} />
+                                <span className="flex-1 text-left"><h1 className="text-sm whitespace-nowrap">{t('bookDetails.viewFullDescription')}</h1></span>
+                                <ChevronDown className={`w-5 h-5 flex-shrink-0 transition-transform duration-300 ${showFullDescription ? 'rotate-180' : ''}`} />
                             </button>
                         </div>
                     </div>

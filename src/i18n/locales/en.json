@@ -96,14 +96,8 @@
     "close": "Close",
     "bookDetails": "Book details",
     "currency": "DZD",
-    "viewCart": "View cart",
-    "remove": "Remove",
-    "removeConfirmTitle": "Remove from cart?",
-    "removeConfirmMessage": "Are you sure you want to remove this book from your cart?",
-    "confirmRemove": "Yes, remove",
-    "cancelRemove": "Cancel",
-    "removedSuccess": "Book successfully removed from cart",
-    "removedError": "Failed to remove book from cart. Please try again."
+    "viewCart": "Place My Order",
+    "keepShopping": "Keep Shopping"
   },
   "common": {
     "loading": "Loading...",

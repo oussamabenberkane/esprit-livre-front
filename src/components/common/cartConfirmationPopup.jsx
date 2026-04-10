@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ShoppingCart, Check, X } from 'lucide-react';
 import { getLanguageCode } from '../../data/booksData';
-import { useCart } from '../../contexts/CartContext';
-import toast, { Toaster } from 'react-hot-toast';
 
 export default function CartConfirmationPopup({
     isOpen,
@@ -12,9 +10,9 @@ export default function CartConfirmationPopup({
     book,
     packBooks = [] // Array of books if this is a pack
 }) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const navigate = useNavigate();
-    const { removeFromCart, removePackFromCart } = useCart();
+    const isFr = i18n.language === 'fr';
 
     // Prevent body scroll when popup is open
     useEffect(() => {
@@ -45,55 +43,11 @@ export default function CartConfirmationPopup({
 
     const handleViewDetails = () => {
         navigate(`/books/${book.id}`);
-        onClose(); // Close the popup after navigation
-    };
-
-    const handleRemoveClick = async () => {
-        try {
-            // Remove the item (book or pack) from cart
-            if (book.isPack) {
-                await removePackFromCart(book.id);
-            } else {
-                await removeFromCart(book.id);
-            }
-
-            // Show success toast
-            toast.success(t('cartPopup.removedSuccess'), {
-                duration: 3000,
-                position: 'top-center',
-                style: {
-                    background: '#10B981',
-                    color: '#fff',
-                    fontWeight: '500',
-                },
-            });
-
-            // Close popup after a short delay to allow toast to be visible
-            setTimeout(() => {
-                onClose();
-            }, 500);
-        } catch (error) {
-            // Show error toast
-            toast.error(t('cartPopup.removedError'), {
-                duration: 3000,
-                position: 'top-center',
-                style: {
-                    background: '#EF4444',
-                    color: '#fff',
-                    fontWeight: '500',
-                },
-            });
-
-            // Close popup after error toast shows
-            setTimeout(() => {
-                onClose();
-            }, 500);
-        }
+        onClose();
     };
 
     return (
         <>
-            <Toaster />
             {/* Backdrop with blur and blue-grey tint */}
             <div
                 className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-40"
@@ -227,16 +181,16 @@ export default function CartConfirmationPopup({
                                             navigate('/cart');
                                             onClose();
                                         }}
-                                        className="flex-1 bg-[#1E40AF] hover:bg-blue-700 text-white font-medium py-1.5 xs:py-2 px-2 xs:px-3 rounded-md xs:rounded-lg transition-colors flex items-center justify-center gap-1 xs:gap-2"
+                                        className={`flex-1 bg-[#1E40AF] hover:bg-blue-700 text-white font-medium ${isFr ? 'py-1.5' : 'py-1 xs:py-1.5'} px-2 xs:px-3 rounded-md xs:rounded-lg transition-colors flex items-center justify-center gap-1 xs:gap-2`}
                                     >
                                         <ShoppingCart className="w-3 h-3 xs:w-4 xs:h-4" />
-                                        <span className="text-xs xs:text-fluid-medium">{t('cartPopup.viewCart')}</span>
+                                        <span className="text-[0.65rem] xs:text-xs">{t('cartPopup.viewCart')}</span>
                                     </button>
                                     <button
-                                        onClick={handleRemoveClick}
-                                        className="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium py-1.5 xs:py-2 px-2 xs:px-3 rounded-md xs:rounded-lg transition-colors"
+                                        onClick={onClose}
+                                        className={`flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium ${isFr ? 'py-1' : 'py-1 xs:py-1.5'} px-2 xs:px-3 rounded-md xs:rounded-lg transition-colors flex items-center justify-center`}
                                     >
-                                        <span className="text-xs xs:text-fluid-medium">{t('cartPopup.remove')}</span>
+                                        <span className={`text-[0.65rem] xs:text-xs${isFr ? ' leading-none' : ''}`}>{t('cartPopup.keepShopping')}</span>
                                     </button>
                                 </div>
                             </div>

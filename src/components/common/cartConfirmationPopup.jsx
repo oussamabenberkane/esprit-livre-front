@@ -10,9 +10,8 @@ export default function CartConfirmationPopup({
     book,
     packBooks = [] // Array of books if this is a pack
 }) {
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
     const navigate = useNavigate();
-    const isFr = i18n.language === 'fr';
 
     // Prevent body scroll when popup is open
     useEffect(() => {
@@ -87,19 +86,19 @@ export default function CartConfirmationPopup({
                     </div>
 
                     {/* Book Details Section */}
-                    <div className="px-3 xs:px-6 py-4 xs:py-6">
+                    <div className="px-3 xs:px-6 pt-4 xs:pt-6 pb-6 xs:pb-8">
                         <div className="flex gap-3 xs:gap-4">
                             {/* Book Cover */}
                             <div className="flex-shrink-0">
                                 <img
                                     src={book.coverImage}
                                     alt={book.title}
-                                    className="w-20 h-28 xs:w-24 xs:h-36 object-cover rounded-md xs:rounded-lg shadow-md"
+                                    className="w-24 h-36 xs:w-28 xs:h-44 object-cover rounded-md xs:rounded-lg shadow-md"
                                 />
                             </div>
 
                             {/* Book Info and Actions - Aligned to cover height */}
-                            <div className="flex-1 flex flex-col min-w-0 h-28 xs:h-36">
+                            <div className="flex-1 flex flex-col min-w-0 h-36 xs:h-44">
                                 {/* Top Section: Title, Author, Price */}
                                 <div className="flex gap-2">
                                     <div className="flex-1 min-w-0">
@@ -175,22 +174,22 @@ export default function CartConfirmationPopup({
                                 <div className="flex-1"></div>
 
                                 {/* Action Buttons - Aligned to bottom of cover */}
-                                <div className="flex gap-2">
+                                <div className="flex flex-col gap-2 mt-2 xs:mt-3">
                                     <button
                                         onClick={() => {
                                             navigate('/cart');
                                             onClose();
                                         }}
-                                        className={`flex-1 bg-[#1E40AF] hover:bg-blue-700 text-white font-medium ${isFr ? 'py-1.5' : 'py-1 xs:py-1.5'} px-2 xs:px-3 rounded-md xs:rounded-lg transition-colors flex items-center justify-center gap-1 xs:gap-2`}
+                                        className="w-full min-h-[2rem] xs:min-h-[2.25rem] bg-[#16A34A] hover:bg-green-700 text-white font-medium px-2 xs:px-3 rounded-md xs:rounded-lg transition-colors flex items-center justify-center gap-1 xs:gap-2"
                                     >
-                                        <ShoppingCart className="w-7 h-7 xs:w-8 xs:h-8" />
+                                        <ShoppingCart className="w-3.5 h-3.5 xs:w-4 xs:h-4 flex-shrink-0" />
                                         <span className="text-[0.65rem] xs:text-xs">{t('cartPopup.viewCart')}</span>
                                     </button>
                                     <button
                                         onClick={onClose}
-                                        className={`flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium ${isFr ? 'py-1' : 'py-1 xs:py-1.5'} px-2 xs:px-3 rounded-md xs:rounded-lg transition-colors flex items-center justify-center`}
+                                        className="w-full min-h-[2rem] xs:min-h-[2.25rem] bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-2 xs:px-3 rounded-md xs:rounded-lg transition-colors flex items-center justify-center"
                                     >
-                                        <span className={`text-[0.65rem] xs:text-xs${isFr ? ' leading-none' : ''}`}>{t('cartPopup.keepShopping')}</span>
+                                        <span className="text-[0.65rem] xs:text-xs">{t('cartPopup.keepShopping')}</span>
                                     </button>
                                 </div>
                             </div>

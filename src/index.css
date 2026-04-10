@@ -103,6 +103,14 @@ a {
   text-decoration: none;
 }
 
+/* Prevent iOS Safari from zooming in when tapping on input fields.
+   iOS zooms when font-size < 16px. This targets iOS only via a feature query. */
+@supports (-webkit-touch-callout: none) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
 button {
   font-size: 1em;
   font-weight: 500;

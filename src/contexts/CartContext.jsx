@@ -82,6 +82,11 @@ const cartReducer = (state, action) => {
                         ? { ...item, quantity: action.payload.quantity }
                         : item
                 ),
+                cartBooks: state.cartBooks.map(book =>
+                    book.id === action.payload.bookId
+                        ? { ...book, quantity: action.payload.quantity }
+                        : book
+                ),
                 error: null
             };
 
@@ -153,6 +158,11 @@ const cartReducer = (state, action) => {
                     item.packId === action.payload.packId
                         ? { ...item, quantity: action.payload.quantity }
                         : item
+                ),
+                cartPacks: state.cartPacks.map(pack =>
+                    pack.id === action.payload.packId
+                        ? { ...pack, quantity: action.payload.quantity }
+                        : pack
                 ),
                 error: null
             };

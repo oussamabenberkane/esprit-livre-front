@@ -190,8 +190,8 @@ function CartItem({ item, onUpdateQuantity, onRemove }) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, x: -100 }}
-      transition={{ duration: 0.3 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.15 }}
       className="flex gap-3 md:gap-4 py-4 border-b border-neutral-200 last:border-b-0"
     >
       {/* Book Image */}
@@ -293,8 +293,8 @@ function PackItem({ item, onUpdateQuantity, onRemove, onViewBooks }) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, x: -100 }}
-      transition={{ duration: 0.3 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.15 }}
       className="flex gap-3 md:gap-4 py-4 border-b border-neutral-200 last:border-b-0"
     >
       {/* Pack Image - Show first book's cover with pack indicator */}
@@ -1517,33 +1517,29 @@ export default function CartCheckoutPage() {
   const paginatedCartItems = allCartItems.slice(startIndex, endIndex);
 
   // Update quantity for books
-  const handleUpdateQuantity = async (itemId, newQuantity) => {
-    await updateQuantity(itemId, newQuantity);
-    // Reload cart books to update UI
-    await loadCartBooks();
+  const handleUpdateQuantity = (itemId, newQuantity) => {
+    updateQuantity(itemId, newQuantity);
   };
 
   // Update quantity for packs
-  const handleUpdatePackQuantity = async (packId, newQuantity) => {
-    await updatePackQuantity(packId, newQuantity);
-    // Reload cart packs to update UI
-    await loadCartPacks();
+  const handleUpdatePackQuantity = (packId, newQuantity) => {
+    updatePackQuantity(packId, newQuantity);
   };
 
   // Remove book from cart
   const handleRemoveItem = async (itemId) => {
+    const isLastOnPage = paginatedCartItems.length === 1 && currentPage > 1;
     await removeFromCart(itemId);
-    // If we removed the last item on current page, go to previous page
-    if (paginatedCartItems.length === 1 && currentPage > 1) {
+    if (isLastOnPage) {
       setCurrentPage(prev => prev - 1);
     }
   };
 
   // Remove pack from cart
   const handleRemovePackItem = async (packId) => {
+    const isLastOnPage = paginatedCartItems.length === 1 && currentPage > 1;
     await removePackFromCart(packId);
-    // If we removed the last item on current page, go to previous page
-    if (paginatedCartItems.length === 1 && currentPage > 1) {
+    if (isLastOnPage) {
       setCurrentPage(prev => prev - 1);
     }
   };
@@ -1807,9 +1803,9 @@ export default function CartCheckoutPage() {
             </div>
 
             {/* Cart Items - Books and Packs */}
-            <AnimatePresence mode="popLayout">
-              {allCartItems.length > 0 ? (
-                <div className="space-y-2">
+            {allCartItems.length > 0 ? (
+              <div className="space-y-2">
+                <AnimatePresence initial={false}>
                   {paginatedCartItems.map((item) => (
                     item.isPack ? (
                       <PackItem
@@ -1828,17 +1824,17 @@ export default function CartCheckoutPage() {
                       />
                     )
                   ))}
-                </div>
-              ) : (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="text-center py-12 text-gray-500"
-                >
-                  {t('cart.empty')}
-                </motion.div>
-              )}
-            </AnimatePresence>
+                </AnimatePresence>
+              </div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-12 text-gray-500"
+              >
+                {t('cart.empty')}
+              </motion.div>
+            )}
 
             {/* Pagination Controls */}
             {totalPages > 1 && allCartItems.length > 0 && (

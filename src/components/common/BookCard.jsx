@@ -94,7 +94,7 @@ const BookCard = ({
         >
             {/* Book Cover Container */}
             <div className="relative w-full flex items-center justify-center">
-                <div className="relative book-image-height w-full px-2">
+                <div className="relative book-image-height w-full px-2 pt-4 sm:pt-5">
                     <img
                         src={coverImageUrl}
                         alt={title}
@@ -137,9 +137,9 @@ const BookCard = ({
             </div>
 
             {/* Book Info */}
-            <div className="px-fluid-xs mt-fluid-xs sm:px-fluid-sm pb-12 sm:pb-16 relative flex flex-col gap-fluid-xxs sm:gap-fluid-xs md:gap-fluid-xs">
+            <div className="px-fluid-sm mt-fluid-sm sm:px-fluid-sm pb-14 sm:pb-18 relative flex flex-col gap-fluid-xs sm:gap-fluid-xs md:gap-fluid-sm">
                 {/* Title */}
-                <h3 className="font-semibold text-[#00417a] leading-tight text-fluid-h2 line-clamp-2 hover:text-blue-600 transition-colors cursor-pointer">
+                <h3 className="font-semibold text-[#00417a] leading-tight text-fluid-h3 line-clamp-2 hover:text-blue-600 transition-colors cursor-pointer">
                     {title}
                 </h3>
 
@@ -183,7 +183,7 @@ const BookCard = ({
                 onClick={handleAddToCartClick}
                 className="bg-[#EE0027] absolute bottom-0 mb-0 right-0 text-white px-4 py-3 rounded-tl-xl rounded-br-sm hover:bg-[#d4183d] transition-colors button-card-size flex items-center justify-center flex-shrink-0"
             >
-                <span className="text-fluid-small font-medium text-center leading-tight" style={{ whiteSpace: 'pre-line' }}>
+                <span className="text-[0.6rem] sm:text-[0.65rem] font-medium text-center leading-tight" style={{ whiteSpace: 'pre-line' }}>
                     {t('bookCard.addToCart')}
                 </span>
             </button>

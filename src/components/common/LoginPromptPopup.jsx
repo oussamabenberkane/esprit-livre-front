@@ -1,6 +1,6 @@
 // src/components/common/LoginPromptPopup.jsx
 import { useTranslation } from 'react-i18next';
-import { X } from 'lucide-react';
+import { X, Gift, Package } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
@@ -11,7 +11,6 @@ const LoginPromptPopup = ({ isOpen, onClose, onLoginClick, position = 'top' }) =
     // Delay backdrop activation to prevent immediate closure on mobile
     useEffect(() => {
         if (isOpen) {
-            // Small delay to prevent touch events from triggering backdrop close
             const timer = setTimeout(() => {
                 setBackdropActive(true);
             }, 100);
@@ -32,59 +31,76 @@ const LoginPromptPopup = ({ isOpen, onClose, onLoginClick, position = 'top' }) =
         <AnimatePresence>
             {isOpen && (
                 <>
-                    {/* Backdrop for click outside */}
-                    <div
-                        className="fixed inset-0 z-40"
+                    {/* Backdrop - blurred on mobile for focus */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="fixed inset-0 z-40 sm:bg-transparent bg-black/30 sm:backdrop-blur-none backdrop-blur-sm"
                         onClick={handleBackdropClick}
                         onTouchEnd={handleBackdropClick}
                     />
 
-                    {/* Popup */}
+                    {/* Popup - centered on mobile, anchored on desktop */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.9, y: position === 'top' ? -10 : 10 }}
+                        initial={{ opacity: 0, scale: 0.92, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.9, y: position === 'top' ? -10 : 10 }}
-                        transition={{ duration: 0.2 }}
-                        className="absolute z-50 bg-white rounded-lg shadow-xl border border-gray-200 p-3 xs:p-4 w-[calc(100vw-2rem)] max-w-[260px] xs:max-w-xs"
-                        style={{
-                            top: position === 'top' ? 'auto' : '100%',
-                            bottom: position === 'top' ? '100%' : 'auto',
-                            right: '-8px',
-                            marginTop: position === 'top' ? '0' : '18px',
-                            marginBottom: position === 'top' ? '8px' : '0'
-                        }}
+                        exit={{ opacity: 0, scale: 0.92, y: 20 }}
+                        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                        className={`fixed sm:absolute z-50 bg-white rounded-2xl sm:rounded-xl shadow-2xl border border-neutral-200 overflow-hidden w-[calc(100vw-2rem)] max-w-[340px] sm:max-w-sm left-1/2 sm:left-auto -translate-x-1/2 sm:translate-x-0 top-24 sm:top-auto sm:right-[-8px] ${position === 'top' ? 'sm:bottom-full sm:mb-2' : 'sm:top-full sm:mt-[18px]'}`}
                         onClick={(e) => e.stopPropagation()}
                         onTouchEnd={(e) => e.stopPropagation()}
                     >
                         {/* Close button */}
                         <button
                             onClick={onClose}
-                            className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 transition-colors"
+                            className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors z-10"
                         >
                             <X className="w-4 h-4" />
                         </button>
 
-                        {/* Content */}
-                        <div className="pr-5 xs:pr-6">
-                            <h3 className="text-sm xs:text-base text-gray-800 font-semibold mb-1.5 xs:mb-2">
+                        <div className="p-4 xs:p-5">
+                            {/* Title */}
+                            <h3 className="text-fluid-h3 text-[#00417a] font-semibold mb-1 pr-6 leading-snug">
                                 {t('loginPrompt.title')}
                             </h3>
-                            <p className="text-xs xs:text-sm text-gray-600 mb-3 xs:mb-4 leading-relaxed">
+                            <p className="text-fluid-small text-gray-500 mb-4 leading-relaxed">
                                 {t('loginPrompt.message')}
                             </p>
+
+                            {/* Benefits */}
+                            <div className="space-y-2.5 mb-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                        <Gift className="w-4 h-4 text-[#00417a]" />
+                                    </div>
+                                    <span className="text-fluid-small text-gray-800 font-medium">
+                                        {t('loginPrompt.benefit1')}
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                        <Package className="w-4 h-4 text-[#00417a]" />
+                                    </div>
+                                    <span className="text-fluid-small text-gray-800 font-medium">
+                                        {t('loginPrompt.benefit2')}
+                                    </span>
+                                </div>
+                            </div>
 
                             {/* Login button */}
                             <button
                                 onClick={onLoginClick}
-                                className="w-full bg-blue-600 hover:bg-blue-700 text-white px-3 xs:px-4 py-1.5 xs:py-2 rounded-lg transition-colors text-xs xs:text-sm font-medium"
+                                className="w-full bg-[#EE0027] hover:bg-[#d4183d] active:scale-[0.98] text-white py-2.5 rounded-xl transition-all text-fluid-small font-semibold"
                             >
                                 {t('loginPrompt.loginButton')}
                             </button>
                         </div>
 
-                        {/* Arrow indicator */}
+                        {/* Arrow indicator - hidden on mobile */}
                         <div
-                            className="absolute w-3 h-3 bg-white border-gray-200 transform rotate-45"
+                            className="hidden sm:block absolute w-3 h-3 bg-white border-neutral-200 transform rotate-45"
                             style={{
                                 [position === 'top' ? 'bottom' : 'top']: '-6px',
                                 right: '12px',

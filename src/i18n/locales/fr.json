@@ -8,8 +8,10 @@
     }
   },
   "loginPrompt": {
-    "title": "Connexion requise",
-    "message": "Vous devez être connecté pour accéder à votre profil.",
+    "title": "Votre espace lecteur vous attend",
+    "message": "Connectez-vous et accédez à des avantages exclusifs.",
+    "benefit1": "Offres réservées aux membres",
+    "benefit2": "Suivi de vos commandes",
     "loginButton": "Se connecter"
   },
   "bookCard": {
@@ -217,7 +219,13 @@
     "orderTrackingPromptTitle": "Suivre votre commande",
     "orderTrackingPromptMessage": "Connectez-vous pour consulter et suivre vos commandes dans votre profil.",
     "signInButton": "Se connecter",
-    "laterButton": "Plus tard"
+    "laterButton": "Plus tard",
+    "orderConfirmedTitle": "Merci pour votre commande !",
+    "orderConfirmedSubtitle": "Votre commande a été confirmée avec succès.",
+    "accountPitchMessage": "Créez votre compte et débloquez des avantages réservés à nos membres",
+    "accountBenefit1": "Offres et promotions exclusives",
+    "accountBenefit2": "Suivi de vos commandes en temps réel",
+    "createAccountButton": "Créer mon compte"
   },
   "errors": {
     "error.insufficientstock": "Certains articles de votre panier ont un stock insuffisant. Veuillez mettre à jour les quantités et réessayer.",
@@ -372,6 +380,8 @@
     "pickupPoint": "Point de relais",
     "pickupPointDesc": "Retirez votre colis au point relais le plus proche",
     "selectProvider": "Sélectionnez un point de relais",
+    "selectRelayPoint": "Choisissez votre point de retrait",
+    "infoSectionMessage": "Renseignez vos informations une seule fois et profitez d'un passage en caisse instantané à chaque commande.",
     "myFavorites": "Mes Favoris",
     "favoritesSaved": "Livres sauvegardés",
     "myOrders": "Mes Commandes",

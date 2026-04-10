@@ -8,9 +8,11 @@
     }
   },
   "loginPrompt": {
-    "title": "Login Required",
-    "message": "You need to be logged in to access your profile.",
-    "loginButton": "Log in"
+    "title": "Your reading space awaits",
+    "message": "Sign in and access exclusive member benefits.",
+    "benefit1": "Members-only offers",
+    "benefit2": "Track your orders",
+    "loginButton": "Sign in"
   },
   "bookCard": {
     "addToCart": "Add to\ncart",
@@ -217,7 +219,13 @@
     "orderTrackingPromptTitle": "Track your order",
     "orderTrackingPromptMessage": "Sign in to view and track your orders in your profile.",
     "signInButton": "Sign in",
-    "laterButton": "Later"
+    "laterButton": "Later",
+    "orderConfirmedTitle": "Thank you for your order!",
+    "orderConfirmedSubtitle": "Your order has been confirmed successfully.",
+    "accountPitchMessage": "Create your account and unlock exclusive member benefits",
+    "accountBenefit1": "Exclusive offers and promotions",
+    "accountBenefit2": "Track your orders in real time",
+    "createAccountButton": "Create my account"
   },
   "errors": {
     "error.insufficientstock": "Some items in your cart have insufficient stock. Please update quantities and try again.",
@@ -372,6 +380,8 @@
     "pickupPoint": "Pickup point",
     "pickupPointDesc": "Pick up your package at the nearest pickup point",
     "selectProvider": "Select a pickup provider",
+    "selectRelayPoint": "Choose your pickup point",
+    "infoSectionMessage": "Fill in your details once and enjoy instant checkout on every order.",
     "myFavorites": "My Favorites",
     "favoritesSaved": "Saved books",
     "myOrders": "My Orders",

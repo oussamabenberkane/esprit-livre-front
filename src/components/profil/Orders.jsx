@@ -369,7 +369,7 @@ export default function Orders() {
         </AnimatePresence>
 
         {/* Header */}
-        <div className="bg-gradient-to-b from-blue-500 to-blue-600 text-white pt-8 pb-6 px-4 shadow-md">
+        <div className="bg-gradient-to-br from-[#00417a] via-[#00518f] to-[#0065a8] text-white pt-8 pb-6 px-4 shadow-md">
         <div className="max-w-4xl mx-auto">
           <button
             onClick={handleBack}

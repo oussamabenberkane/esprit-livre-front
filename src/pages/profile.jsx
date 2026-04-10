@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Edit2, Heart, Package, LogOut, Home, MapPin, ChevronDown, Truck, X, Search, CheckCircle, AlertCircle, Info } from 'lucide-react';
+import { ArrowLeft, Edit2, Heart, Package, LogOut, Home, MapPin, ChevronDown, Truck, X, Search, CheckCircle, AlertCircle, Info, Zap } from 'lucide-react';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/common/Navbar';
@@ -11,6 +11,7 @@ import { isAuthenticated, logout as authLogout, getAndClearRedirectUrl } from '.
 import { formatMemberSinceDate } from '../utils/dateUtils';
 import wilayaData from '../utils/wilayaData';
 import { validateProfileData } from '../utils/validation';
+import RelayPointSelect from '../components/common/RelayPointSelect';
 
 export default function Profile() {
   const { t, i18n } = useTranslation();
@@ -29,6 +30,7 @@ export default function Profile() {
   const [shippingPreference, setShippingPreference] = useState("home"); // "home" or "pickup"
   const [homeAddress, setHomeAddress] = useState("");
   const [pickupProvider, setPickupProvider] = useState("");
+  const [stopDeskId, setStopDeskId] = useState(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showFirstLoginBanner, setShowFirstLoginBanner] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
@@ -136,6 +138,12 @@ export default function Profile() {
           setPickupProvider(providerMap[profile.defaultShippingProvider] || '');
         }
 
+        // Load saved relay point from localStorage
+        const savedStopDeskId = localStorage.getItem('defaultStopDeskId');
+        if (savedStopDeskId) {
+          setStopDeskId(savedStopDeskId);
+        }
+
         // Check if this is a first-time login AND user doesn't have a phone number
         if (isFirstLoginParam && !profile.phone) {
           setIsFirstLogin(true);
@@ -195,6 +203,7 @@ export default function Profile() {
   const handleWilayaSelect = (wilaya) => {
     setUserData({ ...userData, wilaya, city: '' });
     setAvailableCities(wilayaData[wilaya] || []);
+    setStopDeskId(null);
     setWilayaSearch("");
     setOpenDropdown(null);
   };
@@ -207,6 +216,7 @@ export default function Profile() {
 
   const handleProviderSelect = (provider) => {
     setPickupProvider(provider);
+    setStopDeskId(null);
     setOpenDropdown(null);
     // Clear error on selection
     if (validationErrors.pickupProvider) {
@@ -315,6 +325,13 @@ export default function Profile() {
 
       const updateResponse = await updateUserProfile(updateData);
 
+      // Save relay point preference to localStorage
+      if (shippingPreference === 'pickup' && stopDeskId) {
+        localStorage.setItem('defaultStopDeskId', stopDeskId);
+      } else {
+        localStorage.removeItem('defaultStopDeskId');
+      }
+
       // Reset editing states
       setIsEditingPhone(false);
       setValidationErrors({});
@@ -420,36 +437,33 @@ export default function Profile() {
           <Navbar />
         </section>
 
-        {/* Responsive spacing for navbar - taller on mobile due to two-line layout */}
-        <div className="h-28 md:h-20"></div>
+        {/* Header - extends behind navbar spacer to fill rounded corner gap */}
+        <div className="bg-gradient-to-br from-[#00417a] via-[#00518f] to-[#0065a8] text-white pt-34 sm:pt-28 pb-20 sm:pb-24 px-4">
+          <div className="max-w-3xl mx-auto">
+            {/* Back Button */}
+            <button
+              onClick={handleBack}
+              className="flex items-center gap-1.5 mb-5 sm:mb-6 hover:opacity-80 transition-opacity text-white/80 hover:text-white"
+            >
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="text-xs sm:text-sm">{t('profile.back')}</span>
+            </button>
 
-        {/* Header */}
-        <div className="bg-gradient-to-b from-blue-500 to-blue-600 text-white pt-8 pb-24 px-4">
-        <div className="max-w-2xl mx-auto">
-          {/* Back Button */}
-          <button
-            onClick={handleBack}
-            className="flex items-center gap-2 mb-6 hover:opacity-80 transition-opacity"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span className="text-sm">{t('profile.back')}</span>
-          </button>
+            {/* User Info */}
+            <div className="flex items-center gap-3 sm:gap-5">
+              {/* Avatar */}
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/15 backdrop-blur-sm text-white flex items-center justify-center border-2 border-white/30 shadow-lg">
+                <span className="text-xl sm:text-2xl font-medium">{getInitials(`${userData.firstName} ${userData.lastName}`)}</span>
+              </div>
 
-          {/* User Info */}
-          <div className="flex items-center gap-4">
-            {/* Avatar */}
-            <div className="w-20 h-20 rounded-full bg-white text-blue-600 flex items-center justify-center border-4 border-blue-400 shadow-lg">
-              <span className="text-2xl">{getInitials(`${userData.firstName} ${userData.lastName}`)}</span>
-            </div>
-
-            {/* Name */}
-            <div>
-              <h1 className="text-2xl mb-1">{`${userData.firstName} ${userData.lastName}`.trim()}</h1>
-              <p className="text-blue-100 text-sm">{t('profile.memberSince')} {formatMemberSinceDate(userData.createdDate, i18n.language)}</p>
+              {/* Name */}
+              <div>
+                <h1 className="text-xl sm:text-2xl font-semibold mb-0.5">{`${userData.firstName} ${userData.lastName}`.trim()}</h1>
+                <p className="text-white/60 text-xs sm:text-sm">{t('profile.memberSince')} {formatMemberSinceDate(userData.createdDate, i18n.language)}</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
       {/* Success Message */}
       <AnimatePresence>
@@ -522,34 +536,82 @@ export default function Profile() {
       </AnimatePresence>
 
       {/* Main Content */}
-      <div className="max-w-2xl mx-auto px-4 -mt-16">
+      <div className="max-w-3xl mx-auto px-4 -mt-14 sm:-mt-16">
+        {/* Quick Access Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+          {/* Orders */}
+          <button
+            onClick={navigateToOrders}
+            className="group bg-white rounded-xl shadow-md p-4 sm:p-5 flex items-center gap-4 hover:shadow-lg transition-all text-left"
+          >
+            <div className="w-11 h-11 sm:w-12 sm:h-12 bg-[#00417a]/8 rounded-xl flex items-center justify-center flex-shrink-0">
+              <Package className="w-5 h-5 sm:w-6 sm:h-6 text-[#00417a]" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-gray-900 text-fluid-body font-semibold">{t('profile.myOrders')}</h3>
+              <p className="text-fluid-small text-gray-500">{t('profile.ordersHistory')}</p>
+            </div>
+            <ArrowLeft className="w-5 h-5 text-gray-300 rotate-180 flex-shrink-0 group-hover:text-[#00417a] transition-colors" />
+          </button>
+
+          {/* Favorites */}
+          <button
+            onClick={navigateToFavorites}
+            className="group bg-white rounded-xl shadow-md p-4 sm:p-5 flex items-center gap-4 hover:shadow-lg transition-all text-left"
+          >
+            <div className="w-11 h-11 sm:w-12 sm:h-12 bg-[#EE0027]/8 rounded-xl flex items-center justify-center flex-shrink-0">
+              <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-[#EE0027]" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-gray-900 text-fluid-body font-semibold">{t('profile.myFavorites')}</h3>
+              <p className="text-fluid-small text-gray-500">{t('profile.favoritesSaved')}</p>
+            </div>
+            <ArrowLeft className="w-5 h-5 text-gray-300 rotate-180 flex-shrink-0 group-hover:text-[#EE0027] transition-colors" />
+          </button>
+        </div>
+
+        {/* Marketing Banner */}
+        <div className="relative mb-5 p-4 sm:p-5 rounded-xl bg-gradient-to-r from-[#00417a] to-[#0065a8] overflow-hidden">
+          {/* Decorative circle */}
+          <div className="absolute -right-6 -top-6 w-28 h-28 rounded-full bg-white/5"></div>
+          <div className="absolute -right-2 -bottom-8 w-20 h-20 rounded-full bg-white/5"></div>
+          <div className="relative flex items-center gap-3 sm:gap-4">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-white/15 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
+              <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            </div>
+            <p className="text-white text-xs sm:text-sm font-medium leading-relaxed">
+              {t('profile.infoSectionMessage')}
+            </p>
+          </div>
+        </div>
+
         {/* Personal Information Card */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-4">
-          <h2 className="text-lg text-gray-800 mb-4">{t('profile.personalInfo')}</h2>
+        <div className="bg-white rounded-xl shadow-md p-4 sm:p-6 mb-4">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">{t('profile.personalInfo')}</h2>
 
-          {/* First Name - Read Only */}
-          <div ref={firstNameRef} className="mb-4 p-4 bg-gray-50 rounded-lg">
-            <label className="block text-sm text-gray-600 mb-2">{t('profile.firstName')}</label>
-            <p className="text-gray-800">{userData.firstName || '-'}</p>
-            <p className="text-xs text-gray-500 mt-1">{t('profile.readOnly')}</p>
-          </div>
+          {/* Read-only fields — 2-col grid on desktop */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+            {/* First Name */}
+            <div ref={firstNameRef} className="p-3 sm:p-4 bg-gray-50 rounded-lg">
+              <label className="block text-xs sm:text-sm text-gray-500 mb-1">{t('profile.firstName')}</label>
+              <p className="text-gray-900 font-medium text-sm sm:text-base">{userData.firstName || '-'}</p>
+            </div>
 
-          {/* Last Name - Read Only */}
-          <div ref={lastNameRef} className="mb-4 p-4 bg-gray-50 rounded-lg">
-            <label className="block text-sm text-gray-600 mb-2">{t('profile.lastName')}</label>
-            <p className="text-gray-800">{userData.lastName || '-'}</p>
-            <p className="text-xs text-gray-500 mt-1">{t('profile.readOnly')}</p>
-          </div>
+            {/* Last Name */}
+            <div ref={lastNameRef} className="p-3 sm:p-4 bg-gray-50 rounded-lg">
+              <label className="block text-xs sm:text-sm text-gray-500 mb-1">{t('profile.lastName')}</label>
+              <p className="text-gray-900 font-medium text-sm sm:text-base">{userData.lastName || '-'}</p>
+            </div>
 
-          {/* Email - Read Only */}
-          <div ref={emailRef} className="mb-4 p-4 bg-gray-50 rounded-lg">
-            <label className="block text-sm text-gray-600 mb-2">{t('profile.email')}</label>
-            <p className="text-gray-800 overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">{userData.email}</p>
-            <p className="text-xs text-gray-500 mt-1">{t('profile.readOnly')}</p>
+            {/* Email */}
+            <div ref={emailRef} className="p-3 sm:p-4 bg-gray-50 rounded-lg sm:col-span-2">
+              <label className="block text-xs sm:text-sm text-gray-500 mb-1">{t('profile.email')}</label>
+              <p className="text-gray-900 font-medium text-sm sm:text-base overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">{userData.email}</p>
+            </div>
           </div>
 
           {/* Phone - Editable */}
-          <div ref={phoneRef} className={`mb-4 p-4 rounded-lg ${validationErrors.phone ? 'bg-red-50 border-2 border-red-300' : 'bg-gray-50'}`}>
+          <div ref={phoneRef} className={`mb-4 p-3 sm:p-4 rounded-lg ${validationErrors.phone ? 'bg-red-50 border-2 border-red-300' : 'bg-gray-50'}`}>
             <div className="flex items-center justify-between mb-2">
               <label className={`text-sm ${validationErrors.phone ? 'text-red-700 font-medium' : 'text-gray-600'}`}>
                 {t('profile.phone')} <span className="text-red-500">*</span>
@@ -602,13 +664,11 @@ export default function Profile() {
             )}
           </div>
 
-
-
           {/* Location */}
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {/* Wilaya */}
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <label className="block text-sm text-gray-600 mb-2">{t('profile.wilaya')}</label>
+            <div className="p-3 sm:p-4 bg-gray-50 rounded-lg">
+              <label className="block text-xs sm:text-sm text-gray-500 mb-1.5">{t('profile.wilaya')}</label>
               <div className="relative" ref={el => dropdownRefs.current['wilaya'] = el}>
                 <div
                   className={`flex items-center bg-white rounded-lg border-2 transition-all duration-200 ${
@@ -701,8 +761,8 @@ export default function Profile() {
             </div>
 
             {/* City */}
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <label className="block text-sm text-gray-600 mb-2">{t('profile.city')}</label>
+            <div className="p-3 sm:p-4 bg-gray-50 rounded-lg">
+              <label className="block text-xs sm:text-sm text-gray-500 mb-1.5">{t('profile.city')}</label>
               <div className="relative" ref={el => dropdownRefs.current['city'] = el}>
                 <div
                   className={`flex items-center bg-white rounded-lg border-2 transition-all duration-200 ${
@@ -805,8 +865,8 @@ export default function Profile() {
         </div>
 
         {/* Shipping Preference Card */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-4">
-          <h2 className="text-lg text-gray-800 mb-4">{t('profile.shippingPreference')}</h2>
+        <div className="bg-white rounded-xl shadow-md p-4 sm:p-6 mb-4">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">{t('profile.shippingPreference')}</h2>
 
           <div className="space-y-3">
             {/* Home Delivery Option */}
@@ -1018,49 +1078,13 @@ export default function Profile() {
                           <p className="text-sm text-red-600">{validationErrors.pickupProvider}</p>
                         </div>
                       )}
+
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
           </div>
-        </div>
-
-        {/* Navigation Cards */}
-        <div className="space-y-3">
-          {/* Favorites */}
-          <button
-            onClick={navigateToFavorites}
-            className="w-full bg-white rounded-xl shadow-md p-4 flex items-center justify-between hover:shadow-lg hover:scale-[1.02] transition-all"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                <Heart className="w-5 h-5 text-red-600" />
-              </div>
-              <div className="text-left">
-                <h3 className="text-gray-800">{t('profile.myFavorites')}</h3>
-                <p className="text-sm text-gray-500">{t('profile.favoritesSaved')}</p>
-              </div>
-            </div>
-            <ArrowLeft className="w-5 h-5 text-gray-400 rotate-180" />
-          </button>
-
-          {/* Orders */}
-          <button
-            onClick={navigateToOrders}
-            className="w-full bg-white rounded-xl shadow-md p-4 flex items-center justify-between hover:shadow-lg hover:scale-[1.02] transition-all"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                <Package className="w-5 h-5 text-blue-600" />
-              </div>
-              <div className="text-left">
-                <h3 className="text-gray-800">{t('profile.myOrders')}</h3>
-                <p className="text-sm text-gray-500">{t('profile.ordersHistory')}</p>
-              </div>
-            </div>
-            <ArrowLeft className="w-5 h-5 text-gray-400 rotate-180" />
-          </button>
         </div>
 
         {/* Validation Error Banner */}
@@ -1085,12 +1109,12 @@ export default function Profile() {
         )}
 
         {/* Action Buttons */}
-        <div className="mt-12 mb-12 pt-6 border-t border-gray-200">
-          <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-4">
+        <div className="mt-8 sm:mt-10 mb-10 sm:mb-12 pt-5 sm:pt-6 border-t border-gray-200">
+          <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3">
             <button
               onClick={handleSaveProfile}
               disabled={saving}
-              className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-fluid-small sm:text-fluid-body font-medium min-h-[44px]"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-8 py-3 bg-[#00417a] hover:bg-[#003366] text-white rounded-xl shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base font-semibold min-h-[48px]"
             >
               {saving ? (
                 <>
@@ -1099,16 +1123,16 @@ export default function Profile() {
                 </>
               ) : (
                 <>
-                  <Edit2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <Edit2 className="w-4 h-4" />
                   <span>{t('profile.save')}</span>
                 </>
               )}
             </button>
             <button
               onClick={handleLogout}
-              className="flex items-center justify-center gap-2 px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all text-fluid-small sm:text-fluid-body font-medium min-h-[44px]"
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-[#EE0027] hover:bg-[#d4183d] text-white rounded-xl transition-all text-sm sm:text-base font-medium min-h-[48px]"
             >
-              <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
+              <LogOut className="w-4 h-4" />
               <span>{t('profile.logout')}</span>
             </button>
           </div>

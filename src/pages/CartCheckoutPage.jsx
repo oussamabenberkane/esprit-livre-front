@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Minus, Plus, Trash2, ExternalLink, ShoppingBag, ChevronDown, Home, MapPin, Truck, X, Search, Package, LogIn } from 'lucide-react';
+import { ArrowLeft, Minus, Plus, Trash2, ExternalLink, ShoppingBag, ChevronDown, Home, MapPin, Truck, X, Search, Package, LogIn, Gift } from 'lucide-react';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import PackBooksPopup from '../components/common/PackBooksPopup';
@@ -20,12 +20,22 @@ import wilayaData from '../utils/wilayaData';
 // Order Tracking Prompt Popup Component
 function OrderTrackingPrompt({ isOpen, onSignIn, onLater }) {
   const { t } = useTranslation();
+  const [showMarketing, setShowMarketing] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      const timer = setTimeout(() => setShowMarketing(true), 1000);
+      return () => clearTimeout(timer);
+    } else {
+      setShowMarketing(false);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
   return (
     <>
-      {/* Backdrop with blur and blue-grey tint */}
+      {/* Backdrop */}
       <div
         className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-40"
         onClick={onLater}
@@ -33,59 +43,134 @@ function OrderTrackingPrompt({ isOpen, onSignIn, onLater }) {
 
       {/* Popup Container */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onLater}>
-        <div
-          className="bg-white rounded-2xl shadow-2xl w-full max-w-sm animate-fade-in-scale"
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+          className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Icon and Title */}
-          <div className="flex items-start gap-3 px-6 pt-6 pb-4">
-            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-              <Package className="w-5 h-5 text-blue-600" />
+          {/* Thank You Section */}
+          <div className="px-6 pt-8 pb-5 text-center">
+            {/* Animated Checkmark */}
+            <div className="mx-auto mb-4 w-16 h-16">
+              <svg className="w-16 h-16" viewBox="0 0 64 64">
+                <circle
+                  className="order-success-circle"
+                  cx="32" cy="32" r="28"
+                  fill="none"
+                  stroke="#10B981"
+                  strokeWidth="2.5"
+                />
+                <path
+                  className="order-success-check"
+                  d="M20 33 L28 41 L44 25"
+                  fill="none"
+                  stroke="#10B981"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </div>
-            <div className="flex-1">
-              <h3 className="text-gray-900 font-semibold text-base sm:text-lg">
-                {t('cart.orderTrackingPromptTitle')}
-              </h3>
-            </div>
+
+            <h3 className="text-[#00417a] font-semibold text-fluid-h2 mb-1">
+              {t('cart.orderConfirmedTitle')}
+            </h3>
+            <p className="text-gray-500 text-fluid-small">
+              {t('cart.orderConfirmedSubtitle')}
+            </p>
           </div>
 
-          {/* Message */}
-          <p className="text-gray-600 text-sm sm:text-base px-6 pb-6 leading-relaxed">
-            {t('cart.orderTrackingPromptMessage')}
-          </p>
+          {/* Marketing Section - reveals after thank you */}
+          <AnimatePresence>
+            {showMarketing && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <div className="px-6 pt-5 pb-6 border-t border-gray-100 bg-gradient-to-b from-blue-50/60 to-white">
+                  {/* Marketing Hook */}
+                  <p className="text-[#00417a] font-medium text-fluid-body text-center mb-4 leading-relaxed">
+                    {t('cart.accountPitchMessage')}
+                  </p>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 px-6 pb-6">
-            <button
-              onClick={onSignIn}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-4 rounded-lg transition-colors font-medium text-sm sm:text-base"
-            >
-              {t('cart.signInButton')}
-            </button>
-            <button
-              onClick={onLater}
-              className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 px-4 rounded-lg transition-colors font-medium text-sm sm:text-base"
-            >
-              {t('cart.laterButton')}
-            </button>
-          </div>
-        </div>
+                  {/* Benefits */}
+                  <div className="space-y-2.5 mb-5">
+                    <motion.div
+                      initial={{ opacity: 0, x: -12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.15, duration: 0.35 }}
+                      className="flex items-center gap-2.5"
+                    >
+                      <div className="w-7 h-7 rounded-full bg-[#00417a]/10 flex items-center justify-center flex-shrink-0">
+                        <Gift className="w-3.5 h-3.5 text-[#00417a]" />
+                      </div>
+                      <span className="text-gray-700 text-fluid-small">
+                        {t('cart.accountBenefit1')}
+                      </span>
+                    </motion.div>
+
+                    <motion.div
+                      initial={{ opacity: 0, x: -12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3, duration: 0.35 }}
+                      className="flex items-center gap-2.5"
+                    >
+                      <div className="w-7 h-7 rounded-full bg-[#00417a]/10 flex items-center justify-center flex-shrink-0">
+                        <Package className="w-3.5 h-3.5 text-[#00417a]" />
+                      </div>
+                      <span className="text-gray-700 text-fluid-small">
+                        {t('cart.accountBenefit2')}
+                      </span>
+                    </motion.div>
+                  </div>
+
+                  {/* CTA Button */}
+                  <motion.button
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4, duration: 0.3 }}
+                    onClick={onSignIn}
+                    className="w-full bg-[#EE0027] hover:bg-[#d4183d] active:scale-[0.98] text-white py-3 rounded-xl font-semibold text-fluid-body transition-all"
+                  >
+                    {t('cart.createAccountButton')}
+                  </motion.button>
+
+                  {/* Later - subtle text link */}
+                  <motion.button
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.55 }}
+                    onClick={onLater}
+                    className="w-full mt-3 text-gray-400 hover:text-gray-600 text-fluid-small transition-colors py-1"
+                  >
+                    {t('cart.laterButton')}
+                  </motion.button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </div>
 
       <style jsx>{`
-        @keyframes fadeInScale {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
+        .order-success-circle {
+          stroke-dasharray: 176;
+          stroke-dashoffset: 176;
+          animation: drawCircle 0.6s ease-out 0.3s forwards;
         }
-
-        .animate-fade-in-scale {
-          animation: fadeInScale 0.2s ease-out;
+        .order-success-check {
+          stroke-dasharray: 40;
+          stroke-dashoffset: 40;
+          animation: drawCheck 0.35s ease-out 0.75s forwards;
+        }
+        @keyframes drawCircle {
+          to { stroke-dashoffset: 0; }
+        }
+        @keyframes drawCheck {
+          to { stroke-dashoffset: 0; }
         }
       `}</style>
     </>
@@ -439,6 +524,14 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
           setAvailableCities(wilayaData[profile.wilaya]);
         }
 
+        // Pre-fill saved relay point from localStorage
+        if (profile.defaultShippingMethod === 'SHIPPING_PROVIDER') {
+          const savedStopDeskId = localStorage.getItem('defaultStopDeskId');
+          if (savedStopDeskId) {
+            setStopDeskId(savedStopDeskId);
+          }
+        }
+
       } catch (error) {
         console.error('Failed to load profile data:', error);
         // Silently fail - show empty form
@@ -667,33 +760,6 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
       <h2 className="text-black text-fluid-h2 font-[550] text-center mt-fluid-md mb-6">
         {t('cart.formTitle')}
       </h2>
-
-      {/* Guest Checkout Message */}
-      {!isUserAuthenticated && !isLoadingProfile && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg"
-        >
-          <div className="flex items-start gap-3">
-            <div className="flex-shrink-0 w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center mt-0.5">
-              <LogIn className="w-3 h-3 text-white" />
-            </div>
-            <div className="flex-1">
-              <p className="text-blue-900 text-fluid-small">
-                {t('cart.guestCheckoutMessage') || 'Log in to checkout faster with saved information.'}
-              </p>
-              <button
-                type="button"
-                onClick={() => navigate('/auth')}
-                className="mt-2 text-blue-600 hover:text-blue-800 font-semibold text-fluid-xs underline"
-              >
-                {t('cart.loginNow') || 'Log in now'}
-              </button>
-            </div>
-          </div>
-        </motion.div>
-      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Full Name */}

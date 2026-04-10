@@ -558,8 +558,8 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
 
   // Reactive shipping fee calculation
   useEffect(() => {
-    // Prerequisites: wilaya, city, provider, and at least one cart item
-    if (!formData.wilaya || !formData.city || !pickupProvider || (cartBooks.length === 0 && cartPacks.length === 0)) {
+    // Prerequisites: wilaya, provider, and at least one cart item. City only required for home delivery.
+    if (!formData.wilaya || (shippingPreference === 'home' && !formData.city) || !pickupProvider || (cartBooks.length === 0 && cartPacks.length === 0)) {
       setCalculatedFee(null);
       return;
     }
@@ -680,7 +680,7 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
     const isEmailValid = formData.email.trim() === '' || validateEmail(formData.email);
     const isPhoneValid = validatePhone(formData.phone);
     const isWilayaValid = formData.wilaya.trim() !== '';
-    const isCityValid = formData.city.trim() !== '';
+    const isCityValid = shippingPreference === 'pickup' || formData.city.trim() !== '';
 
     // Provider is always required
     const isProviderValid = pickupProvider.trim() !== '';
@@ -843,58 +843,51 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
             {t('cart.shippingMethod')}
           </label>
 
-          <div className="space-y-3">
-            {/* Home Delivery Option */}
-            <div>
-              <button
-                type="button"
-                onClick={() => {
-                  setShippingPreference("home");
-                  setPickupProvider("ZRexpress");
-                  setStopDeskId(null);
-                }}
-                className={`w-full p-2.5 xs:p-3 md:p-4 rounded-lg border-2 transition-all ${shippingPreference === "home"
-                    ? "border-emerald-500 bg-emerald-50"
-                    : "border-neutral-200 bg-gray-50 hover:border-neutral-300"
-                  }`}
-              >
-                <div className="flex items-center gap-2 xs:gap-3">
-                  <div className={`w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0 ${shippingPreference === "home" ? "bg-emerald-100" : "bg-gray-100"
-                    }`}>
-                    <Home className={`w-4 h-4 xs:w-4.5 xs:h-4.5 sm:w-5 sm:h-5 ${shippingPreference === "home" ? "text-emerald-600" : "text-gray-600"
-                      }`} />
-                  </div>
-                  <div className="text-left flex-1 min-w-0">
-                    <h3 className={`font-medium text-xs xs:text-sm sm:text-fluid-small leading-tight ${shippingPreference === "home" ? "text-emerald-900" : "text-gray-800"
-                      }`}>
-                      {t('cart.homeDelivery')}
-                    </h3>
-                    <p className={`text-[10px] xs:text-xs sm:text-fluid-xs leading-tight mt-0.5 ${shippingPreference === "home" ? "text-emerald-600" : "text-gray-500"
-                      }`}>
-                      {t('cart.homeDeliveryDesc')}
-                    </p>
-                  </div>
-                  <div className={`w-4 h-4 xs:w-4.5 xs:h-4.5 sm:w-5 sm:h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${shippingPreference === "home"
-                      ? "border-emerald-500 bg-emerald-500"
-                      : "border-gray-300"
-                    }`}>
-                    {shippingPreference === "home" && (
-                      <div className="w-1.5 h-1.5 xs:w-2 xs:h-2 rounded-full bg-white"></div>
-                    )}
-                  </div>
-                </div>
-              </button>
+          {/* Tab Selector */}
+          <div className="grid grid-cols-2 gap-2.5 mb-4">
+            <button
+              type="button"
+              onClick={() => {
+                setShippingPreference("home");
+                setPickupProvider("ZRexpress");
+                setStopDeskId(null);
+              }}
+              className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-fluid-small font-semibold transition-all duration-200 ${
+                shippingPreference === "home"
+                  ? "bg-emerald-500 text-white shadow-md shadow-emerald-200"
+                  : "bg-white border-2 border-neutral-200 text-gray-500 hover:border-emerald-200 hover:text-emerald-600"
+              }`}
+            >
+              <Home className="w-4 h-4 flex-shrink-0" />
+              {t('cart.homeDelivery')}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setShippingPreference("pickup");
+                setPickupProvider("ZRexpress");
+              }}
+              className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-fluid-small font-semibold transition-all duration-200 ${
+                shippingPreference === "pickup"
+                  ? "bg-emerald-500 text-white shadow-md shadow-emerald-200"
+                  : "bg-white border-2 border-neutral-200 text-gray-500 hover:border-emerald-200 hover:text-emerald-600"
+              }`}
+            >
+              <MapPin className="w-4 h-4 flex-shrink-0" />
+              {t('cart.pickupPoint')}
+            </button>
+          </div>
 
-              {/* Home Delivery Fields - Wilaya, Commune, Adresse */}
-              <AnimatePresence>
-                {shippingPreference === "home" && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0, y: -10 }}
-                    animate={{ opacity: 1, height: "auto", y: 0 }}
-                    exit={{ opacity: 0, height: 0, y: -10 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="overflow-hidden"
-                  >
+          {/* Tab Content */}
+          <AnimatePresence mode="wait">
+            {shippingPreference === "home" && (
+              <motion.div
+                key="home"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2 }}
+              >
                     <div className="mt-3 space-y-4 px-3 md:px-4">
                       {/* Wilaya */}
                       <div>
@@ -1133,60 +1126,17 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
                         )}
                       </div>
                     </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+              </motion.div>
+            )}
 
-            {/* Pickup Point Option */}
-            <div>
-              <button
-                type="button"
-                onClick={() => {
-                  setShippingPreference("pickup");
-                  setPickupProvider("ZRexpress");
-                }}
-                className={`w-full p-2.5 xs:p-3 md:p-4 rounded-lg border-2 transition-all ${shippingPreference === "pickup"
-                    ? "border-emerald-500 bg-emerald-50"
-                    : "border-neutral-200 bg-gray-50 hover:border-neutral-300"
-                  }`}
+            {shippingPreference === "pickup" && (
+              <motion.div
+                key="pickup"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2 }}
               >
-                <div className="flex items-center gap-2 xs:gap-3">
-                  <div className={`w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0 ${shippingPreference === "pickup" ? "bg-emerald-100" : "bg-gray-100"
-                    }`}>
-                    <MapPin className={`w-4 h-4 xs:w-4.5 xs:h-4.5 sm:w-5 sm:h-5 ${shippingPreference === "pickup" ? "text-emerald-600" : "text-gray-600"
-                      }`} />
-                  </div>
-                  <div className="text-left flex-1 min-w-0">
-                    <h3 className={`font-medium text-xs xs:text-sm sm:text-fluid-small leading-tight ${shippingPreference === "pickup" ? "text-emerald-900" : "text-gray-800"
-                      }`}>
-                      {t('cart.pickupPoint')}
-                    </h3>
-                    <p className={`text-[10px] xs:text-xs sm:text-fluid-xs leading-tight mt-0.5 ${shippingPreference === "pickup" ? "text-emerald-600" : "text-gray-500"
-                      }`}>
-                      {t('cart.pickupPointDesc')}
-                    </p>
-                  </div>
-                  <div className={`w-4 h-4 xs:w-4.5 xs:h-4.5 sm:w-5 sm:h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${shippingPreference === "pickup"
-                      ? "border-emerald-500 bg-emerald-500"
-                      : "border-gray-300"
-                    }`}>
-                    {shippingPreference === "pickup" && (
-                      <div className="w-1.5 h-1.5 xs:w-2 xs:h-2 rounded-full bg-white"></div>
-                    )}
-                  </div>
-                </div>
-              </button>
-
-              {/* Pickup Fields - Wilaya, Transporter, Relay Point */}
-              <AnimatePresence>
-                {shippingPreference === "pickup" && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                  >
                     <div className="mt-3 space-y-4 px-3 md:px-4">
                       {/* Wilaya */}
                       <div>
@@ -1391,11 +1341,9 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
                         )}
                       </div>
                     </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Order Cost Summary */}

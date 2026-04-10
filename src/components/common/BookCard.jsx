@@ -93,7 +93,7 @@ const BookCard = ({
             className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group w-full book-card-height flex flex-col relative cursor-pointer"
         >
             {/* Book Cover Container */}
-            <div className="relative pt-fluid-sm pb-auto w-full flex items-center justify-center">
+            <div className="relative w-full flex items-center justify-center">
                 <div className="relative book-image-height w-full px-2">
                     <img
                         src={coverImageUrl}
@@ -137,9 +137,9 @@ const BookCard = ({
             </div>
 
             {/* Book Info */}
-            <div className="px-fluid-xs mt-fluid-xs sm:px-fluid-sm pb-fluid-md relative flex flex-col gap-fluid-tiny sm:gap-fluid-xs md:gap-fluid-sm ">
+            <div className="px-fluid-xs mt-fluid-xs sm:px-fluid-sm pb-fluid-md relative flex flex-col gap-fluid-tiny sm:gap-fluid-xs md:gap-fluid-xs">
                 {/* Title */}
-                <h3 className="font-bold text-[#00417a] leading-none sm:leading-normal text-fluid-h3 min-[450px]:text-fluid-h2 line-clamp-2 hover:text-blue-600 transition-colors cursor-pointer">
+                <h3 className="font-semibold text-[#00417a] leading-none sm:leading-normal text-fluid-h3 min-[450px]:text-fluid-h2 line-clamp-2 hover:text-blue-600 transition-colors cursor-pointer">
                     {title}
                 </h3>
 
@@ -149,7 +149,7 @@ const BookCard = ({
                 </p>
 
                 {/* Stock Status */}
-                <div className="text-fluid-tag font-bold mb-auto">
+                <div className="text-fluid-small font-bold mb-auto">
                     <span className={`inline-flex items-center ${(stock !== null && stock !== undefined && stock > 0)
                         ? 'text-green-600'
                         : 'text-blue-600'
@@ -168,8 +168,8 @@ const BookCard = ({
                 {/* Price and Button Row */}
                 <div className="flex items-end justify-between mt-auto">
                     {/* Price */}
-                    <span className="text-fluid-small md:text-fluid-price font-bold text-[#00417a]">
-                        {price} <span className="text-fluid-vsmall md:text-fluid-small font-bold">{t('bookCard.currency')}</span>
+                    <span className="text-fluid-price font-bold text-[#00417a]">
+                        {price} <span className="text-fluid-small font-bold">{t('bookCard.currency')}</span>
                     </span>
 
 
@@ -183,7 +183,7 @@ const BookCard = ({
                 onClick={handleAddToCartClick}
                 className="bg-[#EE0027] absolute bottom-0 mb-0 right-0 text-white px-4 py-3 rounded-tl-xl rounded-br-sm hover:bg-[#d4183d] transition-colors button-card-size flex items-center justify-center flex-shrink-0"
             >
-                <span className="text-fluid-small font-semibold text-center leading-tight" style={{ whiteSpace: 'pre-line' }}>
+                <span className="text-fluid-small font-medium text-center leading-tight" style={{ whiteSpace: 'pre-line' }}>
                     {t('bookCard.addToCart')}
                 </span>
             </button>

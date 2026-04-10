@@ -41,10 +41,10 @@ main {
   --font-size-fluid-tag: clamp(0.5rem, 0.6vw, 0.65rem);
 
   /* Card dimensions */
-  --card-min-width: 140px;
-  --card-max-width: 220px;
-  --card-width: clamp(var(--card-min-width), calc(140px + (100vw - 320px) * 0.1), var(--card-max-width));
-  --card-height: clamp(260px, calc(var(--card-width) * 1.8), 400px);
+  --card-min-width: 170px;
+  --card-max-width: 275px;
+  --card-width: clamp(var(--card-min-width), calc(170px + (100vw - 320px) * 0.13), var(--card-max-width));
+  --card-height: clamp(315px, calc(var(--card-width) * 1.8), 490px);
 
   /* CardCategory dimensions */
   --cat-min-width: 140px;

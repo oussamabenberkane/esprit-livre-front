@@ -183,7 +183,7 @@ export default function CartConfirmationPopup({
                                         }}
                                         className={`flex-1 bg-[#1E40AF] hover:bg-blue-700 text-white font-medium ${isFr ? 'py-1.5' : 'py-1 xs:py-1.5'} px-2 xs:px-3 rounded-md xs:rounded-lg transition-colors flex items-center justify-center gap-1 xs:gap-2`}
                                     >
-                                        <ShoppingCart className="w-3 h-3 xs:w-4 xs:h-4" />
+                                        <ShoppingCart className="w-7 h-7 xs:w-8 xs:h-8" />
                                         <span className="text-[0.65rem] xs:text-xs">{t('cartPopup.viewCart')}</span>
                                     </button>
                                     <button

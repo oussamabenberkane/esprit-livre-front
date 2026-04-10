@@ -15,7 +15,7 @@ import { buildOrderPayload, createOrder, calculateDeliveryFee } from '../service
 import { getUserProfile } from '../services/user.service';
 import { isAuthenticated, saveRedirectUrl } from '../services/authService';
 import { PROVIDER_API_TO_DISPLAY, PROVIDER_DISPLAY_TO_API } from '../constants/orderEnums';
-import wilayaData from '../utils/wilayaData';
+import wilayaData, { wilayaNumbers } from '../utils/wilayaData';
 
 // Order Tracking Prompt Popup Component
 function OrderTrackingPrompt({ isOpen, onSignIn, onLater }) {
@@ -593,9 +593,16 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
 
   // Filter functions
   const getFilteredWilayas = () => {
-    return Object.keys(wilayaData).filter(wilaya =>
-      wilaya.toLowerCase().includes(wilayaSearch.toLowerCase())
-    );
+    const term = wilayaSearch.toLowerCase().trim();
+    if (!term) return Object.keys(wilayaData);
+    return Object.keys(wilayaData).filter(wilaya => {
+      const num = wilayaNumbers[wilaya] || '';
+      return (
+        wilaya.toLowerCase().includes(term) ||
+        num.includes(term) ||
+        parseInt(term, 10).toString() === parseInt(num, 10).toString()
+      );
+    });
   };
 
   const getFilteredCities = () => {
@@ -927,7 +934,7 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
                                 onFocus={() => {
                                   setOpenDropdown('wilaya');
                                 }}
-                                placeholder={formData.wilaya || t('cart.wilayaPlaceholder')}
+                                placeholder={formData.wilaya ? `${wilayaNumbers[formData.wilaya]} - ${formData.wilaya}` : t('cart.wilayaPlaceholder')}
                                 className={`flex-1 min-w-0 bg-transparent border-0 outline-none text-fluid-small cursor-text ${formData.wilaya ? 'text-gray-700 placeholder-gray-700 font-medium' : 'text-gray-400 placeholder-gray-400'
                                   }`}
                               />
@@ -980,6 +987,7 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
                                       >
                                         <div className={`w-3 h-3 border-2 rounded-full mr-2 sm:mr-3 flex-shrink-0 ${formData.wilaya === wilaya ? 'border-emerald-500 bg-emerald-500' : 'border-gray-300'
                                           }`}></div>
+                                        <span className="text-fluid-small font-medium text-gray-700 mr-2 flex-shrink-0">{wilayaNumbers[wilaya]}</span>
                                         <span className="font-medium truncate">{wilaya}</span>
                                       </button>
                                     ))}
@@ -1176,7 +1184,7 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
                                 onFocus={() => {
                                   setOpenDropdown('wilaya');
                                 }}
-                                placeholder={formData.wilaya || t('cart.wilayaPlaceholder')}
+                                placeholder={formData.wilaya ? `${wilayaNumbers[formData.wilaya]} - ${formData.wilaya}` : t('cart.wilayaPlaceholder')}
                                 className={`flex-1 min-w-0 bg-transparent border-0 outline-none text-fluid-small cursor-text ${formData.wilaya ? 'text-gray-700 placeholder-gray-700 font-medium' : 'text-gray-400 placeholder-gray-400'
                                   }`}
                               />
@@ -1229,6 +1237,7 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
                                       >
                                         <div className={`w-3 h-3 border-2 rounded-full mr-2 sm:mr-3 flex-shrink-0 ${formData.wilaya === wilaya ? 'border-emerald-500 bg-emerald-500' : 'border-gray-300'
                                           }`}></div>
+                                        <span className="text-fluid-small font-medium text-gray-700 mr-2 flex-shrink-0">{wilayaNumbers[wilaya]}</span>
                                         <span className="font-medium truncate">{wilaya}</span>
                                       </button>
                                     ))}

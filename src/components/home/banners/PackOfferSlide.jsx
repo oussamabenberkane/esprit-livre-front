@@ -64,7 +64,8 @@ const FannedBooks = ({ covers = [] }) => {
 
     const visible = covers.slice(0, 6);
     const transforms = getFanTransforms(visible.length, isMobile);
-    const centerIndex = Math.floor((visible.length - 1) / 2);
+    // Rightmost top-z book: matches the visual "top of the stack" for every count (1-6)
+    const badgeIndex = Math.floor(visible.length / 2);
 
     return (
         <div className="relative h-full w-full flex items-center justify-center">
@@ -106,7 +107,7 @@ const FannedBooks = ({ covers = [] }) => {
                                 draggable={false}
                             />
                         </div>
-                        {i === centerIndex && (
+                        {i === badgeIndex && (
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.6, rotate: 10 }}
                                 animate={{ opacity: 1, scale: 1, rotate: 0 }}

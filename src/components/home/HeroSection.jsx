@@ -160,7 +160,7 @@ const HeroCarousel = ({
                     <button
                         type="button"
                         onClick={prev}
-                        className="absolute left-3 sm:left-6 md:left-8 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all z-20 backdrop-blur-sm min-w-[44px] min-h-[44px] inline-flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#d4a84b] focus-visible:ring-offset-2"
+                        className="absolute left-3 sm:left-6 md:left-8 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all z-20 backdrop-blur-sm min-w-[36px] min-h-[36px] sm:min-w-[44px] sm:min-h-[44px] inline-flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#d4a84b] focus-visible:ring-offset-2"
                         aria-label={t('aria.previousSlide')}
                     >
                         <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-[#00417a]" />
@@ -168,7 +168,7 @@ const HeroCarousel = ({
                     <button
                         type="button"
                         onClick={next}
-                        className="absolute top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all z-20 backdrop-blur-sm min-w-[44px] min-h-[44px] inline-flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#d4a84b] focus-visible:ring-offset-2"
+                        className="absolute top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all z-20 backdrop-blur-sm min-w-[36px] min-h-[36px] sm:min-w-[44px] sm:min-h-[44px] inline-flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#d4a84b] focus-visible:ring-offset-2"
                         style={{ right: `${rightArrowOffset}px` }}
                         aria-label={t('aria.nextSlide')}
                     >

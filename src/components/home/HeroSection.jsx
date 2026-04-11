@@ -1,161 +1,135 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const SWIPE_THRESHOLD = 60;
+const EASE = [0.22, 1, 0.36, 1];
+
+const variants = {
+    enter: (dir) => ({
+        x: dir > 0 ? '100%' : '-100%',
+        opacity: 0.4,
+    }),
+    center: {
+        x: 0,
+        opacity: 1,
+        transition: { duration: 0.7, ease: EASE },
+    },
+    exit: (dir) => ({
+        x: dir > 0 ? '-100%' : '100%',
+        opacity: 0.4,
+        transition: { duration: 0.7, ease: EASE },
+    }),
+};
 
 const HeroCarousel = ({
-    images = [],
+    slides = [],
     className = '',
     currentSlide = 0,
-    onSlideChange
+    onSlideChange,
+    autoScrollMs = 7000,
 }) => {
     const { t } = useTranslation();
-    const scrollContainerRef = useRef(null);
-    const [rightArrowOffset, setRightArrowOffset] = useState(16); // Default 1rem in px
+    const [isHovered, setIsHovered] = useState(false);
+    const [rightArrowOffset, setRightArrowOffset] = useState(16);
+    const directionRef = useRef(1);
+    const prevSlideRef = useRef(currentSlide);
 
-    // Calculate right arrow offset accounting for scrollbar
+    // Compute direction by shortest circular path (runs pre-commit so AnimatePresence sees fresh value)
+    if (prevSlideRef.current !== currentSlide && slides.length > 0) {
+        const old = prevSlideRef.current;
+        const neu = currentSlide;
+        const n = slides.length;
+        const forwardDist = (neu - old + n) % n;
+        const backwardDist = (old - neu + n) % n;
+        directionRef.current = forwardDist <= backwardDist ? 1 : -1;
+        prevSlideRef.current = currentSlide;
+    }
+
     useEffect(() => {
         const calculateRightOffset = () => {
-            // Calculate scrollbar width
             const scrollbarW = window.innerWidth - document.documentElement.clientWidth;
-
-            // Base padding based on screen width (matching Tailwind breakpoints)
-            let basePadding = 16; // 1rem for mobile (right-4)
-            if (window.innerWidth >= 768) {
-                basePadding = 32; // 2rem for md (right-8)
-            } else if (window.innerWidth >= 640) {
-                basePadding = 24; // 1.5rem for sm (right-6)
-            }
-
-            // Add scrollbar width to maintain visual consistency
+            let basePadding = 16;
+            if (window.innerWidth >= 768) basePadding = 32;
+            else if (window.innerWidth >= 640) basePadding = 24;
             setRightArrowOffset(basePadding + scrollbarW);
         };
-
         calculateRightOffset();
         window.addEventListener('resize', calculateRightOffset);
-
         return () => window.removeEventListener('resize', calculateRightOffset);
     }, []);
 
-    const scroll = (direction) => {
-        if (!onSlideChange) return;
-
-        let newSlide;
-        if (direction === 'left') {
-            // Loop to last slide if at first slide
-            newSlide = currentSlide === 0 ? images.length - 1 : currentSlide - 1;
-        } else {
-            // Loop to first slide if at last slide
-            newSlide = currentSlide === images.length - 1 ? 0 : currentSlide + 1;
-        }
-
-        onSlideChange(newSlide);
+    const goTo = (targetIndex, dir) => {
+        if (!onSlideChange || slides.length === 0) return;
+        const wrapped = ((targetIndex % slides.length) + slides.length) % slides.length;
+        if (wrapped === currentSlide) return;
+        directionRef.current = dir;
+        onSlideChange(wrapped);
     };
 
-    // Listen to scroll events and update active slide
+    const prev = () => goTo(currentSlide - 1, -1);
+    const next = () => goTo(currentSlide + 1, 1);
+
     useEffect(() => {
-        const container = scrollContainerRef.current;
-        if (!container || !onSlideChange) return;
+        if (slides.length <= 1 || !onSlideChange || isHovered) return;
+        const id = setInterval(() => {
+            directionRef.current = 1;
+            onSlideChange((currentSlide + 1) % slides.length);
+        }, autoScrollMs);
+        return () => clearInterval(id);
+    }, [currentSlide, slides.length, onSlideChange, autoScrollMs, isHovered]);
 
-        const handleScroll = () => {
-            const scrollLeft = container.scrollLeft;
-            const maxScroll = container.scrollWidth - container.clientWidth;
-            const slideWidth = container.offsetWidth;
-
-            // Edge detection
-            if (scrollLeft >= maxScroll - 5) {
-                onSlideChange(images.length - 1);
-            } else if (scrollLeft <= 5) {
-                onSlideChange(0);
-            } else {
-                // Calculate centered slide
-                const activeIndex = Math.round(scrollLeft / slideWidth);
-                onSlideChange(Math.max(0, Math.min(activeIndex, images.length - 1)));
-            }
-        };
-
-        container.addEventListener('scroll', handleScroll);
-        handleScroll(); // Initial call
-
-        return () => container.removeEventListener('scroll', handleScroll);
-    }, [images.length, onSlideChange]);
-
-    // Scroll to slide when currentSlide changes externally (e.g., dot click)
-    useEffect(() => {
-        const container = scrollContainerRef.current;
-        if (!container) return;
-
-        const slideWidth = container.offsetWidth;
-        const targetScroll = currentSlide * slideWidth;
-
-        // Only scroll if we're not already there (avoid infinite loops)
-        if (Math.abs(container.scrollLeft - targetScroll) > 10) {
-            container.scrollTo({
-                left: targetScroll,
-                behavior: 'smooth'
-            });
-        }
-    }, [currentSlide]);
-
-    // Auto-scroll every 2 seconds with looping
-    useEffect(() => {
-        if (images.length <= 1 || !onSlideChange) return;
-
-        const autoScrollInterval = setInterval(() => {
-            const nextSlide = (currentSlide + 1) % images.length;
-            onSlideChange(nextSlide);
-        }, 2000);
-
-        return () => clearInterval(autoScrollInterval);
-    }, [currentSlide, images.length, onSlideChange]);
+    const activeSlide = slides[currentSlide];
 
     return (
-        <div className="relative">
-            {/* Scrollable Container */}
-            <div 
-                ref={scrollContainerRef}
-                className={`flex gap-0 overflow-x-auto scrollbar-hide hero-height snap-x snap-mandatory ${className}`}
-            >
-                {images.map((image, index) => (
-                    <div
-                        key={index}
-                        className="w-full hero-height flex-shrink-0 relative snap-center"
+        <div
+            className="relative"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
+            <div className={`relative hero-height overflow-hidden ${className}`}>
+                <AnimatePresence initial={false} custom={directionRef.current} mode="popLayout">
+                    <motion.div
+                        key={currentSlide}
+                        custom={directionRef.current}
+                        variants={variants}
+                        initial="enter"
+                        animate="center"
+                        exit="exit"
+                        drag="x"
+                        dragConstraints={{ left: 0, right: 0 }}
+                        dragElastic={0.18}
+                        onDragEnd={(_, info) => {
+                            if (info.offset.x < -SWIPE_THRESHOLD) next();
+                            else if (info.offset.x > SWIPE_THRESHOLD) prev();
+                        }}
+                        className="absolute inset-0 h-full w-full touch-pan-y"
+                        style={{ willChange: 'transform' }}
                     >
-                        <img
-                            src={image.src}
-                            alt={image.alt || `Slide ${index + 1}`}
-                            className="w-full h-full object-cover"
-                        />
-                        {image.button && (
-                            <div className="absolute inset-0 flex items-end justify-start p-fluid-xs sm:p-fluid-md">
-                                <button className="bg-white text-[#00417a] m-fluid-md px-fluid-xs py-fluid-xs sm:px-fluid-sm sm:py-fluid-sm text-fluid-small sm:text-fluid-body rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-                                    {image.button}
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                ))}
+                        {activeSlide && typeof activeSlide.content === 'function'
+                            ? activeSlide.content({ isActive: true })
+                            : activeSlide?.content}
+                    </motion.div>
+                </AnimatePresence>
             </div>
 
-            {/* Navigation Arrows */}
-            {images.length > 1 && (
+            {slides.length > 1 && (
                 <>
-                    {/* Left Arrow */}
                     <button
-                        onClick={() => scroll('left')}
-                        className="absolute left-4 sm:left-6 md:left-8 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all z-10"
+                        onClick={prev}
+                        className="absolute left-3 sm:left-6 md:left-8 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all z-20 backdrop-blur-sm"
                         aria-label={t('aria.previousSlide')}
                     >
-                        <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-gray-800" />
+                        <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-[#00417a]" />
                     </button>
-
-                    {/* Right Arrow */}
                     <button
-                        onClick={() => scroll('right')}
-                        className="absolute top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all z-10"
+                        onClick={next}
+                        className="absolute top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all z-20 backdrop-blur-sm"
                         style={{ right: `${rightArrowOffset}px` }}
                         aria-label={t('aria.nextSlide')}
                     >
-                        <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-gray-800" />
+                        <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-[#00417a]" />
                     </button>
                 </>
             )}

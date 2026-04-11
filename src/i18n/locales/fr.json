@@ -121,7 +121,35 @@
     "profileCompleted": "Profil complété avec succès ! Bienvenue chez Esprit Livre.",
     "hero": {
       "discover": "Découvrir",
-      "newReleases": "Nouveautés"
+      "newReleases": "Nouveautés",
+      "packOffer": {
+        "eyebrow": "Offre en cours",
+        "title": "Un pack acheté,",
+        "titleAccent": "un livre offert.",
+        "subtitle": "Composez votre prochaine lecture et recevez un titre en cadeau avec chaque pack.",
+        "savings": "Économisez {{amount}} DA",
+        "giftBadge": "+1 livre offert",
+        "instead": "au lieu de {{price}} DA",
+        "cta": "Profiter de l'offre",
+        "fallbackTitle": "Nos packs lecture"
+      },
+      "socialProof": {
+        "eyebrow": "Ils nous font déjà confiance",
+        "title": "3 000+ lecteurs,",
+        "titleAccent": "une même passion.",
+        "subtitle": "Une communauté qui grandit un livre à la fois.",
+        "stat1Label": "lecteurs servis",
+        "stat2Label": "commandes livrées",
+        "stat3Label": "authentiques",
+        "cta": "Explorer la collection"
+      },
+      "collection": {
+        "eyebrow": "Sélection maison",
+        "title": "45 titres triés",
+        "titleAccent": "sur le volet.",
+        "subtitle": "Chaque ouvrage est choisi avec soin. Trouvez celui qui vous ressemble.",
+        "hint": "Explorer la collection"
+      }
     }
   },
   "floatingCartBadge": {

@@ -8,6 +8,10 @@ import CategoryCard from '../components/home/CategoryCard';
 import BookCard from '../components/common/BookCard';
 import AuthorComponent from '../components/home/author';
 import HeroCarousel from '../components/home/HeroSection';
+import PackOfferSlide from '../components/home/banners/PackOfferSlide';
+import SocialProofSlide from '../components/home/banners/SocialProofSlide';
+import CollectionSlide from '../components/home/banners/CollectionSlide';
+import { getAllBookPacks } from '../services/bookPackService';
 import SeeMore from '../components/buttons/SeeMore';
 import SlideScroll from '../components/buttons/SlideScroll';
 import PaginationDots from '../components/common/PaginationDots';
@@ -226,6 +230,7 @@ const HomePage = () => {
 
     // Hero carousel state (you already have this)
     const [currentSlide, setCurrentSlide] = React.useState(0);
+    const [featuredPack, setFeaturedPack] = useState(null);
 
     // Cart popup state
     const [showCartPopup, setShowCartPopup] = useState(false);
@@ -443,21 +448,78 @@ const HomePage = () => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    const heroImages = [
-        {
-            src: "/assets/banners/banner2.png",
-            alt: "Featured Books Collection",
-            overlay: "rgba(0, 65, 122, 0.3)", // Blue overlay matching your theme
-            button: t('homePage.hero.discover')
-        },
-        {
-            src: "/assets/banners/banner1.png",
-            alt: "Offres spéciales livres",
-            overlay: "rgba(0, 0, 0, 0.2)",
-            button: t('homePage.hero.newReleases')
-        },
+    // Fetch a featured pack for the hero banner
+    useEffect(() => {
+        let cancelled = false;
+        (async () => {
+            try {
+                const response = await getAllBookPacks({ page: 0, size: 1 });
+                const packs = response?.content || response || [];
+                if (cancelled || !packs.length) return;
 
-    ];
+                const rawPack = packs[0];
+                const books = (rawPack.books || []).map((book) => ({
+                    id: book.id,
+                    title: book.title,
+                    price: parseFloat(book.price) || 0,
+                    coverImage: getBookCoverUrl(book.id),
+                }));
+                const originalPrice = books.reduce((sum, b) => sum + b.price, 0);
+                setFeaturedPack({
+                    id: rawPack.id,
+                    title: rawPack.title,
+                    books,
+                    originalPrice,
+                    packPrice: parseFloat(rawPack.price) || 0,
+                });
+            } catch (error) {
+                console.error('Failed to load featured pack:', error);
+            }
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
+    // Collect book covers from loaded main displays for hero visuals
+    const heroCovers = React.useMemo(() => {
+        const seen = new Set();
+        const covers = [];
+        for (const display of mainDisplays) {
+            for (const book of display.books || []) {
+                if (book.id && !seen.has(book.id)) {
+                    seen.add(book.id);
+                    covers.push(getBookCoverUrl(book.id));
+                    if (covers.length >= 16) return covers;
+                }
+            }
+        }
+        return covers;
+    }, [mainDisplays]);
+
+    const heroSlides = React.useMemo(
+        () => [
+            {
+                id: 'pack-offer',
+                content: ({ isActive }) => (
+                    <PackOfferSlide pack={featuredPack} isActive={isActive} />
+                ),
+            },
+            {
+                id: 'social-proof',
+                content: ({ isActive }) => (
+                    <SocialProofSlide backdropCovers={heroCovers} isActive={isActive} />
+                ),
+            },
+            {
+                id: 'collection',
+                content: ({ isActive }) => (
+                    <CollectionSlide covers={heroCovers} isActive={isActive} />
+                ),
+            },
+        ],
+        [featuredPack, heroCovers]
+    );
 
     const handleAddToCart = async (bookId) => {
         console.log(`Added book ${bookId} to cart`);
@@ -682,15 +744,14 @@ const HomePage = () => {
 
                 <section className="w-full mt-[-14px] max-w-[100vw]">
                     <HeroCarousel
-                        images={heroImages}
-                        height="hero-height"
+                        slides={heroSlides}
                         className="shadow-lg"
                         currentSlide={currentSlide}
                         onSlideChange={setCurrentSlide}
                     />
                     <div className="mt-4 mb-4">
                         <PaginationDots
-                            totalDots={heroImages.length}
+                            totalDots={heroSlides.length}
                             currentIndex={currentSlide}
                             onDotClick={(index) => setCurrentSlide(index)}
                         />

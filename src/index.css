@@ -64,7 +64,7 @@ main {
   --button-height: clamp(40px, 9vw, 60px);
 
   /*hero height */
-  --hero-height: clamp(240px, 30vw, 350px);
+  --hero-height: clamp(440px, 42vw, 540px);
 
   /* Fluid Spacing */
   --spacing-fluid-xs: clamp(0.5rem, 1vw, 1rem);

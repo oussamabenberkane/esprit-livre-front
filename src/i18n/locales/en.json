@@ -121,7 +121,35 @@
     "profileCompleted": "Profile completed successfully! Welcome to Esprit Livre.",
     "hero": {
       "discover": "Discover",
-      "newReleases": "New Releases"
+      "newReleases": "New Releases",
+      "packOffer": {
+        "eyebrow": "Limited offer",
+        "title": "Buy a pack,",
+        "titleAccent": "get a book on us.",
+        "subtitle": "Build your next reading list and receive one free book with every pack.",
+        "savings": "Save {{amount}} DA",
+        "giftBadge": "+1 free book",
+        "instead": "instead of {{price}} DA",
+        "cta": "Claim the offer",
+        "fallbackTitle": "Our reading packs"
+      },
+      "socialProof": {
+        "eyebrow": "Already trusted by",
+        "title": "3,000+ readers,",
+        "titleAccent": "one shared passion.",
+        "subtitle": "A community that grows one book at a time.",
+        "stat1Label": "readers served",
+        "stat2Label": "orders delivered",
+        "stat3Label": "authentic",
+        "cta": "Explore the collection"
+      },
+      "collection": {
+        "eyebrow": "House selection",
+        "title": "45 titles,",
+        "titleAccent": "hand-picked.",
+        "subtitle": "Every book is chosen with care. Find the one that speaks to you.",
+        "hint": "Browse the collection"
+      }
     }
   },
   "floatingCartBadge": {

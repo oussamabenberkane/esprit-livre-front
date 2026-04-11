@@ -247,12 +247,15 @@ const PackOfferSlide = ({ pack, isActive }) => {
 
     return (
         <div className="relative w-full h-full">
-            {/* Layered background: cream base + navy radial wash */}
+            {/* Layered background: cream base + navy radial wash (bottom
+                right) + gold bloom in the upper right. The upper-right gold
+                bloom is the shared light source across all three hero slides,
+                so the carousel reads as one scene. */}
             <div
                 className="absolute inset-0"
                 style={{
                     background:
-                        'radial-gradient(120% 80% at 85% 110%, rgba(0,65,122,0.18) 0%, rgba(0,65,122,0) 55%), linear-gradient(135deg, #f9f3e4 0%, #f3ead4 100%)',
+                        'radial-gradient(42% 55% at 88% 18%, rgba(212,168,75,0.22) 0%, rgba(212,168,75,0.06) 48%, rgba(212,168,75,0) 72%), radial-gradient(120% 80% at 85% 110%, rgba(0,65,122,0.18) 0%, rgba(0,65,122,0) 55%), linear-gradient(135deg, #f9f3e4 0%, #f3ead4 100%)',
                 }}
             />
             <GrainOverlay opacity={0.25} />

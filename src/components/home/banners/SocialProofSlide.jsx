@@ -77,24 +77,38 @@ const SocialProofSlide = ({ isActive }) => {
 
     return (
         <div className="relative w-full h-full">
-            {/* Semi-transparent navy wash — the persistent MarqueeBackdrop sits
-                *under* this slide, so the books keep flowing through the tint
-                without restarting on slide change. */}
+            {/* Graduated navy veil — dark on the left for text legibility,
+                dissolving to a cream tint on the right so the persistent
+                MarqueeBackdrop books bleed through and visually bridge into
+                slide 3. No more opaque navy wall. */}
             <div
                 className="absolute inset-0 pointer-events-none"
                 style={{
                     background:
-                        'linear-gradient(100deg, rgba(0,30,60,0.94) 0%, rgba(0,65,122,0.82) 45%, rgba(0,65,122,0.58) 100%)',
+                        'linear-gradient(102deg, rgba(0,25,55,0.9) 0%, rgba(0,42,84,0.78) 26%, rgba(0,65,122,0.5) 54%, rgba(0,65,122,0.18) 78%, rgba(247,241,230,0.12) 100%)',
                 }}
             />
 
-            {/* Gold glow accent */}
+            {/* Soft navy pool behind the copy block for extra contrast on
+                mobile where text centers. Fades outward to nothing. */}
             <div
                 aria-hidden="true"
                 className="absolute inset-0 pointer-events-none"
                 style={{
                     background:
-                        'radial-gradient(50% 50% at 90% 100%, rgba(212,168,75,0.22) 0%, rgba(212,168,75,0) 60%)',
+                        'radial-gradient(58% 70% at 22% 55%, rgba(0,25,55,0.38) 0%, rgba(0,25,55,0) 70%)',
+                }}
+            />
+
+            {/* Gold bloom — pulled up and smaller so it reads as a light
+                source, not a corner wash. */}
+            <div
+                aria-hidden="true"
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                    background:
+                        'radial-gradient(42% 55% at 88% 22%, rgba(212,168,75,0.26) 0%, rgba(212,168,75,0.08) 45%, rgba(212,168,75,0) 70%)',
+                    mixBlendMode: 'screen',
                 }}
             />
 

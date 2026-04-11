@@ -20,15 +20,33 @@ const CollectionSlide = ({ isActive }) => {
 
     return (
         <div className="relative w-full h-full">
-            {/* Semi-transparent cream vignette. The persistent MarqueeBackdrop
-                sits *under* this slide, so books keep flowing uninterrupted
-                through the soft cream wash. */}
+            {/* Cream vignette — lightened so the persistent MarqueeBackdrop
+                books stay readable through the wash, then a whisper of navy
+                from the top-left to echo slide 2's navy gravity and keep the
+                three slides feeling like one scene. */}
             <div
                 aria-hidden="true"
                 className="absolute inset-0 pointer-events-none"
                 style={{
                     background:
-                        'radial-gradient(65% 80% at 50% 50%, rgba(249,243,228,0.35) 0%, rgba(249,243,228,0.82) 55%, rgba(241,230,204,0.94) 100%)',
+                        'radial-gradient(78% 88% at 50% 55%, rgba(249,243,228,0.22) 0%, rgba(249,243,228,0.58) 52%, rgba(241,230,204,0.76) 100%)',
+                }}
+            />
+            <div
+                aria-hidden="true"
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                    background:
+                        'linear-gradient(128deg, rgba(0,42,84,0.16) 0%, rgba(0,42,84,0.05) 26%, rgba(0,42,84,0) 48%)',
+                }}
+            />
+            <div
+                aria-hidden="true"
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                    background:
+                        'radial-gradient(38% 50% at 92% 14%, rgba(212,168,75,0.16) 0%, rgba(212,168,75,0) 65%)',
+                    mixBlendMode: 'screen',
                 }}
             />
 

@@ -29,6 +29,7 @@ const HeroCarousel = ({
     currentSlide = 0,
     onSlideChange,
     autoScrollMs = 7000,
+    backdrop = null,
 }) => {
     const { t } = useTranslation();
     const [isHovered, setIsHovered] = useState(false);
@@ -89,6 +90,7 @@ const HeroCarousel = ({
             onMouseLeave={() => setIsHovered(false)}
         >
             <div className={`relative hero-height overflow-hidden ${className}`}>
+                {backdrop}
                 <AnimatePresence initial={false} custom={directionRef.current} mode="popLayout">
                     <motion.div
                         key={currentSlide}

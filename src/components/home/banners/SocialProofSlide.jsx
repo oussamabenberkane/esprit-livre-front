@@ -4,11 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, Truck, Users, ArrowUpRight } from 'lucide-react';
 import GrainOverlay from './GrainOverlay';
-import BookMarquee, {
-    splitMarqueeRows,
-    MARQUEE_CYCLE_A,
-    MARQUEE_CYCLE_B,
-} from './BookMarquee';
 
 const useCountUp = (target, { duration = 1400, active = true } = {}) => {
     const [value, setValue] = useState(0);
@@ -67,19 +62,20 @@ const Stat = ({ icon: Icon, target, label, suffix = '', active, delay = 0 }) => 
     );
 };
 
-const SocialProofSlide = ({ backdropCovers = [], isActive }) => {
+const SocialProofSlide = ({ isActive }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { rowA, rowB } = splitMarqueeRows(backdropCovers);
 
     return (
         <div className="relative w-full h-full">
-            {/* Navy gradient base */}
+            {/* Semi-transparent navy wash — the persistent MarqueeBackdrop sits
+                *under* this slide, so the books keep flowing through the tint
+                without restarting on slide change. */}
             <div
-                className="absolute inset-0"
+                className="absolute inset-0 pointer-events-none"
                 style={{
                     background:
-                        'radial-gradient(100% 80% at 20% 0%, #0a5394 0%, #00417a 45%, #002d56 100%)',
+                        'linear-gradient(100deg, rgba(0,30,60,0.94) 0%, rgba(0,65,122,0.82) 45%, rgba(0,65,122,0.58) 100%)',
                 }}
             />
 
@@ -90,35 +86,6 @@ const SocialProofSlide = ({ backdropCovers = [], isActive }) => {
                 style={{
                     background:
                         'radial-gradient(50% 50% at 90% 100%, rgba(212,168,75,0.22) 0%, rgba(212,168,75,0) 60%)',
-                }}
-            />
-
-            {/* Tilted marquee — byte-identical to the collection slide so the
-                rows stay visually synchronized across the crossfade. Wall-clock
-                animation delay in BookMarquee does the actual sync math. */}
-            <div
-                className="absolute inset-0 pointer-events-none overflow-hidden opacity-30"
-                style={{
-                    transform: 'rotate(-4deg) scale(1.1)',
-                    transformOrigin: 'center',
-                    mixBlendMode: 'luminosity',
-                }}
-            >
-                <div className="absolute left-0 right-0" style={{ top: '8%' }}>
-                    <BookMarquee covers={rowA} cycleSec={MARQUEE_CYCLE_A} />
-                </div>
-                <div className="absolute left-0 right-0" style={{ top: '62%' }}>
-                    <BookMarquee covers={rowB} cycleSec={MARQUEE_CYCLE_B} reverse />
-                </div>
-            </div>
-
-            {/* Navy tint so the stats stay readable over the books */}
-            <div
-                aria-hidden="true"
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                    background:
-                        'linear-gradient(100deg, rgba(0,45,86,0.88) 0%, rgba(0,65,122,0.72) 45%, rgba(0,65,122,0.4) 100%)',
                 }}
             />
 

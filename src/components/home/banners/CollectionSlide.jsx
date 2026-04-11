@@ -4,17 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import GrainOverlay from './GrainOverlay';
-import BookMarquee, {
-    splitMarqueeRows,
-    MARQUEE_CYCLE_A,
-    MARQUEE_CYCLE_B,
-} from './BookMarquee';
 
-const CollectionSlide = ({ covers = [], isActive }) => {
+const CollectionSlide = ({ isActive }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-
-    const { rowA, rowB } = splitMarqueeRows(covers);
 
     const handleClick = () => navigate('/allbooks');
 
@@ -31,39 +24,15 @@ const CollectionSlide = ({ covers = [], isActive }) => {
                 }
             }}
         >
-            {/* Cream base */}
-            <div
-                className="absolute inset-0"
-                style={{
-                    background:
-                        'linear-gradient(180deg, #f9f3e4 0%, #f1e6cc 100%)',
-                }}
-            />
-
-            {/* Marquee rows in background, tilted. Same config as the social-proof
-                slide, so the two stay visually synchronized across the crossfade. */}
-            <div
-                className="absolute inset-0 opacity-90 pointer-events-none"
-                style={{
-                    transform: 'rotate(-4deg) scale(1.1)',
-                    transformOrigin: 'center',
-                }}
-            >
-                <div className="absolute left-0 right-0" style={{ top: '8%' }}>
-                    <BookMarquee covers={rowA} cycleSec={MARQUEE_CYCLE_A} />
-                </div>
-                <div className="absolute left-0 right-0" style={{ top: '62%' }}>
-                    <BookMarquee covers={rowB} cycleSec={MARQUEE_CYCLE_B} reverse />
-                </div>
-            </div>
-
-            {/* Soft vignette to focus center */}
+            {/* Semi-transparent cream vignette. The persistent MarqueeBackdrop
+                sits *under* this slide, so books keep flowing uninterrupted
+                through the soft cream wash. */}
             <div
                 aria-hidden="true"
                 className="absolute inset-0 pointer-events-none"
                 style={{
                     background:
-                        'radial-gradient(60% 75% at 50% 50%, rgba(249,243,228,0) 0%, rgba(249,243,228,0.85) 60%, rgba(241,230,204,0.95) 100%)',
+                        'radial-gradient(65% 80% at 50% 50%, rgba(249,243,228,0.35) 0%, rgba(249,243,228,0.82) 55%, rgba(241,230,204,0.94) 100%)',
                 }}
             />
 

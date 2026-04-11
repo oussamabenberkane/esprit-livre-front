@@ -11,6 +11,7 @@ import HeroCarousel from '../components/home/HeroSection';
 import PackOfferSlide from '../components/home/banners/PackOfferSlide';
 import SocialProofSlide from '../components/home/banners/SocialProofSlide';
 import CollectionSlide from '../components/home/banners/CollectionSlide';
+import MarqueeBackdrop from '../components/home/banners/MarqueeBackdrop';
 import { getAllBookPacks } from '../services/bookPackService';
 import SeeMore from '../components/buttons/SeeMore';
 import SlideScroll from '../components/buttons/SlideScroll';
@@ -523,15 +524,11 @@ const HomePage = () => {
             },
             {
                 id: 'social-proof',
-                content: ({ isActive }) => (
-                    <SocialProofSlide backdropCovers={heroCovers} isActive={isActive} />
-                ),
+                content: ({ isActive }) => <SocialProofSlide isActive={isActive} />,
             },
             {
                 id: 'collection',
-                content: ({ isActive }) => (
-                    <CollectionSlide covers={heroCovers} isActive={isActive} />
-                ),
+                content: ({ isActive }) => <CollectionSlide isActive={isActive} />,
             },
         ],
         [featuredPack, heroCovers]
@@ -764,6 +761,12 @@ const HomePage = () => {
                         className="shadow-lg"
                         currentSlide={currentSlide}
                         onSlideChange={setCurrentSlide}
+                        backdrop={
+                            <MarqueeBackdrop
+                                covers={heroCovers}
+                                visible={currentSlide === 1 || currentSlide === 2}
+                            />
+                        }
                     />
                     <div className="mt-4 mb-4">
                         <PaginationDots

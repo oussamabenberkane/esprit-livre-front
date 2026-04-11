@@ -654,6 +654,18 @@ a {
   }
 }
 
+/* One-time intro that slides the row in from the right edge. Speed is
+   tuned to match heroMarquee (60s per viewport width) so the transition
+   into the infinite loop is seamless — no visible speed change. */
+@keyframes heroMarqueeIntro {
+  from {
+    transform: translate3d(100vw, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 .animate-fade-in {
   animation: fadeIn 0.4s ease-out forwards;
   opacity: 0;

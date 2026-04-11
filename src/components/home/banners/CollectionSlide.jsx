@@ -4,83 +4,17 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import GrainOverlay from './GrainOverlay';
-
-const SPINE_PALETTE = [
-    ['#0a5394', '#002d56'],
-    ['#d4a84b', '#8a6a1a'],
-    ['#00417a', '#001e3d'],
-    ['#b58929', '#5a3f0a'],
-    ['#0f4d85', '#062e52'],
-    ['#c99531', '#6b4410'],
-    ['#1a5a94', '#003663'],
-    ['#a97b1c', '#4a2f04'],
-];
-
-const Marquee = ({ covers, rowOffset = 0, speed = 55, reverse = false }) => {
-    const hasCovers = covers.length > 0;
-    const fallback = hasCovers ? covers : Array.from({ length: 8 }, (_, i) => null);
-    const list = [...fallback, ...fallback];
-
-    return (
-        <div
-            className="absolute left-0 right-0 flex gap-3 sm:gap-4"
-            style={{
-                top: `${rowOffset}%`,
-                willChange: 'transform',
-            }}
-        >
-            <motion.div
-                className="flex gap-3 sm:gap-4 shrink-0"
-                animate={{ x: reverse ? ['-50%', '0%'] : ['0%', '-50%'] }}
-                transition={{ duration: speed, ease: 'linear', repeat: Infinity }}
-            >
-                {list.map((src, i) => {
-                    const [from, to] = SPINE_PALETTE[i % SPINE_PALETTE.length];
-                    return (
-                        <div
-                            key={i}
-                            className="shrink-0 rounded-[3px] overflow-hidden bg-[#1a1a1a]"
-                            style={{
-                                width: 'clamp(70px, 8vw, 110px)',
-                                height: 'clamp(105px, 12vw, 165px)',
-                                boxShadow:
-                                    '0 18px 32px -14px rgba(0,30,70,0.35), inset 2px 0 0 rgba(255,255,255,0.05), inset -2px 0 0 rgba(0,0,0,0.2)',
-                            }}
-                        >
-                            {src ? (
-                                <img
-                                    src={src}
-                                    alt=""
-                                    className="w-full h-full object-cover"
-                                    loading="lazy"
-                                    draggable={false}
-                                />
-                            ) : (
-                                <div
-                                    className="w-full h-full flex flex-col justify-between p-2"
-                                    style={{
-                                        background: `linear-gradient(150deg, ${from} 0%, ${to} 100%)`,
-                                    }}
-                                >
-                                    <div className="h-[2px] w-1/2 bg-white/35" />
-                                    <div className="h-[2px] w-6 bg-[#d4a84b]" />
-                                    <div className="h-[2px] w-1/3 bg-white/25 self-end" />
-                                </div>
-                            )}
-                        </div>
-                    );
-                })}
-            </motion.div>
-        </div>
-    );
-};
+import BookMarquee, {
+    splitMarqueeRows,
+    MARQUEE_CYCLE_A,
+    MARQUEE_CYCLE_B,
+} from './BookMarquee';
 
 const CollectionSlide = ({ covers = [], isActive }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
 
-    const rowA = covers.slice(0, 8);
-    const rowB = covers.slice(8, 16).length >= 4 ? covers.slice(8, 16) : covers.slice(0, 8).reverse();
+    const { rowA, rowB } = splitMarqueeRows(covers);
 
     const handleClick = () => navigate('/allbooks');
 
@@ -106,7 +40,8 @@ const CollectionSlide = ({ covers = [], isActive }) => {
                 }}
             />
 
-            {/* Marquee rows in background, tilted */}
+            {/* Marquee rows in background, tilted. Same config as the social-proof
+                slide, so the two stay visually synchronized across the crossfade. */}
             <div
                 className="absolute inset-0 opacity-90 pointer-events-none"
                 style={{
@@ -114,8 +49,12 @@ const CollectionSlide = ({ covers = [], isActive }) => {
                     transformOrigin: 'center',
                 }}
             >
-                <Marquee covers={rowA} rowOffset={8} speed={60} />
-                <Marquee covers={rowB} rowOffset={62} speed={75} reverse />
+                <div className="absolute left-0 right-0" style={{ top: '8%' }}>
+                    <BookMarquee covers={rowA} cycleSec={MARQUEE_CYCLE_A} />
+                </div>
+                <div className="absolute left-0 right-0" style={{ top: '62%' }}>
+                    <BookMarquee covers={rowB} cycleSec={MARQUEE_CYCLE_B} reverse />
+                </div>
             </div>
 
             {/* Soft vignette to focus center */}

@@ -4,6 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, Truck, Users, ArrowUpRight } from 'lucide-react';
 import GrainOverlay from './GrainOverlay';
+import BookMarquee, {
+    splitMarqueeRows,
+    MARQUEE_CYCLE_A,
+    MARQUEE_CYCLE_B,
+} from './BookMarquee';
 
 const useCountUp = (target, { duration = 1400, active = true } = {}) => {
     const [value, setValue] = useState(0);
@@ -62,26 +67,10 @@ const Stat = ({ icon: Icon, target, label, suffix = '', active, delay = 0 }) => 
     );
 };
 
-const FloatingCover = ({ src, className, style, delay }) => (
-    <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 0.22, y: 0 }}
-        transition={{ delay, duration: 1.2 }}
-        className={`absolute rounded-[3px] overflow-hidden ring-1 ring-white/10 ${className}`}
-        style={{
-            boxShadow:
-                '0 10px 30px -10px rgba(0,0,0,0.6), inset 2px 0 0 rgba(255,255,255,0.06)',
-            ...style,
-        }}
-        aria-hidden="true"
-    >
-        {src && <img src={src} alt="" className="w-full h-full object-cover" draggable={false} />}
-    </motion.div>
-);
-
 const SocialProofSlide = ({ backdropCovers = [], isActive }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const { rowA, rowB } = splitMarqueeRows(backdropCovers);
 
     return (
         <div className="relative w-full h-full">
@@ -104,45 +93,34 @@ const SocialProofSlide = ({ backdropCovers = [], isActive }) => {
                 }}
             />
 
-            {/* Subtle floating book silhouettes */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                <FloatingCover
-                    src={backdropCovers[0]}
-                    className=""
-                    style={{
-                        left: '4%',
-                        top: '12%',
-                        width: 'clamp(60px, 7vw, 95px)',
-                        height: 'clamp(90px, 10vw, 140px)',
-                        transform: 'rotate(-10deg)',
-                    }}
-                    delay={0.4}
-                />
-                <FloatingCover
-                    src={backdropCovers[1]}
-                    className=""
-                    style={{
-                        right: '6%',
-                        top: '10%',
-                        width: 'clamp(60px, 7vw, 95px)',
-                        height: 'clamp(90px, 10vw, 140px)',
-                        transform: 'rotate(8deg)',
-                    }}
-                    delay={0.55}
-                />
-                <FloatingCover
-                    src={backdropCovers[2]}
-                    className=""
-                    style={{
-                        right: '18%',
-                        bottom: '8%',
-                        width: 'clamp(50px, 6vw, 80px)',
-                        height: 'clamp(75px, 9vw, 118px)',
-                        transform: 'rotate(-4deg)',
-                    }}
-                    delay={0.7}
-                />
+            {/* Tilted marquee — byte-identical to the collection slide so the
+                rows stay visually synchronized across the crossfade. Wall-clock
+                animation delay in BookMarquee does the actual sync math. */}
+            <div
+                className="absolute inset-0 pointer-events-none overflow-hidden opacity-30"
+                style={{
+                    transform: 'rotate(-4deg) scale(1.1)',
+                    transformOrigin: 'center',
+                    mixBlendMode: 'luminosity',
+                }}
+            >
+                <div className="absolute left-0 right-0" style={{ top: '8%' }}>
+                    <BookMarquee covers={rowA} cycleSec={MARQUEE_CYCLE_A} />
+                </div>
+                <div className="absolute left-0 right-0" style={{ top: '62%' }}>
+                    <BookMarquee covers={rowB} cycleSec={MARQUEE_CYCLE_B} reverse />
+                </div>
             </div>
+
+            {/* Navy tint so the stats stay readable over the books */}
+            <div
+                aria-hidden="true"
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                    background:
+                        'linear-gradient(100deg, rgba(0,45,86,0.88) 0%, rgba(0,65,122,0.72) 45%, rgba(0,65,122,0.4) 100%)',
+                }}
+            />
 
             {/* Gold hairline divider running diagonally */}
             <div

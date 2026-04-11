@@ -31,7 +31,7 @@ const MarqueeBackdrop = ({ covers = [], visible = true }) => {
                     <BookMarquee covers={rowA} cycleSec={MARQUEE_CYCLE_A} />
                 </div>
                 <div className="absolute left-0 right-0" style={{ top: '62%' }}>
-                    <BookMarquee covers={rowB} cycleSec={MARQUEE_CYCLE_B} reverse />
+                    <BookMarquee covers={rowB} cycleSec={MARQUEE_CYCLE_B} />
                 </div>
             </div>
         </div>

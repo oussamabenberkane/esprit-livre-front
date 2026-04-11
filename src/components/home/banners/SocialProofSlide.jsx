@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, Truck, Users, ArrowUpRight } from 'lucide-react';
 import GrainOverlay from './GrainOverlay';
 
-const useCountUp = (target, { duration = 1400, active = true } = {}) => {
-    const [value, setValue] = useState(0);
+const useCountUp = (target, { duration = 1400, active = true, instant = false } = {}) => {
+    const [value, setValue] = useState(instant && active ? target : 0);
 
     useEffect(() => {
         if (!active) {
             setValue(0);
+            return;
+        }
+        if (instant) {
+            setValue(target);
             return;
         }
         let raf;
@@ -23,20 +27,20 @@ const useCountUp = (target, { duration = 1400, active = true } = {}) => {
         };
         raf = requestAnimationFrame(tick);
         return () => cancelAnimationFrame(raf);
-    }, [target, duration, active]);
+    }, [target, duration, active, instant]);
 
     return value;
 };
 
 const formatNum = (n) => new Intl.NumberFormat('fr-FR').format(n);
 
-const Stat = ({ icon: Icon, target, label, suffix = '', active, delay = 0 }) => {
-    const value = useCountUp(target, { active });
+const Stat = ({ icon: Icon, target, label, suffix = '', active, delay = 0, instant = false }) => {
+    const value = useCountUp(target, { active, instant });
     return (
         <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={active ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
-            transition={{ delay, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            initial={instant ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
+            animate={active ? { opacity: 1, y: 0 } : instant ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
+            transition={instant ? { duration: 0 } : { delay, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="relative"
         >
             <div
@@ -49,10 +53,10 @@ const Stat = ({ icon: Icon, target, label, suffix = '', active, delay = 0 }) => 
                 {formatNum(value)}
                 {suffix && <span className="text-[#d4a84b]">{suffix}</span>}
             </div>
-            <div className="mt-1 flex items-center gap-1.5 text-[#d4a84b]/90">
-                <Icon className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" strokeWidth={2.25} />
+            <div className="mt-1 flex items-center gap-1.5">
+                <Icon className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 text-[#d4a84b]" strokeWidth={2.25} />
                 <span
-                    className="text-[9px] sm:text-[10px] font-semibold uppercase truncate"
+                    className="text-[10px] sm:text-[11px] font-semibold uppercase truncate text-white/85"
                     style={{ letterSpacing: '0.12em' }}
                 >
                     {label}
@@ -65,6 +69,11 @@ const Stat = ({ icon: Icon, target, label, suffix = '', active, delay = 0 }) => 
 const SocialProofSlide = ({ isActive }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const prefersReducedMotion = useReducedMotion();
+    const rmInitial = prefersReducedMotion ? { opacity: 1, y: 0 } : undefined;
+    const rmAnimate = (base) =>
+        prefersReducedMotion ? { opacity: 1, y: 0 } : isActive ? base : { opacity: 0, y: 14 };
+    const rmTransition = (t) => (prefersReducedMotion ? { duration: 0 } : t);
 
     return (
         <div className="relative w-full h-full">
@@ -105,23 +114,25 @@ const SocialProofSlide = ({ isActive }) => {
                 <div className="container-main w-full px-5 sm:px-8 md:px-fluid-lg">
                     <div className="max-w-3xl text-center md:text-left">
                         <motion.div
-                            initial={{ opacity: 0, y: 12 }}
-                            animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
-                            transition={{ delay: 0.1, duration: 0.55 }}
+                            initial={rmInitial ?? { opacity: 0, y: 12 }}
+                            animate={rmAnimate({ opacity: 1, y: 0 })}
+                            transition={rmTransition({ delay: 0.1, duration: 0.55 })}
                             className="inline-flex items-center gap-1.5 rounded-full border border-[#d4a84b]/40 bg-[#d4a84b]/10 text-[#d4a84b] text-[10px] sm:text-fluid-vsmall font-semibold px-2.5 py-1 mb-2 sm:mb-3"
                             style={{ letterSpacing: '0.12em', textTransform: 'uppercase' }}
                         >
                             <span className="relative flex h-1.5 w-1.5">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d4a84b] opacity-60" />
+                                {!prefersReducedMotion && (
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d4a84b] opacity-60" />
+                                )}
                                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#d4a84b]" />
                             </span>
                             {t('homePage.hero.socialProof.eyebrow')}
                         </motion.div>
 
                         <motion.h2
-                            initial={{ opacity: 0, y: 14 }}
-                            animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
-                            transition={{ delay: 0.18, duration: 0.6 }}
+                            initial={rmInitial ?? { opacity: 0, y: 14 }}
+                            animate={rmAnimate({ opacity: 1, y: 0 })}
+                            transition={rmTransition({ delay: 0.18, duration: 0.6 })}
                             className="font-['Poppins'] font-bold text-white leading-[1.06]"
                             style={{ fontSize: 'clamp(1.5rem, 5vw, 2.8rem)' }}
                         >
@@ -133,10 +144,10 @@ const SocialProofSlide = ({ isActive }) => {
                         </motion.h2>
 
                         <motion.p
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-                            transition={{ delay: 0.28, duration: 0.55 }}
-                            className="mt-2 text-white/70 text-fluid-small max-w-xl mx-auto md:mx-0"
+                            initial={rmInitial ?? { opacity: 0, y: 10 }}
+                            animate={rmAnimate({ opacity: 1, y: 0 })}
+                            transition={rmTransition({ delay: 0.28, duration: 0.55 })}
+                            className="mt-2 text-white/80 text-fluid-small max-w-xl mx-auto md:mx-0"
                         >
                             {t('homePage.hero.socialProof.subtitle')}
                         </motion.p>
@@ -149,6 +160,7 @@ const SocialProofSlide = ({ isActive }) => {
                                 label={t('homePage.hero.socialProof.stat1Label')}
                                 active={isActive}
                                 delay={0.35}
+                                instant={prefersReducedMotion}
                             />
                             <Stat
                                 icon={Truck}
@@ -156,6 +168,7 @@ const SocialProofSlide = ({ isActive }) => {
                                 label={t('homePage.hero.socialProof.stat2Label')}
                                 active={isActive}
                                 delay={0.45}
+                                instant={prefersReducedMotion}
                             />
                             <Stat
                                 icon={ShieldCheck}
@@ -164,18 +177,20 @@ const SocialProofSlide = ({ isActive }) => {
                                 label={t('homePage.hero.socialProof.stat3Label')}
                                 active={isActive}
                                 delay={0.55}
+                                instant={prefersReducedMotion}
                             />
                         </div>
 
                         <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-                            transition={{ delay: 0.65, duration: 0.55 }}
+                            initial={rmInitial ?? { opacity: 0, y: 10 }}
+                            animate={rmAnimate({ opacity: 1, y: 0 })}
+                            transition={rmTransition({ delay: 0.65, duration: 0.55 })}
                             className="mt-4 sm:mt-5 flex justify-center md:justify-start"
                         >
                             <button
-                                onClick={() => navigate('/allbooks')}
-                                className="group inline-flex items-center gap-2 rounded-full border border-[#d4a84b] text-[#d4a84b] font-semibold text-fluid-small px-5 py-2.5 sm:px-6 sm:py-3 hover:bg-[#d4a84b] hover:text-[#002a52] transition-all"
+                                type="button"
+                                onClick={() => navigate('/auth')}
+                                className="group inline-flex items-center gap-2 rounded-full border border-[#d4a84b] text-[#d4a84b] font-semibold text-fluid-small px-5 py-2.5 sm:px-6 sm:py-3 hover:bg-[#d4a84b] hover:text-[#002a52] transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#d4a84b] focus-visible:ring-offset-2 focus-visible:ring-offset-[#00417a] min-h-[44px]"
                             >
                                 {t('homePage.hero.socialProof.cta')}
                                 <ArrowUpRight

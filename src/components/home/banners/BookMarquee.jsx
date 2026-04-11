@@ -1,4 +1,5 @@
 import React from 'react';
+import { useReducedMotion } from 'framer-motion';
 
 /**
  * Split covers into two marquee rows. Both rows live inside the shared
@@ -20,27 +21,25 @@ const BOOK_SHADOW =
 /**
  * Horizontally-scrolling strip of book covers.
  *
- * When `intro` is true the row starts off-screen to the right
- * (`translateX(100vw)`) and slides in progressively before entering the
- * infinite loop. The intro duration equals `cycleSec` so the intro speed
- * matches the loop speed — the handoff into the infinite loop is seamless.
+ * The books render in place from t=0 (no slide-in intro). Under
+ * `prefers-reduced-motion`, the row stays still.
  */
 const BookMarquee = ({
     covers = [],
     cycleSec = MARQUEE_CYCLE_A,
     reverse = false,
-    intro = false,
     gapClass = 'gap-3 sm:gap-4',
     widthStyle = 'clamp(70px, 8vw, 110px)',
     heightStyle = 'clamp(105px, 12vw, 165px)',
     className = '',
 }) => {
+    const prefersReducedMotion = useReducedMotion();
     if (!covers.length) return null;
 
     const doubled = [...covers, ...covers];
     const loopName = reverse ? 'heroMarqueeReverse' : 'heroMarquee';
-    const animation = intro
-        ? `heroMarqueeIntro ${cycleSec}s linear forwards, ${loopName} ${cycleSec}s ${cycleSec}s linear infinite`
+    const animation = prefersReducedMotion
+        ? 'none'
         : `${loopName} ${cycleSec}s linear infinite`;
 
     return (

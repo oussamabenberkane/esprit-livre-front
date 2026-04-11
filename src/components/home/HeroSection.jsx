@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 
 const SWIPE_THRESHOLD = 60;
 const EASE = [0.22, 1, 0.36, 1];
@@ -23,6 +23,12 @@ const variants = {
     }),
 };
 
+const reducedVariants = {
+    enter: { x: 0, opacity: 1 },
+    center: { x: 0, opacity: 1, transition: { duration: 0 } },
+    exit: { x: 0, opacity: 1, transition: { duration: 0 } },
+};
+
 const HeroCarousel = ({
     slides = [],
     className = '',
@@ -32,7 +38,12 @@ const HeroCarousel = ({
     backdrop = null,
 }) => {
     const { t } = useTranslation();
+    const prefersReducedMotion = useReducedMotion();
     const [isHovered, setIsHovered] = useState(false);
+    const [isFocused, setIsFocused] = useState(false);
+    const [isPageVisible, setIsPageVisible] = useState(
+        typeof document !== 'undefined' ? !document.hidden : true
+    );
     const [rightArrowOffset, setRightArrowOffset] = useState(16);
     const directionRef = useRef(1);
     const prevSlideRef = useRef(currentSlide);
@@ -61,6 +72,12 @@ const HeroCarousel = ({
         return () => window.removeEventListener('resize', calculateRightOffset);
     }, []);
 
+    useEffect(() => {
+        const onVisibilityChange = () => setIsPageVisible(!document.hidden);
+        document.addEventListener('visibilitychange', onVisibilityChange);
+        return () => document.removeEventListener('visibilitychange', onVisibilityChange);
+    }, []);
+
     const goTo = (targetIndex, dir) => {
         if (!onSlideChange || slides.length === 0) return;
         const wrapped = ((targetIndex % slides.length) + slides.length) % slides.length;
@@ -73,33 +90,55 @@ const HeroCarousel = ({
     const next = () => goTo(currentSlide + 1, 1);
 
     useEffect(() => {
-        if (slides.length <= 1 || !onSlideChange || isHovered) return;
+        if (slides.length <= 1 || !onSlideChange) return;
+        if (isHovered || isFocused || !isPageVisible || prefersReducedMotion) return;
         const id = setInterval(() => {
             directionRef.current = 1;
             onSlideChange((currentSlide + 1) % slides.length);
         }, autoScrollMs);
         return () => clearInterval(id);
-    }, [currentSlide, slides.length, onSlideChange, autoScrollMs, isHovered]);
+    }, [
+        currentSlide,
+        slides.length,
+        onSlideChange,
+        autoScrollMs,
+        isHovered,
+        isFocused,
+        isPageVisible,
+        prefersReducedMotion,
+    ]);
 
     const activeSlide = slides[currentSlide];
+    const activeVariants = prefersReducedMotion ? reducedVariants : variants;
 
     return (
         <div
+            role="region"
+            aria-roledescription="carousel"
+            aria-label={t('aria.heroCarousel')}
             className="relative"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
+            onFocus={() => setIsFocused(true)}
+            onBlur={(e) => {
+                if (!e.currentTarget.contains(e.relatedTarget)) setIsFocused(false);
+            }}
         >
-            <div className={`relative hero-height overflow-hidden ${className}`}>
+            <div
+                className={`relative hero-height overflow-hidden ${className}`}
+                aria-live="polite"
+                aria-atomic="true"
+            >
                 {backdrop}
                 <AnimatePresence initial={false} custom={directionRef.current} mode="popLayout">
                     <motion.div
                         key={currentSlide}
                         custom={directionRef.current}
-                        variants={variants}
+                        variants={activeVariants}
                         initial="enter"
                         animate="center"
                         exit="exit"
-                        drag="x"
+                        drag={prefersReducedMotion ? false : 'x'}
                         dragConstraints={{ left: 0, right: 0 }}
                         dragElastic={0.18}
                         onDragEnd={(_, info) => {
@@ -119,15 +158,17 @@ const HeroCarousel = ({
             {slides.length > 1 && (
                 <>
                     <button
+                        type="button"
                         onClick={prev}
-                        className="absolute left-3 sm:left-6 md:left-8 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all z-20 backdrop-blur-sm"
+                        className="absolute left-3 sm:left-6 md:left-8 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all z-20 backdrop-blur-sm min-w-[44px] min-h-[44px] inline-flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#d4a84b] focus-visible:ring-offset-2"
                         aria-label={t('aria.previousSlide')}
                     >
                         <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-[#00417a]" />
                     </button>
                     <button
+                        type="button"
                         onClick={next}
-                        className="absolute top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all z-20 backdrop-blur-sm"
+                        className="absolute top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all z-20 backdrop-blur-sm min-w-[44px] min-h-[44px] inline-flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#d4a84b] focus-visible:ring-offset-2"
                         style={{ right: `${rightArrowOffset}px` }}
                         aria-label={t('aria.nextSlide')}
                     >

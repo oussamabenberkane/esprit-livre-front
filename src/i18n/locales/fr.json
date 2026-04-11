@@ -126,28 +126,30 @@
         "eyebrow": "Offre en cours",
         "title": "Un pack acheté,",
         "titleAccent": "un livre offert.",
-        "subtitle": "Composez votre prochaine lecture et recevez un titre en cadeau avec chaque pack.",
+        "subtitle": "Choisissez les livres qui composent votre pack. Nous ajoutons un titre en cadeau.",
         "savings": "Économisez {{amount}} DA",
         "giftBadge": "+1 livre offert",
         "instead": "au lieu de {{price}} DA",
-        "cta": "Profiter de l'offre",
-        "fallbackTitle": "Nos packs lecture"
+        "cta": "Voir les packs",
+        "fallbackTitle": "Nos packs lecture",
+        "moreBooks": "+{{count}}",
+        "moreBooksTooltip": "Également dans ce pack"
       },
       "socialProof": {
         "eyebrow": "Ils nous font déjà confiance",
         "title": "3 000+ lecteurs,",
         "titleAccent": "une même passion.",
-        "subtitle": "Une communauté qui grandit un livre à la fois.",
+        "subtitle": "D'Alger à Tamanrasset, une même librairie.",
         "stat1Label": "lecteurs servis",
         "stat2Label": "commandes livrées",
         "stat3Label": "authentiques",
-        "cta": "Explorer la collection"
+        "cta": "Créer un compte"
       },
       "collection": {
         "eyebrow": "Sélection maison",
         "title": "45 titres triés",
         "titleAccent": "sur le volet.",
-        "subtitle": "Chaque ouvrage est choisi avec soin. Trouvez celui qui vous ressemble.",
+        "subtitle": "Trouvez celui qui vous ressemble.",
         "hint": "Explorer la collection"
       }
     }
@@ -514,7 +516,9 @@
     "previousSlide": "Diapositive précédente",
     "nextSlide": "Diapositive suivante",
     "search": "Rechercher",
-    "goToSet": "Aller à l'ensemble {{index}}"
+    "goToSet": "Aller à l'ensemble {{index}}",
+    "goToSlide": "Aller à la diapositive {{index}}",
+    "heroCarousel": "Carrousel d'accueil"
   },
   "navigation": {
     "noItems": "Aucun élément à afficher"

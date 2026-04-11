@@ -2,7 +2,16 @@
 import { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const PaginationDots = ({ totalDots = 5, currentIndex = 0, onDotClick, maxVisible = 9 }) => {
+const PaginationDots = ({
+  totalDots = 5,
+  currentIndex = 0,
+  onDotClick,
+  maxVisible = 9,
+  activeColor = '#ef4444',
+  inactiveColor = '#d1d5db',
+  inactiveHoverColor = '#9ca3af',
+  ariaLabelFor,
+}) => {
   const { visibleIndices, needsWindow } = useMemo(() => {
     if (totalDots <= maxVisible) {
       return {
@@ -49,40 +58,47 @@ const PaginationDots = ({ totalDots = 5, currentIndex = 0, onDotClick, maxVisibl
   };
 
   return (
-    <div className="flex items-center justify-center gap-1.5">
+    <div className="flex items-center justify-center">
       <AnimatePresence initial={false}>
         {visibleIndices.map((realIndex, windowPos) => {
           const isActive = realIndex === currentIndex;
           const style = getDotStyle(realIndex, windowPos);
+          const label = ariaLabelFor
+            ? ariaLabelFor(realIndex)
+            : `Go to item ${realIndex + 1}`;
 
           return (
-            <motion.button
+            <button
               key={realIndex}
-              layout
-              className={`rounded-full cursor-pointer ${
-                isActive ? 'bg-red-500 shadow-sm' : 'bg-gray-300'
-              }`}
+              type="button"
               onClick={() => onDotClick && onDotClick(realIndex)}
-              aria-label={`Go to item ${realIndex + 1}`}
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{
-                opacity: 1,
-                scale: 1,
-                width: style.width,
-                height: style.height,
-                backgroundColor: isActive ? '#ef4444' : '#d1d5db',
-              }}
-              exit={{ opacity: 0, scale: 0.5 }}
-              whileHover={{
-                backgroundColor: isActive ? '#ef4444' : '#9ca3af',
-                scale: 1.1,
-              }}
-              transition={{
-                type: 'spring',
-                stiffness: 300,
-                damping: 20,
-              }}
-            />
+              aria-label={label}
+              aria-current={isActive ? 'true' : undefined}
+              className="group relative inline-flex items-center justify-center min-w-[44px] min-h-[44px] px-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#d4a84b] focus-visible:ring-offset-2 focus-visible:rounded-full"
+            >
+              <motion.span
+                layout
+                className="rounded-full block"
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{
+                  opacity: 1,
+                  scale: 1,
+                  width: style.width,
+                  height: style.height,
+                  backgroundColor: isActive ? activeColor : inactiveColor,
+                }}
+                exit={{ opacity: 0, scale: 0.5 }}
+                whileHover={{
+                  backgroundColor: isActive ? activeColor : inactiveHoverColor,
+                  scale: 1.1,
+                }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 300,
+                  damping: 20,
+                }}
+              />
+            </button>
           );
         })}
       </AnimatePresence>

@@ -126,28 +126,30 @@
         "eyebrow": "Limited offer",
         "title": "Buy a pack,",
         "titleAccent": "get a book on us.",
-        "subtitle": "Build your next reading list and receive one free book with every pack.",
+        "subtitle": "Pick the books that make up your pack. We add one more as a gift.",
         "savings": "Save {{amount}} DA",
         "giftBadge": "+1 free book",
         "instead": "instead of {{price}} DA",
-        "cta": "Claim the offer",
-        "fallbackTitle": "Our reading packs"
+        "cta": "See the packs",
+        "fallbackTitle": "Our reading packs",
+        "moreBooks": "+{{count}}",
+        "moreBooksTooltip": "Also in this pack"
       },
       "socialProof": {
         "eyebrow": "Already trusted by",
         "title": "3,000+ readers,",
         "titleAccent": "one shared passion.",
-        "subtitle": "A community that grows one book at a time.",
+        "subtitle": "From Algiers to Tamanrasset, one bookstore.",
         "stat1Label": "readers served",
         "stat2Label": "orders delivered",
         "stat3Label": "authentic",
-        "cta": "Explore the collection"
+        "cta": "Create an account"
       },
       "collection": {
         "eyebrow": "House selection",
         "title": "45 titles,",
         "titleAccent": "hand-picked.",
-        "subtitle": "Every book is chosen with care. Find the one that speaks to you.",
+        "subtitle": "Find the one that speaks to you.",
         "hint": "Browse the collection"
       }
     }
@@ -514,7 +516,9 @@
     "previousSlide": "Previous slide",
     "nextSlide": "Next slide",
     "search": "Search",
-    "goToSet": "Go to set {{index}}"
+    "goToSet": "Go to set {{index}}",
+    "goToSlide": "Go to slide {{index}}",
+    "heroCarousel": "Home carousel"
   },
   "navigation": {
     "noItems": "No items to display"

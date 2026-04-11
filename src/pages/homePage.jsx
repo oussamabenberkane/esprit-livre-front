@@ -448,30 +448,46 @@ const HomePage = () => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    // Fetch a featured pack for the hero banner
+    // Fetch all packs, pick the one with the highest discount for the hero banner
     useEffect(() => {
         let cancelled = false;
         (async () => {
             try {
-                const response = await getAllBookPacks({ page: 0, size: 1 });
-                const packs = response?.content || response || [];
-                if (cancelled || !packs.length) return;
+                const response = await getAllBookPacks({ page: 0, size: 100 });
+                const rawPacks = response?.content || response || [];
+                if (cancelled || !rawPacks.length) return;
 
-                const rawPack = packs[0];
-                const books = (rawPack.books || []).map((book) => ({
-                    id: book.id,
-                    title: book.title,
-                    price: parseFloat(book.price) || 0,
-                    coverImage: getBookCoverUrl(book.id),
-                }));
-                const originalPrice = books.reduce((sum, b) => sum + b.price, 0);
-                setFeaturedPack({
-                    id: rawPack.id,
-                    title: rawPack.title,
-                    books,
-                    originalPrice,
-                    packPrice: parseFloat(rawPack.price) || 0,
-                });
+                let bestPack = null;
+                let bestDiscountRatio = -1;
+
+                for (const raw of rawPacks) {
+                    const books = (raw.books || []).map((book) => ({
+                        id: book.id,
+                        title: book.title,
+                        price: parseFloat(book.price) || 0,
+                        coverImage: getBookCoverUrl(book.id),
+                    }));
+                    const originalPrice = books.reduce((sum, b) => sum + b.price, 0);
+                    const packPrice = parseFloat(raw.price) || 0;
+                    const discountRatio =
+                        originalPrice > 0 && packPrice < originalPrice
+                            ? (originalPrice - packPrice) / originalPrice
+                            : 0;
+
+                    if (discountRatio > bestDiscountRatio) {
+                        bestDiscountRatio = discountRatio;
+                        bestPack = {
+                            id: raw.id,
+                            title: raw.title,
+                            books,
+                            originalPrice,
+                            packPrice,
+                            discountPercent: Math.round(discountRatio * 100),
+                        };
+                    }
+                }
+
+                if (!cancelled && bestPack) setFeaturedPack(bestPack);
             } catch (error) {
                 console.error('Failed to load featured pack:', error);
             }

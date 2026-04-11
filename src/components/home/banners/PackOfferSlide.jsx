@@ -7,38 +7,6 @@ import GrainOverlay from './GrainOverlay';
 
 const formatDA = (n) => new Intl.NumberFormat('fr-FR').format(Math.round(n || 0));
 
-const PLACEHOLDER_SPINES = [
-    { from: '#0a5394', to: '#002d56', title: 'Poésie' },
-    { from: '#d4a84b', to: '#8a6a1a', title: 'Essai' },
-    { from: '#00417a', to: '#001e3d', title: 'Roman' },
-    { from: '#b58929', to: '#5a3f0a', title: 'Nouvelles' },
-    { from: '#0a5394', to: '#002d56', title: 'Récit' },
-];
-
-const BookCoverPlaceholder = ({ index }) => {
-    const skin = PLACEHOLDER_SPINES[index % PLACEHOLDER_SPINES.length];
-    return (
-        <div
-            className="w-full h-full relative flex flex-col justify-between p-2"
-            style={{
-                background: `linear-gradient(150deg, ${skin.from} 0%, ${skin.to} 100%)`,
-            }}
-        >
-            <div className="h-[2px] w-1/2 bg-white/35" />
-            <div className="flex flex-col items-start gap-1">
-                <div
-                    className="font-['Poppins'] italic font-semibold text-white/85 text-[9px] sm:text-[10px] leading-tight"
-                    style={{ letterSpacing: '0.04em' }}
-                >
-                    {skin.title}
-                </div>
-                <div className="h-[2px] w-6 bg-[#d4a84b]" />
-            </div>
-            <div className="h-[2px] w-1/3 bg-white/25 self-end" />
-        </div>
-    );
-};
-
 const useIsMobile = () => {
     const [isMobile, setIsMobile] = useState(
         typeof window !== 'undefined' ? window.matchMedia('(max-width: 639px)').matches : false
@@ -52,30 +20,55 @@ const useIsMobile = () => {
     return isMobile;
 };
 
+const getFanTransforms = (count, isMobile) => {
+    const s = isMobile ? 0.62 : 1;
+    const configs = {
+        1: [{ rotate: 0, x: 0, y: 0, z: 5 }],
+        2: [
+            { rotate: -9, x: -32 * s, y: 4, z: 2 },
+            { rotate: 9, x: 32 * s, y: 4, z: 2 },
+        ],
+        3: [
+            { rotate: -11, x: -52 * s, y: 10, z: 1 },
+            { rotate: 0, x: 0, y: 0, z: 5 },
+            { rotate: 11, x: 52 * s, y: 10, z: 1 },
+        ],
+        4: [
+            { rotate: -13, x: -74 * s, y: 12, z: 1 },
+            { rotate: -5, x: -26 * s, y: 2, z: 3 },
+            { rotate: 5, x: 26 * s, y: 2, z: 3 },
+            { rotate: 13, x: 74 * s, y: 12, z: 1 },
+        ],
+        5: [
+            { rotate: -14, x: -90 * s, y: 14, z: 1 },
+            { rotate: -7, x: -46 * s, y: 6, z: 2 },
+            { rotate: 0, x: 0, y: 0, z: 5 },
+            { rotate: 7, x: 46 * s, y: 6, z: 2 },
+            { rotate: 14, x: 90 * s, y: 14, z: 1 },
+        ],
+        6: [
+            { rotate: -16, x: -108 * s, y: 18, z: 1 },
+            { rotate: -10, x: -66 * s, y: 8, z: 2 },
+            { rotate: -3, x: -22 * s, y: 1, z: 4 },
+            { rotate: 3, x: 22 * s, y: 1, z: 4 },
+            { rotate: 10, x: 66 * s, y: 8, z: 2 },
+            { rotate: 16, x: 108 * s, y: 18, z: 1 },
+        ],
+    };
+    return configs[Math.min(Math.max(count, 1), 6)];
+};
+
 const FannedBooks = ({ covers = [] }) => {
     const isMobile = useIsMobile();
-    const list = [];
-    for (let i = 0; i < 5; i++) list.push(covers[i] || null);
+    if (!covers.length) return null;
 
-    const transforms = isMobile
-        ? [
-              { rotate: -16, x: -58, y: 8, z: 1 },
-              { rotate: -8, x: -28, y: 2, z: 2 },
-              { rotate: 0, x: 0, y: -2, z: 5 },
-              { rotate: 8, x: 28, y: 2, z: 2 },
-              { rotate: 16, x: 58, y: 8, z: 1 },
-          ]
-        : [
-              { rotate: -14, x: -90, y: 14, z: 1 },
-              { rotate: -7, x: -46, y: 6, z: 2 },
-              { rotate: 0, x: 0, y: 0, z: 5 },
-              { rotate: 7, x: 46, y: 6, z: 2 },
-              { rotate: 14, x: 90, y: 14, z: 1 },
-          ];
+    const visible = covers.slice(0, 6);
+    const transforms = getFanTransforms(visible.length, isMobile);
+    const centerIndex = Math.floor((visible.length - 1) / 2);
 
     return (
         <div className="relative h-full w-full flex items-center justify-center">
-            {list.map((src, i) => {
+            {visible.map((src, i) => {
                 const tr = transforms[i];
                 return (
                     <motion.div
@@ -105,19 +98,15 @@ const FannedBooks = ({ covers = [] }) => {
                                     '0 20px 40px -12px rgba(0,20,60,0.45), 0 6px 14px -6px rgba(0,0,0,0.3), inset 2px 0 0 rgba(255,255,255,0.08), inset -2px 0 0 rgba(0,0,0,0.2)',
                             }}
                         >
-                            {src ? (
-                                <img
-                                    src={src}
-                                    alt=""
-                                    className="w-full h-full object-cover"
-                                    loading="lazy"
-                                    draggable={false}
-                                />
-                            ) : (
-                                <BookCoverPlaceholder index={i} />
-                            )}
+                            <img
+                                src={src}
+                                alt=""
+                                className="w-full h-full object-cover"
+                                loading="lazy"
+                                draggable={false}
+                            />
                         </div>
-                        {i === 2 && (
+                        {i === centerIndex && (
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.6, rotate: 10 }}
                                 animate={{ opacity: 1, scale: 1, rotate: 0 }}
@@ -143,8 +132,9 @@ const PackOfferSlide = ({ pack, isActive }) => {
     const originalPrice = pack?.originalPrice || 0;
     const packPrice = pack?.packPrice || 0;
     const savings = Math.max(0, originalPrice - packPrice);
+    const discountPercent = pack?.discountPercent || 0;
     const covers = (pack?.books || []).map((b) => b.coverImage).filter(Boolean);
-    const packTitle = pack?.title || t('homePage.hero.packOffer.fallbackTitle');
+    const hasCovers = covers.length > 0;
 
     const fadeUp = {
         hidden: { opacity: 0, y: 18 },
@@ -187,10 +177,18 @@ const PackOfferSlide = ({ pack, isActive }) => {
 
             <div className="relative h-full w-full flex items-center">
                 <div className="container-main w-full px-5 sm:px-8 md:px-fluid-lg">
-                    <div className="flex flex-col md:grid md:grid-cols-12 md:items-center md:gap-4">
+                    <div
+                        className={`flex flex-col ${
+                            hasCovers ? 'md:grid md:grid-cols-12 md:items-center md:gap-4' : ''
+                        }`}
+                    >
                         {/* Copy */}
                         <motion.div
-                            className="md:col-span-7 lg:col-span-7 text-center md:text-left order-2 md:order-1 mt-4 md:mt-0"
+                            className={`${
+                                hasCovers
+                                    ? 'md:col-span-7 lg:col-span-7 text-center md:text-left order-2 md:order-1 mt-4 md:mt-0'
+                                    : 'text-center max-w-2xl mx-auto'
+                            }`}
                             initial="hidden"
                             animate={isActive ? 'show' : 'hidden'}
                             variants={{ show: { transition: { staggerChildren: 0.05 } } }}
@@ -198,11 +196,23 @@ const PackOfferSlide = ({ pack, isActive }) => {
                             <motion.div
                                 variants={fadeUp}
                                 custom={0}
-                                className="inline-flex items-center gap-1.5 rounded-full bg-[#00417a]/10 text-[#00417a] text-[10px] sm:text-fluid-vsmall font-semibold px-2.5 py-1 mb-2 sm:mb-3"
-                                style={{ letterSpacing: '0.12em', textTransform: 'uppercase' }}
+                                className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-2 sm:mb-3"
                             >
-                                <Sparkles className="w-3 h-3" strokeWidth={2.5} />
-                                {t('homePage.hero.packOffer.eyebrow')}
+                                <span
+                                    className="inline-flex items-center gap-1.5 rounded-full bg-[#00417a]/10 text-[#00417a] text-[10px] sm:text-fluid-vsmall font-semibold px-2.5 py-1"
+                                    style={{ letterSpacing: '0.12em', textTransform: 'uppercase' }}
+                                >
+                                    <Sparkles className="w-3 h-3" strokeWidth={2.5} />
+                                    {t('homePage.hero.packOffer.eyebrow')}
+                                </span>
+                                {discountPercent > 0 && (
+                                    <span
+                                        className="inline-flex items-center rounded-full bg-[#d4a84b] text-[#2a1c00] text-[10px] sm:text-fluid-vsmall font-bold px-2.5 py-1 shadow-[0_6px_14px_-6px_rgba(212,168,75,0.6)]"
+                                        style={{ letterSpacing: '0.04em' }}
+                                    >
+                                        −{discountPercent}%
+                                    </span>
+                                )}
                             </motion.div>
 
                             <motion.h2
@@ -275,10 +285,12 @@ const PackOfferSlide = ({ pack, isActive }) => {
                             </motion.div>
                         </motion.div>
 
-                        {/* Fanned books — on top of the stack on mobile */}
-                        <div className="md:col-span-5 lg:col-span-5 relative h-[130px] xs:h-[150px] sm:h-[190px] md:h-[260px] lg:h-[300px] order-1 md:order-2">
-                            <FannedBooks covers={covers} />
-                        </div>
+                        {/* Fanned books — on top of the stack on mobile; hidden entirely when no covers */}
+                        {hasCovers && (
+                            <div className="md:col-span-5 lg:col-span-5 relative h-[130px] xs:h-[150px] sm:h-[190px] md:h-[260px] lg:h-[300px] order-1 md:order-2">
+                                <FannedBooks covers={covers} />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

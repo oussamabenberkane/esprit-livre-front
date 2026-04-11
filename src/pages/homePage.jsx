@@ -774,9 +774,6 @@ const HomePage = () => {
                             totalDots={heroSlides.length}
                             currentIndex={currentSlide}
                             onDotClick={(index) => setCurrentSlide(index)}
-                            activeColor="#00417a"
-                            inactiveColor="rgba(0,65,122,0.25)"
-                            inactiveHoverColor="rgba(0,65,122,0.5)"
                             ariaLabelFor={(index) =>
                                 t('aria.goToSlide', { index: index + 1 })
                             }

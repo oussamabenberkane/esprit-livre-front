@@ -7,9 +7,9 @@ const PaginationDots = ({
   currentIndex = 0,
   onDotClick,
   maxVisible = 9,
-  activeColor = '#ef4444',
-  inactiveColor = '#d1d5db',
-  inactiveHoverColor = '#9ca3af',
+  activeColor = '#00417a',
+  inactiveColor = 'rgba(0,65,122,0.25)',
+  inactiveHoverColor = 'rgba(0,65,122,0.5)',
   ariaLabelFor,
 }) => {
   const { visibleIndices, needsWindow } = useMemo(() => {

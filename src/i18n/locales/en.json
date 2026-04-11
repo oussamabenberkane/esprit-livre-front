@@ -15,7 +15,7 @@
     "loginButton": "Sign in"
   },
   "bookCard": {
-    "addToCart": "Add to\ncart",
+    "addToCart": "Add to cart",
     "currency": "DZD",
     "stockStatus": {
       "inStock": "in stock",

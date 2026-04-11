@@ -181,9 +181,10 @@ const BookCard = ({
             {/* Add to Cart Button - Now in Flow */}
             <button
                 onClick={handleAddToCartClick}
-                className="bg-[#EE0027] absolute bottom-0 mb-0 right-0 text-white px-4 py-3 rounded-tl-xl rounded-br-sm hover:bg-[#d4183d] transition-colors button-card-size flex items-center justify-center flex-shrink-0"
+                className="bg-[#EE0027] absolute bottom-0 right-0 text-white rounded-tl-xl rounded-br-sm hover:bg-[#d4183d] active:scale-95 transition-all duration-200 button-card-size flex flex-col gap-1 md:gap-1.5 items-center justify-center flex-shrink-0 shadow-md px-2"
             >
-                <span className="text-[0.6rem] sm:text-[0.65rem] font-medium text-center leading-tight" style={{ whiteSpace: 'pre-line' }}>
+                <ShoppingCart className="hidden md:block w-4 h-4 lg:w-[18px] lg:h-[18px]" strokeWidth={2.25} />
+                <span className="text-[0.7rem] sm:text-[0.75rem] md:text-[0.72rem] lg:text-[0.78rem] font-semibold text-center leading-[1.15] tracking-tight">
                     {t('bookCard.addToCart')}
                 </span>
             </button>

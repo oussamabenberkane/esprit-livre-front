@@ -766,6 +766,7 @@ const HomePage = () => {
                             <MarqueeBackdrop
                                 covers={heroCovers}
                                 visible={currentSlide === 1 || currentSlide === 2}
+                                currentSlide={currentSlide}
                             />
                         }
                     />

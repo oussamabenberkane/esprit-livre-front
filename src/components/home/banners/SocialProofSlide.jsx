@@ -98,13 +98,13 @@ const SocialProofSlide = ({ isActive }) => {
                 }}
             />
 
-            {/* Gold hairline divider running diagonally */}
+            {/* Subtle gold hairline sitting toward the far right */}
             <div
                 aria-hidden="true"
                 className="absolute inset-0 pointer-events-none"
                 style={{
                     background:
-                        'linear-gradient(115deg, transparent 48%, rgba(212,168,75,0.35) 49%, rgba(212,168,75,0.35) 49.5%, transparent 50%)',
+                        'linear-gradient(115deg, transparent 82%, rgba(212,168,75,0.14) 83%, rgba(212,168,75,0.14) 83.4%, transparent 84%)',
                 }}
             />
 

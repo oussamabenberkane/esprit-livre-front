@@ -1,6 +1,6 @@
 {
   "navbar": {
-    "searchPlaceholder": "What are you reading next?",
+    "searchPlaceholder": "Search for a book...",
     "signIn": "Sign in",
     "language": {
       "fr": "FR",
@@ -8,9 +8,9 @@
     }
   },
   "loginPrompt": {
-    "title": "Your shelf is waiting",
-    "message": "Sign in to unlock deals, track orders, and never miss a drop.",
-    "benefit1": "Early access & member-only prices",
+    "title": "Your reading space awaits",
+    "message": "Sign in to access exclusive benefits.",
+    "benefit1": "Member-only offers",
     "benefit2": "Real-time order tracking",
     "loginButton": "Sign in"
   },
@@ -25,7 +25,7 @@
   },
   "allBooks": {
     "pageTitle": "All Books",
-    "pageSubtitle": "Every story we carry, all in one place",
+    "pageSubtitle": "Our complete collection, all in one place",
     "resultsFor": "Results for \"{{query}}\"",
     "resultsTitle": "Results",
     "resultsCount": "{{start}} - {{end}} of {{total}} books",
@@ -92,7 +92,7 @@
     }
   },
   "cartPopup": {
-    "title": "Nice pick! Added to your cart",
+    "title": "Added to your cart",
     "close": "Close",
     "currency": "DZD",
     "viewCart": "Place my order",
@@ -114,13 +114,13 @@
     "category": "Category"
   },
   "homePage": {
-    "greeting": "Find your next read",
-    "greetingAuth": "Hey {{name}}, welcome back",
-    "categoriesSubtitle": "Browse by category and discover something new",
-    "categoriesSubtitleAuth": "Picked up where you left off? Dive back in",
+    "greeting": "Hello",
+    "greetingAuth": "Hello, {{name}}",
+    "categoriesSubtitle": "Browse by category",
+    "categoriesSubtitleAuth": "Your favorite categories",
     "recommendedBooks": "Recommended Books",
-    "featuredAuthors": "Authors We Love",
-    "profileCompleted": "You're all set! Welcome to the Esprit Livre family.",
+    "featuredAuthors": "Featured Authors",
+    "profileCompleted": "All set! Welcome to Esprit Livre.",
     "hero": {
       "discover": "Discover",
       "newReleases": "New Releases",
@@ -193,8 +193,8 @@
   "cart": {
     "title": "Cart ({{count}} item)",
     "title_plural": "Cart ({{count}} items)",
-    "empty": "Nothing here yet — let's fix that",
-    "continueShop": "Keep browsing",
+    "empty": "Your cart is empty",
+    "continueShop": "Browse books",
     "bookDetails": "Book details",
     "viewPackBooks": "View pack books",
     "books": "books",
@@ -249,17 +249,17 @@
     "orderNumber": "Order #",
     "orderError": "Failed to place order. Please try again.",
     "orderErrorTitle": "Order Failed",
-    "guestCheckoutMessage": "Sign in for instant checkout with your saved info.",
+    "guestCheckoutMessage": "Sign in for faster checkout.",
     "loginNow": "Log in now",
     "orderTrackingPromptTitle": "Track your order",
     "orderTrackingPromptMessage": "Sign in to view and track your orders in your profile.",
     "signInButton": "Sign in",
     "laterButton": "Later",
-    "orderConfirmedTitle": "You're all set!",
-    "orderConfirmedSubtitle": "Your order is confirmed — we're getting it ready.",
-    "accountPitchMessage": "Create an account and never miss a deal again",
-    "accountBenefit1": "Member-only drops & early access",
-    "accountBenefit2": "Track every order in real time",
+    "orderConfirmedTitle": "Order confirmed!",
+    "orderConfirmedSubtitle": "We're getting your order ready.",
+    "accountPitchMessage": "Create an account for exclusive perks",
+    "accountBenefit1": "Member-only offers & early access",
+    "accountBenefit2": "Track your orders in real time",
     "createAccountButton": "Create my account"
   },
   "errors": {
@@ -444,7 +444,7 @@
     "pickupPointDesc": "Pick up your package at the nearest pickup point",
     "selectProvider": "Select a pickup provider",
     "selectRelayPoint": "Choose your pickup point",
-    "infoSectionMessage": "Save your details once — breeze through checkout every time.",
+    "infoSectionMessage": "Save your details once for faster checkout.",
     "myFavorites": "My Favorites",
     "favoritesSaved": "Saved books",
     "myOrders": "My Orders",
@@ -459,8 +459,8 @@
     "validationError": "Please fix the errors below",
     "readOnly": "This field cannot be edited",
     "firstLogin": {
-      "title": "Welcome aboard!",
-      "message": "Drop your phone number so we can keep you posted on your orders"
+      "title": "Welcome!",
+      "message": "Add your phone number to track your orders"
     }
   },
   "favorites": {
@@ -468,9 +468,9 @@
     "back": "Back",
     "count": "{{count}} book",
     "count_plural": "{{count}} books",
-    "emptyTitle": "Your shelf is empty",
-    "emptyMessage": "Tap the heart on any book to save it here",
-    "discoverBooks": "Find something you'll love"
+    "emptyTitle": "No favorites yet",
+    "emptyMessage": "Tap the heart on a book to save it here",
+    "discoverBooks": "Discover books"
   },
   "orders": {
     "title": "My Orders",
@@ -484,7 +484,7 @@
     "currency": "DZD",
     "loading": "Loading your orders...",
     "emptyTitle": "No orders yet",
-    "emptyMessage": "Your first delivery is just a few clicks away",
+    "emptyMessage": "Your orders will appear here",
     "startShopping": "Start shopping",
     "errorTitle": "Unable to Load Orders",
     "quantity": "Quantity",
@@ -527,8 +527,8 @@
     "loading": "Loading books..."
   },
   "404": {
-    "title": "Lost in the stacks",
-    "description": "The page you're looking for has gone off-shelf. It may have been moved or no longer exists.",
+    "title": "Page not found",
+    "description": "The page you're looking for doesn't exist or has been moved.",
     "goBack": "Go back",
     "home": "Home",
     "browseBooks": "Browse Books",
@@ -538,13 +538,13 @@
     "customerService": "Customer Service"
   },
   "auth": {
-    "welcome": "Welcome to Esprit Livre",
-    "subtitle": "Sign in to start building your personal library",
+    "welcome": "Welcome",
+    "subtitle": "Sign in or create an account to continue",
     "connecting": "Connecting...",
     "continueWithGoogle": "Continue with Google",
-    "feature1": "Thousands of titles at your fingertips",
-    "feature2": "Build your personal reading list",
-    "feature3": "Checkout in seconds, not minutes",
+    "feature1": "Access thousands of books",
+    "feature2": "Save your favorite reads",
+    "feature3": "Fast and secure checkout",
     "termsText": "By continuing, you agree to our Terms of Service and Privacy Policy",
     "errorFallback": "Failed to start authentication process. Please try again."
   },

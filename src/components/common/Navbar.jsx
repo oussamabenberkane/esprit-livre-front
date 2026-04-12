@@ -49,12 +49,12 @@ const SignInButton = ({ onClick, className = "", highlight = false }) => {
     );
 };
 
-// Logo — "Esprit" stacked on "Livre"
+// Logo — "ESPRIT" / "LIVRE" stacked wordmark
 const Logo = ({ onClick }) => (
     <button onClick={onClick} className="text-left logo-btn">
-        <div className="flex flex-col leading-[0.85]" style={{ fontWeight: 600, color: '#F0F4F8' }}>
-            <span className="text-[27px] max-[767px]:text-[22px]">Esprit</span>
-            <span className="text-[27px] max-[767px]:text-[22px]">Livre</span>
+        <div className="flex flex-col leading-[1.05]" style={{ color: '#ffffff', letterSpacing: '0.12em' }}>
+            <span className="text-[15px] max-[767px]:text-[13px] font-light uppercase">Esprit</span>
+            <span className="text-[15px] max-[767px]:text-[13px] font-semibold uppercase">Livre</span>
         </div>
     </button>
 );

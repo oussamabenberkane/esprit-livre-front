@@ -118,8 +118,8 @@ const MainDisplayCarousel = ({ display, onAddToCart, onToggleFavorite, updateScr
                 {/* Horizontal Scroll Container with negative margin */}
                 <div className="relative -ml-fluid-2xl">
                     {/* Scroll fade overlays */}
-                    <div className={`absolute left-0 top-0 bottom-0 w-[var(--spacing-fluid-2xl)] bg-gradient-to-r from-white to-transparent z-10 pointer-events-none transition-opacity duration-300 ${display.canScrollLeft ? 'opacity-100' : 'opacity-0'}`} />
-                    <div className={`absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none transition-opacity duration-300 ${display.canScrollRight ? 'opacity-100' : 'opacity-0'}`} />
+                    <div className={`absolute left-0 top-0 bottom-0 w-[var(--spacing-fluid-2xl)] z-10 pointer-events-none transition-opacity duration-300 ${display.canScrollLeft ? 'opacity-100' : 'opacity-0'}`} style={{ background: 'linear-gradient(to right, white 0%, rgba(255,255,255,0.7) 35%, rgba(255,255,255,0.2) 65%, transparent 100%)' }} />
+                    <div className={`absolute right-0 top-0 bottom-0 w-16 z-10 pointer-events-none transition-opacity duration-300 ${display.canScrollRight ? 'opacity-100' : 'opacity-0'}`} style={{ background: 'linear-gradient(to left, white 0%, rgba(255,255,255,0.7) 30%, rgba(255,255,255,0.15) 60%, transparent 100%)' }} />
                     <div
                         ref={scrollRef}
                         className="flex pt-fluid-xs pr-fluid-lg pl-fluid-2xl gap-fluid-md overflow-x-auto scrollbar-hide pb-4"
@@ -813,8 +813,8 @@ const HomePage = () => {
                             className="relative -ml-fluid-2xl" // Negative left margin to extend left
                         >
                             {/* Scroll fade overlays */}
-                            <div className={`absolute left-0 top-0 bottom-0 w-[var(--spacing-fluid-2xl)] bg-gradient-to-r from-white to-transparent z-10 pointer-events-none transition-opacity duration-300 ${canScrollCategoriesLeft ? 'opacity-100' : 'opacity-0'}`} />
-                            <div className={`absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none transition-opacity duration-300 ${canScrollCategoriesRight ? 'opacity-100' : 'opacity-0'}`} />
+                            <div className={`absolute left-0 top-0 bottom-0 w-[var(--spacing-fluid-2xl)] z-10 pointer-events-none transition-opacity duration-300 ${canScrollCategoriesLeft ? 'opacity-100' : 'opacity-0'}`} style={{ background: 'linear-gradient(to right, white 0%, rgba(255,255,255,0.7) 35%, rgba(255,255,255,0.2) 65%, transparent 100%)' }} />
+                            <div className={`absolute right-0 top-0 bottom-0 w-16 z-10 pointer-events-none transition-opacity duration-300 ${canScrollCategoriesRight ? 'opacity-100' : 'opacity-0'}`} style={{ background: 'linear-gradient(to left, white 0%, rgba(255,255,255,0.7) 30%, rgba(255,255,255,0.15) 60%, transparent 100%)' }} />
                             <div
                                 ref={categoriesScrollRef}
                                 className="flex pt-fluid-lg pl-fluid-2xl pr-fluid-lg gap-fluid-lg overflow-x-auto pb-4 scrollbar-hide"
@@ -966,8 +966,8 @@ const HomePage = () => {
 
                         <div className="relative -ml-fluid-2xl">
                             {/* Scroll fade overlays */}
-                            <div className={`absolute left-0 top-0 bottom-0 w-[var(--spacing-fluid-2xl)] bg-gradient-to-r from-white to-transparent z-10 pointer-events-none transition-opacity duration-300 ${canScrollAuthorsLeft ? 'opacity-100' : 'opacity-0'}`} />
-                            <div className={`absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none transition-opacity duration-300 ${canScrollAuthorsRight ? 'opacity-100' : 'opacity-0'}`} />
+                            <div className={`absolute left-0 top-0 bottom-0 w-[var(--spacing-fluid-2xl)] z-10 pointer-events-none transition-opacity duration-300 ${canScrollAuthorsLeft ? 'opacity-100' : 'opacity-0'}`} style={{ background: 'linear-gradient(to right, white 0%, rgba(255,255,255,0.7) 35%, rgba(255,255,255,0.2) 65%, transparent 100%)' }} />
+                            <div className={`absolute right-0 top-0 bottom-0 w-16 z-10 pointer-events-none transition-opacity duration-300 ${canScrollAuthorsRight ? 'opacity-100' : 'opacity-0'}`} style={{ background: 'linear-gradient(to left, white 0%, rgba(255,255,255,0.7) 30%, rgba(255,255,255,0.15) 60%, transparent 100%)' }} />
                             <div
                                 ref={authorsScrollRef}
                                 className="flex gap-fluid-sm pl-fluid-2xl pr-fluid-lg overflow-x-auto scrollbar-hide pt-fluid-xs pb-4"

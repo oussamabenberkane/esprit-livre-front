@@ -260,6 +260,7 @@
     "error.generic": "An error occurred. Please try again or contact customer support."
   },
   "customerService": {
+    "label": "Support",
     "title": "Customer Service",
     "subtitle": "We're here to help. Check our FAQ or contact us directly.",
     "email": "Email",

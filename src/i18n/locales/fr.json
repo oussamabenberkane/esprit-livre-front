@@ -260,6 +260,7 @@
     "error.generic": "Une erreur s'est produite. Veuillez réessayer ou contacter le service client."
   },
   "customerService": {
+    "label": "Support",
     "title": "Service Client",
     "subtitle": "Nous sommes là pour vous aider. Consultez notre FAQ ou contactez-nous directement.",
     "email": "Email",

@@ -158,8 +158,8 @@
     "close": "Close",
     "itemAdded": "{{count}} item added",
     "itemsAdded": "{{count}} items added",
-    "cart": "cart →",
-    "dragToDelete": "Drag here to delete"
+    "cart": "cart",
+    "swipeToDelete": "Swipe to dismiss"
   },
   "bookDetails": {
     "loading": "Loading...",

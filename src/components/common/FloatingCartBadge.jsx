@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ShoppingCart, Trash2, ArrowRight } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { ShoppingCart, Trash2, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence, useMotionValue, useTransform, useAnimation } from 'framer-motion';
 import { useCart } from '../../contexts/CartContext';
 
 const BADGE_VISIBILITY_KEY = 'el_cart_badge_dismissed';
 const LAST_CART_COUNT_KEY = 'el_cart_last_count';
+
+const DELETE_THRESHOLD = -100;
 
 export default function FloatingCartBadge({ onGoToCart }) {
   const { t } = useTranslation();
@@ -16,29 +18,21 @@ export default function FloatingCartBadge({ onGoToCart }) {
   const [justAdded, setJustAdded] = useState(false);
   const previousCountRef = useRef(0);
 
-  // Drag & drop states
+  const dragX = useMotionValue(0);
+  const controls = useAnimation();
   const [isDragging, setIsDragging] = useState(false);
-  const [showDeleteZone, setShowDeleteZone] = useState(false);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [dragStartPos, setDragStartPos] = useState({ x: 0, y: 0 });
-  const [isNearDelete, setIsNearDelete] = useState(false);
-  const badgeRef = useRef(null);
-  const deleteZoneRef = useRef(null);
-  const scrollPositionRef = useRef(0);
+  const dragStartRef = useRef({ x: 0, y: 0, time: 0 });
+  const wasDragRef = useRef(false);
 
-  // Click vs drag detection
-  const [isClick, setIsClick] = useState(true);
-  const dragTimeoutRef = useRef(null);
-
-  const DRAG_THRESHOLD = 10;
-  const DRAG_TIME_THRESHOLD = 150;
+  // Derived motion values for the delete zone reveal
+  const deleteOpacity = useTransform(dragX, [-140, -40, 0], [1, 0.6, 0]);
+  const deleteScale = useTransform(dragX, [-140, -60, 0], [1.1, 0.8, 0.5]);
+  const badgeOpacity = useTransform(dragX, [-180, -120, 0], [0.4, 0.85, 1]);
 
   useEffect(() => {
     const bookCount = getCartItemCount();
     const packCount = getPackCartItemCount();
     const currentCount = bookCount + packCount;
-    const previousCount = previousCountRef.current;
 
     setItemCount(currentCount);
 
@@ -58,7 +52,6 @@ export default function FloatingCartBadge({ onGoToCart }) {
       setJustAdded(true);
       localStorage.removeItem(BADGE_VISIBILITY_KEY);
       localStorage.setItem(LAST_CART_COUNT_KEY, currentCount.toString());
-      // Reset the "just added" highlight after the attention pulse
       const timeout = setTimeout(() => setJustAdded(false), 2400);
       return () => clearTimeout(timeout);
     } else if (currentCount > 0 && !wasDismissed) {
@@ -74,420 +67,220 @@ export default function FloatingCartBadge({ onGoToCart }) {
     localStorage.setItem(LAST_CART_COUNT_KEY, itemCount.toString());
   }, [itemCount]);
 
-  const handleBadgeClick = useCallback(() => {
-    if (isClick && !isDragging) {
+  const handleDragStart = useCallback((_, info) => {
+    dragStartRef.current = { x: info.point.x, y: info.point.y, time: Date.now() };
+    wasDragRef.current = false;
+  }, []);
+
+  const handleDrag = useCallback((_, info) => {
+    const dist = Math.abs(info.offset.x);
+    if (dist > 6) {
+      wasDragRef.current = true;
+      setIsDragging(true);
+    }
+  }, []);
+
+  const handleDragEnd = useCallback(async (_, info) => {
+    setIsDragging(false);
+    const velocity = info.velocity.x;
+    const offset = info.offset.x;
+
+    // Fast swipe left or past threshold → dismiss
+    if (offset < DELETE_THRESHOLD || velocity < -500) {
+      await controls.start({
+        x: -400,
+        opacity: 0,
+        transition: { type: 'spring', stiffness: 300, damping: 30 },
+      });
+      handleDismiss();
+      dragX.set(0);
+      controls.set({ x: 0, opacity: 1 });
+    } else {
+      // Snap back
+      controls.start({
+        x: 0,
+        transition: { type: 'spring', stiffness: 500, damping: 30 },
+      });
+    }
+
+    // Reset drag flag after a tick so onClick doesn't fire
+    requestAnimationFrame(() => {
+      wasDragRef.current = false;
+    });
+  }, [controls, dragX, handleDismiss]);
+
+  const handleTap = useCallback(() => {
+    if (!wasDragRef.current) {
       onGoToCart();
     }
-  }, [isClick, isDragging, onGoToCart]);
+  }, [onGoToCart]);
 
   // Reset position when badge becomes visible
   useEffect(() => {
     if (isVisible) {
-      setPosition({ x: 0, y: 0 });
-      setIsDragging(false);
-      setShowDeleteZone(false);
-      setIsNearDelete(false);
+      dragX.set(0);
+      controls.set({ x: 0, opacity: 1 });
     }
-  }, [isVisible]);
-
-  // Freeze background during drag
-  useEffect(() => {
-    if (isDragging) {
-      scrollPositionRef.current = window.pageYOffset || document.documentElement.scrollTop;
-
-      document.body.style.overflow = 'hidden';
-      document.body.style.touchAction = 'none';
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollPositionRef.current}px`;
-      document.body.style.width = '100%';
-      document.body.style.userSelect = 'none';
-      document.body.style.pointerEvents = 'none';
-
-      const preventBackgroundEvents = (e) => {
-        if (badgeRef.current?.contains(e.target) || deleteZoneRef.current?.contains(e.target)) {
-          return;
-        }
-        e.preventDefault();
-        e.stopPropagation();
-      };
-
-      document.addEventListener('touchmove', preventBackgroundEvents, { passive: false });
-      document.addEventListener('wheel', preventBackgroundEvents, { passive: false });
-      document.addEventListener('scroll', preventBackgroundEvents, { passive: false });
-      document.addEventListener('click', preventBackgroundEvents, { capture: true });
-      document.addEventListener('mousedown', preventBackgroundEvents, { capture: true });
-      document.addEventListener('mouseup', preventBackgroundEvents, { capture: true });
-      document.addEventListener('contextmenu', preventBackgroundEvents, { capture: true });
-
-      return () => {
-        document.body.style.overflow = '';
-        document.body.style.touchAction = '';
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.width = '';
-        document.body.style.userSelect = '';
-        document.body.style.pointerEvents = '';
-
-        document.removeEventListener('touchmove', preventBackgroundEvents);
-        document.removeEventListener('wheel', preventBackgroundEvents);
-        document.removeEventListener('scroll', preventBackgroundEvents);
-        document.removeEventListener('click', preventBackgroundEvents, { capture: true });
-        document.removeEventListener('mousedown', preventBackgroundEvents, { capture: true });
-        document.removeEventListener('mouseup', preventBackgroundEvents, { capture: true });
-        document.removeEventListener('contextmenu', preventBackgroundEvents, { capture: true });
-
-        window.scrollTo(0, scrollPositionRef.current);
-      };
-    }
-  }, [isDragging]);
-
-  const handleTouchStart = (e) => {
-    const touch = e.touches[0];
-    setIsClick(true);
-    setDragStart({
-      x: touch.clientX - position.x,
-      y: touch.clientY - position.y
-    });
-    setDragStartPos({
-      x: touch.clientX,
-      y: touch.clientY
-    });
-
-    dragTimeoutRef.current = setTimeout(() => {
-      setIsClick(false);
-      setIsDragging(true);
-    }, DRAG_TIME_THRESHOLD);
-
-    e.stopPropagation();
-  };
-
-  const handleTouchMove = (e) => {
-    const touch = e.touches[0];
-
-    const distanceMoved = Math.sqrt(
-      Math.pow(touch.clientX - dragStartPos.x, 2) +
-      Math.pow(touch.clientY - dragStartPos.y, 2)
-    );
-
-    if (distanceMoved > DRAG_THRESHOLD && isClick) {
-      setIsClick(false);
-      setIsDragging(true);
-      if (dragTimeoutRef.current) {
-        clearTimeout(dragTimeoutRef.current);
-      }
-    }
-
-    if (!isDragging && distanceMoved <= DRAG_THRESHOLD) return;
-
-    const newX = touch.clientX - dragStart.x;
-    const newY = touch.clientY - dragStart.y;
-
-    if (distanceMoved > DRAG_THRESHOLD && !showDeleteZone) {
-      setShowDeleteZone(true);
-    }
-
-    setPosition({ x: newX, y: newY });
-
-    if (showDeleteZone && deleteZoneRef.current && badgeRef.current) {
-      const deleteRect = deleteZoneRef.current.getBoundingClientRect();
-      const badgeRect = badgeRef.current.getBoundingClientRect();
-
-      const distance = Math.sqrt(
-        Math.pow(deleteRect.left - badgeRect.left, 2) +
-        Math.pow(deleteRect.top - badgeRect.top, 2)
-      );
-
-      setIsNearDelete(distance < 80);
-    }
-
-    e.stopPropagation();
-  };
-
-  const handleTouchEnd = () => {
-    if (dragTimeoutRef.current) {
-      clearTimeout(dragTimeoutRef.current);
-    }
-
-    if (isClick) {
-      handleBadgeClick();
-    } else if (isNearDelete && showDeleteZone) {
-      handleDismiss();
-    } else {
-      setPosition({ x: 0, y: 0 });
-    }
-
-    setIsDragging(false);
-    setIsNearDelete(false);
-    setShowDeleteZone(false);
-    setIsClick(true);
-  };
-
-  const handleMouseDown = (e) => {
-    setIsClick(true);
-    setDragStart({
-      x: e.clientX - position.x,
-      y: e.clientY - position.y
-    });
-    setDragStartPos({
-      x: e.clientX,
-      y: e.clientY
-    });
-
-    dragTimeoutRef.current = setTimeout(() => {
-      setIsClick(false);
-      setIsDragging(true);
-    }, DRAG_TIME_THRESHOLD);
-  };
-
-  const handleMouseMove = useCallback((e) => {
-    const distanceMoved = Math.sqrt(
-      Math.pow(e.clientX - dragStartPos.x, 2) +
-      Math.pow(e.clientY - dragStartPos.y, 2)
-    );
-
-    if (distanceMoved > DRAG_THRESHOLD && isClick) {
-      setIsClick(false);
-      setIsDragging(true);
-      if (dragTimeoutRef.current) {
-        clearTimeout(dragTimeoutRef.current);
-      }
-    }
-
-    if (!isDragging && distanceMoved <= DRAG_THRESHOLD) return;
-
-    const newX = e.clientX - dragStart.x;
-    const newY = e.clientY - dragStart.y;
-
-    if (distanceMoved > DRAG_THRESHOLD && !showDeleteZone) {
-      setShowDeleteZone(true);
-    }
-
-    setPosition({ x: newX, y: newY });
-
-    if (showDeleteZone && deleteZoneRef.current && badgeRef.current) {
-      const deleteRect = deleteZoneRef.current.getBoundingClientRect();
-      const badgeRect = badgeRef.current.getBoundingClientRect();
-
-      const distance = Math.sqrt(
-        Math.pow(deleteRect.left - badgeRect.left, 2) +
-        Math.pow(deleteRect.top - badgeRect.top, 2)
-      );
-
-      setIsNearDelete(distance < 80);
-    }
-  }, [isDragging, isClick, dragStart, dragStartPos, showDeleteZone]);
-
-  const handleMouseUp = useCallback(() => {
-    if (dragTimeoutRef.current) {
-      clearTimeout(dragTimeoutRef.current);
-    }
-
-    if (isClick) {
-      handleBadgeClick();
-    } else if (isNearDelete && showDeleteZone) {
-      handleDismiss();
-    } else {
-      setPosition({ x: 0, y: 0 });
-    }
-
-    setIsDragging(false);
-    setIsNearDelete(false);
-    setShowDeleteZone(false);
-    setIsClick(true);
-  }, [isClick, isNearDelete, showDeleteZone, handleBadgeClick, handleDismiss]);
-
-  useEffect(() => {
-    if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-
-      return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-      };
-    }
-  }, [isDragging, handleMouseMove, handleMouseUp]);
-
-  useEffect(() => {
-    return () => {
-      if (dragTimeoutRef.current) {
-        clearTimeout(dragTimeoutRef.current);
-      }
-    };
-  }, []);
+  }, [isVisible, dragX, controls]);
 
   if (!isVisible) return null;
 
   return (
-    <>
-      {/* Delete Zone */}
-      <AnimatePresence>
-        {showDeleteZone && (
-          <motion.div
-            ref={deleteZoneRef}
-            initial={{ opacity: 0, y: 20, scale: 0.8 }}
-            animate={{
-              opacity: 1,
-              y: 0,
-              scale: isNearDelete ? 1.2 : 1,
-            }}
-            exit={{ opacity: 0, y: 20, scale: 0.8 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-            className="fixed bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-50"
-            style={{ pointerEvents: 'auto' }}
-          >
-            <div
-              className="flex flex-col items-center gap-1.5"
-            >
-              <div
-                className="rounded-full p-3.5 md:p-4 transition-colors duration-200 shadow-2xl"
-                style={{
-                  background: isNearDelete
-                    ? 'linear-gradient(135deg, #dc2626, #b91c1c)'
-                    : 'linear-gradient(135deg, #ef4444, #dc2626)',
-                  boxShadow: isNearDelete
-                    ? '0 0 30px rgba(220, 38, 38, 0.5)'
-                    : '0 8px 24px rgba(220, 38, 38, 0.3)',
-                }}
-              >
-                <Trash2 className="w-5 h-5 md:w-6 md:h-6 text-white" />
-              </div>
-              <span className="text-[10px] md:text-xs font-medium text-gray-500">
-                {t('floatingCartBadge.dragToDelete')}
-              </span>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Floating Badge */}
+    <div className="fixed bottom-5 right-3 md:bottom-7 md:right-6 z-40" style={{ fontFamily: 'Poppins, sans-serif' }}>
       <AnimatePresence>
         {isVisible && (
           <motion.div
-            ref={badgeRef}
-            initial={{ opacity: 0, y: 80, scale: 0.6 }}
-            animate={{
-              opacity: isDragging && isNearDelete ? 0.5 : 1,
-              y: 0,
-              scale: isDragging ? 1.05 : 1,
-            }}
-            exit={{ opacity: 0, y: 40, scale: 0.8 }}
-            transition={{
-              type: 'spring',
-              stiffness: 360,
-              damping: 28,
-              mass: 0.8,
-            }}
-            className={`fixed bottom-4 right-3 md:bottom-6 md:right-6 z-40 ${
-              isDragging ? 'cursor-grabbing' : 'cursor-pointer'
-            }`}
-            style={{
-              transform: `translate(${position.x}px, ${position.y}px)`,
-              transition: isDragging ? 'none' : 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-              pointerEvents: 'auto',
-            }}
-            onMouseDown={handleMouseDown}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
+            initial={{ opacity: 0, y: 60, scale: 0.5 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 40, scale: 0.7 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 26, mass: 0.8 }}
+            className="relative"
           >
-            {/* Ambient glow behind the badge */}
-            <div
-              className="absolute -inset-2 rounded-2xl opacity-40 blur-xl pointer-events-none"
+            {/* Delete zone — revealed underneath when swiping left */}
+            <motion.div
+              className="absolute inset-0 rounded-[18px] md:rounded-[22px] flex items-center justify-end pr-5 md:pr-6 overflow-hidden"
               style={{
-                background: 'linear-gradient(135deg, #00417a, #0052a3)',
-                animation: justAdded ? 'cartGlow 1.2s ease-in-out 2' : 'none',
-              }}
-            />
-
-            {/* Main badge body */}
-            <div
-              className="relative rounded-2xl overflow-hidden shadow-lg md:shadow-xl"
-              style={{
-                background: 'linear-gradient(135deg, #00356a 0%, #00417a 40%, #004d8f 100%)',
-                boxShadow: isDragging
-                  ? '0 20px 50px rgba(0, 65, 122, 0.4)'
-                  : '0 8px 32px rgba(0, 65, 122, 0.25)',
+                opacity: deleteOpacity,
+                background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
+                boxShadow: '0 4px 20px rgba(220, 38, 38, 0.35)',
               }}
             >
-              {/* Subtle top highlight line */}
-              <div
-                className="absolute top-0 left-0 right-0 h-[1px]"
+              <motion.div
+                style={{ scale: deleteScale }}
+                className="flex items-center gap-2"
+              >
+                <Trash2 className="w-4 h-4 md:w-5 md:h-5 text-white/90" />
+              </motion.div>
+            </motion.div>
+
+            {/* The draggable badge */}
+            <motion.div
+              drag="x"
+              dragDirectionLock
+              dragConstraints={{ left: -200, right: 0 }}
+              dragElastic={{ left: 0.15, right: 0.4 }}
+              onDragStart={handleDragStart}
+              onDrag={handleDrag}
+              onDragEnd={handleDragEnd}
+              onTap={handleTap}
+              animate={controls}
+              style={{ x: dragX, opacity: badgeOpacity }}
+              className="relative cursor-pointer select-none touch-pan-y"
+              whileTap={!isDragging ? { scale: 0.97 } : undefined}
+            >
+              {/* Ambient glow */}
+              <motion.div
+                className="absolute -inset-2.5 rounded-[22px] pointer-events-none"
                 style={{
-                  background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                  background: 'radial-gradient(ellipse at center, rgba(0, 65, 122, 0.35), transparent 70%)',
+                  filter: 'blur(12px)',
                 }}
+                animate={justAdded ? {
+                  opacity: [0.4, 0.8, 0.4],
+                  scale: [1, 1.12, 1],
+                } : { opacity: 0.35 }}
+                transition={justAdded ? {
+                  duration: 1.2,
+                  repeat: 2,
+                  ease: 'easeInOut',
+                } : {}}
               />
 
-              <div className="flex items-center gap-2.5 md:gap-3.5 px-3 py-2.5 md:px-5 md:py-3.5">
-                {/* Cart icon with count bubble */}
-                <div className="relative flex-shrink-0">
-                  <div
-                    className="rounded-xl p-2 md:p-2.5"
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.12)',
-                      backdropFilter: 'blur(8px)',
-                    }}
-                  >
-                    <ShoppingCart className="w-4 h-4 md:w-5 md:h-5 text-white" />
+              {/* Main badge surface */}
+              <div
+                className="relative rounded-[18px] md:rounded-[22px] overflow-hidden"
+                style={{
+                  background: 'linear-gradient(145deg, #003a6e 0%, #00417a 35%, #004f94 100%)',
+                  boxShadow: isDragging
+                    ? '0 16px 48px rgba(0, 52, 100, 0.45), 0 2px 8px rgba(0,0,0,0.15)'
+                    : '0 8px 28px rgba(0, 52, 100, 0.3), 0 2px 6px rgba(0,0,0,0.1)',
+                }}
+              >
+                {/* Glass highlight on top edge */}
+                <div
+                  className="absolute top-0 left-3 right-3 h-px"
+                  style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent)' }}
+                />
+
+                <div className="flex items-center gap-3 md:gap-4 pl-3.5 pr-4 py-2.5 md:pl-5 md:pr-5 md:py-3.5">
+                  {/* Cart icon container */}
+                  <div className="relative flex-shrink-0">
+                    <div
+                      className="rounded-xl p-2 md:p-2.5"
+                      style={{
+                        background: 'rgba(255,255,255,0.1)',
+                        backdropFilter: 'blur(6px)',
+                        border: '1px solid rgba(255,255,255,0.08)',
+                      }}
+                    >
+                      <ShoppingCart className="w-[18px] h-[18px] md:w-5 md:h-5 text-white/90" />
+                    </div>
+
+                    {/* Count pill */}
+                    <motion.div
+                      key={itemCount}
+                      initial={{ scale: 0, rotate: -20 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ type: 'spring', stiffness: 500, damping: 14, delay: 0.08 }}
+                      className="absolute -top-1.5 -right-1.5 min-w-[18px] md:min-w-[20px] h-[18px] md:h-[20px] flex items-center justify-center rounded-full text-[10px] md:text-[11px] font-bold leading-none px-[5px]"
+                      style={{
+                        background: '#ee0027',
+                        color: '#fff',
+                        boxShadow: '0 2px 8px rgba(238, 0, 39, 0.45)',
+                        border: '1.5px solid rgba(0, 65, 122, 0.6)',
+                      }}
+                    >
+                      {itemCount}
+                    </motion.div>
                   </div>
-                  {/* Item count bubble */}
-                  <motion.div
-                    key={itemCount}
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: 'spring', stiffness: 500, damping: 15, delay: 0.1 }}
-                    className="absolute -top-1.5 -right-1.5 min-w-[18px] md:min-w-[20px] h-[18px] md:h-[20px] flex items-center justify-center rounded-full text-[10px] md:text-[11px] font-bold leading-none px-1"
-                    style={{
-                      background: 'linear-gradient(135deg, #ee0027, #d00022)',
-                      color: '#fff',
-                      boxShadow: '0 2px 8px rgba(238, 0, 39, 0.4)',
-                    }}
-                  >
-                    {itemCount}
-                  </motion.div>
+
+                  {/* Text block */}
+                  <div className="flex flex-col min-w-0 gap-0.5">
+                    <span className="text-white font-semibold text-[11.5px] md:text-[14px] leading-tight tracking-[-0.01em] truncate">
+                      {itemCount === 1
+                        ? t('floatingCartBadge.itemAdded', { count: itemCount })
+                        : t('floatingCartBadge.itemsAdded', { count: itemCount })
+                      }
+                    </span>
+                    <span className="flex items-center gap-0.5 text-[10px] md:text-xs font-medium text-white/50">
+                      {t('floatingCartBadge.cart')}
+                      <ChevronRight className="w-2.5 h-2.5 md:w-3 md:h-3" strokeWidth={2.5} />
+                    </span>
+                  </div>
                 </div>
 
-                {/* Text content */}
-                <div className="flex flex-col min-w-0">
-                  <span className="text-white font-semibold text-[11px] md:text-sm leading-tight truncate">
-                    {itemCount === 1
-                      ? t('floatingCartBadge.itemAdded', { count: itemCount })
-                      : t('floatingCartBadge.itemsAdded', { count: itemCount })
-                    }
-                  </span>
-                  <span
-                    className="flex items-center gap-0.5 mt-0.5 text-[10px] md:text-xs font-medium"
-                    style={{ color: 'rgba(255, 255, 255, 0.65)' }}
-                  >
-                    {t('floatingCartBadge.cart')}
-                    <ArrowRight className="w-2.5 h-2.5 md:w-3 md:h-3" />
-                  </span>
-                </div>
+                {/* Bottom accent line */}
+                <div
+                  className="h-[2px] w-full"
+                  style={{
+                    background: justAdded
+                      ? 'linear-gradient(90deg, transparent 5%, #ee0027 30%, #ff4d5e 50%, #ee0027 70%, transparent 95%)'
+                      : 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)',
+                    transition: 'background 0.6s ease',
+                  }}
+                />
               </div>
 
-              {/* Animated progress-like accent bar at bottom */}
-              <div
-                className="h-[2px] w-full"
-                style={{
-                  background: justAdded
-                    ? 'linear-gradient(90deg, transparent, #ee0027, #ff3350, #ee0027, transparent)'
-                    : 'linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)',
-                  transition: 'background 0.6s ease',
-                }}
-              />
-            </div>
-
+              {/* Swipe hint — subtle left-arrow chevrons on first appearance */}
+              <AnimatePresence>
+                {justAdded && (
+                  <motion.div
+                    className="absolute right-full top-1/2 -translate-y-1/2 mr-2 flex items-center pointer-events-none"
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: [0, 0.5, 0], x: [10, -4, -12] }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1.8, delay: 1.5, ease: 'easeInOut' }}
+                  >
+                    <span className="text-white/40 text-xs font-medium tracking-wide">
+                      ‹‹
+                    </span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Keyframe for glow pulse on new item */}
-      <style>{`
-        @keyframes cartGlow {
-          0%, 100% { opacity: 0.3; transform: scale(1); }
-          50% { opacity: 0.7; transform: scale(1.15); }
-        }
-      `}</style>
-    </>
+    </div>
   );
 }

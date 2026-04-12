@@ -158,8 +158,8 @@
     "close": "Fermer",
     "itemAdded": "{{count}} article ajouté",
     "itemsAdded": "{{count}} articles ajoutés",
-    "cart": "panier →",
-    "dragToDelete": "Glissez ici pour supprimer"
+    "cart": "panier",
+    "swipeToDelete": "Glissez pour masquer"
   },
   "bookDetails": {
     "loading": "Chargement...",

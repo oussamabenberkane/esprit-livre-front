@@ -75,8 +75,6 @@ const BookDetails = () => {
 
     // Description reveal state
     const [showFullDescription, setShowFullDescription] = useState(false);
-    const [isAnimatingOut, setIsAnimatingOut] = useState(false);
-    const descriptionRef = useRef(null);
     const bookDetailsRef = useRef(null);
 
     // Cart popup state
@@ -436,40 +434,7 @@ const BookDetails = () => {
     };
 
     const handleToggleDescription = () => {
-        if (showFullDescription) {
-            // Closing: trigger fade-out animation
-            setIsAnimatingOut(true);
-
-            // Scroll back to book details smoothly
-            setTimeout(() => {
-                bookDetailsRef.current?.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }, 50);
-
-            // Wait for animation to complete before hiding
-            setTimeout(() => {
-                setShowFullDescription(false);
-                setIsAnimatingOut(false);
-            }, 300); // Match animation duration
-        } else {
-            // Opening: show and fade in
-            setShowFullDescription(true);
-
-            // Smooth scroll to bottom of description after rendering
-            setTimeout(() => {
-                if (descriptionRef.current) {
-                    const descRect = descriptionRef.current.getBoundingClientRect();
-                    const extraPadding = 48; // Extra space below description
-
-                    window.scrollTo({
-                        top: window.scrollY + descRect.bottom - window.innerHeight + extraPadding,
-                        behavior: 'smooth'
-                    });
-                }
-            }, 350); // Wait for fade-in animation to mostly complete
-        }
+        setShowFullDescription(prev => !prev);
     };
 
     // Loading state
@@ -541,18 +506,8 @@ const BookDetails = () => {
                             <ChevronLeft className="w-5 h-5" />
                         </button>
 
-                        {/* Book Title */}
-                        <h1 className="font-['Poppins'] font-bold text-[#1c2d55] text-fluid-h1to2 mb-fluid-xxs">
-                            {book.title}
-                        </h1>
-
-                        {/* Author */}
-                        <p className="font-['Poppins'] font-semibold text-[#626e82] text-sm mb-fluid-md">
-                            {t('bookDetails.author')} {book.author.name}
-                        </p>
-
                         {/* Book Image */}
-                        <div className="flex justify-center mb-fluid-lg">
+                        <div className="flex justify-center mb-fluid-sm">
                             <div className="w-[200px] xs:w-[220px] aspect-[5/7] rounded-md shadow-[0px_5px_20px_0px_rgba(0,0,0,0.25)] overflow-hidden">
                                 <img
                                     src={getBookCoverUrl(book.id)}
@@ -562,21 +517,16 @@ const BookDetails = () => {
                             </div>
                         </div>
 
-                        {/* Book Information */}
-                        <div className="flex flex-col gap-fluid-sm">
-                            {/* Price Card */}
-                            <div className="bg-neutral-100 rounded-md p-fluid-sm">
-                                <div className="flex items-start justify-between gap-2 mb-2">
-                                    <h2 className="font-['Poppins'] font-semibold text-[#1c2d55] text-sm leading-tight flex-1">
-                                        {book.title}
-                                    </h2>
-                                    {book.language && (
-                                        <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded flex-shrink-0">
-                                            {getLanguageCode(book.language)}
-                                        </span>
-                                    )}
-                                </div>
-                                <div className="text-right">
+                        {/* Title + Author + Price under cover */}
+                        <div className="text-center mb-fluid-md">
+                            <h1 className="font-['Poppins'] font-bold text-[#1c2d55] text-fluid-h1to2 mb-fluid-xxs">
+                                {book.title}
+                            </h1>
+                            <p className="font-['Poppins'] font-semibold text-[#626e82] text-sm mb-fluid-xs">
+                                {t('bookDetails.author')} {book.author.name}
+                            </p>
+                            <div className="flex items-center justify-center gap-3">
+                                <div>
                                     <span className="font-['Poppins'] font-extrabold text-[#1c2d55] text-base">
                                         {book.price}
                                     </span>
@@ -584,7 +534,31 @@ const BookDetails = () => {
                                         DZD
                                     </span>
                                 </div>
+                                {book.language && (
+                                    <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded flex-shrink-0">
+                                        {getLanguageCode(book.language)}
+                                    </span>
+                                )}
                             </div>
+                        </div>
+
+                        {/* Book Information */}
+                        <div className="flex flex-col gap-fluid-sm">
+                            {/* Description - inline expand */}
+                            {book.description && (
+                                <div>
+                                    <p className={`font-['Poppins'] font-normal text-[#626e82] text-sm leading-relaxed whitespace-pre-line ${showFullDescription ? '' : 'line-clamp-3'}`}>
+                                        {formatDesc(book.description)}
+                                    </p>
+                                    <button
+                                        onClick={handleToggleDescription}
+                                        className="font-['Poppins'] font-medium text-[#00417a] text-xs mt-1.5 inline-flex items-center gap-1 hover:underline"
+                                    >
+                                        {showFullDescription ? t('bookDetails.hideDescription') : t('bookDetails.viewFullDescription')}
+                                        <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showFullDescription ? 'rotate-180' : ''}`} />
+                                    </button>
+                                </div>
+                            )}
 
                             {/* Details Card */}
                             <div className="border border-[#c9cfd8] rounded-md p-fluid-sm">
@@ -627,31 +601,6 @@ const BookDetails = () => {
                                     <ShoppingCart className="w-4 h-4" />
                                 </button>
                             </div>
-
-                            {/* Description Preview - Mobile */}
-                            {book.description && (
-                                <div
-                                    className="cursor-pointer group border border-[#c9cfd8] rounded-md p-fluid-sm hover:border-[#00417a]/30 transition-colors"
-                                    onClick={handleToggleDescription}
-                                >
-                                    <p className="font-['Poppins'] font-normal text-[#626e82] text-sm leading-relaxed whitespace-pre-line line-clamp-3">
-                                        {formatDesc(book.description)}
-                                    </p>
-                                    <span className="font-['Poppins'] font-medium text-[#00417a] text-xs mt-1.5 inline-flex items-center gap-1 group-hover:underline">
-                                        {t('bookDetails.viewFullDescription')}
-                                        <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showFullDescription ? 'rotate-180' : ''}`} />
-                                    </span>
-                                </div>
-                            )}
-                            {!book.description && (
-                                <button
-                                    onClick={handleToggleDescription}
-                                    className="font-['Poppins'] font-medium text-[#626e82] hover:text-[#1c2d55] transition-colors flex items-center gap-1 w-full"
-                                >
-                                    <span className="flex-1 text-left"><h1 className="text-sm whitespace-nowrap">{t('bookDetails.viewFullDescription')}</h1></span>
-                                    <ChevronDown className={`w-5 h-5 flex-shrink-0 transition-transform duration-300 ${showFullDescription ? 'rotate-180' : ''}`} />
-                                </button>
-                            )}
                         </div>
                     </div>
 
@@ -667,19 +616,9 @@ const BookDetails = () => {
                                 <ChevronLeft className="w-5 h-5" />
                             </button>
 
-                            {/* Book Title */}
-                            <h1 className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-h2 mb-fluid-xxs">
-                                {book.title}
-                            </h1>
-
-                            {/* Author */}
-                            <p className="font-['Poppins'] font-normal text-[#626e82] text-fluid-small mb-fluid-md">
-                                {t('bookDetails.author')} {book.author.name}
-                            </p>
-
                             {/* Horizontal Layout - Centered */}
-                            <div className="flex gap-fluid-lg items-stretch max-w-6xl mx-auto">
-                                {/* Left Column - Book Image */}
+                            <div className="flex gap-fluid-lg items-start max-w-6xl mx-auto">
+                                {/* Left Column - Cover + Title/Price */}
                                 <div className="flex-shrink-0 w-[240px] lg:w-[280px]">
                                     <div className="w-full aspect-[5/7] rounded-md shadow-[0px_5px_20px_0px_rgba(0,0,0,0.25)] overflow-hidden">
                                         <img
@@ -689,34 +628,52 @@ const BookDetails = () => {
                                         />
                                     </div>
 
-                                </div>
-
-                                {/* Right Column - Book Information (Extended Height) */}
-                                <div className="flex flex-col gap-fluid-sm flex-1 min-w-0">
-                                    {/* Price Card */}
-                                    <div className="bg-neutral-100 rounded-md p-fluid-sm">
-                                        <div className="flex items-start justify-between gap-4 mb-2">
-                                            <h2 className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-medium leading-tight flex-1">
-                                                {book.title}
-                                            </h2>
+                                    {/* Title + Author + Price under cover */}
+                                    <div className="mt-fluid-sm">
+                                        <h1 className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-h3 leading-tight mb-1">
+                                            {book.title}
+                                        </h1>
+                                        <p className="font-['Poppins'] font-normal text-[#626e82] text-fluid-small mb-fluid-xs">
+                                            {t('bookDetails.author')} {book.author.name}
+                                        </p>
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <span className="font-['Poppins'] font-extrabold text-[#1c2d55] text-fluid-medium">
+                                                    {book.price}
+                                                </span>
+                                                <span className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-vsmall ml-1">
+                                                    DZD
+                                                </span>
+                                            </div>
                                             {book.language && (
                                                 <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded flex-shrink-0">
                                                     {getLanguageCode(book.language)}
                                                 </span>
                                             )}
                                         </div>
-                                        <div className="text-right">
-                                            <span className="font-['Poppins'] font-extrabold text-[#1c2d55] text-fluid-medium">
-                                                {book.price}
-                                            </span>
-                                            <span className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-vsmall ml-1">
-                                                DZD
-                                            </span>
-                                        </div>
                                     </div>
+                                </div>
 
-                                    {/* Details Card - Extended to Match Image Height */}
-                                    <div className="border border-[#c9cfd8] rounded-md p-fluid-md flex-1 flex flex-col justify-between">
+                                {/* Right Column - Description first, then details */}
+                                <div className="flex flex-col gap-fluid-sm flex-1 min-w-0">
+                                    {/* Description - inline expand */}
+                                    {book.description && (
+                                        <div>
+                                            <p className={`font-['Poppins'] font-normal text-[#626e82] text-fluid-small leading-relaxed whitespace-pre-line ${showFullDescription ? '' : 'line-clamp-4'}`}>
+                                                {formatDesc(book.description)}
+                                            </p>
+                                            <button
+                                                onClick={handleToggleDescription}
+                                                className="font-['Poppins'] font-medium text-[#00417a] text-fluid-vsmall mt-fluid-xxs inline-flex items-center gap-1 hover:underline"
+                                            >
+                                                {showFullDescription ? t('bookDetails.hideDescription') : t('bookDetails.viewFullDescription')}
+                                                <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${showFullDescription ? 'rotate-180' : ''}`} />
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    {/* Details Card */}
+                                    <div className="border border-[#c9cfd8] rounded-md p-fluid-md">
                                         <div>
                                             {/* Seller */}
                                             <p className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-medium mb-fluid-xxs">
@@ -749,75 +706,19 @@ const BookDetails = () => {
                                             </p>
                                         </div>
 
-                                        {/* Add to Cart Button - Aligned to Bottom */}
+                                        {/* Add to Cart Button */}
                                         <button
                                             onClick={handleAddMainBookToCart}
-                                            className="w-[85%] mx-auto bg-[#ee0027] hover:bg-[#d00022] text-white font-['Poppins'] font-extrabold text-fluid-vsmall rounded-md py-2 px-4 flex items-center justify-center gap-2 transition-colors mb-fluid-sm mt-auto"
+                                            className="w-[85%] mx-auto bg-[#ee0027] hover:bg-[#d00022] text-white font-['Poppins'] font-extrabold text-fluid-vsmall rounded-md py-2 px-4 flex items-center justify-center gap-2 transition-colors"
                                         >
                                             <span>{t('bookDetails.addToCart')}</span>
                                             <ShoppingCart className="w-4 h-4" />
                                         </button>
                                     </div>
-
-                                    {/* Description Preview - Desktop */}
-                                    {book.description && (
-                                        <div
-                                            className="cursor-pointer group border border-[#c9cfd8] rounded-md p-fluid-sm hover:border-[#00417a]/30 transition-colors"
-                                            onClick={handleToggleDescription}
-                                        >
-                                            <p className="font-['Poppins'] font-normal text-[#626e82] text-fluid-small leading-relaxed whitespace-pre-line line-clamp-3">
-                                                {formatDesc(book.description)}
-                                            </p>
-                                            <span className="font-['Poppins'] font-medium text-[#00417a] text-fluid-vsmall mt-fluid-xxs inline-flex items-center gap-1 group-hover:underline">
-                                                {t('bookDetails.viewFullDescription')}
-                                                <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${showFullDescription ? 'rotate-180' : ''}`} />
-                                            </span>
-                                        </div>
-                                    )}
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    {/* Full Description Section - Shows when toggled */}
-                    {showFullDescription && (
-                        <div
-                            ref={descriptionRef}
-                            className={`mt-fluid-lg transition-all duration-300 ease-in-out ${isAnimatingOut
-                                ? 'animate-fade-out'
-                                : 'animate-fade-in'
-                                }`}
-                            style={{ animationDuration: '300ms' }}
-                        >
-                            {/* Mobile Layout */}
-                            <div className="md:hidden container-main container-padding">
-                                <div className="bg-gray-50 rounded-md p-fluid-md border border-gray-200 shadow-sm">
-                                    <h3 className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-h3 mb-fluid-sm">
-                                        {t('bookDetails.fullDescription')}
-                                    </h3>
-                                    <p className="font-['Poppins'] font-normal text-[#626e82] text-fluid-small leading-relaxed whitespace-pre-line">
-                                        {formatDesc(book.description)}
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Desktop Layout - Match width of image + details box */}
-                            <div className="hidden md:block">
-                                <div className="container-main px-fluid-md">
-                                    <div className="max-w-6xl mx-auto">
-                                        <div className="bg-gray-50 rounded-md p-fluid-md border border-gray-200 shadow-sm">
-                                            <h3 className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-h3 mb-fluid-sm">
-                                                {t('bookDetails.fullDescription')}
-                                            </h3>
-                                            <p className="font-['Poppins'] font-normal text-[#626e82] text-fluid-small leading-relaxed whitespace-pre-line">
-                                                {formatDesc(book.description)}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
                 </section>
 
                 {/* Recommended Books Section */}

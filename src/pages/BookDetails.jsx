@@ -809,6 +809,9 @@ const BookDetails = () => {
 
                         {/* Horizontal Scroll Container with negative margin */}
                         <div className="relative -ml-fluid-2xl">
+                            {/* Scroll fade overlays */}
+                            <div className={`absolute left-0 top-0 bottom-0 w-[var(--spacing-fluid-2xl)] bg-gradient-to-r from-white to-transparent z-10 pointer-events-none transition-opacity duration-300 ${canScrollBooksLeft ? 'opacity-100' : 'opacity-0'}`} />
+                            <div className={`absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none transition-opacity duration-300 ${canScrollBooksRight ? 'opacity-100' : 'opacity-0'}`} />
                             <div
                                 ref={booksScrollRef}
                                 className="flex pt-fluid-xs pr-fluid-lg pl-fluid-2xl gap-fluid-md overflow-x-auto scrollbar-hide pb-4"
@@ -930,6 +933,9 @@ const BookDetails = () => {
 
                             {/* Horizontal Scroll Container with negative margin */}
                             <div className="relative -ml-fluid-2xl">
+                                {/* Scroll fade overlays */}
+                                <div className={`absolute left-0 top-0 bottom-0 w-[var(--spacing-fluid-2xl)] bg-gradient-to-r from-white to-transparent z-10 pointer-events-none transition-opacity duration-300 ${canScrollPacksLeft ? 'opacity-100' : 'opacity-0'}`} />
+                                <div className={`absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none transition-opacity duration-300 ${canScrollPacksRight ? 'opacity-100' : 'opacity-0'}`} />
                                 <div
                                     ref={packsScrollRef}
                                     className="flex pt-fluid-xs pr-fluid-lg pl-fluid-2xl gap-fluid-md overflow-x-auto scrollbar-hide pb-4"
@@ -1030,7 +1036,8 @@ const BookDetails = () => {
                         author: selectedBook.author?.name || 'Unknown',
                         price: selectedBook.price,
                         coverImage: getBookCoverUrl(selectedBook.id),
-                        language: selectedBook.language
+                        language: selectedBook.language,
+                        description: selectedBook.description
                     }}
                     packBooks={selectedBook.isPack ? packBooks : []}
                 />

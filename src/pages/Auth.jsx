@@ -70,7 +70,18 @@ export default function Auth() {
                 />
               </svg>
             </div>
-            <h1 className="text-gray-900 text-2xl mb-2">Esprit Livre</h1>
+            <div className="flex items-center justify-center gap-2 mb-2">
+                <span
+                    className="text-gray-900 font-semibold italic text-3xl leading-none tracking-wide"
+                    style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                >
+                    Esprit
+                </span>
+                <span className="w-px h-7 bg-[#d4a84b] opacity-70" aria-hidden="true" />
+                <span className="text-gray-900 font-medium text-sm leading-none tracking-[0.18em] uppercase">
+                    Livre
+                </span>
+            </div>
           </motion.div>
 
           {/* Title */}

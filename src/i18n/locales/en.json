@@ -32,7 +32,9 @@
     "page": "Page {{current}}/{{total}}",
     "seeMore": "See more",
     "endOfResults": "✓ You have reached the end of results",
-    "noBooksFound": "No books found"
+    "noBooksFound": "No books found",
+    "packsTitle": "Packs",
+    "booksTitle": "Books"
   },
   "filters": {
     "heading": "Filters",

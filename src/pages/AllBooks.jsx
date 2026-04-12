@@ -353,9 +353,21 @@ export default function AllBooks() {
                         </div>
                     </div>
 
-                    {/* Packs Grid */}
+                    {/* Packs Section */}
                     {(isLoadingPacks || packs.length > 0) && (
-                        <section className="mb-fluid-lg">
+                        <section className="mb-fluid-lg -mx-fluid-md px-fluid-md py-fluid-md bg-gradient-to-b from-[#f0f5fa] to-white rounded-2xl border border-blue-100/60">
+                            {/* Packs Section Header */}
+                            <div className="flex items-center gap-2.5 mb-fluid-sm">
+                                <div className="w-1 h-6 bg-[#EE0027] rounded-full"></div>
+                                <h3 className="text-brand-blue text-fluid-h2 font-['Poppins'] font-semibold">
+                                    {t('allBooks.packsTitle', 'Packs')}
+                                </h3>
+                                <span className="text-fluid-small text-[#00417a]/50 font-medium">
+                                    {!isLoadingPacks && `(${packs.length})`}
+                                </span>
+                            </div>
+
+                            {/* Packs Grid */}
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-fluid-md auto-rows-fr">
                                 {isLoadingPacks ? (
                                     Array.from({ length: 2 }).map((_, index) => (
@@ -382,6 +394,19 @@ export default function AllBooks() {
                                 )}
                             </div>
                         </section>
+                    )}
+
+                    {/* Books Section Header */}
+                    {!isLoading && books.length > 0 && (isLoadingPacks || packs.length > 0) && (
+                        <div className="flex items-center gap-2.5 mb-fluid-sm">
+                            <div className="w-1 h-6 bg-brand-blue rounded-full"></div>
+                            <h3 className="text-brand-blue text-fluid-h2 font-['Poppins'] font-semibold">
+                                {t('allBooks.booksTitle', 'Livres')}
+                            </h3>
+                            <span className="text-fluid-small text-[#00417a]/50 font-medium">
+                                ({totalBooks})
+                            </span>
+                        </div>
                     )}
 
                     {/* Books Grid */}

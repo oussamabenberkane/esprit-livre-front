@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ShieldCheck, Truck, Users, ArrowUpRight } from 'lucide-react';
+import { ShieldCheck, Truck, Users, ArrowUpRight, User } from 'lucide-react';
+import { isAuthenticated } from '../../../services/authService';
 import GrainOverlay from './GrainOverlay';
 
 const useCountUp = (target, { duration = 1400, active = true, instant = false } = {}) => {
@@ -70,10 +71,18 @@ const SocialProofSlide = ({ isActive }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const prefersReducedMotion = useReducedMotion();
+    const loggedIn = isAuthenticated();
     const rmInitial = prefersReducedMotion ? { opacity: 1, y: 0 } : undefined;
     const rmAnimate = (base) =>
         prefersReducedMotion ? { opacity: 1, y: 0 } : isActive ? base : { opacity: 0, y: 14 };
     const rmTransition = (t) => (prefersReducedMotion ? { duration: 0 } : t);
+
+    const eyebrow = loggedIn ? t('homePage.hero.socialProof.auth.eyebrow') : t('homePage.hero.socialProof.eyebrow');
+    const title = loggedIn ? t('homePage.hero.socialProof.auth.title') : t('homePage.hero.socialProof.title');
+    const titleAccent = loggedIn ? t('homePage.hero.socialProof.auth.titleAccent') : t('homePage.hero.socialProof.titleAccent');
+    const subtitle = loggedIn ? t('homePage.hero.socialProof.auth.subtitle') : t('homePage.hero.socialProof.subtitle');
+    const ctaLabel = loggedIn ? t('homePage.hero.socialProof.auth.cta') : t('homePage.hero.socialProof.cta');
+    const ctaRoute = loggedIn ? '/profile' : '/auth';
 
     return (
         <div className="relative w-full h-full">
@@ -138,7 +147,7 @@ const SocialProofSlide = ({ isActive }) => {
                                 )}
                                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#b58929]" />
                             </span>
-                            {t('homePage.hero.socialProof.eyebrow')}
+                            {eyebrow}
                         </motion.div>
 
                         <motion.h2
@@ -148,10 +157,10 @@ const SocialProofSlide = ({ isActive }) => {
                             className="font-['Poppins'] font-bold text-[#00417a] leading-[1.06]"
                             style={{ fontSize: 'clamp(1.5rem, 5vw, 2.8rem)' }}
                         >
-                            {t('homePage.hero.socialProof.title')}
+                            {title}
                             <br />
                             <span className="italic font-medium text-[#b58929]">
-                                {t('homePage.hero.socialProof.titleAccent')}
+                                {titleAccent}
                             </span>
                         </motion.h2>
 
@@ -161,7 +170,7 @@ const SocialProofSlide = ({ isActive }) => {
                             transition={rmTransition({ delay: 0.28, duration: 0.55 })}
                             className="mt-2 text-[#00417a]/75 text-fluid-small max-w-xl mx-auto md:mx-0"
                         >
-                            {t('homePage.hero.socialProof.subtitle')}
+                            {subtitle}
                         </motion.p>
 
                         {/* Stats row */}
@@ -201,14 +210,21 @@ const SocialProofSlide = ({ isActive }) => {
                         >
                             <button
                                 type="button"
-                                onClick={() => navigate('/auth')}
+                                onClick={() => navigate(ctaRoute)}
                                 className="group inline-flex items-center gap-2 rounded-full bg-[#00417a] text-white font-semibold text-fluid-small px-5 py-2.5 sm:px-6 sm:py-3 shadow-[0_10px_24px_-8px_rgba(0,65,122,0.55)] hover:bg-[#003463] transition-all hover:shadow-[0_14px_30px_-10px_rgba(0,65,122,0.65)] hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#d4a84b] focus-visible:ring-offset-2 min-h-[44px]"
                             >
-                                {t('homePage.hero.socialProof.cta')}
-                                <ArrowUpRight
-                                    className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                                    strokeWidth={2.5}
-                                />
+                                {ctaLabel}
+                                {loggedIn ? (
+                                    <User
+                                        className="w-4 h-4 transition-transform group-hover:scale-110"
+                                        strokeWidth={2.5}
+                                    />
+                                ) : (
+                                    <ArrowUpRight
+                                        className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                                        strokeWidth={2.5}
+                                    />
+                                )}
                             </button>
                         </motion.div>
                     </div>

@@ -143,7 +143,14 @@
         "stat1Label": "readers served",
         "stat2Label": "orders delivered",
         "stat3Label": "authentic",
-        "cta": "Create an account"
+        "cta": "Create an account",
+        "auth": {
+          "eyebrow": "Welcome back",
+          "title": "You're part of",
+          "titleAccent": "something special.",
+          "subtitle": "Your next favorite book is just a click away.",
+          "cta": "See my profile"
+        }
       },
       "collection": {
         "eyebrow": "House selection",

@@ -143,7 +143,14 @@
         "stat1Label": "lecteurs servis",
         "stat2Label": "commandes livrées",
         "stat3Label": "authentiques",
-        "cta": "Créer un compte"
+        "cta": "Créer un compte",
+        "auth": {
+          "eyebrow": "Bon retour parmi nous",
+          "title": "Vous faites partie",
+          "titleAccent": "d'une belle aventure.",
+          "subtitle": "Votre prochain coup de cœur n'est qu'à un clic.",
+          "cta": "Voir mon profil"
+        }
       },
       "collection": {
         "eyebrow": "Sélection maison",

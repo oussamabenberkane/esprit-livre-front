@@ -52,18 +52,15 @@ const SignInButton = ({ onClick, className = "", highlight = false }) => {
 // Logo Component
 const Logo = ({ onClick }) => (
     <button onClick={onClick} className="text-left group">
-        <div className="flex items-center gap-[5px] min-[360px]:gap-[6px] md:gap-2">
-            <span
-                className="text-white font-semibold italic leading-none text-[15px] min-[360px]:text-lg md:text-[22px] tracking-wide"
-                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
-            >
+        <div className="flex items-center gap-[6px] min-[360px]:gap-2 md:gap-2.5">
+            <span className="text-white font-semibold leading-none text-base min-[360px]:text-lg md:text-xl tracking-[0.08em] uppercase">
                 Esprit
             </span>
             <span
                 className="w-px self-stretch bg-[#d4a84b] opacity-70 group-hover:opacity-100 transition-opacity"
                 aria-hidden="true"
             />
-            <span className="text-white font-medium leading-none text-[11px] min-[360px]:text-xs md:text-sm tracking-[0.18em] uppercase">
+            <span className="text-white font-medium leading-none text-xs min-[360px]:text-sm md:text-base tracking-[0.18em] uppercase">
                 Livre
             </span>
         </div>

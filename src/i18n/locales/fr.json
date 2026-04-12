@@ -34,7 +34,8 @@
     "endOfResults": "✓ Vous avez atteint la fin des résultats",
     "noBooksFound": "Aucun livre trouvé",
     "packsTitle": "Packs",
-    "booksTitle": "Livres"
+    "booksTitle": "Livres",
+    "noPacksFound": "Aucun pack trouvé"
   },
   "filters": {
     "heading": "Filtres",

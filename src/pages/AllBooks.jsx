@@ -33,6 +33,7 @@ export default function AllBooks() {
     const [selectedBook, setSelectedBook] = useState(null)
     const [pageTitle, setPageTitle] = useState(null) // Dynamic page title
     const [searchContext, setSearchContext] = useState(null) // Store search context (type + name)
+    const [activeTab, setActiveTab] = useState('books') // 'books' or 'packs'
 
     // API state
     const [books, setBooks] = useState([])
@@ -331,13 +332,13 @@ export default function AllBooks() {
                         />
                     </div>
 
-                    {/* Results Section */}
-                    <div className="mb-fluid-lg">
-                        <div className="flex items-center justify-between flex-wrap gap-2">
+                    {/* Results Header + Tabs */}
+                    <div className="mb-fluid-md">
+                        <div className="flex items-center justify-between flex-wrap gap-2 mb-fluid-sm">
                             <h2 className="text-brand-blue text-fluid-h1to2 font-['poppins'] font-semibold">
                                 {pageTitle || t('allBooks.resultsTitle')}
                             </h2>
-                            {!isLoading && (
+                            {!isLoading && activeTab === 'books' && (
                                 <div className="text-fluid-small text-gray-600">
                                     {t('allBooks.resultsCount', {
                                         start: totalBooks > 0 ? (currentPage - 1) * booksPerPage + 1 : 0,
@@ -351,31 +352,59 @@ export default function AllBooks() {
                                 </div>
                             )}
                         </div>
+
+                        {/* Tabs */}
+                        <div className="flex gap-1 border-b border-gray-200">
+                            <button
+                                onClick={() => setActiveTab('books')}
+                                className={`relative px-5 py-2.5 text-fluid-small font-semibold font-['Poppins'] transition-colors duration-200 ${
+                                    activeTab === 'books'
+                                        ? 'text-brand-blue'
+                                        : 'text-gray-400 hover:text-gray-600'
+                                }`}
+                            >
+                                {t('allBooks.booksTitle', 'Livres')}
+                                {!isLoading && (
+                                    <span className={`ml-1.5 text-fluid-vsmall font-medium ${activeTab === 'books' ? 'text-[#00417a]/50' : 'text-gray-300'}`}>
+                                        {totalBooks}
+                                    </span>
+                                )}
+                                {activeTab === 'books' && (
+                                    <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-brand-blue rounded-full" />
+                                )}
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('packs')}
+                                className={`relative px-5 py-2.5 text-fluid-small font-semibold font-['Poppins'] transition-colors duration-200 ${
+                                    activeTab === 'packs'
+                                        ? 'text-brand-blue'
+                                        : 'text-gray-400 hover:text-gray-600'
+                                }`}
+                            >
+                                {t('allBooks.packsTitle', 'Packs')}
+                                {!isLoadingPacks && (
+                                    <span className={`ml-1.5 text-fluid-vsmall font-medium ${activeTab === 'packs' ? 'text-[#00417a]/50' : 'text-gray-300'}`}>
+                                        {packs.length}
+                                    </span>
+                                )}
+                                {activeTab === 'packs' && (
+                                    <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-brand-blue rounded-full" />
+                                )}
+                            </button>
+                        </div>
                     </div>
 
-                    {/* Packs Section */}
-                    {(isLoadingPacks || packs.length > 0) && (
-                        <section className="mb-fluid-lg -mx-fluid-md px-fluid-md py-fluid-md bg-gradient-to-b from-[#f0f5fa] to-white rounded-2xl border border-blue-100/60">
-                            {/* Packs Section Header */}
-                            <div className="flex items-center gap-2.5 mb-fluid-sm">
-                                <div className="w-1 h-6 bg-[#EE0027] rounded-full"></div>
-                                <h3 className="text-brand-blue text-fluid-h2 font-['Poppins'] font-semibold">
-                                    {t('allBooks.packsTitle', 'Packs')}
-                                </h3>
-                                <span className="text-fluid-small text-[#00417a]/50 font-medium">
-                                    {!isLoadingPacks && `(${packs.length})`}
-                                </span>
-                            </div>
-
-                            {/* Packs Grid */}
+                    {/* Packs Tab Content */}
+                    {activeTab === 'packs' && (
+                        <section className="pb-fluid-xl">
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-fluid-md auto-rows-fr">
                                 {isLoadingPacks ? (
-                                    Array.from({ length: 2 }).map((_, index) => (
+                                    Array.from({ length: 4 }).map((_, index) => (
                                         <div key={`pack-skeleton-${index}`} className="h-full">
                                             <PackCardSkeleton />
                                         </div>
                                     ))
-                                ) : (
+                                ) : packs.length > 0 ? (
                                     packs.map((pack) => (
                                         <div key={`pack-${pack.id}`} className="h-full animate-fade-in">
                                             <PackCard
@@ -391,25 +420,18 @@ export default function AllBooks() {
                                             />
                                         </div>
                                     ))
+                                ) : (
+                                    <div className="col-span-full text-center text-gray-500 py-20">
+                                        <div className="text-6xl mb-4">📦</div>
+                                        <p className="text-xl font-medium">{t('allBooks.noPacksFound', 'Aucun pack trouvé')}</p>
+                                    </div>
                                 )}
                             </div>
                         </section>
                     )}
 
-                    {/* Books Section Header */}
-                    {!isLoading && books.length > 0 && (isLoadingPacks || packs.length > 0) && (
-                        <div className="flex items-center gap-2.5 mb-fluid-sm">
-                            <div className="w-1 h-6 bg-brand-blue rounded-full"></div>
-                            <h3 className="text-brand-blue text-fluid-h2 font-['Poppins'] font-semibold">
-                                {t('allBooks.booksTitle', 'Livres')}
-                            </h3>
-                            <span className="text-fluid-small text-[#00417a]/50 font-medium">
-                                ({totalBooks})
-                            </span>
-                        </div>
-                    )}
-
-                    {/* Books Grid */}
+                    {/* Books Tab Content */}
+                    {activeTab === 'books' && (
                     <section className="pb-fluid-xl">
                         {/* Error State */}
                         {error && !isLoading && (
@@ -513,15 +535,17 @@ export default function AllBooks() {
                         )}
 
                         {/* No books found */}
-                        {!isLoading && !error && books.length === 0 && !isLoadingPacks && packs.length === 0 && (
+                        {!isLoading && !error && books.length === 0 && (
                             <div className="text-center text-gray-500 py-20">
                                 <div className="text-6xl mb-4">📚</div>
                                 <p className="text-xl font-medium">{t('allBooks.noBooksFound')}</p>
                             </div>
                         )}
                     </section>
+                    )}
 
                     {/* Bottom Navigation */}
+                    {activeTab === 'books' && (
                     <div className="flex flex-col sm:flex-row justify-between items-center gap-4 py-fluid-lg border-t border-gray-200 text-fluid-small">
                         <div ></div>
 
@@ -658,6 +682,7 @@ export default function AllBooks() {
                             </div>
                         )}
                     </div>
+                    )}
                 </div>
 
             </div>

@@ -24,15 +24,15 @@ const PriceFilter = ({ filters, onPriceChange, onPriceInputBlur, onMinSliderChan
           <div
             className="absolute h-1 bg-blue-600 rounded-full top-1/2 -translate-y-1/2 transition-all pointer-events-none"
             style={{
-              left: `${((filters.price.min || 0) / 10000) * 100}%`,
-              right: `${100 - ((filters.price.max || 10000) / 10000) * 100}%`
+              left: `${((filters.price.min || 0) / 50000) * 100}%`,
+              right: `${100 - ((filters.price.max || 50000) / 50000) * 100}%`
             }}
           />
 
           <input
             type="range"
             min="0"
-            max="10000"
+            max="50000"
             step="50"
             value={filters.price.min || 0}
             onChange={onMinSliderChange}
@@ -43,9 +43,9 @@ const PriceFilter = ({ filters, onPriceChange, onPriceInputBlur, onMinSliderChan
           <input
             type="range"
             min="0"
-            max="10000"
+            max="50000"
             step="50"
-            value={filters.price.max || 10000}
+            value={filters.price.max || 50000}
             onChange={onMaxSliderChange}
             className="absolute w-full appearance-none bg-transparent cursor-pointer pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-600 [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-blue-600 [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:hover:scale-110 [&::-moz-range-thumb]:transition-transform"
             style={{ top: '50%', transform: 'translateY(-50%)', zIndex: 5, left: 0 }}
@@ -252,7 +252,7 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
   const [isMobile, setIsMobile] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [filters, setFilters] = useState({
-    price: { min: 0, max: 10000 },
+    price: { min: 0, max: 50000 },
     categories: [],
     authors: [],
     languages: []
@@ -346,11 +346,11 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
       // Map price from persisted filters (only when non-default)
       if (
         (initialFilters.minPrice !== undefined && initialFilters.minPrice > 0) ||
-        (initialFilters.maxPrice !== undefined && initialFilters.maxPrice < 10000)
+        (initialFilters.maxPrice !== undefined && initialFilters.maxPrice < 50000)
       ) {
         mappedFilters.price = {
           min: initialFilters.minPrice ?? 0,
-          max: initialFilters.maxPrice ?? 10000
+          max: initialFilters.maxPrice ?? 50000
         };
       }
 
@@ -369,7 +369,7 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
 
           const hasPriceFilter =
             (initialFilters.minPrice !== undefined && initialFilters.minPrice > 0) ||
-            (initialFilters.maxPrice !== undefined && initialFilters.maxPrice < 10000);
+            (initialFilters.maxPrice !== undefined && initialFilters.maxPrice < 50000);
           const hasLanguageFilter = initialFilters.languages && initialFilters.languages.length > 0;
 
           // Auto-apply filters when coming from URL or persisted state
@@ -422,7 +422,7 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
               authors: [],
               languages: [],
               minPrice: 0,
-              maxPrice: 10000,
+              maxPrice: 50000,
               search: initialFilters.search
             });
           }
@@ -519,13 +519,13 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
     }
 
     const numValue = parseInt(value) || 0;
-    let clampedValue = Math.max(0, Math.min(10000, numValue));
+    let clampedValue = Math.max(0, Math.min(50000, numValue));
 
     setFilters(prev => {
       const newPrice = { ...prev.price };
 
       if (type === 'min') {
-        clampedValue = Math.min(clampedValue, prev.price.max || 10000);
+        clampedValue = Math.min(clampedValue, prev.price.max || 50000);
         newPrice.min = clampedValue;
       } else {
         clampedValue = Math.max(clampedValue, prev.price.min || 0);
@@ -546,14 +546,14 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
           ...prev,
           price: {
             ...prev.price,
-            [type]: type === 'min' ? 0 : 10000
+            [type]: type === 'min' ? 0 : 50000
           }
         };
 
         // Check if all filters are now inactive after this change
         const allInactive =
           newFilters.price.min === 0 &&
-          newFilters.price.max === 10000 &&
+          newFilters.price.max === 50000 &&
           newFilters.categories.length === 0 &&
           newFilters.authors.length === 0 &&
           newFilters.languages.length === 0;
@@ -566,7 +566,7 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
               authors: [],
               languages: [],
               minPrice: 0,
-              maxPrice: 10000,
+              maxPrice: 50000,
               ...(initialFilters && initialFilters.search ? { search: initialFilters.search } : {})
             });
           }, 0);
@@ -579,7 +579,7 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
 
   const handleMinSliderChange = (e) => {
     const value = parseInt(e.target.value);
-    const maxValue = filters.price.max || 10000;
+    const maxValue = filters.price.max || 50000;
     // Min should stop 50 before max (one step before)
     const clampedValue = Math.min(value, maxValue - 50);
     setFilters(prev => {
@@ -594,7 +594,7 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
       // Check if all filters are now inactive after this change
       const allInactive =
         newFilters.price.min === 0 &&
-        newFilters.price.max === 10000 &&
+        newFilters.price.max === 50000 &&
         newFilters.categories.length === 0 &&
         newFilters.authors.length === 0 &&
         newFilters.languages.length === 0;
@@ -607,7 +607,7 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
             authors: [],
             languages: [],
             minPrice: 0,
-            maxPrice: 10000,
+            maxPrice: 50000,
             ...(initialFilters && initialFilters.search ? { search: initialFilters.search } : {})
           });
         }, 0);
@@ -634,7 +634,7 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
       // Check if all filters are now inactive after this change
       const allInactive =
         newFilters.price.min === 0 &&
-        newFilters.price.max === 10000 &&
+        newFilters.price.max === 50000 &&
         newFilters.categories.length === 0 &&
         newFilters.authors.length === 0 &&
         newFilters.languages.length === 0;
@@ -647,7 +647,7 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
             authors: [],
             languages: [],
             minPrice: 0,
-            maxPrice: 10000,
+            maxPrice: 50000,
             ...(initialFilters && initialFilters.search ? { search: initialFilters.search } : {})
           });
         }, 0);
@@ -679,7 +679,7 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
       // Check if all filters are now inactive after this removal
       const allInactive =
         newFilters.price.min === 0 &&
-        newFilters.price.max === 10000 &&
+        newFilters.price.max === 50000 &&
         newFilters.categories.length === 0 &&
         newFilters.authors.length === 0 &&
         newFilters.languages.length === 0;
@@ -692,7 +692,7 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
             authors: [],
             languages: [],
             minPrice: 0,
-            maxPrice: 10000,
+            maxPrice: 50000,
             ...(initialFilters && initialFilters.search ? { search: initialFilters.search } : {})
           });
         }, 0);
@@ -705,7 +705,7 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
   const hasActiveFilters = () => {
     return (
       filters.price.min > 0 ||
-      filters.price.max < 10000 ||
+      filters.price.max < 50000 ||
       filters.categories.length > 0 ||
       filters.authors.length > 0 ||
       filters.languages.length > 0
@@ -715,7 +715,7 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
   const resetFilters = () => {
     // Clear all filter state
     setFilters({
-      price: { min: 0, max: 10000 },
+      price: { min: 0, max: 50000 },
       categories: [],
       authors: [],
       languages: []
@@ -734,7 +734,7 @@ const FiltersSection = ({ initialFilters, onApplyFilters, categoriesData = [], a
         authors: [],
         languages: [],
         minPrice: 0,
-        maxPrice: 10000
+        maxPrice: 50000
       });
     }
 

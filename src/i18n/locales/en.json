@@ -94,7 +94,6 @@
   "cartPopup": {
     "title": "Item added to cart",
     "close": "Close",
-    "bookDetails": "Book details",
     "currency": "DZD",
     "viewCart": "Place My Order",
     "keepShopping": "Keep Shopping",

@@ -1,11 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; // kept for cart navigation
 import { useTranslation } from 'react-i18next';
 import { ShoppingCart, Check, X, Package, ChevronDown, BookOpen } from 'lucide-react';
 import { getLanguageCode } from '../../data/booksData';
 import { useCart } from '../../contexts/CartContext';
 import { getBookCoverUrl } from '../../utils/imageUtils';
 import { playCartSound } from '../../utils/cartSound';
+
+/** Turn literal "\n" (from JSON) into real newlines so whitespace-pre-line works */
+const formatDesc = (text) => text ? text.replace(/\\n/g, '\n') : '';
 
 export default function CartConfirmationPopup({
     isOpen,
@@ -106,10 +109,6 @@ export default function CartConfirmationPopup({
 
     if (!isOpen) return null;
 
-    const handleViewDetails = () => {
-        window.open(`/books/${book.id}`, '_blank', 'noopener,noreferrer');
-    };
-
     const handleToggleDescription = () => {
         setShowDescription(prev => !prev);
     };
@@ -182,40 +181,16 @@ export default function CartConfirmationPopup({
                                                 <p className="text-gray-600 text-[0.7rem] xs:text-sm mb-1.5 xs:mb-2">
                                                     {book.author}
                                                 </p>
-                                                <div className="flex items-center gap-2 xs:gap-3 flex-wrap">
+                                                {book.description && (
                                                     <button
-                                                        onClick={handleViewDetails}
-                                                        className="text-blue-600 hover:text-blue-700 hover:underline inline-flex items-center gap-0.5 xs:gap-1 transition-colors"
+                                                        onClick={handleToggleDescription}
+                                                        className="inline-flex items-center gap-1 xs:gap-1.5 text-[#00417a]/60 hover:text-[#00417a] transition-colors"
                                                     >
-                                                        <span className="text-[0.65rem] xs:text-fluid-medium">{t('cartPopup.bookDetails')}</span>
-                                                        <svg
-                                                            className="w-2.5 h-2.5 xs:w-3 xs:h-3"
-                                                            fill="none"
-                                                            stroke="currentColor"
-                                                            viewBox="0 0 24 24"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                strokeWidth={2}
-                                                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                                                            />
-                                                        </svg>
+                                                        <BookOpen className="w-3 h-3 xs:w-3.5 xs:h-3.5" strokeWidth={1.8} />
+                                                        <span className="text-[0.65rem] xs:text-fluid-medium font-medium">{t('cartPopup.description')}</span>
+                                                        <ChevronDown className={`w-3 h-3 xs:w-3.5 xs:h-3.5 transition-transform duration-200 ${showDescription ? 'rotate-180' : ''}`} />
                                                     </button>
-                                                    {book.description && (
-                                                        <>
-                                                            <span className="text-gray-300 text-[0.6rem] xs:text-xs">|</span>
-                                                            <button
-                                                                onClick={handleToggleDescription}
-                                                                className="text-[#00417a]/70 hover:text-[#00417a] inline-flex items-center gap-0.5 xs:gap-1 transition-colors"
-                                                            >
-                                                                <BookOpen className="w-2.5 h-2.5 xs:w-3 xs:h-3" />
-                                                                <span className="text-[0.65rem] xs:text-fluid-medium">{t('cartPopup.description')}</span>
-                                                                <ChevronDown className={`w-2.5 h-2.5 xs:w-3 xs:h-3 transition-transform duration-200 ${showDescription ? 'rotate-180' : ''}`} />
-                                                            </button>
-                                                        </>
-                                                    )}
-                                                </div>
+                                                )}
                                             </>
                                         ) : (
                                             <>
@@ -288,10 +263,10 @@ export default function CartConfirmationPopup({
                         <div className="px-3 xs:px-5 pb-1">
                             <div
                                 ref={descriptionRef}
-                                className="desc-slide-in bg-gray-50/80 rounded-lg xs:rounded-xl border border-gray-100 p-3 xs:p-4 max-h-[10rem] xs:max-h-[12rem] overflow-y-auto scrollbar-thin"
+                                className="desc-slide-in bg-[#00417a]/[0.03] rounded-lg xs:rounded-xl border border-[#00417a]/10 p-3 xs:p-4 max-h-[10rem] xs:max-h-[12rem] overflow-y-auto scrollbar-thin"
                             >
-                                <p className="text-gray-600 text-[0.68rem] xs:text-sm leading-relaxed whitespace-pre-line font-['Poppins']">
-                                    {book.description}
+                                <p className="text-[#626e82] text-[0.68rem] xs:text-sm leading-relaxed whitespace-pre-line font-['Poppins']">
+                                    {formatDesc(book.description)}
                                 </p>
                             </div>
                         </div>

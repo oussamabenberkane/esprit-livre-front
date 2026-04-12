@@ -107,7 +107,7 @@ const PacksPromotionnels = () => {
                     if (appliedFilters.minPrice > 0) {
                         params.minPrice = appliedFilters.minPrice;
                     }
-                    if (appliedFilters.maxPrice < 10000) {
+                    if (appliedFilters.maxPrice < 50000) {
                         params.maxPrice = appliedFilters.maxPrice;
                     }
 

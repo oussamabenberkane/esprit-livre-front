@@ -22,6 +22,9 @@ import { getBookCoverUrl, getBookPackCoverUrl } from '../utils/imageUtils';
 import useProgressiveRender from '../hooks/useProgressiveRender';
 import { useCart } from '../contexts/CartContext';
 
+/** Turn literal "\n" (from JSON) into real newlines so whitespace-pre-line works */
+const formatDesc = (text) => text ? text.replace(/\\n/g, '\n') : '';
+
 const BookDetails = () => {
     const { t } = useTranslation();
     const { addToCart, addPackToCart } = useCart();
@@ -628,11 +631,11 @@ const BookDetails = () => {
                             {/* Description Preview - Mobile */}
                             {book.description && (
                                 <div
-                                    className="cursor-pointer group"
+                                    className="cursor-pointer group border border-[#c9cfd8] rounded-md p-fluid-sm hover:border-[#00417a]/30 transition-colors"
                                     onClick={handleToggleDescription}
                                 >
                                     <p className="font-['Poppins'] font-normal text-[#626e82] text-sm leading-relaxed whitespace-pre-line line-clamp-3">
-                                        {book.description}
+                                        {formatDesc(book.description)}
                                     </p>
                                     <span className="font-['Poppins'] font-medium text-[#00417a] text-xs mt-1.5 inline-flex items-center gap-1 group-hover:underline">
                                         {t('bookDetails.viewFullDescription')}
@@ -676,8 +679,8 @@ const BookDetails = () => {
 
                             {/* Horizontal Layout - Centered */}
                             <div className="flex gap-fluid-lg items-stretch max-w-6xl mx-auto">
-                                {/* Left Column - Book Image with Description Link */}
-                                <div className="flex-shrink-0 flex flex-col justify-between w-[240px] lg:w-[280px]">
+                                {/* Left Column - Book Image */}
+                                <div className="flex-shrink-0 w-[240px] lg:w-[280px]">
                                     <div className="w-full aspect-[5/7] rounded-md shadow-[0px_5px_20px_0px_rgba(0,0,0,0.25)] overflow-hidden">
                                         <img
                                             src={getBookCoverUrl(book.id)}
@@ -686,29 +689,6 @@ const BookDetails = () => {
                                         />
                                     </div>
 
-                                    {/* Description Preview - Desktop */}
-                                    {book.description ? (
-                                        <div
-                                            className="cursor-pointer group mt-fluid-sm"
-                                            onClick={handleToggleDescription}
-                                        >
-                                            <p className="font-['Poppins'] font-normal text-[#626e82] text-fluid-small leading-relaxed whitespace-pre-line line-clamp-2">
-                                                {book.description}
-                                            </p>
-                                            <span className="font-['Poppins'] font-medium text-[#00417a] text-fluid-vsmall mt-1 inline-flex items-center gap-1 group-hover:underline">
-                                                {t('bookDetails.viewFullDescription')}
-                                                <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${showFullDescription ? 'rotate-180' : ''}`} />
-                                            </span>
-                                        </div>
-                                    ) : (
-                                        <button
-                                            onClick={handleToggleDescription}
-                                            className="font-['Poppins'] font-medium text-[#626e82] text-fluid-vsmall hover:text-[#1c2d55] transition-colors flex items-center gap-1 w-full mt-fluid-sm"
-                                        >
-                                            <span className="flex-1 text-left"><h1 className='text-fluid-h3 whitespace-nowrap'>{t('bookDetails.viewFullDescription')}</h1></span>
-                                            <ChevronDown className={`w-3 h-3 flex-shrink-0 transition-transform duration-300 ${showFullDescription ? 'rotate-180' : ''}`} />
-                                        </button>
-                                    )}
                                 </div>
 
                                 {/* Right Column - Book Information (Extended Height) */}
@@ -778,6 +758,22 @@ const BookDetails = () => {
                                             <ShoppingCart className="w-4 h-4" />
                                         </button>
                                     </div>
+
+                                    {/* Description Preview - Desktop */}
+                                    {book.description && (
+                                        <div
+                                            className="cursor-pointer group border border-[#c9cfd8] rounded-md p-fluid-sm hover:border-[#00417a]/30 transition-colors"
+                                            onClick={handleToggleDescription}
+                                        >
+                                            <p className="font-['Poppins'] font-normal text-[#626e82] text-fluid-small leading-relaxed whitespace-pre-line line-clamp-3">
+                                                {formatDesc(book.description)}
+                                            </p>
+                                            <span className="font-['Poppins'] font-medium text-[#00417a] text-fluid-vsmall mt-fluid-xxs inline-flex items-center gap-1 group-hover:underline">
+                                                {t('bookDetails.viewFullDescription')}
+                                                <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${showFullDescription ? 'rotate-180' : ''}`} />
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -800,7 +796,7 @@ const BookDetails = () => {
                                         {t('bookDetails.fullDescription')}
                                     </h3>
                                     <p className="font-['Poppins'] font-normal text-[#626e82] text-fluid-small leading-relaxed whitespace-pre-line">
-                                        {book.description}
+                                        {formatDesc(book.description)}
                                     </p>
                                 </div>
                             </div>
@@ -814,7 +810,7 @@ const BookDetails = () => {
                                                 {t('bookDetails.fullDescription')}
                                             </h3>
                                             <p className="font-['Poppins'] font-normal text-[#626e82] text-fluid-small leading-relaxed whitespace-pre-line">
-                                                {book.description}
+                                                {formatDesc(book.description)}
                                             </p>
                                         </div>
                                     </div>

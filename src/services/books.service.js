@@ -88,7 +88,7 @@ export const fetchAllBooks = async (page = 0, size = 12, filters = {}) => {
       params.append('minPrice', filters.minPrice.toString());
     }
 
-    if (filters.maxPrice !== undefined && filters.maxPrice !== null && filters.maxPrice < 10000) {
+    if (filters.maxPrice !== undefined && filters.maxPrice !== null && filters.maxPrice < 50000) {
       params.append('maxPrice', filters.maxPrice.toString());
     }
 

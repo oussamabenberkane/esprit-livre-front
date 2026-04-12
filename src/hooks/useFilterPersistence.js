@@ -37,7 +37,7 @@ export function hasActiveFilters(filters) {
         (filters.authors && filters.authors.length > 0) ||
         (filters.languages && filters.languages.length > 0) ||
         (filters.minPrice > 0) ||
-        (filters.maxPrice < 10000) ||
+        (filters.maxPrice < 50000) ||
         !!filters.search
     );
 }

@@ -547,10 +547,10 @@ const BookDetails = () => {
                             {/* Description - inline expand */}
                             {book.description && (
                                 <div>
-                                    <h3 className="font-['Poppins'] font-semibold text-[#1c2d55] text-sm mb-1.5">
+                                    <h3 className="font-['Poppins'] font-bold text-[#1c2d55] text-base mb-1.5">
                                         {t('bookDetails.descriptionTitle')}
                                     </h3>
-                                    <p className={`font-['Poppins'] font-normal text-[#3a4560] text-sm leading-relaxed whitespace-pre-line ${showFullDescription ? '' : 'line-clamp-3'}`}>
+                                    <p className={`font-['Poppins'] font-normal text-[#1c2d55] text-sm leading-relaxed whitespace-pre-line ${showFullDescription ? '' : 'line-clamp-3'}`}>
                                         {formatDesc(book.description)}
                                     </p>
                                     <button
@@ -662,10 +662,10 @@ const BookDetails = () => {
                                     {/* Description - inline expand */}
                                     {book.description && (
                                         <div>
-                                            <h3 className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-medium mb-fluid-xxs">
+                                            <h3 className="font-['Poppins'] font-bold text-[#1c2d55] text-fluid-h3 mb-fluid-xxs">
                                                 {t('bookDetails.descriptionTitle')}
                                             </h3>
-                                            <p className={`font-['Poppins'] font-normal text-[#3a4560] text-fluid-small leading-relaxed whitespace-pre-line ${showFullDescription ? '' : 'line-clamp-4'}`}>
+                                            <p className={`font-['Poppins'] font-normal text-[#1c2d55] text-fluid-small leading-relaxed whitespace-pre-line ${showFullDescription ? '' : 'line-clamp-4'}`}>
                                                 {formatDesc(book.description)}
                                             </p>
                                             <button

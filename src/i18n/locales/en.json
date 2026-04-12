@@ -363,25 +363,52 @@
     }
   },
   "team": {
-    "title": "Our Team",
-    "subtitle": "Meet the passionate people who bring Esprit Livre to life",
-    "missionTitle": "Our Mission",
-    "missionText": "At Esprit Livre, we want to make reading and books \"cool\" and desirable again in the age of short attention span content. Why? Because reading develops concentration, nourishes the mind and improves well-being. We unite creativity, technology and passion to build a platform that makes people want to read, discover and share books as a true lifestyle.",
+    "label": "Our Team",
+    "title": "The People Behind Esprit Livre",
+    "subtitle": "A small team with a big dream — to make reading irresistible again.",
+    "favoriteBookLabel": "Favorite Book",
     "members": {
       "lhadi": {
         "name": "Lhadi Talentikit",
-        "role": "CEO / Owner",
-        "description": "Leader guiding Esprit Livre's mission to make reading accessible."
+        "role": "CEO & Founder",
+        "description": "Lhadi is the visionary behind Esprit Livre. Driven by a deep belief that books have the power to shape minds and ignite curiosity, he founded Esprit Livre to bridge the gap between traditional reading culture and the digital generation. His leadership blends entrepreneurial ambition with a genuine love for literature, guiding every decision with one question: how do we make someone pick up a book today?",
+        "favoriteBook": {
+          "title": "The Alchemist",
+          "author": "Paulo Coelho"
+        }
       },
       "oussama": {
         "name": "Oussama Benberkane",
         "role": "Backend Developer",
-        "description": "Designs reliable and scalable backend systems that power our platform."
+        "description": "Oussama is the one making sure everything actually works. When you search for a book, add it to your cart, or place an order — he's the reason it all runs smoothly. He builds the invisible machinery behind Esprit Livre, obsessing over speed and reliability so you never have to think about it. If the site feels effortless, that's kind of the point.",
+        "favoriteBook": {
+          "title": "Man's Search for Meaning",
+          "author": "Viktor Frankl"
+        }
       },
       "yani": {
-        "name": "Yani Farhaten",
+        "name": "Yani Ferhaten",
         "role": "Frontend Developer",
-        "description": "Creates modern, intuitive and enjoyable interfaces for our users."
+        "description": "Yani is the one who makes Esprit Livre look and feel the way it does. Every button, every page, every little animation — that's him. He cares deeply about making the experience feel like browsing a real bookshop: warm, intuitive, and a little bit delightful. If something on the site made you smile or just felt right, chances are Yani spent way too long getting it perfect.",
+        "favoriteBook": {
+          "title": "The Little Prince",
+          "author": "Antoine de Saint-Exupéry"
+        }
+      }
+    },
+    "values": {
+      "title": "What Drives Us",
+      "passion": {
+        "title": "A Love for Reading",
+        "description": "We believe books have the power to change perspectives, spark imagination, and build empathy. Everything we build starts with that belief."
+      },
+      "community": {
+        "title": "Community First",
+        "description": "Esprit Livre isn't just a store — it's a gathering place for readers. We build connections through shared stories and collective discovery."
+      },
+      "innovation": {
+        "title": "A Fresh Lens",
+        "description": "We bring modern technology and fresh design thinking to the world of books, making the reading experience feel exciting and accessible."
       }
     }
   },

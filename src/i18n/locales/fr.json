@@ -363,25 +363,52 @@
     }
   },
   "team": {
-    "title": "Notre Équipe",
-    "subtitle": "Rencontrez les personnes passionnées qui font vivre Esprit Livre",
-    "missionTitle": "Notre Mission",
-    "missionText": "Chez Esprit Livre, nous voulons rendre la lecture et les livres à nouveau \"cool\" et désirables à l'ère des contenus à courte durée d'attention. Pourquoi ? Parce que lire développe la concentration, nourrit l'esprit et améliore le bien-être. Nous unissons créativité, technologie et passion pour bâtir une plateforme qui donne envie de lire, de découvrir et de partager des livres comme un véritable style de vie.",
+    "label": "Notre Équipe",
+    "title": "Les Personnes Derrière Esprit Livre",
+    "subtitle": "Une petite équipe avec un grand rêve — rendre la lecture irrésistible à nouveau.",
+    "favoriteBookLabel": "Livre Préféré",
     "members": {
       "lhadi": {
         "name": "Lhadi Talentikit",
-        "role": "CEO / Propriétaire",
-        "description": "Leader guidant la mission d'Esprit Livre pour rendre la lecture accessible."
+        "role": "PDG & Fondateur",
+        "description": "Lhadi est le visionnaire derrière Esprit Livre. Animé par une conviction profonde que les livres ont le pouvoir de façonner les esprits et d'éveiller la curiosité, il a fondé Esprit Livre pour combler le fossé entre la culture de lecture traditionnelle et la génération numérique. Son leadership allie ambition entrepreneuriale et amour sincère de la littérature, guidant chaque décision avec une question : comment donner envie à quelqu'un de prendre un livre aujourd'hui ?",
+        "favoriteBook": {
+          "title": "L'Alchimiste",
+          "author": "Paulo Coelho"
+        }
       },
       "oussama": {
         "name": "Oussama Benberkane",
         "role": "Développeur Backend",
-        "description": "Conçoit des systèmes backend fiables et évolutifs qui propulsent notre plateforme."
+        "description": "Oussama, c'est celui qui fait en sorte que tout fonctionne vraiment. Quand vous cherchez un livre, l'ajoutez au panier ou passez commande — c'est grâce à lui que tout tourne. Il construit la mécanique invisible d'Esprit Livre, obsédé par la vitesse et la fiabilité pour que vous n'ayez jamais à y penser. Si le site vous semble fluide, c'est un peu le but.",
+        "favoriteBook": {
+          "title": "Découvrir un sens à sa vie",
+          "author": "Viktor Frankl"
+        }
       },
       "yani": {
-        "name": "Yani Farhaten",
+        "name": "Yani Ferhaten",
         "role": "Développeur Frontend",
-        "description": "Crée des interfaces modernes, intuitives et agréables pour nos utilisateurs."
+        "description": "Yani, c'est celui qui donne à Esprit Livre son apparence et son ressenti. Chaque bouton, chaque page, chaque petite animation — c'est lui. Il tient à ce que l'expérience ressemble à une vraie balade en librairie : chaleureuse, intuitive, et un peu magique. Si quelque chose sur le site vous a fait sourire ou vous a semblé juste parfait, il y a de fortes chances que Yani y ait passé beaucoup trop de temps.",
+        "favoriteBook": {
+          "title": "Le Petit Prince",
+          "author": "Antoine de Saint-Exupéry"
+        }
+      }
+    },
+    "values": {
+      "title": "Ce Qui Nous Anime",
+      "passion": {
+        "title": "L'Amour de la Lecture",
+        "description": "Nous croyons que les livres ont le pouvoir de changer les perspectives, d'éveiller l'imagination et de cultiver l'empathie. Tout ce que nous construisons part de cette conviction."
+      },
+      "community": {
+        "title": "La Communauté d'Abord",
+        "description": "Esprit Livre n'est pas qu'une boutique — c'est un lieu de rassemblement pour les lecteurs. Nous tissons des liens à travers des histoires partagées et la découverte collective."
+      },
+      "innovation": {
+        "title": "Un Regard Neuf",
+        "description": "Nous apportons la technologie moderne et un design innovant au monde des livres, rendant l'expérience de lecture passionnante et accessible."
       }
     }
   },

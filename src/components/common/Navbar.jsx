@@ -49,25 +49,98 @@ const SignInButton = ({ onClick, className = "", highlight = false }) => {
     );
 };
 
-// Logo Component
-const Logo = ({ onClick }) => (
-    <button onClick={onClick} className="text-left group">
-        <div className="flex items-center gap-[6px] min-[360px]:gap-2 md:gap-2.5">
+// Book icon used in both full and compact logos
+const BookIcon = ({ size = 22 }) => (
+    <svg
+        className="logo-book-icon"
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        <defs>
+            <linearGradient id="bookFillGrad" x1="0" y1="1" x2="0.3" y2="0">
+                <stop offset="0%" stopColor="#6DD5FA" />
+                <stop offset="100%" stopColor="#C9A96E" />
+            </linearGradient>
+        </defs>
+        {/* Filled layer — clipped from bottom on hover */}
+        <path
+            d="M12 5C12 5 9 3.5 5.5 3.5C4.2 3.5 3 4 3 4V20C3 20 4.2 19.5 5.5 19.5C9 19.5 12 21 12 21C12 21 15 19.5 18.5 19.5C19.8 19.5 21 20 21 20V4C21 4 19.8 3.5 18.5 3.5C15 3.5 12 5 12 5Z"
+            fill="url(#bookFillGrad)"
+            className="logo-book-fill"
+        />
+        {/* Outline layer */}
+        <path
+            d="M12 5C12 5 9 3.5 5.5 3.5C4.2 3.5 3 4 3 4V20C3 20 4.2 19.5 5.5 19.5C9 19.5 12 21 12 21C12 21 15 19.5 18.5 19.5C19.8 19.5 21 20 21 20V4C21 4 19.8 3.5 18.5 3.5C15 3.5 12 5 12 5Z"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+            className="logo-book-cover"
+        />
+        <line x1="12" y1="5" x2="12" y2="21" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" className="logo-book-spine" />
+    </svg>
+);
+
+// Logo — full wordmark (desktop/tablet)
+const LogoFull = ({ onClick }) => (
+    <button onClick={onClick} className="text-left logo-btn">
+        <div className="flex items-center gap-2 logo-full">
             <span
-                className="text-white font-semibold italic leading-none text-base min-[360px]:text-lg md:text-xl tracking-wide"
-                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                className="leading-none text-[22px] logo-word-left"
+                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, color: '#F0F4F8' }}
             >
                 Esprit
             </span>
+            <span className="flex items-center" style={{ color: '#A8C4D9' }}>
+                <BookIcon size={20} />
+            </span>
             <span
-                className="w-px self-stretch bg-[#d4a84b] opacity-70 group-hover:opacity-100 transition-opacity"
-                aria-hidden="true"
-            />
-            <span className="text-white font-medium leading-none text-xs min-[360px]:text-sm md:text-base tracking-[0.18em] uppercase">
+                className="leading-none text-[22px] logo-word-right"
+                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, color: '#F0F4F8' }}
+            >
                 Livre
             </span>
         </div>
     </button>
+);
+
+// Logo — compact monogram (mobile)
+const LogoCompact = ({ onClick }) => (
+    <button onClick={onClick} className="text-left logo-btn">
+        <div className="flex items-center gap-1 logo-full">
+            <span
+                className="leading-none text-[22px]"
+                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', color: '#F0F4F8' }}
+            >
+                E
+            </span>
+            <span className="flex items-center" style={{ color: '#A8C4D9' }}>
+                <BookIcon size={20} />
+            </span>
+            <span
+                className="leading-none text-[22px]"
+                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontStyle: 'italic', color: '#F0F4F8' }}
+            >
+                L
+            </span>
+        </div>
+    </button>
+);
+
+// Responsive Logo — compact below 767px, full above
+const Logo = ({ onClick }) => (
+    <>
+        <div className="hidden min-[767px]:block">
+            <LogoFull onClick={onClick} />
+        </div>
+        <div className="min-[767px]:hidden">
+            <LogoCompact onClick={onClick} />
+        </div>
+    </>
 );
 
 // SearchBar Component

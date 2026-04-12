@@ -2,16 +2,20 @@ import Navbar from "../components/common/Navbar"
 import Footer from "../components/common/Footer"
 import BookCard from "../components/common/BookCard"
 import BookCardSkeleton from "../components/common/skeletons/BookCardSkeleton"
+import PackCard from "../components/common/PackCard"
+import PackCardSkeleton from "../components/common/skeletons/PackCardSkeleton"
+import PackBooksPopup from "../components/common/PackBooksPopup"
 import FiltersSection from "../components/allbooks/FiltersSection"
 import CartConfirmationPopup from "../components/common/cartConfirmationPopup"
 import FloatingCartBadge from "../components/common/FloatingCartBadge"
-import { fetchAllBooks } from "../services/books.service"
+import { fetchAllBooks, getBooksByIds } from "../services/books.service"
+import { getAllBookPacks } from "../services/bookPackService"
 import { fetchCategories } from "../services/tags.service"
 import { fetchTopAuthors } from "../services/authors.service"
 import { useState, useEffect } from "react"
 import { useSearchParams, useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
-import { getBookCoverUrl } from '../utils/imageUtils'
+import { getBookCoverUrl, getBookPackCoverUrl } from '../utils/imageUtils'
 import useProgressiveRender from '../hooks/useProgressiveRender'
 import { useCart } from '../contexts/CartContext'
 import { useFilterPersistence, hasActiveFilters } from '../hooks/useFilterPersistence'
@@ -19,7 +23,7 @@ import { useFilterPersistence, hasActiveFilters } from '../hooks/useFilterPersis
 export default function AllBooks() {
     const { t } = useTranslation()
     const navigate = useNavigate()
-    const { addToCart } = useCart()
+    const { addToCart, addPackToCart } = useCart()
     const [currentPage, setCurrentPage] = useState(1)
     const [searchParams] = useSearchParams()
     const { savedFilters, saveFilters } = useFilterPersistence('allbooks_filters')
@@ -37,6 +41,13 @@ export default function AllBooks() {
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState(null)
     const booksPerPage = 12
+
+    // Packs state
+    const [packs, setPacks] = useState([])
+    const [isLoadingPacks, setIsLoadingPacks] = useState(true)
+    const [showPackBooksPopup, setShowPackBooksPopup] = useState(false)
+    const [selectedPackForPopup, setSelectedPackForPopup] = useState(null)
+    const [isLoadingPopupBooks, setIsLoadingPopupBooks] = useState(false)
 
     // Filter data state
     const [categories, setCategories] = useState([])
@@ -130,7 +141,7 @@ export default function AllBooks() {
         }
     }, [initialFilters])
 
-    // Fetch books from API
+    // Fetch books and packs from API
     useEffect(() => {
         const loadBooks = async () => {
             try {
@@ -150,7 +161,59 @@ export default function AllBooks() {
             }
         }
 
+        const loadPacks = async () => {
+            // Only show packs on first page
+            if (currentPage > 1) {
+                setPacks([])
+                setIsLoadingPacks(false)
+                return
+            }
+            try {
+                setIsLoadingPacks(true)
+                const filters = appliedFilters || {}
+                const params = {
+                    page: 0,
+                    size: 4,
+                }
+                if (filters.minPrice > 0) params.minPrice = filters.minPrice
+                if (filters.maxPrice < 50000) params.maxPrice = filters.maxPrice
+                if (filters.search) params.search = filters.search
+                if (filters.authors?.length > 0) params.author = filters.authors
+                if (filters.categories?.length > 0) params.categories = filters.categories
+                if (filters.languages?.length > 0) params.language = filters.languages
+
+                const response = await getAllBookPacks(params)
+                const packsData = response.content || response
+
+                const processedPacks = (Array.isArray(packsData) ? packsData : []).map(pack => {
+                    const books = (pack.books || []).map(book => ({
+                        id: book.id,
+                        title: book.title,
+                        author: book.author?.name || 'Unknown',
+                        authorId: book.author?.id || null,
+                        price: parseFloat(book.price) || 0,
+                        coverImage: getBookCoverUrl(book.id)
+                    }))
+                    const originalPrice = books.reduce((sum, book) => sum + book.price, 0)
+                    return {
+                        ...pack,
+                        books,
+                        originalPrice,
+                        packPrice: parseFloat(pack.price) || 0,
+                        packImage: getBookPackCoverUrl(pack.id) || null
+                    }
+                })
+                setPacks(processedPacks)
+            } catch (err) {
+                console.error('Failed to fetch packs:', err)
+                setPacks([])
+            } finally {
+                setIsLoadingPacks(false)
+            }
+        }
+
         loadBooks()
+        loadPacks()
     }, [currentPage, booksPerPage, appliedFilters])
 
     const handleSeeMore = () => {
@@ -176,6 +239,53 @@ export default function AllBooks() {
 
     const handleToggleFavorite = (bookId, isFavorited) => {
         console.log(`Book ${bookId} favorited: ${isFavorited}`)
+    }
+
+    const handlePackAddToCart = async (packId) => {
+        const pack = packs.find(p => p.id === packId)
+        if (pack) {
+            try {
+                await addPackToCart(packId, 1)
+                const packAsBook = {
+                    id: pack.id,
+                    title: pack.title,
+                    author: `${pack.books.length} ${t('packCard.books')}`,
+                    price: pack.packPrice,
+                    coverImage: pack.books[0]?.coverImage || pack.packImage,
+                    language: null,
+                    isPack: true
+                }
+                setSelectedBook(packAsBook)
+                setShowCartPopup(true)
+            } catch (error) {
+                console.error('Error adding pack to cart:', error)
+            }
+        }
+    }
+
+    const handleViewAllBooks = async (pack) => {
+        setSelectedPackForPopup(pack)
+        setShowPackBooksPopup(true)
+        setIsLoadingPopupBooks(true)
+        try {
+            const bookIds = pack.books.map(b => b.id)
+            const fullBooks = await getBooksByIds(bookIds)
+            setSelectedPackForPopup({
+                ...pack,
+                books: fullBooks.map(book => ({
+                    id: book.id,
+                    title: book.title,
+                    author: book.author?.name || 'Unknown',
+                    price: book.price,
+                    coverImage: getBookCoverUrl(book.id),
+                    language: book.language
+                }))
+            })
+        } catch (err) {
+            console.error('Error fetching book details:', err)
+        } finally {
+            setIsLoadingPopupBooks(false)
+        }
     }
 
     const handleApplyFilters = (filters) => {
@@ -242,6 +352,37 @@ export default function AllBooks() {
                             )}
                         </div>
                     </div>
+
+                    {/* Packs Grid */}
+                    {(isLoadingPacks || packs.length > 0) && (
+                        <section className="mb-fluid-lg">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-fluid-md auto-rows-fr">
+                                {isLoadingPacks ? (
+                                    Array.from({ length: 2 }).map((_, index) => (
+                                        <div key={`pack-skeleton-${index}`} className="h-full">
+                                            <PackCardSkeleton />
+                                        </div>
+                                    ))
+                                ) : (
+                                    packs.map((pack) => (
+                                        <div key={`pack-${pack.id}`} className="h-full animate-fade-in">
+                                            <PackCard
+                                                id={pack.id}
+                                                title={pack.title}
+                                                description={pack.description}
+                                                originalPrice={pack.originalPrice}
+                                                packPrice={pack.packPrice}
+                                                packImage={pack.packImage}
+                                                books={pack.books}
+                                                onAddToCart={handlePackAddToCart}
+                                                onViewAllBooks={() => handleViewAllBooks(pack)}
+                                            />
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </section>
+                    )}
 
                     {/* Books Grid */}
                     <section className="pb-fluid-xl">
@@ -347,7 +488,7 @@ export default function AllBooks() {
                         )}
 
                         {/* No books found */}
-                        {!isLoading && !error && books.length === 0 && (
+                        {!isLoading && !error && books.length === 0 && !isLoadingPacks && packs.length === 0 && (
                             <div className="text-center text-gray-500 py-20">
                                 <div className="text-6xl mb-4">📚</div>
                                 <p className="text-xl font-medium">{t('allBooks.noBooksFound')}</p>
@@ -497,12 +638,32 @@ export default function AllBooks() {
             </div>
             <Footer />
 
+            {/* Pack Books Popup */}
+            <PackBooksPopup
+                isOpen={showPackBooksPopup}
+                onClose={() => {
+                    setShowPackBooksPopup(false)
+                    setSelectedPackForPopup(null)
+                }}
+                packTitle={selectedPackForPopup?.title}
+                packDescription={selectedPackForPopup?.description}
+                books={selectedPackForPopup?.books || []}
+                isLoading={isLoadingPopupBooks}
+            />
+
             {/* Cart Confirmation Popup - Single instance at page level */}
             {selectedBook && (
                 <CartConfirmationPopup
                     isOpen={showCartPopup}
                     onClose={handleClosePopup}
-                    book={{
+                    book={selectedBook.isPack ? {
+                        id: selectedBook.id,
+                        title: selectedBook.title,
+                        author: selectedBook.author,
+                        price: selectedBook.price,
+                        coverImage: selectedBook.coverImage,
+                        language: selectedBook.language,
+                    } : {
                         id: selectedBook.id,
                         title: selectedBook.title,
                         author: selectedBook.author.name,

@@ -77,49 +77,50 @@ const SocialProofSlide = ({ isActive }) => {
 
     return (
         <div className="relative w-full h-full">
-            {/* Warm cream base matching slides 1 & 3 */}
-            <div
-                className="absolute inset-0"
-                style={{
-                    background:
-                        'linear-gradient(135deg, #f9f3e4 0%, #f3ead4 100%)',
-                }}
-            />
-
-            {/* Subtle navy vignette from the left for depth */}
+            {/* Semi-transparent cream veil — heavier than slide 3 so the
+                marquee books are visible but softened. This is the midpoint
+                between slide 1's opaque cream and slide 3's light wash. */}
             <div
                 aria-hidden="true"
                 className="absolute inset-0 pointer-events-none"
                 style={{
                     background:
-                        'radial-gradient(58% 70% at 18% 55%, rgba(0,65,122,0.08) 0%, rgba(0,65,122,0) 70%)',
+                        'radial-gradient(78% 88% at 50% 55%, rgba(249,243,228,0.55) 0%, rgba(249,243,228,0.78) 52%, rgba(243,234,212,0.88) 100%)',
                 }}
             />
 
-            {/* Gold bloom — upper right, shared light source across all slides */}
+            {/* Left-side cream concentration for text legibility */}
             <div
                 aria-hidden="true"
                 className="absolute inset-0 pointer-events-none"
                 style={{
                     background:
-                        'radial-gradient(42% 55% at 88% 18%, rgba(212,168,75,0.22) 0%, rgba(212,168,75,0.06) 48%, rgba(212,168,75,0) 72%)',
+                        'linear-gradient(102deg, rgba(249,243,228,0.92) 0%, rgba(249,243,228,0.72) 32%, rgba(249,243,228,0.35) 58%, rgba(249,243,228,0.12) 80%, transparent 100%)',
                 }}
             />
 
-            {/* Navy radial wash — bottom right, subtle */}
+            {/* Whisper of navy from top-left to bridge from slide 1's
+                warmth into slide 3's airy feel */}
             <div
                 aria-hidden="true"
                 className="absolute inset-0 pointer-events-none"
                 style={{
                     background:
-                        'radial-gradient(120% 80% at 85% 110%, rgba(0,65,122,0.12) 0%, rgba(0,65,122,0) 55%)',
+                        'linear-gradient(128deg, rgba(0,42,84,0.12) 0%, rgba(0,42,84,0.04) 28%, rgba(0,42,84,0) 50%)',
                 }}
             />
 
-            <GrainOverlay opacity={0.25} />
+            {/* Gold bloom — upper right, shared light source */}
+            <div
+                aria-hidden="true"
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                    background:
+                        'radial-gradient(42% 55% at 88% 18%, rgba(212,168,75,0.20) 0%, rgba(212,168,75,0.06) 48%, rgba(212,168,75,0) 72%)',
+                }}
+            />
 
-            {/* Decorative hairline frame */}
-            <div className="absolute inset-3 sm:inset-5 md:inset-7 rounded-[22px] border border-[#00417a]/10 pointer-events-none" />
+            <GrainOverlay opacity={0.22} />
 
             <div className="relative h-full w-full flex items-center">
                 <div className="container-main w-full px-5 sm:px-8 md:px-fluid-lg">

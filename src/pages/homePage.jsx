@@ -28,6 +28,8 @@ import { fetchTopAuthors } from '../services/authors.service';
 import { getBookCoverUrl } from '../utils/imageUtils';
 import useProgressiveRender from '../hooks/useProgressiveRender';
 import { useCart } from '../contexts/CartContext';
+import { isAuthenticated } from '../services/authService';
+import { getUserProfile } from '../services/user.service';
 
 
 // MainDisplayCarousel component for rendering individual carousels
@@ -231,6 +233,18 @@ const HomePage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { addToCart } = useCart();
+
+    // Authenticated user state
+    const [userName, setUserName] = useState('');
+    const loggedIn = isAuthenticated();
+
+    useEffect(() => {
+        if (loggedIn) {
+            getUserProfile()
+                .then((profile) => setUserName(profile.firstName || ''))
+                .catch(() => setUserName(''));
+        }
+    }, [loggedIn]);
 
     // Hero carousel state (you already have this)
     const [currentSlide, setCurrentSlide] = React.useState(0);
@@ -795,7 +809,9 @@ const HomePage = () => {
                         <div className="flex items-center justify-between pr-fluid-lg">
                             <div>
                                 <h1 className="font-['Poppins'] font-bold text-[#00417a] text-fluid-h1to2 mb-0">
-                                    {t('homePage.greeting')}
+                                    {loggedIn && userName
+                                        ? t('homePage.greetingAuth', { name: userName })
+                                        : t('homePage.greeting')}
                                 </h1>
 
                             </div>
@@ -804,7 +820,9 @@ const HomePage = () => {
 
                         </div>
                         <p className="font-['Poppins'] font-[550] text-[#00417a] text-fluid-small" >
-                            {t('homePage.categoriesSubtitle')}
+                            {loggedIn
+                                ? t('homePage.categoriesSubtitleAuth')
+                                : t('homePage.categoriesSubtitle')}
                         </p>
 
 

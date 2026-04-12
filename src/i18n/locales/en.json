@@ -1,6 +1,6 @@
 {
   "navbar": {
-    "searchPlaceholder": "Search for a book...",
+    "searchPlaceholder": "What are you reading next?",
     "signIn": "Sign in",
     "language": {
       "fr": "FR",
@@ -8,10 +8,10 @@
     }
   },
   "loginPrompt": {
-    "title": "Your reading space awaits",
-    "message": "Sign in and access exclusive member benefits.",
-    "benefit1": "Members-only offers",
-    "benefit2": "Track your orders",
+    "title": "Your shelf is waiting",
+    "message": "Sign in to unlock deals, track orders, and never miss a drop.",
+    "benefit1": "Early access & member-only prices",
+    "benefit2": "Real-time order tracking",
     "loginButton": "Sign in"
   },
   "bookCard": {
@@ -25,7 +25,7 @@
   },
   "allBooks": {
     "pageTitle": "All Books",
-    "pageSubtitle": "Discover our complete collection of books",
+    "pageSubtitle": "Every story we carry, all in one place",
     "resultsFor": "Results for \"{{query}}\"",
     "resultsTitle": "Results",
     "resultsCount": "{{start}} - {{end}} of {{total}} books",
@@ -92,11 +92,11 @@
     }
   },
   "cartPopup": {
-    "title": "Item added to cart",
+    "title": "Nice pick! Added to your cart",
     "close": "Close",
     "currency": "DZD",
-    "viewCart": "Place My Order",
-    "keepShopping": "Keep Shopping",
+    "viewCart": "Place my order",
+    "keepShopping": "Keep browsing",
     "alsoInCart": "Also in your cart"
   },
   "common": {
@@ -114,11 +114,13 @@
     "category": "Category"
   },
   "homePage": {
-    "greeting": "Hello",
-    "categoriesSubtitle": "Choose from the following categories",
+    "greeting": "Find your next read",
+    "greetingAuth": "Hey {{name}}, welcome back",
+    "categoriesSubtitle": "Browse by category and discover something new",
+    "categoriesSubtitleAuth": "Picked up where you left off? Dive back in",
     "recommendedBooks": "Recommended Books",
-    "featuredAuthors": "Our Featured Authors",
-    "profileCompleted": "Profile completed successfully! Welcome to Esprit Livre.",
+    "featuredAuthors": "Authors We Love",
+    "profileCompleted": "You're all set! Welcome to the Esprit Livre family.",
     "hero": {
       "discover": "Discover",
       "newReleases": "New Releases",
@@ -143,20 +145,20 @@
         "stat1Label": "readers served",
         "stat2Label": "orders delivered",
         "stat3Label": "authentic",
-        "cta": "Create an account",
+        "cta": "Join the community",
         "auth": {
-          "eyebrow": "Welcome back",
-          "title": "You're part of",
-          "titleAccent": "something special.",
-          "subtitle": "Your next favorite book is just a click away.",
-          "cta": "See my profile"
+          "eyebrow": "Good to see you again",
+          "title": "You're one of",
+          "titleAccent": "3,000+ bookworms.",
+          "subtitle": "Your next favorite read is waiting.",
+          "cta": "My profile"
         }
       },
       "collection": {
-        "eyebrow": "House selection",
-        "title": "Our favorites,",
-        "titleAccent": "hand-picked for you.",
-        "subtitle": "Find the one that speaks to you.",
+        "eyebrow": "Staff picks",
+        "title": "Books we can't stop",
+        "titleAccent": "talking about.",
+        "subtitle": "Curated with love — find your next obsession.",
         "hint": "Browse the collection"
       }
     }
@@ -191,8 +193,8 @@
   "cart": {
     "title": "Cart ({{count}} item)",
     "title_plural": "Cart ({{count}} items)",
-    "empty": "Your cart is empty",
-    "continueShop": "Continue shopping",
+    "empty": "Nothing here yet — let's fix that",
+    "continueShop": "Keep browsing",
     "bookDetails": "Book details",
     "viewPackBooks": "View pack books",
     "books": "books",
@@ -247,17 +249,17 @@
     "orderNumber": "Order #",
     "orderError": "Failed to place order. Please try again.",
     "orderErrorTitle": "Order Failed",
-    "guestCheckoutMessage": "Log in to checkout faster with saved information.",
+    "guestCheckoutMessage": "Sign in for instant checkout with your saved info.",
     "loginNow": "Log in now",
     "orderTrackingPromptTitle": "Track your order",
     "orderTrackingPromptMessage": "Sign in to view and track your orders in your profile.",
     "signInButton": "Sign in",
     "laterButton": "Later",
-    "orderConfirmedTitle": "Thank you for your order!",
-    "orderConfirmedSubtitle": "Your order has been confirmed successfully.",
-    "accountPitchMessage": "Create your account and unlock exclusive member benefits",
-    "accountBenefit1": "Exclusive offers and promotions",
-    "accountBenefit2": "Track your orders in real time",
+    "orderConfirmedTitle": "You're all set!",
+    "orderConfirmedSubtitle": "Your order is confirmed — we're getting it ready.",
+    "accountPitchMessage": "Create an account and never miss a deal again",
+    "accountBenefit1": "Member-only drops & early access",
+    "accountBenefit2": "Track every order in real time",
     "createAccountButton": "Create my account"
   },
   "errors": {
@@ -442,7 +444,7 @@
     "pickupPointDesc": "Pick up your package at the nearest pickup point",
     "selectProvider": "Select a pickup provider",
     "selectRelayPoint": "Choose your pickup point",
-    "infoSectionMessage": "Fill in your details once and enjoy instant checkout on every order.",
+    "infoSectionMessage": "Save your details once — breeze through checkout every time.",
     "myFavorites": "My Favorites",
     "favoritesSaved": "Saved books",
     "myOrders": "My Orders",
@@ -457,8 +459,8 @@
     "validationError": "Please fix the errors below",
     "readOnly": "This field cannot be edited",
     "firstLogin": {
-      "title": "Welcome!",
-      "message": "Add your phone number to track your orders and receive updates"
+      "title": "Welcome aboard!",
+      "message": "Drop your phone number so we can keep you posted on your orders"
     }
   },
   "favorites": {
@@ -466,9 +468,9 @@
     "back": "Back",
     "count": "{{count}} book",
     "count_plural": "{{count}} books",
-    "emptyTitle": "No favorites",
-    "emptyMessage": "You haven't added any books to your favorites yet",
-    "discoverBooks": "Discover books"
+    "emptyTitle": "Your shelf is empty",
+    "emptyMessage": "Tap the heart on any book to save it here",
+    "discoverBooks": "Find something you'll love"
   },
   "orders": {
     "title": "My Orders",
@@ -481,8 +483,8 @@
     "hideDetails": "Hide",
     "currency": "DZD",
     "loading": "Loading your orders...",
-    "emptyTitle": "No orders",
-    "emptyMessage": "You haven't placed any orders yet 📦",
+    "emptyTitle": "No orders yet",
+    "emptyMessage": "Your first delivery is just a few clicks away",
     "startShopping": "Start shopping",
     "errorTitle": "Unable to Load Orders",
     "quantity": "Quantity",
@@ -525,9 +527,9 @@
     "loading": "Loading books..."
   },
   "404": {
-    "title": "Page Not Found",
-    "description": "Sorry, the page you're looking for seems to have disappeared. It may have been moved or no longer exists.",
-    "goBack": "Go Back",
+    "title": "Lost in the stacks",
+    "description": "The page you're looking for has gone off-shelf. It may have been moved or no longer exists.",
+    "goBack": "Go back",
     "home": "Home",
     "browseBooks": "Browse Books",
     "helpfulLinks": "Helpful Links",
@@ -536,13 +538,13 @@
     "customerService": "Customer Service"
   },
   "auth": {
-    "welcome": "Welcome",
-    "subtitle": "Sign in or create an account to continue",
+    "welcome": "Welcome to Esprit Livre",
+    "subtitle": "Sign in to start building your personal library",
     "connecting": "Connecting...",
     "continueWithGoogle": "Continue with Google",
-    "feature1": "Access thousands of books",
-    "feature2": "Save your favorite books",
-    "feature3": "Fast and secure checkout",
+    "feature1": "Thousands of titles at your fingertips",
+    "feature2": "Build your personal reading list",
+    "feature3": "Checkout in seconds, not minutes",
     "termsText": "By continuing, you agree to our Terms of Service and Privacy Policy",
     "errorFallback": "Failed to start authentication process. Please try again."
   },

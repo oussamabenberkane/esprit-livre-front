@@ -1,6 +1,6 @@
 {
   "navbar": {
-    "searchPlaceholder": "Recherchez un livre...",
+    "searchPlaceholder": "Votre prochaine lecture ?",
     "signIn": "Se connecter",
     "language": {
       "fr": "FR",
@@ -8,10 +8,10 @@
     }
   },
   "loginPrompt": {
-    "title": "Votre espace lecteur vous attend",
-    "message": "Connectez-vous et accédez à des avantages exclusifs.",
-    "benefit1": "Offres réservées aux membres",
-    "benefit2": "Suivi de vos commandes",
+    "title": "Votre étagère vous attend",
+    "message": "Connectez-vous pour débloquer vos offres et suivre vos commandes.",
+    "benefit1": "Accès anticipé & prix membres",
+    "benefit2": "Suivi de commandes en temps réel",
     "loginButton": "Se connecter"
   },
   "bookCard": {
@@ -25,7 +25,7 @@
   },
   "allBooks": {
     "pageTitle": "Tous les livres",
-    "pageSubtitle": "Découvrez notre collection complète de livres",
+    "pageSubtitle": "Chaque titre qu'on propose, réuni au même endroit",
     "resultsFor": "Résultats pour \"{{query}}\"",
     "resultsTitle": "Résultats",
     "resultsCount": "{{start}} - {{end}} sur {{total}} livres",
@@ -92,11 +92,11 @@
     }
   },
   "cartPopup": {
-    "title": "Élément ajouté au panier",
+    "title": "Bien vu ! Ajouté au panier",
     "close": "Fermer",
     "currency": "DZD",
     "viewCart": "Finaliser ma commande",
-    "keepShopping": "Poursuivre mes achats",
+    "keepShopping": "Continuer à explorer",
     "alsoInCart": "Aussi dans votre panier"
   },
   "common": {
@@ -114,11 +114,13 @@
     "category": "Catégorie"
   },
   "homePage": {
-    "greeting": "Bonjour",
-    "categoriesSubtitle": "Choisissez parmis les catégories suivantes",
+    "greeting": "Trouvez votre prochaine lecture",
+    "greetingAuth": "Content de vous revoir, {{name}}",
+    "categoriesSubtitle": "Explorez par catégorie et trouvez votre pépite",
+    "categoriesSubtitleAuth": "Envie de reprendre ? Replongez-vous",
     "recommendedBooks": "Livres recommandés",
-    "featuredAuthors": "Nos auteurs phares",
-    "profileCompleted": "Profil complété avec succès ! Bienvenue chez Esprit Livre.",
+    "featuredAuthors": "Nos auteurs coup de cœur",
+    "profileCompleted": "C'est tout bon ! Bienvenue dans la famille Esprit Livre.",
     "hero": {
       "discover": "Découvrir",
       "newReleases": "Nouveautés",
@@ -143,20 +145,20 @@
         "stat1Label": "lecteurs servis",
         "stat2Label": "commandes livrées",
         "stat3Label": "authentiques",
-        "cta": "Créer un compte",
+        "cta": "Rejoindre la communauté",
         "auth": {
-          "eyebrow": "Bon retour parmi nous",
-          "title": "Vous faites partie",
-          "titleAccent": "d'une belle aventure.",
-          "subtitle": "Votre prochain coup de cœur n'est qu'à un clic.",
-          "cta": "Voir mon profil"
+          "eyebrow": "Ravi de vous revoir",
+          "title": "Vous êtes l'un de nos",
+          "titleAccent": "3 000+ passionnés.",
+          "subtitle": "Votre prochain coup de cœur vous attend.",
+          "cta": "Mon profil"
         }
       },
       "collection": {
-        "eyebrow": "Sélection maison",
-        "title": "Nos coups de cœur,",
-        "titleAccent": "triés sur le volet.",
-        "subtitle": "Trouvez celui qui vous ressemble.",
+        "eyebrow": "Sélection de l'équipe",
+        "title": "Les livres dont on",
+        "titleAccent": "n'arrête pas de parler.",
+        "subtitle": "Choisis avec soin — trouvez votre prochaine obsession.",
         "hint": "Explorer la collection"
       }
     }
@@ -191,8 +193,8 @@
   "cart": {
     "title": "Panier ({{count}} article)",
     "title_plural": "Panier ({{count}} articles)",
-    "empty": "Votre panier est vide",
-    "continueShop": "Continuer mes achats",
+    "empty": "Rien ici pour l'instant — on corrige ça ?",
+    "continueShop": "Continuer à explorer",
     "bookDetails": "Détails du livre",
     "viewPackBooks": "Voir les livres du pack",
     "books": "livres",
@@ -247,17 +249,17 @@
     "orderNumber": "Commande n°",
     "orderError": "Échec de la commande. Veuillez réessayer.",
     "orderErrorTitle": "Échec de la commande",
-    "guestCheckoutMessage": "Connectez-vous pour passer commande plus rapidement avec vos informations sauvegardées.",
+    "guestCheckoutMessage": "Connectez-vous pour un passage en caisse instantané.",
     "loginNow": "Se connecter maintenant",
     "orderTrackingPromptTitle": "Suivre votre commande",
     "orderTrackingPromptMessage": "Connectez-vous pour consulter et suivre vos commandes dans votre profil.",
     "signInButton": "Se connecter",
     "laterButton": "Plus tard",
-    "orderConfirmedTitle": "Merci pour votre commande !",
-    "orderConfirmedSubtitle": "Votre commande a été confirmée avec succès.",
-    "accountPitchMessage": "Créez votre compte et débloquez des avantages réservés à nos membres",
-    "accountBenefit1": "Offres et promotions exclusives",
-    "accountBenefit2": "Suivi de vos commandes en temps réel",
+    "orderConfirmedTitle": "C'est tout bon !",
+    "orderConfirmedSubtitle": "Votre commande est confirmée — on s'en occupe.",
+    "accountPitchMessage": "Créez un compte pour ne plus jamais rater une offre",
+    "accountBenefit1": "Accès anticipé & offres réservées",
+    "accountBenefit2": "Suivi de chaque commande en temps réel",
     "createAccountButton": "Créer mon compte"
   },
   "errors": {
@@ -442,7 +444,7 @@
     "pickupPointDesc": "Retirez votre colis au point relais le plus proche",
     "selectProvider": "Sélectionnez un point de relais",
     "selectRelayPoint": "Choisissez votre point de retrait",
-    "infoSectionMessage": "Renseignez vos informations une seule fois et profitez d'un passage en caisse instantané à chaque commande.",
+    "infoSectionMessage": "Remplissez une fois — passez commande en un clin d'œil à chaque fois.",
     "myFavorites": "Mes Favoris",
     "favoritesSaved": "Livres sauvegardés",
     "myOrders": "Mes Commandes",
@@ -457,8 +459,8 @@
     "validationError": "Veuillez corriger les erreurs ci-dessous",
     "readOnly": "Ce champ ne peut pas être modifié",
     "firstLogin": {
-      "title": "Bienvenue !",
-      "message": "Ajoutez votre numéro de téléphone pour suivre vos commandes et recevoir des mises à jour"
+      "title": "Bienvenue à bord !",
+      "message": "Ajoutez votre numéro pour qu'on vous tienne au courant de vos commandes"
     }
   },
   "favorites": {
@@ -466,9 +468,9 @@
     "back": "Retour",
     "count": "{{count}} livre",
     "count_plural": "{{count}} livres",
-    "emptyTitle": "Aucun favori",
-    "emptyMessage": "Vous n'avez pas encore ajouté de livres à vos favoris",
-    "discoverBooks": "Découvrir des livres"
+    "emptyTitle": "Votre étagère est vide",
+    "emptyMessage": "Appuyez sur le cœur d'un livre pour le sauvegarder ici",
+    "discoverBooks": "Trouvez un coup de cœur"
   },
   "orders": {
     "title": "Mes Commandes",
@@ -481,8 +483,8 @@
     "hideDetails": "Masquer",
     "currency": "DZD",
     "loading": "Chargement de vos commandes...",
-    "emptyTitle": "Aucune commande",
-    "emptyMessage": "Vous n'avez pas encore passé de commande 📦",
+    "emptyTitle": "Pas encore de commandes",
+    "emptyMessage": "Votre première livraison est à quelques clics",
     "startShopping": "Commencer mes achats",
     "errorTitle": "Impossible de charger les commandes",
     "quantity": "Quantité",
@@ -525,8 +527,8 @@
     "loading": "Chargement des livres..."
   },
   "404": {
-    "title": "Page non trouvée",
-    "description": "Désolé, la page que vous recherchez semble avoir disparu. Elle a peut-être été déplacée ou n'existe plus.",
+    "title": "Perdu dans les rayons",
+    "description": "La page que vous cherchez a quitté les étagères. Elle a peut-être été déplacée ou n'existe plus.",
     "goBack": "Retour",
     "home": "Accueil",
     "browseBooks": "Parcourir les livres",
@@ -536,13 +538,13 @@
     "customerService": "Service client"
   },
   "auth": {
-    "welcome": "Bienvenue",
-    "subtitle": "Connectez-vous ou créez un compte pour continuer",
+    "welcome": "Bienvenue chez Esprit Livre",
+    "subtitle": "Connectez-vous pour commencer votre bibliothèque",
     "connecting": "Connexion...",
     "continueWithGoogle": "Poursuivre avec Google",
-    "feature1": "Accédez à des milliers de livres",
-    "feature2": "Enregistrez vos livres préférés",
-    "feature3": "Paiement rapide et sécurisé",
+    "feature1": "Des milliers de titres à portée de main",
+    "feature2": "Construisez votre liste de lecture",
+    "feature3": "Paiement en quelques secondes",
     "termsText": "En continuant, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialité",
     "errorFallback": "Échec du démarrage du processus d'authentification. Veuillez réessayer."
   },

@@ -332,32 +332,16 @@ export default function AllBooks() {
                         />
                     </div>
 
-                    {/* Results Header + Tabs */}
-                    <div className="mb-fluid-md">
-                        <div className="flex items-center justify-between flex-wrap gap-2 mb-fluid-sm">
-                            <h2 className="text-brand-blue text-fluid-h1to2 font-['poppins'] font-semibold">
+                    {/* Results Header with Tabs */}
+                    <div className="flex items-end justify-between flex-wrap gap-2 mb-fluid-md border-b border-gray-200">
+                        {/* Left: Title + Tabs */}
+                        <div className="flex items-end gap-fluid-sm">
+                            <h2 className="text-brand-blue text-fluid-h1to2 font-['poppins'] font-semibold pb-2.5">
                                 {pageTitle || t('allBooks.resultsTitle')}
                             </h2>
-                            {!isLoading && activeTab === 'books' && (
-                                <div className="text-fluid-small text-gray-600">
-                                    {t('allBooks.resultsCount', {
-                                        start: totalBooks > 0 ? (currentPage - 1) * booksPerPage + 1 : 0,
-                                        end: Math.min(currentPage * booksPerPage, totalBooks),
-                                        total: totalBooks
-                                    })}
-                                    <span className="hidden sm:inline ml-2 text-gray-400">•</span>
-                                    <span className="hidden sm:inline ml-2">
-                                        {t('allBooks.page', { current: currentPage, total: totalPages || 1 })}
-                                    </span>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Tabs */}
-                        <div className="flex gap-1 border-b border-gray-200">
                             <button
                                 onClick={() => setActiveTab('books')}
-                                className={`relative px-5 py-2.5 text-fluid-small font-semibold font-['Poppins'] transition-colors duration-200 ${
+                                className={`relative pb-2.5 px-3 text-fluid-small font-semibold font-['Poppins'] transition-colors duration-200 ${
                                     activeTab === 'books'
                                         ? 'text-brand-blue'
                                         : 'text-gray-400 hover:text-gray-600'
@@ -375,7 +359,7 @@ export default function AllBooks() {
                             </button>
                             <button
                                 onClick={() => setActiveTab('packs')}
-                                className={`relative px-5 py-2.5 text-fluid-small font-semibold font-['Poppins'] transition-colors duration-200 ${
+                                className={`relative pb-2.5 px-3 text-fluid-small font-semibold font-['Poppins'] transition-colors duration-200 ${
                                     activeTab === 'packs'
                                         ? 'text-brand-blue'
                                         : 'text-gray-400 hover:text-gray-600'
@@ -392,6 +376,21 @@ export default function AllBooks() {
                                 )}
                             </button>
                         </div>
+
+                        {/* Right: Page info */}
+                        {!isLoading && activeTab === 'books' && (
+                            <div className="text-fluid-small text-gray-600 pb-3">
+                                {t('allBooks.resultsCount', {
+                                    start: totalBooks > 0 ? (currentPage - 1) * booksPerPage + 1 : 0,
+                                    end: Math.min(currentPage * booksPerPage, totalBooks),
+                                    total: totalBooks
+                                })}
+                                <span className="hidden sm:inline ml-2 text-gray-400">•</span>
+                                <span className="hidden sm:inline ml-2">
+                                    {t('allBooks.page', { current: currentPage, total: totalPages || 1 })}
+                                </span>
+                            </div>
+                        )}
                     </div>
 
                     {/* Packs Tab Content */}

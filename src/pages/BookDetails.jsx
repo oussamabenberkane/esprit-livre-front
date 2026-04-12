@@ -625,14 +625,30 @@ const BookDetails = () => {
                                 </button>
                             </div>
 
-                            {/* View Full Description Link - Below Details on Mobile */}
-                            <button
-                                onClick={handleToggleDescription}
-                                className="font-['Poppins'] font-medium text-[#626e82] hover:text-[#1c2d55] transition-colors flex items-center gap-1 w-full"
-                            >
-                                <span className="flex-1 text-left"><h1 className="text-sm whitespace-nowrap">{t('bookDetails.viewFullDescription')}</h1></span>
-                                <ChevronDown className={`w-5 h-5 flex-shrink-0 transition-transform duration-300 ${showFullDescription ? 'rotate-180' : ''}`} />
-                            </button>
+                            {/* Description Preview - Mobile */}
+                            {book.description && (
+                                <div
+                                    className="cursor-pointer group"
+                                    onClick={handleToggleDescription}
+                                >
+                                    <p className="font-['Poppins'] font-normal text-[#626e82] text-sm leading-relaxed whitespace-pre-line line-clamp-3">
+                                        {book.description}
+                                    </p>
+                                    <span className="font-['Poppins'] font-medium text-[#00417a] text-xs mt-1.5 inline-flex items-center gap-1 group-hover:underline">
+                                        {t('bookDetails.viewFullDescription')}
+                                        <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showFullDescription ? 'rotate-180' : ''}`} />
+                                    </span>
+                                </div>
+                            )}
+                            {!book.description && (
+                                <button
+                                    onClick={handleToggleDescription}
+                                    className="font-['Poppins'] font-medium text-[#626e82] hover:text-[#1c2d55] transition-colors flex items-center gap-1 w-full"
+                                >
+                                    <span className="flex-1 text-left"><h1 className="text-sm whitespace-nowrap">{t('bookDetails.viewFullDescription')}</h1></span>
+                                    <ChevronDown className={`w-5 h-5 flex-shrink-0 transition-transform duration-300 ${showFullDescription ? 'rotate-180' : ''}`} />
+                                </button>
+                            )}
                         </div>
                     </div>
 
@@ -670,14 +686,29 @@ const BookDetails = () => {
                                         />
                                     </div>
 
-                                    {/* View Full Description Link - Aligned to Bottom of Details Card */}
-                                    <button
-                                        onClick={handleToggleDescription}
-                                        className="font-['Poppins'] font-medium text-[#626e82] text-fluid-vsmall hover:text-[#1c2d55] transition-colors flex items-center gap-1 w-full mt-fluid-sm"
-                                    >
-                                        <span className="flex-1 text-left"><h1 className='text-fluid-h3 whitespace-nowrap'>{t('bookDetails.viewFullDescription')}</h1></span>
-                                        <ChevronDown className={`w-3 h-3 flex-shrink-0 transition-transform duration-300 ${showFullDescription ? 'rotate-180' : ''}`} />
-                                    </button>
+                                    {/* Description Preview - Desktop */}
+                                    {book.description ? (
+                                        <div
+                                            className="cursor-pointer group mt-fluid-sm"
+                                            onClick={handleToggleDescription}
+                                        >
+                                            <p className="font-['Poppins'] font-normal text-[#626e82] text-fluid-small leading-relaxed whitespace-pre-line line-clamp-2">
+                                                {book.description}
+                                            </p>
+                                            <span className="font-['Poppins'] font-medium text-[#00417a] text-fluid-vsmall mt-1 inline-flex items-center gap-1 group-hover:underline">
+                                                {t('bookDetails.viewFullDescription')}
+                                                <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${showFullDescription ? 'rotate-180' : ''}`} />
+                                            </span>
+                                        </div>
+                                    ) : (
+                                        <button
+                                            onClick={handleToggleDescription}
+                                            className="font-['Poppins'] font-medium text-[#626e82] text-fluid-vsmall hover:text-[#1c2d55] transition-colors flex items-center gap-1 w-full mt-fluid-sm"
+                                        >
+                                            <span className="flex-1 text-left"><h1 className='text-fluid-h3 whitespace-nowrap'>{t('bookDetails.viewFullDescription')}</h1></span>
+                                            <ChevronDown className={`w-3 h-3 flex-shrink-0 transition-transform duration-300 ${showFullDescription ? 'rotate-180' : ''}`} />
+                                        </button>
+                                    )}
                                 </div>
 
                                 {/* Right Column - Book Information (Extended Height) */}

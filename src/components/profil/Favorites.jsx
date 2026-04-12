@@ -392,7 +392,8 @@ export default function Favorites() {
               author: selectedBook.author.name,
               price: selectedBook.price,
               coverImage: getBookCoverUrl(selectedBook.id),
-              language: selectedBook.language
+              language: selectedBook.language,
+              description: selectedBook.description
             }}
           />
         )}

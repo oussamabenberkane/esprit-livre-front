@@ -98,7 +98,8 @@
     "currency": "DZD",
     "viewCart": "Finaliser ma commande",
     "keepShopping": "Poursuivre mes achats",
-    "alsoInCart": "Aussi dans votre panier"
+    "alsoInCart": "Aussi dans votre panier",
+    "description": "Synopsis"
   },
   "common": {
     "loading": "Chargement...",

@@ -1088,7 +1088,8 @@ const HomePage = () => {
                         author: selectedBook.author?.name || 'Unknown Author',
                         price: selectedBook.price,
                         coverImage: getBookCoverUrl(selectedBook.id),
-                        language: selectedBook.language
+                        language: selectedBook.language,
+                        description: selectedBook.description
                     }}
                 />
             )}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ShoppingCart, Check, X, Package } from 'lucide-react';
+import { ShoppingCart, Check, X, Package, ChevronDown, BookOpen } from 'lucide-react';
 import { getLanguageCode } from '../../data/booksData';
 import { useCart } from '../../contexts/CartContext';
 import { getBookCoverUrl } from '../../utils/imageUtils';
@@ -19,6 +19,8 @@ export default function CartConfirmationPopup({
     const [animateCheck, setAnimateCheck] = useState(false);
     const hasPlayedRef = useRef(false);
     const [hydratedPacks, setHydratedPacks] = useState([]);
+    const [showDescription, setShowDescription] = useState(false);
+    const descriptionRef = useRef(null);
 
     // Load pack details when popup opens so we can show first book covers
     useEffect(() => {
@@ -79,6 +81,7 @@ export default function CartConfirmationPopup({
         if (!isOpen) {
             hasPlayedRef.current = false;
             setAnimateCheck(false);
+            setShowDescription(false);
         }
     }, [isOpen]);
 
@@ -104,8 +107,11 @@ export default function CartConfirmationPopup({
     if (!isOpen) return null;
 
     const handleViewDetails = () => {
-        navigate(`/books/${book.id}`);
-        onClose();
+        window.open(`/books/${book.id}`, '_blank', 'noopener,noreferrer');
+    };
+
+    const handleToggleDescription = () => {
+        setShowDescription(prev => !prev);
     };
 
     return (
@@ -176,25 +182,40 @@ export default function CartConfirmationPopup({
                                                 <p className="text-gray-600 text-[0.7rem] xs:text-sm mb-1.5 xs:mb-2">
                                                     {book.author}
                                                 </p>
-                                                <button
-                                                    onClick={handleViewDetails}
-                                                    className="text-blue-600 hover:underline inline-flex items-center gap-0.5 xs:gap-1"
-                                                >
-                                                    <span className="text-[0.65rem] xs:text-fluid-medium">{t('cartPopup.bookDetails')}</span>
-                                                    <svg
-                                                        className="w-2.5 h-2.5 xs:w-3 xs:h-3"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        viewBox="0 0 24 24"
+                                                <div className="flex items-center gap-2 xs:gap-3 flex-wrap">
+                                                    <button
+                                                        onClick={handleViewDetails}
+                                                        className="text-blue-600 hover:text-blue-700 hover:underline inline-flex items-center gap-0.5 xs:gap-1 transition-colors"
                                                     >
-                                                        <path
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            strokeWidth={2}
-                                                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                                                        />
-                                                    </svg>
-                                                </button>
+                                                        <span className="text-[0.65rem] xs:text-fluid-medium">{t('cartPopup.bookDetails')}</span>
+                                                        <svg
+                                                            className="w-2.5 h-2.5 xs:w-3 xs:h-3"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                strokeWidth={2}
+                                                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                                                            />
+                                                        </svg>
+                                                    </button>
+                                                    {book.description && (
+                                                        <>
+                                                            <span className="text-gray-300 text-[0.6rem] xs:text-xs">|</span>
+                                                            <button
+                                                                onClick={handleToggleDescription}
+                                                                className="text-[#00417a]/70 hover:text-[#00417a] inline-flex items-center gap-0.5 xs:gap-1 transition-colors"
+                                                            >
+                                                                <BookOpen className="w-2.5 h-2.5 xs:w-3 xs:h-3" />
+                                                                <span className="text-[0.65rem] xs:text-fluid-medium">{t('cartPopup.description')}</span>
+                                                                <ChevronDown className={`w-2.5 h-2.5 xs:w-3 xs:h-3 transition-transform duration-200 ${showDescription ? 'rotate-180' : ''}`} />
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                </div>
                                             </>
                                         ) : (
                                             <>
@@ -261,6 +282,20 @@ export default function CartConfirmationPopup({
                             </div>
                         </div>
                     </div>
+
+                    {/* Collapsible Description */}
+                    {showDescription && book.description && (
+                        <div className="px-3 xs:px-5 pb-1">
+                            <div
+                                ref={descriptionRef}
+                                className="desc-slide-in bg-gray-50/80 rounded-lg xs:rounded-xl border border-gray-100 p-3 xs:p-4 max-h-[10rem] xs:max-h-[12rem] overflow-y-auto scrollbar-thin"
+                            >
+                                <p className="text-gray-600 text-[0.68rem] xs:text-sm leading-relaxed whitespace-pre-line font-['Poppins']">
+                                    {book.description}
+                                </p>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Existing cart items strip */}
                     {otherCartItems.length > 0 && (
@@ -352,6 +387,27 @@ export default function CartConfirmationPopup({
                 }
                 .check-badge-pop {
                     animation: checkBadgePop 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+                }
+
+                /* Description slide-in */
+                @keyframes descSlideIn {
+                    from { opacity: 0; max-height: 0; margin-top: 0; }
+                    to { opacity: 1; max-height: 12rem; margin-top: 0; }
+                }
+                .desc-slide-in {
+                    animation: descSlideIn 0.25s ease-out both;
+                }
+
+                /* Custom scrollbar for description */
+                .scrollbar-thin::-webkit-scrollbar {
+                    width: 4px;
+                }
+                .scrollbar-thin::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+                .scrollbar-thin::-webkit-scrollbar-thumb {
+                    background: #d1d5db;
+                    border-radius: 999px;
                 }
 
                 /* Thumbnail stagger entrance */

@@ -1,6 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ShoppingCart, X, Trash2 } from 'lucide-react';
+import { ShoppingCart, X, Trash2, ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../../contexts/CartContext';
 
 const BADGE_VISIBILITY_KEY = 'el_cart_badge_dismissed';
@@ -10,9 +11,9 @@ export default function FloatingCartBadge({ onGoToCart }) {
   const { t } = useTranslation();
   const { cartItems, packCartItems, getCartItemCount, getPackCartItemCount } = useCart();
 
-  // State for visibility - managed internally now
   const [isVisible, setIsVisible] = useState(false);
   const [itemCount, setItemCount] = useState(0);
+  const [justAdded, setJustAdded] = useState(false);
   const previousCountRef = useRef(0);
 
   // Drag & drop states
@@ -30,26 +31,17 @@ export default function FloatingCartBadge({ onGoToCart }) {
   const [isClick, setIsClick] = useState(true);
   const dragTimeoutRef = useRef(null);
 
-  // Drag threshold in pixels - must move this much before considering it a drag
   const DRAG_THRESHOLD = 10;
-  // Time threshold in ms - click becomes drag after this duration
   const DRAG_TIME_THRESHOLD = 150;
 
-  /**
-   * Core Logic: Listen to cart changes and manage badge visibility
-   * Updated to track last known count and only show when new items are added
-   * Now includes both book and pack counts
-   */
   useEffect(() => {
     const bookCount = getCartItemCount();
     const packCount = getPackCartItemCount();
-    const currentCount = bookCount + packCount; // Pack counts as 1 item
+    const currentCount = bookCount + packCount;
     const previousCount = previousCountRef.current;
 
-    // Update item count
     setItemCount(currentCount);
 
-    // Hide badge if cart is empty
     if (currentCount === 0) {
       setIsVisible(false);
       localStorage.removeItem(BADGE_VISIBILITY_KEY);
@@ -58,50 +50,35 @@ export default function FloatingCartBadge({ onGoToCart }) {
       return;
     }
 
-    // Get last known cart count (persisted across sessions)
     const lastKnownCount = parseInt(localStorage.getItem(LAST_CART_COUNT_KEY) || '0', 10);
-
-    // Check if badge was manually dismissed
     const wasDismissed = localStorage.getItem(BADGE_VISIBILITY_KEY) === 'true';
 
-    // Show badge if:
-    // 1. Cart count increased from last known count (new items added) - always show, even if previously dismissed
-    // 2. Cart has items and badge was never dismissed AND count hasn't changed since last session
     if (currentCount > lastKnownCount) {
-      // New items added - show badge and clear dismissed state
       setIsVisible(true);
+      setJustAdded(true);
       localStorage.removeItem(BADGE_VISIBILITY_KEY);
       localStorage.setItem(LAST_CART_COUNT_KEY, currentCount.toString());
+      // Reset the "just added" highlight after the attention pulse
+      const timeout = setTimeout(() => setJustAdded(false), 2400);
+      return () => clearTimeout(timeout);
     } else if (currentCount > 0 && !wasDismissed) {
-      // Cart has items and wasn't dismissed - show badge
       setIsVisible(true);
     }
 
-    // Update previous count for within-session tracking
     previousCountRef.current = currentCount;
   }, [cartItems, packCartItems, getCartItemCount, getPackCartItemCount]);
 
-  /**
-   * Handle manual dismissal (close button or drag-to-remove)
-   * Updates localStorage to persist dismissal across page reloads/navigations
-   */
-  const handleDismiss = () => {
+  const handleDismiss = useCallback(() => {
     setIsVisible(false);
-    // Mark as dismissed in localStorage - persists until new item added
     localStorage.setItem(BADGE_VISIBILITY_KEY, 'true');
-    // Store current count so we know when new items are added
     localStorage.setItem(LAST_CART_COUNT_KEY, itemCount.toString());
-  };
+  }, [itemCount]);
 
-  /**
-   * Handle click on badge - navigate to cart
-   * Only triggers if not dragging
-   */
-  const handleBadgeClick = () => {
+  const handleBadgeClick = useCallback(() => {
     if (isClick && !isDragging) {
       onGoToCart();
     }
-  };
+  }, [isClick, isDragging, onGoToCart]);
 
   // Reset position when badge becomes visible
   useEffect(() => {
@@ -113,24 +90,20 @@ export default function FloatingCartBadge({ onGoToCart }) {
     }
   }, [isVisible]);
 
-  // Completely freeze all background interactions during drag
+  // Freeze background during drag
   useEffect(() => {
     if (isDragging) {
-      // Save current scroll position
       scrollPositionRef.current = window.pageYOffset || document.documentElement.scrollTop;
 
-      // Freeze the page completely
       document.body.style.overflow = 'hidden';
       document.body.style.touchAction = 'none';
       document.body.style.position = 'fixed';
       document.body.style.top = `-${scrollPositionRef.current}px`;
       document.body.style.width = '100%';
-      document.body.style.userSelect = 'none'; // Prevent text selection
-      document.body.style.pointerEvents = 'none'; // Disable all pointer events on background
+      document.body.style.userSelect = 'none';
+      document.body.style.pointerEvents = 'none';
 
-      // Prevent all default behaviors except on our badge and delete zone
       const preventBackgroundEvents = (e) => {
-        // Allow events on the badge and delete zone to pass through
         if (badgeRef.current?.contains(e.target) || deleteZoneRef.current?.contains(e.target)) {
           return;
         }
@@ -138,7 +111,6 @@ export default function FloatingCartBadge({ onGoToCart }) {
         e.stopPropagation();
       };
 
-      // Add non-passive listeners to prevent background interactions
       document.addEventListener('touchmove', preventBackgroundEvents, { passive: false });
       document.addEventListener('wheel', preventBackgroundEvents, { passive: false });
       document.addEventListener('scroll', preventBackgroundEvents, { passive: false });
@@ -148,7 +120,6 @@ export default function FloatingCartBadge({ onGoToCart }) {
       document.addEventListener('contextmenu', preventBackgroundEvents, { capture: true });
 
       return () => {
-        // Restore all interactions when dragging stops
         document.body.style.overflow = '';
         document.body.style.touchAction = '';
         document.body.style.position = '';
@@ -157,7 +128,6 @@ export default function FloatingCartBadge({ onGoToCart }) {
         document.body.style.userSelect = '';
         document.body.style.pointerEvents = '';
 
-        // Remove all event listeners
         document.removeEventListener('touchmove', preventBackgroundEvents);
         document.removeEventListener('wheel', preventBackgroundEvents);
         document.removeEventListener('scroll', preventBackgroundEvents);
@@ -166,7 +136,6 @@ export default function FloatingCartBadge({ onGoToCart }) {
         document.removeEventListener('mouseup', preventBackgroundEvents, { capture: true });
         document.removeEventListener('contextmenu', preventBackgroundEvents, { capture: true });
 
-        // Restore scroll position
         window.scrollTo(0, scrollPositionRef.current);
       };
     }
@@ -174,7 +143,7 @@ export default function FloatingCartBadge({ onGoToCart }) {
 
   const handleTouchStart = (e) => {
     const touch = e.touches[0];
-    setIsClick(true); // Assume it's a click until proven otherwise
+    setIsClick(true);
     setDragStart({
       x: touch.clientX - position.x,
       y: touch.clientY - position.y
@@ -184,26 +153,22 @@ export default function FloatingCartBadge({ onGoToCart }) {
       y: touch.clientY
     });
 
-    // Set timeout to mark as drag after threshold time
     dragTimeoutRef.current = setTimeout(() => {
       setIsClick(false);
       setIsDragging(true);
     }, DRAG_TIME_THRESHOLD);
 
-    // Stop propagation so our drag works while document scroll is prevented
     e.stopPropagation();
   };
 
   const handleTouchMove = (e) => {
     const touch = e.touches[0];
 
-    // Calculate distance from start position
     const distanceMoved = Math.sqrt(
       Math.pow(touch.clientX - dragStartPos.x, 2) +
       Math.pow(touch.clientY - dragStartPos.y, 2)
     );
 
-    // If moved beyond threshold, cancel click and enable dragging
     if (distanceMoved > DRAG_THRESHOLD && isClick) {
       setIsClick(false);
       setIsDragging(true);
@@ -212,22 +177,17 @@ export default function FloatingCartBadge({ onGoToCart }) {
       }
     }
 
-    if (!isDragging && distanceMoved <= DRAG_THRESHOLD) {
-      // Not dragging yet, don't update position
-      return;
-    }
+    if (!isDragging && distanceMoved <= DRAG_THRESHOLD) return;
 
     const newX = touch.clientX - dragStart.x;
     const newY = touch.clientY - dragStart.y;
 
-    // Only show delete zone if dragged beyond threshold
     if (distanceMoved > DRAG_THRESHOLD && !showDeleteZone) {
       setShowDeleteZone(true);
     }
 
     setPosition({ x: newX, y: newY });
 
-    // Check if near delete zone (only if zone is visible)
     if (showDeleteZone && deleteZoneRef.current && badgeRef.current) {
       const deleteRect = deleteZoneRef.current.getBoundingClientRect();
       const badgeRect = badgeRef.current.getBoundingClientRect();
@@ -240,28 +200,22 @@ export default function FloatingCartBadge({ onGoToCart }) {
       setIsNearDelete(distance < 80);
     }
 
-    // Stop propagation so our drag works while document scroll is prevented
     e.stopPropagation();
   };
 
   const handleTouchEnd = () => {
-    // Clear drag timeout
     if (dragTimeoutRef.current) {
       clearTimeout(dragTimeoutRef.current);
     }
 
-    // If it was a click (not a drag), handle the click
     if (isClick) {
       handleBadgeClick();
     } else if (isNearDelete && showDeleteZone) {
-      // If dragged to delete zone, dismiss
       handleDismiss();
     } else {
-      // Snap back to original position
       setPosition({ x: 0, y: 0 });
     }
 
-    // Reset states
     setIsDragging(false);
     setIsNearDelete(false);
     setShowDeleteZone(false);
@@ -269,7 +223,7 @@ export default function FloatingCartBadge({ onGoToCart }) {
   };
 
   const handleMouseDown = (e) => {
-    setIsClick(true); // Assume it's a click until proven otherwise
+    setIsClick(true);
     setDragStart({
       x: e.clientX - position.x,
       y: e.clientY - position.y
@@ -279,21 +233,18 @@ export default function FloatingCartBadge({ onGoToCart }) {
       y: e.clientY
     });
 
-    // Set timeout to mark as drag after threshold time
     dragTimeoutRef.current = setTimeout(() => {
       setIsClick(false);
       setIsDragging(true);
     }, DRAG_TIME_THRESHOLD);
   };
 
-  const handleMouseMove = (e) => {
-    // Calculate distance from start position
+  const handleMouseMove = useCallback((e) => {
     const distanceMoved = Math.sqrt(
       Math.pow(e.clientX - dragStartPos.x, 2) +
       Math.pow(e.clientY - dragStartPos.y, 2)
     );
 
-    // If moved beyond threshold, cancel click and enable dragging
     if (distanceMoved > DRAG_THRESHOLD && isClick) {
       setIsClick(false);
       setIsDragging(true);
@@ -302,22 +253,17 @@ export default function FloatingCartBadge({ onGoToCart }) {
       }
     }
 
-    if (!isDragging && distanceMoved <= DRAG_THRESHOLD) {
-      // Not dragging yet, don't update position
-      return;
-    }
+    if (!isDragging && distanceMoved <= DRAG_THRESHOLD) return;
 
     const newX = e.clientX - dragStart.x;
     const newY = e.clientY - dragStart.y;
 
-    // Only show delete zone if dragged beyond threshold
     if (distanceMoved > DRAG_THRESHOLD && !showDeleteZone) {
       setShowDeleteZone(true);
     }
 
     setPosition({ x: newX, y: newY });
 
-    // Check if near delete zone (only if zone is visible)
     if (showDeleteZone && deleteZoneRef.current && badgeRef.current) {
       const deleteRect = deleteZoneRef.current.getBoundingClientRect();
       const badgeRect = badgeRef.current.getBoundingClientRect();
@@ -329,31 +275,26 @@ export default function FloatingCartBadge({ onGoToCart }) {
 
       setIsNearDelete(distance < 80);
     }
-  };
+  }, [isDragging, isClick, dragStart, dragStartPos, showDeleteZone]);
 
-  const handleMouseUp = () => {
-    // Clear drag timeout
+  const handleMouseUp = useCallback(() => {
     if (dragTimeoutRef.current) {
       clearTimeout(dragTimeoutRef.current);
     }
 
-    // If it was a click (not a drag), handle the click
     if (isClick) {
       handleBadgeClick();
     } else if (isNearDelete && showDeleteZone) {
-      // If dragged to delete zone, dismiss
       handleDismiss();
     } else {
-      // Snap back to original position
       setPosition({ x: 0, y: 0 });
     }
 
-    // Reset states
     setIsDragging(false);
     setIsNearDelete(false);
     setShowDeleteZone(false);
     setIsClick(true);
-  };
+  }, [isClick, isNearDelete, showDeleteZone, handleBadgeClick, handleDismiss]);
 
   useEffect(() => {
     if (isDragging) {
@@ -365,9 +306,8 @@ export default function FloatingCartBadge({ onGoToCart }) {
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-  }, [isDragging, position, dragStart]);
+  }, [isDragging, handleMouseMove, handleMouseUp]);
 
-  // Cleanup drag timeout on unmount
   useEffect(() => {
     return () => {
       if (dragTimeoutRef.current) {
@@ -380,87 +320,190 @@ export default function FloatingCartBadge({ onGoToCart }) {
 
   return (
     <>
-      {/* Delete Zone - appears only when actually dragging (beyond threshold) */}
-      {showDeleteZone && (
-        <div
-          ref={deleteZoneRef}
-          className={`fixed bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-50 transition-all duration-200 ${
-            isNearDelete ? 'scale-110' : 'scale-100'
-          }`}
-          style={{ pointerEvents: 'auto' }}
-        >
-          <div className={`rounded-full p-3 md:p-4 transition-colors ${
-            isNearDelete ? 'bg-red-600' : 'bg-red-500'
-          } shadow-2xl`}>
-            <Trash2 className="w-6 h-6 md:w-8 md:h-8 text-white" />
-          </div>
-          <p className="text-center text-xs md:text-sm font-medium text-gray-700 mt-1">
-            {t('floatingCartBadge.dragToDelete')}
-          </p>
-        </div>
-      )}
+      {/* Delete Zone */}
+      <AnimatePresence>
+        {showDeleteZone && (
+          <motion.div
+            ref={deleteZoneRef}
+            initial={{ opacity: 0, y: 20, scale: 0.8 }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              scale: isNearDelete ? 1.2 : 1,
+            }}
+            exit={{ opacity: 0, y: 20, scale: 0.8 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            className="fixed bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-50"
+            style={{ pointerEvents: 'auto' }}
+          >
+            <div
+              className="flex flex-col items-center gap-1.5"
+            >
+              <div
+                className="rounded-full p-3.5 md:p-4 transition-colors duration-200 shadow-2xl"
+                style={{
+                  background: isNearDelete
+                    ? 'linear-gradient(135deg, #dc2626, #b91c1c)'
+                    : 'linear-gradient(135deg, #ef4444, #dc2626)',
+                  boxShadow: isNearDelete
+                    ? '0 0 30px rgba(220, 38, 38, 0.5)'
+                    : '0 8px 24px rgba(220, 38, 38, 0.3)',
+                }}
+              >
+                <Trash2 className="w-5 h-5 md:w-6 md:h-6 text-white" />
+              </div>
+              <span className="text-[10px] md:text-xs font-medium text-gray-500">
+                {t('floatingCartBadge.dragToDelete')}
+              </span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Floating Badge */}
-      <div
-        ref={badgeRef}
-        className={`fixed bottom-3 right-3 md:bottom-6 md:right-6 z-40 ${
-          isDragging ? 'cursor-grabbing' : 'cursor-pointer'
-        }`}
-        style={{
-          transform: `translate(${position.x}px, ${position.y}px)`,
-          transition: isDragging ? 'none' : 'transform 0.3s ease-out',
-          animation: !isDragging && position.x === 0 && position.y === 0 ? 'slideUp 0.3s ease-out' : 'none',
-          opacity: isDragging && isNearDelete ? 0.5 : 1,
-          pointerEvents: 'auto', // Keep badge interactive even when background is frozen
-        }}
-        onMouseDown={handleMouseDown}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
-        <div className={`bg-[#1E40AF] text-white rounded-md md:rounded-lg shadow-lg md:shadow-2xl p-2 md:p-4 pr-8 md:pr-12 relative max-w-[240px] md:max-w-sm transition-transform ${
-          isDragging ? 'scale-105 rotate-2' : 'scale-100'
-        }`}>
-          {/* Close Button */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDismiss();
+      <AnimatePresence>
+        {isVisible && (
+          <motion.div
+            ref={badgeRef}
+            initial={{ opacity: 0, y: 80, scale: 0.6 }}
+            animate={{
+              opacity: isDragging && isNearDelete ? 0.5 : 1,
+              y: 0,
+              scale: isDragging ? 1.05 : 1,
             }}
-            className="absolute top-0.5 right-0.5 md:top-2 md:right-2 w-5 h-5 md:w-6 md:h-6 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors"
-            aria-label={t('floatingCartBadge.close')}
+            exit={{ opacity: 0, y: 40, scale: 0.8 }}
+            transition={{
+              type: 'spring',
+              stiffness: 360,
+              damping: 28,
+              mass: 0.8,
+            }}
+            className={`fixed bottom-4 right-3 md:bottom-6 md:right-6 z-40 ${
+              isDragging ? 'cursor-grabbing' : 'cursor-pointer'
+            }`}
+            style={{
+              transform: `translate(${position.x}px, ${position.y}px)`,
+              transition: isDragging ? 'none' : 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              pointerEvents: 'auto',
+            }}
+            onMouseDown={handleMouseDown}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
           >
-            <X className="w-3 h-3 md:w-4 md:h-4" />
-          </button>
+            {/* Ambient glow behind the badge */}
+            <div
+              className="absolute -inset-2 rounded-2xl opacity-40 blur-xl pointer-events-none"
+              style={{
+                background: 'linear-gradient(135deg, #00417a, #0052a3)',
+                animation: justAdded ? 'cartGlow 1.2s ease-in-out 2' : 'none',
+              }}
+            />
 
-          {/* Content */}
-          <div
-            className="flex items-center gap-1.5 md:gap-3 cursor-pointer"
-            onClick={(e) => {
-              // Only navigate if we're not dragging
-              if (isClick && !isDragging && onGoToCart) {
+            {/* Main badge body */}
+            <div
+              className="relative rounded-2xl overflow-hidden shadow-lg md:shadow-xl"
+              style={{
+                background: 'linear-gradient(135deg, #00356a 0%, #00417a 40%, #004d8f 100%)',
+                boxShadow: isDragging
+                  ? '0 20px 50px rgba(0, 65, 122, 0.4)'
+                  : '0 8px 32px rgba(0, 65, 122, 0.25)',
+              }}
+            >
+              {/* Subtle top highlight line */}
+              <div
+                className="absolute top-0 left-0 right-0 h-[1px]"
+                style={{
+                  background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                }}
+              />
+
+              <div className="flex items-center gap-2.5 md:gap-3.5 px-3 py-2.5 md:px-5 md:py-3.5 pr-8 md:pr-10">
+                {/* Cart icon with count bubble */}
+                <div className="relative flex-shrink-0">
+                  <div
+                    className="rounded-xl p-2 md:p-2.5"
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.12)',
+                      backdropFilter: 'blur(8px)',
+                    }}
+                  >
+                    <ShoppingCart className="w-4 h-4 md:w-5 md:h-5 text-white" />
+                  </div>
+                  {/* Item count bubble */}
+                  <motion.div
+                    key={itemCount}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 15, delay: 0.1 }}
+                    className="absolute -top-1.5 -right-1.5 min-w-[18px] md:min-w-[20px] h-[18px] md:h-[20px] flex items-center justify-center rounded-full text-[10px] md:text-[11px] font-bold leading-none px-1"
+                    style={{
+                      background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                      color: '#fff',
+                      boxShadow: '0 2px 8px rgba(245, 158, 11, 0.4)',
+                    }}
+                  >
+                    {itemCount}
+                  </motion.div>
+                </div>
+
+                {/* Text content */}
+                <div className="flex flex-col min-w-0">
+                  <span className="text-white font-semibold text-[11px] md:text-sm leading-tight truncate">
+                    {itemCount === 1
+                      ? t('floatingCartBadge.itemAdded', { count: itemCount })
+                      : t('floatingCartBadge.itemsAdded', { count: itemCount })
+                    }
+                  </span>
+                  <span
+                    className="flex items-center gap-0.5 mt-0.5 text-[10px] md:text-xs font-medium"
+                    style={{ color: 'rgba(255, 255, 255, 0.65)' }}
+                  >
+                    {t('floatingCartBadge.cart')}
+                    <ArrowRight className="w-2.5 h-2.5 md:w-3 md:h-3" />
+                  </span>
+                </div>
+              </div>
+
+              {/* Animated progress-like accent bar at bottom */}
+              <div
+                className="h-[2px] w-full"
+                style={{
+                  background: justAdded
+                    ? 'linear-gradient(90deg, transparent, #f59e0b, #fbbf24, #f59e0b, transparent)'
+                    : 'linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)',
+                  transition: 'background 0.6s ease',
+                }}
+              />
+            </div>
+
+            {/* Close button — sits outside the card, top-right */}
+            <button
+              onClick={(e) => {
                 e.stopPropagation();
-                onGoToCart();
-              }
-            }}
-          >
-            <div className="bg-white/20 rounded-full p-1 md:p-2">
-              <ShoppingCart className="w-3.5 h-3.5 md:w-5 md:h-5" />
-            </div>
-            <div className="flex-1">
-              <p className="font-semibold text-[10px] md:text-sm leading-tight md:leading-normal">
-                {itemCount === 1
-                  ? t('floatingCartBadge.itemAdded', { count: itemCount })
-                  : t('floatingCartBadge.itemsAdded', { count: itemCount })
-                }
-              </p>
-              <p className="text-[9px] md:text-xs underline mt-0 md:mt-1 block">
-                {t('floatingCartBadge.cart')}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+                handleDismiss();
+              }}
+              className="absolute -top-1.5 -right-1.5 md:-top-2 md:-right-2 w-5 h-5 md:w-6 md:h-6 flex items-center justify-center rounded-full transition-all duration-150 hover:scale-110"
+              style={{
+                background: 'rgba(30, 41, 59, 0.85)',
+                backdropFilter: 'blur(4px)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+              }}
+              aria-label={t('floatingCartBadge.close')}
+            >
+              <X className="w-3 h-3 md:w-3.5 md:h-3.5 text-white/80" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Keyframe for glow pulse on new item */}
+      <style>{`
+        @keyframes cartGlow {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 0.7; transform: scale(1.15); }
+        }
+      `}</style>
     </>
   );
 }

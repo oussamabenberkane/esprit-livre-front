@@ -98,7 +98,8 @@
     "viewCart": "Place My Order",
     "keepShopping": "Keep Shopping",
     "alsoInCart": "Also in your cart",
-    "description": "Synopsis"
+    "description": "Synopsis",
+    "flipBack": "Tap to flip back"
   },
   "common": {
     "loading": "Loading...",

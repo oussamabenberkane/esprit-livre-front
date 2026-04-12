@@ -98,7 +98,8 @@
     "viewCart": "Finaliser ma commande",
     "keepShopping": "Poursuivre mes achats",
     "alsoInCart": "Aussi dans votre panier",
-    "description": "Synopsis"
+    "description": "Synopsis",
+    "flipBack": "Appuyez pour retourner"
   },
   "common": {
     "loading": "Chargement...",

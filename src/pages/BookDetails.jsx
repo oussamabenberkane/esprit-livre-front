@@ -547,7 +547,10 @@ const BookDetails = () => {
                             {/* Description - inline expand */}
                             {book.description && (
                                 <div>
-                                    <p className={`font-['Poppins'] font-normal text-[#626e82] text-sm leading-relaxed whitespace-pre-line ${showFullDescription ? '' : 'line-clamp-3'}`}>
+                                    <h3 className="font-['Poppins'] font-semibold text-[#1c2d55] text-sm mb-1.5">
+                                        {t('bookDetails.descriptionTitle')}
+                                    </h3>
+                                    <p className={`font-['Poppins'] font-normal text-[#3a4560] text-sm leading-relaxed whitespace-pre-line ${showFullDescription ? '' : 'line-clamp-3'}`}>
                                         {formatDesc(book.description)}
                                     </p>
                                     <button
@@ -659,7 +662,10 @@ const BookDetails = () => {
                                     {/* Description - inline expand */}
                                     {book.description && (
                                         <div>
-                                            <p className={`font-['Poppins'] font-normal text-[#626e82] text-fluid-small leading-relaxed whitespace-pre-line ${showFullDescription ? '' : 'line-clamp-4'}`}>
+                                            <h3 className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-medium mb-fluid-xxs">
+                                                {t('bookDetails.descriptionTitle')}
+                                            </h3>
+                                            <p className={`font-['Poppins'] font-normal text-[#3a4560] text-fluid-small leading-relaxed whitespace-pre-line ${showFullDescription ? '' : 'line-clamp-4'}`}>
                                                 {formatDesc(book.description)}
                                             </p>
                                             <button

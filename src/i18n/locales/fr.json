@@ -97,9 +97,7 @@
     "currency": "DZD",
     "viewCart": "Finaliser ma commande",
     "keepShopping": "Poursuivre mes achats",
-    "alsoInCart": "Aussi dans votre panier",
-    "description": "Synopsis",
-    "flipBack": "Appuyez pour retourner"
+    "alsoInCart": "Aussi dans votre panier"
   },
   "common": {
     "loading": "Chargement...",
@@ -176,6 +174,7 @@
     "inStock": "en stock",
     "estimatedDelivery": "Livraison estimé pour 1-2 jours",
     "addToCart": "Ajouter au panier",
+    "descriptionTitle": "Description",
     "viewFullDescription": "Voir la description complète",
     "hideDescription": "Voir moins",
     "fullDescription": "Description complète",

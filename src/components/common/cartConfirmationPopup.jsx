@@ -1,14 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ShoppingCart, Check, X, Package, RotateCcw, BookOpen } from 'lucide-react';
+import { ShoppingCart, Check, X, Package, BookOpen } from 'lucide-react';
 import { getLanguageCode } from '../../data/booksData';
 import { useCart } from '../../contexts/CartContext';
 import { getBookCoverUrl } from '../../utils/imageUtils';
 import { playCartSound } from '../../utils/cartSound';
-
-/** Turn literal "\n" (from JSON) into real newlines so whitespace-pre-line works */
-const formatDesc = (text) => text ? text.replace(/\\n/g, '\n') : '';
 
 export default function CartConfirmationPopup({
     isOpen,
@@ -22,8 +19,6 @@ export default function CartConfirmationPopup({
     const [animateCheck, setAnimateCheck] = useState(false);
     const hasPlayedRef = useRef(false);
     const [hydratedPacks, setHydratedPacks] = useState([]);
-    const [showDescription, setShowDescription] = useState(false);
-
     // Load pack details when popup opens so we can show first book covers
     useEffect(() => {
         if (isOpen && packCartItems.length > 0) {
@@ -83,7 +78,6 @@ export default function CartConfirmationPopup({
         if (!isOpen) {
             hasPlayedRef.current = false;
             setAnimateCheck(false);
-            setShowDescription(false);
         }
     }, [isOpen]);
 
@@ -108,8 +102,8 @@ export default function CartConfirmationPopup({
 
     if (!isOpen) return null;
 
-    const handleToggleDescription = () => {
-        setShowDescription(prev => !prev);
+    const handleOpenDetails = () => {
+        window.open(`/books/${book.id}`, '_blank', 'noopener,noreferrer');
     };
 
     return (
@@ -158,41 +152,19 @@ export default function CartConfirmationPopup({
                     {/* Book Details Section — larger cover */}
                     <div className="px-3 xs:px-5 pt-4 xs:pt-5 pb-2 xs:pb-3">
                         <div className="flex gap-3 xs:gap-5">
-                            {/* Primary Book Cover — 3D flip card */}
-                            <div className="flex-shrink-0 cover-slide-in">
-                                <div
-                                    className={`book-flip-container w-28 h-[10.5rem] xs:w-36 xs:h-[13.5rem] cursor-pointer ${showDescription ? 'flipped' : ''}`}
-                                    onClick={book.description && !book.isPack ? handleToggleDescription : () => window.open(`/books/${book.id}`, '_blank', 'noopener,noreferrer')}
-                                >
-                                    <div className="book-flip-inner">
-                                        {/* Front — Cover image */}
-                                        <div className="book-flip-front">
-                                            <img
-                                                src={book.coverImage}
-                                                alt={book.title}
-                                                className="w-full h-full object-cover rounded-lg xs:rounded-xl shadow-lg"
-                                            />
-                                            {/* Synopsis hint badge */}
-                                            {book.description && !book.isPack && (
-                                                <div className="absolute bottom-1.5 right-1.5 xs:bottom-2 xs:right-2 w-6 h-6 xs:w-7 xs:h-7 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md ring-1 ring-black/5 synopsis-hint">
-                                                    <BookOpen className="w-3 h-3 xs:w-3.5 xs:h-3.5 text-[#00417a]" strokeWidth={2} />
-                                                </div>
-                                            )}
-                                        </div>
-                                        {/* Back — Description */}
-                                        <div className="book-flip-back rounded-lg xs:rounded-xl shadow-lg bg-[#00417a] p-3 xs:p-4 flex flex-col">
-                                            <div className="flex-1 overflow-y-auto scrollbar-thin-light">
-                                                <p className="text-white/90 text-[0.6rem] xs:text-xs leading-relaxed whitespace-pre-line font-['Poppins']">
-                                                    {formatDesc(book.description)}
-                                                </p>
-                                            </div>
-                                            <div className="flex items-center justify-center gap-1 mt-2 pt-2 border-t border-white/15">
-                                                <RotateCcw className="w-2.5 h-2.5 xs:w-3 xs:h-3 text-white/50" />
-                                                <span className="text-white/50 text-[0.55rem] xs:text-[0.65rem] font-medium font-['Poppins']">{t('cartPopup.flipBack')}</span>
-                                            </div>
-                                        </div>
+                            {/* Primary Book Cover — clickable */}
+                            <div className="flex-shrink-0 cover-slide-in relative cursor-pointer" onClick={handleOpenDetails}>
+                                <img
+                                    src={book.coverImage}
+                                    alt={book.title}
+                                    className="w-28 h-[10.5rem] xs:w-36 xs:h-[13.5rem] object-cover rounded-lg xs:rounded-xl shadow-lg"
+                                />
+                                {/* Synopsis badge */}
+                                {book.description && !book.isPack && (
+                                    <div className="absolute bottom-1.5 right-1.5 xs:bottom-2 xs:right-2 w-6 h-6 xs:w-7 xs:h-7 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md ring-1 ring-black/5 synopsis-hint">
+                                        <BookOpen className="w-3 h-3 xs:w-3.5 xs:h-3.5 text-[#00417a]" strokeWidth={2} />
                                     </div>
-                                </div>
+                                )}
                             </div>
 
                             {/* Book Info and Actions */}
@@ -202,7 +174,7 @@ export default function CartConfirmationPopup({
                                     <div className="flex-1 min-w-0">
                                         <h4
                                             className="font-semibold text-gray-900 text-sm xs:text-fluid-lg mb-0.5 xs:mb-1 line-clamp-2 cursor-pointer hover:text-[#00417a] transition-colors"
-                                            onClick={() => window.open(`/books/${book.id}`, '_blank', 'noopener,noreferrer')}
+                                            onClick={handleOpenDetails}
                                         >
                                             {book.title}
                                         </h4>
@@ -368,31 +340,6 @@ export default function CartConfirmationPopup({
                     animation: checkBadgePop 1s cubic-bezier(0.34, 1.56, 0.64, 1);
                 }
 
-                /* 3D Book Cover Flip */
-                .book-flip-container {
-                    perspective: 800px;
-                }
-                .book-flip-inner {
-                    position: relative;
-                    width: 100%;
-                    height: 100%;
-                    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
-                    transform-style: preserve-3d;
-                }
-                .book-flip-container.flipped .book-flip-inner {
-                    transform: rotateY(180deg);
-                }
-                .book-flip-front,
-                .book-flip-back {
-                    position: absolute;
-                    inset: 0;
-                    backface-visibility: hidden;
-                    -webkit-backface-visibility: hidden;
-                }
-                .book-flip-back {
-                    transform: rotateY(180deg);
-                }
-
                 /* Synopsis hint badge pulse */
                 @keyframes synopsisHint {
                     0%, 100% { opacity: 0.7; transform: scale(1); }
@@ -400,21 +347,6 @@ export default function CartConfirmationPopup({
                 }
                 .synopsis-hint {
                     animation: synopsisHint 2.5s ease-in-out 1.5s 2;
-                }
-
-                /* Light scrollbar for dark background */
-                .scrollbar-thin-light::-webkit-scrollbar {
-                    width: 3px;
-                }
-                .scrollbar-thin-light::-webkit-scrollbar-track {
-                    background: transparent;
-                }
-                .scrollbar-thin-light::-webkit-scrollbar-thumb {
-                    background: rgba(255,255,255,0.2);
-                    border-radius: 999px;
-                }
-                .scrollbar-thin-light::-webkit-scrollbar-thumb:hover {
-                    background: rgba(255,255,255,0.35);
                 }
 
                 /* Thumbnail stagger entrance */

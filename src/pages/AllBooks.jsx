@@ -315,11 +315,13 @@ export default function AllBooks() {
                     {/* Page Header */}
                     <div className="mt-fluid-lg mb-fluid-lg">
                         <h1 className="text-brand-blue text-fluid-h1 font-bold mb-fluid-xxs">
-                            {t('allBooks.pageTitle')}
+                            {pageTitle || t('allBooks.pageTitle')}
                         </h1>
-                        <p className="font-['Poppins'] font-[550] text-brand-blue text-fluid-small">
-                            {t('allBooks.pageSubtitle')}
-                        </p>
+                        {!pageTitle && (
+                            <p className="font-['Poppins'] font-[550] text-brand-blue text-fluid-small">
+                                {t('allBooks.pageSubtitle')}
+                            </p>
+                        )}
                     </div>
 
                     {/* Filters Section */}
@@ -332,13 +334,10 @@ export default function AllBooks() {
                         />
                     </div>
 
-                    {/* Results Header with Tabs */}
+                    {/* Tabs + Pagination */}
                     <div className="flex items-end justify-between flex-wrap gap-2 mb-fluid-md border-b border-gray-200">
-                        {/* Left: Title + Tabs */}
-                        <div className="flex items-end gap-fluid-sm">
-                            <h2 className="text-brand-blue text-fluid-h1to2 font-['poppins'] font-semibold pb-2.5">
-                                {pageTitle || t('allBooks.resultsTitle')}
-                            </h2>
+                        {/* Left: Tabs */}
+                        <div className="flex items-end">
                             <button
                                 onClick={() => setActiveTab('books')}
                                 className={`relative pb-2.5 px-3 text-fluid-small font-semibold font-['Poppins'] transition-colors duration-200 ${

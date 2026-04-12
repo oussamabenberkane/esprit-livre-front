@@ -1,38 +1,82 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ShoppingCart, Check, X } from 'lucide-react';
 import { getLanguageCode } from '../../data/booksData';
+import { useCart } from '../../contexts/CartContext';
+import { getBookCoverUrl, getBookPackCoverUrl } from '../../utils/imageUtils';
+import { playCartSound } from '../../utils/cartSound';
 
 export default function CartConfirmationPopup({
     isOpen,
     onClose,
     book,
-    packBooks = [] // Array of books if this is a pack
+    packBooks = []
 }) {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const { cartItems, packCartItems } = useCart();
+    const [animateCheck, setAnimateCheck] = useState(false);
+    const hasPlayedRef = useRef(false);
+
+    // Gather existing cart items (excluding the one just added)
+    const otherCartItems = React.useMemo(() => {
+        const items = [];
+        // Books
+        cartItems.forEach(item => {
+            if (item.bookId !== book?.id) {
+                items.push({
+                    id: item.bookId,
+                    type: 'book',
+                    coverImage: getBookCoverUrl(item.bookId),
+                });
+            }
+        });
+        // Packs
+        packCartItems.forEach(item => {
+            const isCurrentPack = book?.isPack && item.packId === book?.id;
+            if (!isCurrentPack) {
+                items.push({
+                    id: item.packId,
+                    type: 'pack',
+                    coverImage: getBookPackCoverUrl(item.packId),
+                });
+            }
+        });
+        return items;
+    }, [cartItems, packCartItems, book]);
+
+    // Play sound + trigger check animation when popup opens
+    useEffect(() => {
+        if (isOpen && !hasPlayedRef.current) {
+            hasPlayedRef.current = true;
+            // Small delay so the modal is visible before sound+animation
+            const timer = setTimeout(() => {
+                playCartSound();
+                setAnimateCheck(true);
+            }, 120);
+            return () => clearTimeout(timer);
+        }
+        if (!isOpen) {
+            hasPlayedRef.current = false;
+            setAnimateCheck(false);
+        }
+    }, [isOpen]);
 
     // Prevent body scroll when popup is open
     useEffect(() => {
         if (isOpen) {
-            // Save current scroll position
             const scrollY = window.scrollY;
-
-            // Prevent scrolling
             document.body.style.overflow = 'hidden';
             document.body.style.position = 'fixed';
             document.body.style.top = `-${scrollY}px`;
             document.body.style.width = '100%';
 
             return () => {
-                // Restore scrolling
                 document.body.style.overflow = '';
                 document.body.style.position = '';
                 document.body.style.top = '';
                 document.body.style.width = '';
-
-                // Restore scroll position
                 window.scrollTo(0, scrollY);
             };
         }
@@ -47,26 +91,29 @@ export default function CartConfirmationPopup({
 
     return (
         <>
-            {/* Backdrop with blur and blue-grey tint */}
+            {/* Backdrop */}
             <div
-                className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-40"
+                className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-40 animate-fade-in-backdrop"
                 onClick={onClose}
             />
 
             {/* Popup Container */}
             <div className="fixed inset-0 z-50 flex items-center justify-center p-2 xs:p-4" onClick={onClose}>
                 <div
-                    className="bg-white rounded-xl xs:rounded-2xl shadow-2xl w-full max-w-md animate-fade-in-scale"
+                    className="bg-white rounded-xl xs:rounded-2xl shadow-2xl w-full max-w-[28rem] xs:max-w-lg animate-fade-in-scale"
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Header Section */}
-                    <div className="relative px-3 xs:px-6 pt-3 xs:pt-4 pb-2 xs:pb-4 border-b border-gray-100">
+                    <div className="relative px-3 xs:px-5 pt-3 xs:pt-4 pb-2.5 xs:pb-3.5 border-b border-gray-100">
                         <div className="flex items-center gap-2 xs:gap-3">
-                            <div className="relative">
-                                <div className="w-8 h-8 xs:w-10 xs:h-10 bg-green-100 rounded-full flex items-center justify-center">
+                            {/* Animated cart icon */}
+                            <div className={`relative cart-icon-container ${animateCheck ? 'cart-icon-animate' : ''}`}>
+                                <div className="w-8 h-8 xs:w-10 xs:h-10 bg-green-50 rounded-full flex items-center justify-center">
                                     <ShoppingCart className="w-4 h-4 xs:w-5 xs:h-5 text-green-600" />
                                 </div>
-                                <div className="absolute -top-1 -right-1 w-4 h-4 xs:w-5 xs:h-5 bg-green-600 rounded-full flex items-center justify-center">
+                                <div className={`absolute -top-1 -right-1 w-4 h-4 xs:w-5 xs:h-5 rounded-full flex items-center justify-center ${animateCheck ? 'check-badge-pop' : ''}`}
+                                    style={{ background: '#16A34A' }}
+                                >
                                     <Check className="w-2.5 h-2.5 xs:w-3 xs:h-3 text-white" strokeWidth={3} />
                                 </div>
                             </div>
@@ -85,29 +132,29 @@ export default function CartConfirmationPopup({
                         </button>
                     </div>
 
-                    {/* Book Details Section */}
-                    <div className="px-3 xs:px-6 pt-4 xs:pt-6 pb-6 xs:pb-8">
-                        <div className="flex gap-3 xs:gap-4">
-                            {/* Book Cover */}
-                            <div className="flex-shrink-0">
+                    {/* Book Details Section — larger cover */}
+                    <div className="px-3 xs:px-5 pt-4 xs:pt-5 pb-2 xs:pb-3">
+                        <div className="flex gap-3 xs:gap-5">
+                            {/* Primary Book Cover — prominently sized */}
+                            <div className="flex-shrink-0 cover-slide-in">
                                 <img
                                     src={book.coverImage}
                                     alt={book.title}
-                                    className="w-24 h-36 xs:w-28 xs:h-44 object-cover rounded-md xs:rounded-lg shadow-md"
+                                    className="w-28 h-[10.5rem] xs:w-36 xs:h-[13.5rem] object-cover rounded-lg xs:rounded-xl shadow-lg"
                                 />
                             </div>
 
-                            {/* Book Info and Actions - Aligned to cover height */}
-                            <div className="flex-1 flex flex-col min-w-0 h-36 xs:h-44">
+                            {/* Book Info and Actions */}
+                            <div className="flex-1 flex flex-col min-w-0 h-[10.5rem] xs:h-[13.5rem]">
                                 {/* Top Section: Title, Author, Price */}
                                 <div className="flex gap-2">
                                     <div className="flex-1 min-w-0">
-                                        <h4 className="font-semibold text-gray-900 text-xs xs:text-fluid-lg mb-0.5 xs:mb-1 line-clamp-2">
+                                        <h4 className="font-semibold text-gray-900 text-sm xs:text-fluid-lg mb-0.5 xs:mb-1 line-clamp-2">
                                             {book.title}
                                         </h4>
                                         {!book.isPack ? (
                                             <>
-                                                <p className="text-gray-600 text-[0.65rem] xs:text-sm mb-1 xs:mb-2">
+                                                <p className="text-gray-600 text-[0.7rem] xs:text-sm mb-1.5 xs:mb-2">
                                                     {book.author}
                                                 </p>
                                                 <button
@@ -132,10 +179,10 @@ export default function CartConfirmationPopup({
                                             </>
                                         ) : (
                                             <>
-                                                <p className="text-gray-600 text-[0.65rem] xs:text-sm mb-1 xs:mb-2">
+                                                <p className="text-gray-600 text-[0.7rem] xs:text-sm mb-1 xs:mb-2">
                                                     {book.author}
                                                 </p>
-                                                {/* Book Titles Carousel - Only for packs */}
+                                                {/* Book Titles Carousel — Only for packs */}
                                                 {packBooks.length > 0 && (
                                                     <div className="mt-1 xs:mt-2">
                                                         <div className="flex gap-1 xs:gap-1.5 overflow-x-auto scrollbar-hide py-1 xs:py-1.5">
@@ -156,7 +203,7 @@ export default function CartConfirmationPopup({
 
                                     {/* Price */}
                                     <div className="flex-shrink-0 text-right">
-                                        <p className="font-bold text-gray-900 text-sm xs:text-fluid-lg">
+                                        <p className="font-bold text-gray-900 text-base xs:text-fluid-lg">
                                             {book.price}
                                         </p>
                                         <p className="text-gray-500 text-[0.6rem] xs:text-sm mb-0.5 xs:mb-1">
@@ -170,10 +217,10 @@ export default function CartConfirmationPopup({
                                     </div>
                                 </div>
 
-                                {/* Spacer to push buttons to bottom */}
+                                {/* Spacer */}
                                 <div className="flex-1"></div>
 
-                                {/* Action Buttons - Aligned to bottom of cover */}
+                                {/* Action Buttons */}
                                 <div className="flex flex-col gap-2 mt-2 xs:mt-3">
                                     <button
                                         onClick={() => {
@@ -195,25 +242,104 @@ export default function CartConfirmationPopup({
                             </div>
                         </div>
                     </div>
+
+                    {/* Existing cart items strip */}
+                    {otherCartItems.length > 0 && (
+                        <div className="px-3 xs:px-5 pb-4 xs:pb-5 pt-1 xs:pt-2">
+                            <div className="border-t border-gray-100 pt-3 xs:pt-4">
+                                <p className="text-[0.6rem] xs:text-xs text-gray-400 font-medium uppercase tracking-wider mb-2 xs:mb-2.5">
+                                    {t('cartPopup.alsoInCart')}
+                                </p>
+                                <div className="flex gap-2 xs:gap-2.5 overflow-x-auto scrollbar-hide pb-1">
+                                    {otherCartItems.map((item) => (
+                                        <div
+                                            key={`${item.type}-${item.id}`}
+                                            className="flex-shrink-0 cart-thumb-enter"
+                                        >
+                                            <img
+                                                src={item.coverImage}
+                                                alt=""
+                                                className="w-10 h-[3.75rem] xs:w-12 xs:h-[4.5rem] object-cover rounded-md shadow-sm ring-1 ring-gray-200/60"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Bottom padding when no other items */}
+                    {otherCartItems.length === 0 && (
+                        <div className="pb-3 xs:pb-4" />
+                    )}
                 </div>
             </div>
 
-            <style jsx>{`
-        @keyframes fadeInScale {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
+            <style>{`
+                @keyframes fadeInScale {
+                    from { opacity: 0; transform: scale(0.93) translateY(8px); }
+                    to { opacity: 1; transform: scale(1) translateY(0); }
+                }
+                @keyframes fadeInBackdrop {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                .animate-fade-in-scale {
+                    animation: fadeInScale 0.28s cubic-bezier(0.34, 1.4, 0.64, 1);
+                }
+                .animate-fade-in-backdrop {
+                    animation: fadeInBackdrop 0.2s ease-out;
+                }
 
-        .animate-fade-in-scale {
-          animation: fadeInScale 0.2s ease-out;
-        }
-      `}</style>
+                /* Cover image slides in from left */
+                @keyframes coverSlideIn {
+                    from { opacity: 0; transform: translateX(-12px) scale(0.96); }
+                    to { opacity: 1; transform: translateX(0) scale(1); }
+                }
+                .cover-slide-in {
+                    animation: coverSlideIn 0.35s cubic-bezier(0.34, 1.2, 0.64, 1) 0.08s both;
+                }
+
+                /* Cart icon bounce + glow when check appears */
+                @keyframes cartIconBounce {
+                    0% { transform: scale(1); }
+                    20% { transform: scale(1.18); }
+                    40% { transform: scale(0.94); }
+                    60% { transform: scale(1.06); }
+                    80% { transform: scale(0.98); }
+                    100% { transform: scale(1); }
+                }
+                .cart-icon-animate {
+                    animation: cartIconBounce 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+                }
+
+                /* Check badge pops in with overshoot */
+                @keyframes checkBadgePop {
+                    0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+                    50% { transform: scale(1.35) rotate(8deg); opacity: 1; }
+                    70% { transform: scale(0.9) rotate(-3deg); }
+                    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+                }
+                .check-badge-pop {
+                    animation: checkBadgePop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+                }
+
+                /* Thumbnail stagger entrance */
+                @keyframes thumbEnter {
+                    from { opacity: 0; transform: translateY(6px) scale(0.9); }
+                    to { opacity: 1; transform: translateY(0) scale(1); }
+                }
+                .cart-thumb-enter {
+                    animation: thumbEnter 0.3s ease-out both;
+                }
+                .cart-thumb-enter:nth-child(1) { animation-delay: 0.15s; }
+                .cart-thumb-enter:nth-child(2) { animation-delay: 0.22s; }
+                .cart-thumb-enter:nth-child(3) { animation-delay: 0.29s; }
+                .cart-thumb-enter:nth-child(4) { animation-delay: 0.36s; }
+                .cart-thumb-enter:nth-child(5) { animation-delay: 0.43s; }
+                .cart-thumb-enter:nth-child(6) { animation-delay: 0.50s; }
+                .cart-thumb-enter:nth-child(n+7) { animation-delay: 0.55s; }
+            `}</style>
         </>
     );
 }

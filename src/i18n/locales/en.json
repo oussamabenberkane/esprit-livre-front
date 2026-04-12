@@ -97,7 +97,8 @@
     "bookDetails": "Book details",
     "currency": "DZD",
     "viewCart": "Place My Order",
-    "keepShopping": "Keep Shopping"
+    "keepShopping": "Keep Shopping",
+    "alsoInCart": "Also in your cart"
   },
   "common": {
     "loading": "Loading...",

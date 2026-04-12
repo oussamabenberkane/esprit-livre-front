@@ -438,9 +438,9 @@ export default function FloatingCartBadge({ onGoToCart }) {
                     transition={{ type: 'spring', stiffness: 500, damping: 15, delay: 0.1 }}
                     className="absolute -top-1.5 -right-1.5 min-w-[18px] md:min-w-[20px] h-[18px] md:h-[20px] flex items-center justify-center rounded-full text-[10px] md:text-[11px] font-bold leading-none px-1"
                     style={{
-                      background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                      background: 'linear-gradient(135deg, #ee0027, #d00022)',
                       color: '#fff',
-                      boxShadow: '0 2px 8px rgba(245, 158, 11, 0.4)',
+                      boxShadow: '0 2px 8px rgba(238, 0, 39, 0.4)',
                     }}
                   >
                     {itemCount}
@@ -470,7 +470,7 @@ export default function FloatingCartBadge({ onGoToCart }) {
                 className="h-[2px] w-full"
                 style={{
                   background: justAdded
-                    ? 'linear-gradient(90deg, transparent, #f59e0b, #fbbf24, #f59e0b, transparent)'
+                    ? 'linear-gradient(90deg, transparent, #ee0027, #ff3350, #ee0027, transparent)'
                     : 'linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)',
                   transition: 'background 0.6s ease',
                 }}

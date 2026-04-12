@@ -316,46 +316,42 @@ export default function CartConfirmationPopup({
                     animation: fadeInBackdrop 0.2s ease-out;
                 }
 
-                /* Cover image slides in from left — 2s to match sound */
+                /* Cover image slides in from left — 1s to match sound */
                 @keyframes coverSlideIn {
-                    0% { opacity: 0; transform: translateX(-20px) scale(0.92); }
-                    25% { opacity: 1; transform: translateX(4px) scale(1.02); }
-                    50% { transform: translateX(-2px) scale(1); }
-                    75% { transform: translateX(1px) scale(1); }
+                    0% { opacity: 0; transform: translateX(-16px) scale(0.94); }
+                    30% { opacity: 1; transform: translateX(3px) scale(1.02); }
+                    60% { transform: translateX(-1px) scale(1); }
                     100% { transform: translateX(0) scale(1); }
                 }
                 .cover-slide-in {
-                    animation: coverSlideIn 2s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
+                    animation: coverSlideIn 1s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
                 }
 
-                /* Cart icon bounce — 2s with multiple pulses matching swoosh */
+                /* Cart icon bounce — 1s matching pop-swoosh */
                 @keyframes cartIconBounce {
                     0% { transform: scale(1); }
-                    8% { transform: scale(1.22); }
-                    16% { transform: scale(0.92); }
-                    24% { transform: scale(1.1); }
-                    35% { transform: scale(0.97); }
-                    50% { transform: scale(1.05); }
-                    65% { transform: scale(0.99); }
+                    12% { transform: scale(1.2); }
+                    28% { transform: scale(0.93); }
+                    44% { transform: scale(1.08); }
+                    62% { transform: scale(0.98); }
                     80% { transform: scale(1.02); }
                     100% { transform: scale(1); }
                 }
                 .cart-icon-animate {
-                    animation: cartIconBounce 2s cubic-bezier(0.34, 1.56, 0.64, 1);
+                    animation: cartIconBounce 1s cubic-bezier(0.34, 1.56, 0.64, 1);
                 }
 
-                /* Check badge pops in with overshoot — extended to 2s with settle */
+                /* Check badge pops in with overshoot — 1s */
                 @keyframes checkBadgePop {
-                    0% { transform: scale(0) rotate(-60deg); opacity: 0; }
-                    15% { transform: scale(1.5) rotate(12deg); opacity: 1; }
-                    25% { transform: scale(0.85) rotate(-5deg); }
-                    35% { transform: scale(1.15) rotate(3deg); }
-                    50% { transform: scale(0.95) rotate(-1deg); }
-                    70% { transform: scale(1.05) rotate(0deg); }
+                    0% { transform: scale(0) rotate(-50deg); opacity: 0; }
+                    20% { transform: scale(1.4) rotate(10deg); opacity: 1; }
+                    38% { transform: scale(0.88) rotate(-4deg); }
+                    55% { transform: scale(1.1) rotate(2deg); }
+                    75% { transform: scale(0.97) rotate(0deg); }
                     100% { transform: scale(1) rotate(0deg); opacity: 1; }
                 }
                 .check-badge-pop {
-                    animation: checkBadgePop 2s cubic-bezier(0.34, 1.56, 0.64, 1);
+                    animation: checkBadgePop 1s cubic-bezier(0.34, 1.56, 0.64, 1);
                 }
 
                 /* Thumbnail stagger entrance */

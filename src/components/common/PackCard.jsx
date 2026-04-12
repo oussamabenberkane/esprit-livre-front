@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ShoppingCart, Eye } from 'lucide-react';
 import PackBooksPopup from './PackBooksPopup';
@@ -16,7 +15,6 @@ const PackCard = ({
     onViewAllBooks
 }) => {
     const { t } = useTranslation();
-    const navigate = useNavigate();
     const [imageError, setImageError] = useState(false);
     const [showAllBooksPopup, setShowAllBooksPopup] = useState(false);
     const [showDescriptionModal, setShowDescriptionModal] = useState(false);
@@ -165,12 +163,6 @@ const PackCard = ({
     const savings = originalPrice - packPrice;
     const savingsPercentage = Math.round((savings / originalPrice) * 100);
 
-    // Handle book thumbnail click - navigate to book details
-    const handleBookClick = (bookId, e) => {
-        e.stopPropagation();
-        navigate(`/books/${bookId}`);
-    };
-
     // Handle Details button click
     const handleDetailsClick = (e) => {
         e.stopPropagation();
@@ -193,7 +185,7 @@ const PackCard = ({
                         <div
                             key={index}
                             className="relative overflow-hidden rounded-sm bg-gray-100 cursor-pointer w-full h-full"
-                            onClick={(e) => handleBookClick(book.id, e)}
+                            onClick={handleDetailsClick}
                         >
                             <img
                                 src={book.coverImage}

@@ -16,7 +16,7 @@ import BookDetailsSkeleton from '../components/common/skeletons/BookDetailsSkele
 import BookCardSkeleton from '../components/common/skeletons/BookCardSkeleton';
 import PackCardSkeleton from '../components/common/skeletons/PackCardSkeleton';
 import { BOOKS_DATA, getLanguageCode } from '../data/booksData';
-import { fetchBookById, fetchBookRecommendations, getBooksByIds } from '../services/books.service';
+import { fetchBookById, fetchBookRecommendations } from '../services/books.service';
 import { getRecommendedPacksForBook } from '../services/bookPackService';
 import { getBookCoverUrl, getBookPackCoverUrl } from '../utils/imageUtils';
 import useProgressiveRender from '../hooks/useProgressiveRender';
@@ -130,7 +130,6 @@ const BookDetails = () => {
     // Fetch pack recommendations for the current book
     useEffect(() => {
         const fetchPacks = async () => {
-            // Don't fetch if no book is loaded
             if (!book?.id) {
                 setRecommendedPacks([]);
                 setPacksLoading(false);
@@ -140,70 +139,32 @@ const BookDetails = () => {
             try {
                 setPacksLoading(true);
 
-                // Fetch recommended packs for the current book
                 const response = await getRecommendedPacksForBook(book.id, {
                     page: 0,
                     size: 8
                 });
                 const packsData = response.content || response;
 
-                // For each pack, fetch the full book details
-                const packsWithBooks = await Promise.all(
-                    packsData.map(async (pack) => {
-                        try {
-                            // Extract book IDs - handle both array of objects and array of IDs
-                            let bookIds = pack.books || [];
+                // Books are already included in the API response — no need to re-fetch
+                const packsWithBooks = packsData.map((pack) => {
+                    const books = (pack.books || []).map(b => ({
+                        id: b.id,
+                        title: b.title,
+                        author: b.author?.name || 'Unknown',
+                        price: parseFloat(b.price) || 0,
+                        coverImage: getBookCoverUrl(b.id)
+                    }));
 
-                            // If books is an array of objects with id property, extract just the IDs
-                            if (bookIds.length > 0 && typeof bookIds[0] === 'object') {
-                                bookIds = bookIds.map(book => book.id || book);
-                            }
+                    const originalPrice = books.reduce((sum, b) => sum + b.price, 0);
 
-                            // Skip fetching if no books in pack
-                            if (bookIds.length === 0) {
-                                return {
-                                    ...pack,
-                                    books: [],
-                                    originalPrice: parseFloat(pack.price) || 0,
-                                    packPrice: parseFloat(pack.price) || 0,
-                                    packImage: pack.coverImageUrl || null
-                                };
-                            }
-
-                            // Fetch full details for all books in the pack
-                            const booksDetails = await getBooksByIds(bookIds);
-
-                            // Calculate original price from individual book prices
-                            const originalPrice = booksDetails.reduce((sum, book) => {
-                                return sum + (parseFloat(book.price) || 0);
-                            }, 0);
-
-                            return {
-                                ...pack,
-                                books: booksDetails.map(book => ({
-                                    id: book.id,
-                                    title: book.title,
-                                    author: book.author?.name || 'Unknown',
-                                    price: parseFloat(book.price) || 0,
-                                    coverImage: getBookCoverUrl(book.id)
-                                })),
-                                originalPrice: originalPrice,
-                                packPrice: parseFloat(pack.price) || 0,
-                                packImage: pack.coverImageUrl || null
-                            };
-                        } catch (err) {
-                            console.error(`Error fetching books for pack ${pack.id}:`, err);
-                            // Return pack with minimal data if book fetching fails
-                            return {
-                                ...pack,
-                                books: [],
-                                originalPrice: parseFloat(pack.price) || 0,
-                                packPrice: parseFloat(pack.price) || 0,
-                                packImage: pack.coverImageUrl || null
-                            };
-                        }
-                    })
-                );
+                    return {
+                        ...pack,
+                        books,
+                        originalPrice,
+                        packPrice: parseFloat(pack.price) || 0,
+                        packImage: pack.coverUrl || pack.coverImageUrl || null
+                    };
+                });
 
                 setRecommendedPacks(packsWithBooks);
             } catch (err) {
@@ -215,7 +176,7 @@ const BookDetails = () => {
         };
 
         fetchPacks();
-    }, [book?.id]); // Re-fetch when the book ID changes
+    }, [book?.id]);
 
     // Scroll handlers
     const checkBooksScrollPosition = () => {

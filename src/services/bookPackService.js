@@ -125,12 +125,6 @@ export const getBookPackById = async (id) => {
  */
 export const getRecommendedPacksForBook = async (bookId, params = {}) => {
   try {
-    // TODO: Replace with actual recommendation endpoint when backend implements it
-    // Expected endpoint: GET /api/books/${bookId}/recommended-packs
-    // For now, falling back to getAllBookPacks
-
-    // When backend is ready, uncomment and use this:
-    /*
     const queryParams = new URLSearchParams();
     if (params.page !== undefined) queryParams.append('page', params.page);
     if (params.size !== undefined) queryParams.append('size', params.size);
@@ -147,12 +141,6 @@ export const getRecommendedPacksForBook = async (bookId, params = {}) => {
     }
 
     return await response.json();
-    */
-
-    // Temporary fallback - fetches all packs
-    // TODO: Implement book-specific pack recommendations endpoint on backend
-    console.log(`[INFO] Using fallback: fetching all packs for book ${bookId}`);
-    return await getAllBookPacks(params);
   } catch (error) {
     console.error('Error fetching recommended packs:', error);
     throw error;

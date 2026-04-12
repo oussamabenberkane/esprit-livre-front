@@ -229,40 +229,32 @@ export const fetchBookById = async (id) => {
 };
 
 /**
- * Fetch recommended books for a specific book
+ * Fetch similar books for a specific book (scored by tags, author, co-occurrence, trending)
  * @param {number} id - The book ID
- * @param {number} page - Page number (default 0)
- * @param {number} size - Number of recommendations (default 5)
- * @returns {Promise<Array>} Array of recommended books
+ * @param {number} size - Number of recommendations (default 10)
+ * @returns {Promise<Array>} Array of similar books
  */
-export const fetchBookRecommendations = async (id, page = 0, size = 5) => {
+export const fetchBookRecommendations = async (id, page = 0, size = 10) => {
   try {
-    const params = new URLSearchParams({
-      page: page.toString(),
-      size: size.toString()
-    });
-
-    const response = await fetch(`${API_BASE_URL}/api/books/${id}/recommendations?${params.toString()}`, {
+    const response = await fetch(`${API_BASE_URL}/api/books/${id}/similar?size=${size}`, {
       method: 'GET',
       headers: getDefaultHeaders(),
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch book recommendations: ${response.statusText}`);
+      throw new Error(`Failed to fetch similar books: ${response.statusText}`);
     }
 
     const data = await response.json();
 
-    // Return the recommendations array
     if (Array.isArray(data)) {
       return data;
     }
 
-    // Handle unexpected response format
-    console.warn('Unexpected response format from recommendations API:', data);
+    console.warn('Unexpected response format from similar books API:', data);
     return [];
   } catch (error) {
-    console.error(`Error fetching recommendations for book ${id}:`, error);
+    console.error(`Error fetching similar books for book ${id}:`, error);
     throw error;
   }
 };

@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ShoppingCart, Check, X } from 'lucide-react';
+import { ShoppingCart, Check, X, Package } from 'lucide-react';
 import { getLanguageCode } from '../../data/booksData';
 import { useCart } from '../../contexts/CartContext';
-import { getBookCoverUrl, getBookPackCoverUrl } from '../../utils/imageUtils';
+import { getBookCoverUrl } from '../../utils/imageUtils';
 import { playCartSound } from '../../utils/cartSound';
 
 export default function CartConfirmationPopup({
@@ -15,9 +15,25 @@ export default function CartConfirmationPopup({
 }) {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { cartItems, packCartItems } = useCart();
+    const { cartItems, packCartItems, cartPacks, loadCartPacks } = useCart();
     const [animateCheck, setAnimateCheck] = useState(false);
     const hasPlayedRef = useRef(false);
+    const [hydratedPacks, setHydratedPacks] = useState([]);
+
+    // Load pack details when popup opens so we can show first book covers
+    useEffect(() => {
+        if (isOpen && packCartItems.length > 0) {
+            // If cartPacks are already loaded, use them
+            if (cartPacks && cartPacks.length > 0) {
+                setHydratedPacks(cartPacks);
+            } else {
+                // Load them
+                loadCartPacks().then(packs => {
+                    if (packs) setHydratedPacks(packs);
+                });
+            }
+        }
+    }, [isOpen, packCartItems, cartPacks, loadCartPacks]);
 
     // Gather existing cart items (excluding the one just added)
     const otherCartItems = React.useMemo(() => {
@@ -32,25 +48,28 @@ export default function CartConfirmationPopup({
                 });
             }
         });
-        // Packs
+        // Packs — use first book's cover from hydrated data
         packCartItems.forEach(item => {
             const isCurrentPack = book?.isPack && item.packId === book?.id;
             if (!isCurrentPack) {
-                items.push({
-                    id: item.packId,
-                    type: 'pack',
-                    coverImage: getBookPackCoverUrl(item.packId),
-                });
+                const hydratedPack = hydratedPacks.find(p => p.id === item.packId);
+                const firstBook = hydratedPack?.books?.[0];
+                if (firstBook) {
+                    items.push({
+                        id: item.packId,
+                        type: 'pack',
+                        coverImage: firstBook.coverImage || getBookCoverUrl(firstBook.id),
+                    });
+                }
             }
         });
         return items;
-    }, [cartItems, packCartItems, book]);
+    }, [cartItems, packCartItems, book, hydratedPacks]);
 
     // Play sound + trigger check animation when popup opens
     useEffect(() => {
         if (isOpen && !hasPlayedRef.current) {
             hasPlayedRef.current = true;
-            // Small delay so the modal is visible before sound+animation
             const timer = setTimeout(() => {
                 playCartSound();
                 setAnimateCheck(true);
@@ -246,21 +265,27 @@ export default function CartConfirmationPopup({
                     {/* Existing cart items strip */}
                     {otherCartItems.length > 0 && (
                         <div className="px-3 xs:px-5 pb-4 xs:pb-5 pt-1 xs:pt-2">
-                            <div className="border-t border-gray-100 pt-3 xs:pt-4">
-                                <p className="text-[0.6rem] xs:text-xs text-gray-400 font-medium uppercase tracking-wider mb-2 xs:mb-2.5">
+                            <div className="border-t border-blue-100 pt-3 xs:pt-4 -mx-3 xs:-mx-5 px-3 xs:px-5 pb-1 bg-blue-50/50 rounded-b-xl xs:rounded-b-2xl">
+                                <p className="text-[0.6rem] xs:text-xs text-[#00417a]/50 font-medium uppercase tracking-wider mb-2 xs:mb-2.5">
                                     {t('cartPopup.alsoInCart')}
                                 </p>
                                 <div className="flex gap-2 xs:gap-2.5 overflow-x-auto scrollbar-hide pb-1">
                                     {otherCartItems.map((item) => (
                                         <div
                                             key={`${item.type}-${item.id}`}
-                                            className="flex-shrink-0 cart-thumb-enter"
+                                            className="flex-shrink-0 cart-thumb-enter relative"
                                         >
                                             <img
                                                 src={item.coverImage}
                                                 alt=""
                                                 className="w-10 h-[3.75rem] xs:w-12 xs:h-[4.5rem] object-cover rounded-md shadow-sm ring-1 ring-gray-200/60"
                                             />
+                                            {/* Pack indicator badge */}
+                                            {item.type === 'pack' && (
+                                                <div className="absolute -bottom-1 -right-1 w-4 h-4 xs:w-[1.15rem] xs:h-[1.15rem] bg-[#00417a] rounded-full flex items-center justify-center shadow-sm ring-1.5 ring-white">
+                                                    <Package className="w-2.5 h-2.5 xs:w-3 xs:h-3 text-white" strokeWidth={2.5} />
+                                                </div>
+                                            )}
                                         </div>
                                     ))}
                                 </div>
@@ -291,37 +316,46 @@ export default function CartConfirmationPopup({
                     animation: fadeInBackdrop 0.2s ease-out;
                 }
 
-                /* Cover image slides in from left */
+                /* Cover image slides in from left — 2s to match sound */
                 @keyframes coverSlideIn {
-                    from { opacity: 0; transform: translateX(-12px) scale(0.96); }
-                    to { opacity: 1; transform: translateX(0) scale(1); }
+                    0% { opacity: 0; transform: translateX(-20px) scale(0.92); }
+                    25% { opacity: 1; transform: translateX(4px) scale(1.02); }
+                    50% { transform: translateX(-2px) scale(1); }
+                    75% { transform: translateX(1px) scale(1); }
+                    100% { transform: translateX(0) scale(1); }
                 }
                 .cover-slide-in {
-                    animation: coverSlideIn 0.35s cubic-bezier(0.34, 1.2, 0.64, 1) 0.08s both;
+                    animation: coverSlideIn 2s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
                 }
 
-                /* Cart icon bounce + glow when check appears */
+                /* Cart icon bounce — 2s with multiple pulses matching swoosh */
                 @keyframes cartIconBounce {
                     0% { transform: scale(1); }
-                    20% { transform: scale(1.18); }
-                    40% { transform: scale(0.94); }
-                    60% { transform: scale(1.06); }
-                    80% { transform: scale(0.98); }
+                    8% { transform: scale(1.22); }
+                    16% { transform: scale(0.92); }
+                    24% { transform: scale(1.1); }
+                    35% { transform: scale(0.97); }
+                    50% { transform: scale(1.05); }
+                    65% { transform: scale(0.99); }
+                    80% { transform: scale(1.02); }
                     100% { transform: scale(1); }
                 }
                 .cart-icon-animate {
-                    animation: cartIconBounce 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+                    animation: cartIconBounce 2s cubic-bezier(0.34, 1.56, 0.64, 1);
                 }
 
-                /* Check badge pops in with overshoot */
+                /* Check badge pops in with overshoot — extended to 2s with settle */
                 @keyframes checkBadgePop {
-                    0% { transform: scale(0) rotate(-45deg); opacity: 0; }
-                    50% { transform: scale(1.35) rotate(8deg); opacity: 1; }
-                    70% { transform: scale(0.9) rotate(-3deg); }
+                    0% { transform: scale(0) rotate(-60deg); opacity: 0; }
+                    15% { transform: scale(1.5) rotate(12deg); opacity: 1; }
+                    25% { transform: scale(0.85) rotate(-5deg); }
+                    35% { transform: scale(1.15) rotate(3deg); }
+                    50% { transform: scale(0.95) rotate(-1deg); }
+                    70% { transform: scale(1.05) rotate(0deg); }
                     100% { transform: scale(1) rotate(0deg); opacity: 1; }
                 }
                 .check-badge-pop {
-                    animation: checkBadgePop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+                    animation: checkBadgePop 2s cubic-bezier(0.34, 1.56, 0.64, 1);
                 }
 
                 /* Thumbnail stagger entrance */

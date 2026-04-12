@@ -53,7 +53,10 @@ const SignInButton = ({ onClick, className = "", highlight = false }) => {
 const Logo = ({ onClick }) => (
     <button onClick={onClick} className="text-left group">
         <div className="flex items-center gap-[6px] min-[360px]:gap-2 md:gap-2.5">
-            <span className="text-white font-semibold leading-none text-base min-[360px]:text-lg md:text-xl tracking-[0.08em] uppercase">
+            <span
+                className="text-white font-semibold italic leading-none text-base min-[360px]:text-lg md:text-xl tracking-wide"
+                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+            >
                 Esprit
             </span>
             <span

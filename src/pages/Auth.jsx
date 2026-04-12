@@ -71,7 +71,10 @@ export default function Auth() {
               </svg>
             </div>
             <div className="flex items-center justify-center gap-2.5 mb-2">
-                <span className="text-gray-900 font-semibold text-3xl leading-none tracking-[0.08em] uppercase">
+                <span
+                    className="text-gray-900 font-semibold italic text-3xl leading-none tracking-wide"
+                    style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                >
                     Esprit
                 </span>
                 <span className="w-px h-8 bg-[#d4a84b] opacity-70" aria-hidden="true" />

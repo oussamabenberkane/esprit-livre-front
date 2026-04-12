@@ -90,16 +90,16 @@ const LogoFull = ({ onClick }) => (
     <button onClick={onClick} className="text-left logo-btn">
         <div className="flex items-center gap-2 logo-full">
             <span
-                className="leading-none text-[22px] logo-word-left"
+                className="leading-none text-[27px] logo-word-left"
                 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, color: '#F0F4F8' }}
             >
                 Esprit
             </span>
             <span className="flex items-center" style={{ color: '#A8C4D9' }}>
-                <BookIcon size={20} />
+                <BookIcon size={24} />
             </span>
             <span
-                className="leading-none text-[22px] logo-word-right"
+                className="leading-none text-[27px] logo-word-right"
                 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, color: '#F0F4F8' }}
             >
                 Livre

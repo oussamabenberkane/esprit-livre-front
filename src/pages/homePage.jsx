@@ -764,7 +764,7 @@ const HomePage = () => {
                         className="shadow-lg"
                         currentSlide={currentSlide}
                         onSlideChange={setCurrentSlide}
-                        autoScrollMs={12000}
+                        autoScrollMs={6000}
                         backdrop={
                             <MarqueeBackdrop
                                 covers={heroCovers}

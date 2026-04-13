@@ -43,6 +43,11 @@ export const getAllBookPacks = async (params = {}) => {
       queryParams.append('categoryId', params.categoryId.toString());
     }
 
+    // Add mainDisplayId filter
+    if (params.mainDisplayId !== undefined) {
+      queryParams.append('mainDisplayId', params.mainDisplayId.toString());
+    }
+
     // Add author filter(s) - support both single value and array
     if (params.author) {
       if (Array.isArray(params.author)) {

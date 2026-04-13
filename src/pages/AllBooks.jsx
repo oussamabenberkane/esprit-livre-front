@@ -15,7 +15,7 @@ import { fetchTopAuthors } from "../services/authors.service"
 import { useState, useEffect } from "react"
 import { useSearchParams, useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
-import { getBookCoverUrl, getBookPackCoverUrl } from '../utils/imageUtils'
+import { getBookCoverUrl } from '../utils/imageUtils'
 import useProgressiveRender from '../hooks/useProgressiveRender'
 import { useCart } from '../contexts/CartContext'
 import { useFilterPersistence, hasActiveFilters } from '../hooks/useFilterPersistence'
@@ -201,7 +201,7 @@ export default function AllBooks() {
                         books,
                         originalPrice,
                         packPrice: parseFloat(pack.price) || 0,
-                        packImage: getBookPackCoverUrl(pack.id) || null
+                        packImage: null
                     }
                 })
                 setPacks(processedPacks)

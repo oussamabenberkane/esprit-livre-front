@@ -13,18 +13,6 @@ export const getBookCoverUrl = (bookId) => {
 };
 
 /**
- * Get the full URL for a book pack cover image
- * @param {number|string} packId - The book pack ID
- * @returns {string} The full URL to the book pack cover image
- */
-export const getBookPackCoverUrl = (packId) => {
-  if (!packId) {
-    return null;
-  }
-  return `${API_BASE_URL}/api/book-packs/${packId}/cover`;
-};
-
-/**
  * Get the full URL for an author picture
  * @param {number|string} authorId - The author ID
  * @returns {string} The full URL to the author picture

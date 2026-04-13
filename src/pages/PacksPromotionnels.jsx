@@ -13,7 +13,7 @@ import { getAllBookPacks } from '../services/bookPackService';
 import { getBooksByIds } from '../services/books.service';
 import { fetchCategories } from '../services/tags.service';
 import { fetchTopAuthors } from '../services/authors.service';
-import { getBookCoverUrl, getBookPackCoverUrl } from '../utils/imageUtils';
+import { getBookCoverUrl } from '../utils/imageUtils';
 import useProgressiveRender from '../hooks/useProgressiveRender';
 import { useCart } from '../contexts/CartContext';
 import { useFilterPersistence, hasActiveFilters } from '../hooks/useFilterPersistence';
@@ -158,7 +158,7 @@ const PacksPromotionnels = () => {
                         books: books,
                         originalPrice: originalPrice,
                         packPrice: parseFloat(pack.price) || 0,
-                        packImage: getBookPackCoverUrl(pack.id) || null
+                        packImage: null
                     };
                 });
 

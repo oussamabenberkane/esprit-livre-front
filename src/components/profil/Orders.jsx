@@ -9,7 +9,7 @@ import Footer from '../common/Footer';
 import { getLanguageCode, getFullLanguageName } from '../../data/booksData';
 import { getUserOrders } from '../../services/order.service';
 import { isAuthenticated } from '../../services/authService';
-import { getBookCoverUrl, getBookPackCoverUrl } from '../../utils/imageUtils';
+import { getBookCoverUrl } from '../../utils/imageUtils';
 
 /**
  * Format date for display
@@ -49,7 +49,7 @@ const transformOrder = (apiOrder, locale = 'fr-FR') => {
       if (isPack) {
         // For packs, use the first book's cover (bookId is the first book's ID from the backend)
         // Or use the pack cover utility if available
-        imageUrl = item.bookId ? getBookCoverUrl(item.bookId) : getBookPackCoverUrl(item.bookPackId);
+        imageUrl = item.bookId ? getBookCoverUrl(item.bookId) : null;
       } else if (isBook) {
         imageUrl = getBookCoverUrl(item.bookId);
       } else {

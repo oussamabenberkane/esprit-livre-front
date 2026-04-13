@@ -288,12 +288,12 @@ export const packCartStorage = {
     },
 
     /**
-     * Get total number of pack items in cart (count as 1 item each)
+     * Get total number of pack items in cart (count as 1 item each regardless of quantity)
      * @returns {number}
      */
     getItemCount: () => {
         const cart = packCartStorage.get();
-        return cart.reduce((total, item) => total + item.quantity, 0);
+        return cart.length;
     },
 
     /**

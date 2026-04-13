@@ -6,6 +6,7 @@ import { CheckCircle, X } from 'lucide-react';
 import Navbar from '../components/common/Navbar';
 import CategoryCard from '../components/home/CategoryCard';
 import BookCard from '../components/common/BookCard';
+import PackCardCompact from '../components/common/PackCardCompact';
 import AuthorComponent from '../components/home/author';
 import HeroCarousel from '../components/home/HeroSection';
 import PackOfferSlide from '../components/home/banners/PackOfferSlide';
@@ -33,18 +34,45 @@ import { getUserProfile } from '../services/user.service';
 
 
 // MainDisplayCarousel component for rendering individual carousels
-const MainDisplayCarousel = ({ display, onAddToCart, onToggleFavorite, updateScrollState, t, i18n }) => {
+const MainDisplayCarousel = ({ display, onAddToCart, onAddPackToCart, onToggleFavorite, updateScrollState, t, i18n }) => {
     const scrollRef = useRef(null);
 
-    // Progressive rendering for books - show them one at a time
+    // Build interleaved items: books with packs mixed in
+    const allBooks = display.books || [];
+    const allPacks = display.packs || [];
+
+    // Interleave packs among books — insert a pack every ~3 books
+    const interleavedItems = React.useMemo(() => {
+        if (allPacks.length === 0) return allBooks.map(b => ({ ...b, _type: 'book' }));
+
+        const items = [];
+        const interval = allPacks.length > 0 ? Math.max(2, Math.floor(allBooks.length / (allPacks.length + 1))) : Infinity;
+        let packIndex = 0;
+
+        for (let i = 0; i < allBooks.length; i++) {
+            items.push({ ...allBooks[i], _type: 'book' });
+            if (packIndex < allPacks.length && (i + 1) % interval === 0) {
+                items.push({ ...allPacks[packIndex], _type: 'pack' });
+                packIndex++;
+            }
+        }
+        // Append remaining packs at the end
+        while (packIndex < allPacks.length) {
+            items.push({ ...allPacks[packIndex], _type: 'pack' });
+            packIndex++;
+        }
+        return items;
+    }, [allBooks, allPacks]);
+
+    // Progressive rendering for all items
     const { visibleItems: visibleBooks, isRendering } = useProgressiveRender(
-        display.books || [],
+        interleavedItems,
         display.isLoading || false,
-        80 // 80ms delay between each book appearing
+        80
     );
 
-    // Calculate total items to show (visible books + remaining skeletons)
-    const totalItems = display.isLoading ? 10 : display.books.length;
+    // Calculate total items to show
+    const totalItems = display.isLoading ? 10 : interleavedItems.length;
     const skeletonCount = display.isLoading ? 10 : Math.max(0, totalItems - visibleBooks.length);
 
     const checkScrollPosition = () => {
@@ -101,7 +129,7 @@ const MainDisplayCarousel = ({ display, onAddToCart, onToggleFavorite, updateScr
     }, [visibleBooks.length]);
 
     // Don't render the section at all if there's no data and not loading
-    if (!display.isLoading && display.books.length === 0) return null;
+    if (!display.isLoading && interleavedItems.length === 0) return null;
 
     return (
         <section className="w-full section-spacing">
@@ -126,10 +154,28 @@ const MainDisplayCarousel = ({ display, onAddToCart, onToggleFavorite, updateScr
                         ref={scrollRef}
                         className="flex pt-fluid-xs pr-fluid-lg pl-fluid-2xl gap-fluid-md overflow-x-auto scrollbar-hide pb-4"
                     >
-                        {/* Render visible books */}
-                        {visibleBooks.map((book) => {
-                            // Extract first ETIQUETTE tag for badge
-                            const etiquetteTag = book.tags?.find(tag => tag.type === "ETIQUETTE");
+                        {/* Render visible items (books and packs interleaved) */}
+                        {visibleBooks.map((item) => {
+                            if (item._type === 'pack') {
+                                return (
+                                    <div
+                                        key={`pack-${item.id}`}
+                                        className="flex-shrink-0 snap-start book-card-width"
+                                    >
+                                        <PackCardCompact
+                                            id={item.id}
+                                            title={item.title}
+                                            originalPrice={item.originalPrice}
+                                            packPrice={item.packPrice}
+                                            books={item.books || []}
+                                            onAddToCart={onAddPackToCart}
+                                        />
+                                    </div>
+                                );
+                            }
+
+                            // Book card
+                            const etiquetteTag = item.tags?.find(tag => tag.type === "ETIQUETTE");
                             const badge = etiquetteTag ? {
                                 type: etiquetteTag.nameEn?.toLowerCase(),
                                 nameFr: etiquetteTag.nameFr,
@@ -137,30 +183,29 @@ const MainDisplayCarousel = ({ display, onAddToCart, onToggleFavorite, updateScr
                                 colorHex: etiquetteTag.colorHex
                             } : null;
 
-                            // Derive stock status from stockQuantity
                             const stockStatus = {
-                                available: book.stockQuantity > 0,
-                                text: book.stockQuantity > 0 ? t('bookCard.stockStatus.inStock') : t('bookCard.stockStatus.outOfStock')
+                                available: item.stockQuantity > 0,
+                                text: item.stockQuantity > 0 ? t('bookCard.stockStatus.inStock') : t('bookCard.stockStatus.outOfStock')
                             };
 
                             return (
                                 <div
-                                    key={book.id}
+                                    key={`book-${item.id}`}
                                     className="flex-shrink-0 snap-start book-card-width"
                                 >
                                     <BookCard
-                                        id={book.id}
-                                        title={book.title}
-                                        author={book.author?.name || 'Unknown Author'}
-                                        price={book.price}
-                                        coverImage={getBookCoverUrl(book.id)}
+                                        id={item.id}
+                                        title={item.title}
+                                        author={item.author?.name || 'Unknown Author'}
+                                        price={item.price}
+                                        coverImage={getBookCoverUrl(item.id)}
                                         badge={badge}
                                         stockStatus={stockStatus}
-                                        language={book.language}
-                                        stock={book.stockQuantity}
+                                        language={item.language}
+                                        stock={item.stockQuantity}
                                         onAddToCart={onAddToCart}
                                         onToggleFavorite={onToggleFavorite}
-                                        isFavorited={book.isLikedByCurrentUser}
+                                        isFavorited={item.isLikedByCurrentUser}
                                     />
                                 </div>
                             );
@@ -232,7 +277,7 @@ const HomePage = () => {
     const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
-    const { addToCart } = useCart();
+    const { addToCart, addPackToCart } = useCart();
 
     // Authenticated user state
     const [userName, setUserName] = useState('');
@@ -570,6 +615,30 @@ const HomePage = () => {
         }
     };
 
+    const handleAddPackToCart = async (packId) => {
+        await addPackToCart(packId, 1);
+
+        let foundPack = null;
+        for (const display of mainDisplays) {
+            foundPack = (display.packs || []).find(p => p.id === packId);
+            if (foundPack) break;
+        }
+
+        if (foundPack) {
+            const packAsBook = {
+                id: foundPack.id,
+                title: foundPack.title,
+                author: `${foundPack.books.length} livres`,
+                price: foundPack.packPrice,
+                coverImage: foundPack.books[0]?.coverImage || getBookCoverUrl(foundPack.books[0]?.id),
+                isPack: true,
+                books: foundPack.books,
+            };
+            setSelectedBook(packAsBook);
+            setShowCartPopup(true);
+        }
+    };
+
     const handleClosePopup = () => {
         setShowCartPopup(false);
     };
@@ -620,28 +689,48 @@ const HomePage = () => {
                 setMainDisplays(initialDisplays);
                 setMainDisplaysLoading(false);
 
-                // Fetch books for each main display sequentially to simulate real-time loading
+                // Fetch books and packs for each main display sequentially
                 for (const display of displays) {
                     try {
-                        const books = await fetchBooksByMainDisplay(display.id, 0, 10);
+                        const [books, packsResponse] = await Promise.all([
+                            fetchBooksByMainDisplay(display.id, 0, 10),
+                            getAllBookPacks({ mainDisplayId: display.id, page: 0, size: 10 }),
+                        ]);
+
+                        const rawPacks = packsResponse?.content || packsResponse || [];
+                        const packs = rawPacks.map(pack => ({
+                            ...pack,
+                            _type: 'pack',
+                            originalPrice: (pack.books || []).reduce((sum, b) => sum + (parseFloat(b.price) || 0), 0),
+                            packPrice: parseFloat(pack.price) || 0,
+                            books: (pack.books || []).map(b => ({
+                                ...b,
+                                coverImage: getBookCoverUrl(b.id),
+                            })),
+                        }));
+
+                        const allItems = books || [];
+                        const totalCount = allItems.length + packs.length;
+
                         setMainDisplays(prevDisplays =>
                             prevDisplays.map(d =>
                                 d.id === display.id
                                     ? {
                                         ...d,
-                                        books: books || [],
+                                        books: allItems,
+                                        packs: packs,
                                         isLoading: false,
-                                        canScrollRight: (books || []).length > 0
+                                        canScrollRight: totalCount > 0
                                     }
                                     : d
                             )
                         );
                     } catch (error) {
-                        console.error(`Failed to load books for display ${display.id}:`, error);
+                        console.error(`Failed to load items for display ${display.id}:`, error);
                         setMainDisplays(prevDisplays =>
                             prevDisplays.map(d =>
                                 d.id === display.id
-                                    ? { ...d, books: [], isLoading: false }
+                                    ? { ...d, books: [], packs: [], isLoading: false }
                                     : d
                             )
                         );
@@ -961,6 +1050,7 @@ const HomePage = () => {
                             key={display.id}
                             display={display}
                             onAddToCart={handleAddToCart}
+                            onAddPackToCart={handleAddPackToCart}
                             onToggleFavorite={handleToggleFavorite}
                             updateScrollState={updateMainDisplayScrollState}
                             t={t}

@@ -1,9 +1,10 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ShoppingCart, Check, X, Package, BookOpen } from 'lucide-react';
 import { getLanguageCode } from '../../data/booksData';
 import { useCart } from '../../contexts/CartContext';
+import { packCartStorage } from '../../services/cart.service';
 import { getBookCoverUrl } from '../../utils/imageUtils';
 import { playCartSound } from '../../utils/cartSound';
 
@@ -11,59 +12,82 @@ export default function CartConfirmationPopup({
     isOpen,
     onClose,
     book,
-    packBooks = []
+    packBooks = [],
 }) {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { cartItems, packCartItems, cartPacks, loadCartPacks } = useCart();
+    const { cartItems, loadCartPacks } = useCart();
     const [animateCheck, setAnimateCheck] = useState(false);
     const hasPlayedRef = useRef(false);
-    const [hydratedPacks, setHydratedPacks] = useState([]);
-    // Load pack details when popup opens so we can show first book covers
+    const [otherCartItems, setOtherCartItems] = useState([]);
+
+    // Snapshot cart state when popup opens — frozen for the lifetime of this open session.
+    // Using a ref to detect the open transition so we only re-snapshot on each new open,
+    // not on every cartItems change (which would show the just-added item in the strip).
+    const wasOpenRef = useRef(false);
     useEffect(() => {
-        if (isOpen && packCartItems.length > 0) {
-            // If cartPacks are already loaded, use them
-            if (cartPacks && cartPacks.length > 0) {
-                setHydratedPacks(cartPacks);
-            } else {
-                // Load them
-                loadCartPacks().then(packs => {
-                    if (packs) setHydratedPacks(packs);
+        if (isOpen && !wasOpenRef.current) {
+            wasOpenRef.current = true;
+
+            // Capture book/cartItems values sync, before any async gap.
+            const currentBook = book;
+            const currentCartItems = cartItems;
+
+            // Read pack items directly from localStorage — this is the only source
+            // immune to React state/context timing. By now addPackToCart has already
+            // written to localStorage, so we filter out the just-added pack using
+            // string comparison (avoids Number(undefined)=NaN silently passing the filter).
+            const justAddedPackId = currentBook?.isPack ? String(currentBook.id) : null;
+            const rawPackItems = packCartStorage.get();
+            const currentPackCartItems = justAddedPackId !== null
+                ? rawPackItems.filter(item => String(item.packId) !== justAddedPackId)
+                : rawPackItems;
+
+            const buildSnapshot = (packsData) => {
+                const items = [];
+
+                // Books already in cart (excluding the one just added)
+                const justAddedBookId = !currentBook?.isPack ? Number(currentBook?.id) : null;
+                currentCartItems.forEach(item => {
+                    if (Number(item.bookId) !== justAddedBookId) {
+                        items.push({
+                            id: item.bookId,
+                            type: 'book',
+                            coverImage: getBookCoverUrl(item.bookId),
+                        });
+                    }
                 });
+
+                // Packs already in cart, excluding the one just added
+                currentPackCartItems.forEach(({ packId }) => {
+                    const hydratedPack = packsData.find(p => String(p.id) === String(packId));
+                    const firstBook = hydratedPack?.books?.[0];
+                    if (firstBook) {
+                        items.push({
+                            id: Number(packId),
+                            type: 'pack',
+                            coverImage: firstBook.coverImage || getBookCoverUrl(firstBook.id),
+                        });
+                    }
+                });
+
+                setOtherCartItems(items);
+            };
+
+            if (currentPackCartItems.length > 0) {
+                loadCartPacks().then(packs => {
+                    buildSnapshot(packs || []);
+                });
+            } else {
+                buildSnapshot([]);
             }
         }
-    }, [isOpen, packCartItems, cartPacks, loadCartPacks]);
 
-    // Gather existing cart items (excluding the one just added)
-    const otherCartItems = React.useMemo(() => {
-        const items = [];
-        // Books
-        cartItems.forEach(item => {
-            if (item.bookId !== book?.id) {
-                items.push({
-                    id: item.bookId,
-                    type: 'book',
-                    coverImage: getBookCoverUrl(item.bookId),
-                });
-            }
-        });
-        // Packs — use first book's cover from hydrated data
-        packCartItems.forEach(item => {
-            const isCurrentPack = book?.isPack && item.packId === book?.id;
-            if (!isCurrentPack) {
-                const hydratedPack = hydratedPacks.find(p => p.id === item.packId);
-                const firstBook = hydratedPack?.books?.[0];
-                if (firstBook) {
-                    items.push({
-                        id: item.packId,
-                        type: 'pack',
-                        coverImage: firstBook.coverImage || getBookCoverUrl(firstBook.id),
-                    });
-                }
-            }
-        });
-        return items;
-    }, [cartItems, packCartItems, book, hydratedPacks]);
+        if (!isOpen) {
+            wasOpenRef.current = false;
+            setOtherCartItems([]); // Reset on close so the strip never shows stale items on next open
+        }
+    }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // Play sound + trigger check animation when popup opens
     useEffect(() => {
@@ -101,6 +125,13 @@ export default function CartConfirmationPopup({
     }, [isOpen]);
 
     if (!isOpen) return null;
+
+    // Filter out the just-added item so it never appears in its own strip
+    const stripItems = otherCartItems.filter(item =>
+        book?.isPack
+            ? !(item.type === 'pack' && String(item.id) === String(book.id))
+            : !(item.type === 'book' && String(item.id) === String(book?.id))
+    );
 
     const handleOpenDetails = () => {
         window.open(`/books/${book.id}`, '_blank', 'noopener,noreferrer');
@@ -249,14 +280,14 @@ export default function CartConfirmationPopup({
                     </div>
 
                     {/* Existing cart items strip */}
-                    {otherCartItems.length > 0 && (
+                    {stripItems.length > 0 && (
                         <div className="px-3 xs:px-5 pb-4 xs:pb-5 pt-1 xs:pt-2">
                             <div className="border-t border-blue-100 pt-3 xs:pt-4 -mx-3 xs:-mx-5 px-3 xs:px-5 pb-1 bg-blue-50/50 rounded-b-xl xs:rounded-b-2xl">
                                 <p className="text-[0.6rem] xs:text-xs text-[#00417a]/50 font-medium uppercase tracking-wider mb-2 xs:mb-2.5">
                                     {t('cartPopup.alsoInCart')}
                                 </p>
                                 <div className="flex gap-2 xs:gap-2.5 overflow-x-auto scrollbar-hide pb-1">
-                                    {otherCartItems.map((item) => (
+                                    {stripItems.map((item) => (
                                         <div
                                             key={`${item.type}-${item.id}`}
                                             className="flex-shrink-0 cart-thumb-enter relative"
@@ -280,7 +311,7 @@ export default function CartConfirmationPopup({
                     )}
 
                     {/* Bottom padding when no other items */}
-                    {otherCartItems.length === 0 && (
+                    {stripItems.length === 0 && (
                         <div className="pb-3 xs:pb-4" />
                     )}
                 </div>

@@ -711,6 +711,7 @@ export default function AllBooks() {
                         price: selectedBook.price,
                         coverImage: selectedBook.coverImage,
                         language: selectedBook.language,
+                        isPack: true,
                     } : {
                         id: selectedBook.id,
                         title: selectedBook.title,

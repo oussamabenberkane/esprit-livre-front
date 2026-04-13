@@ -91,8 +91,8 @@ const Navbar = ({
     onCartClick
 }) => {
     const { t } = useTranslation();
-    const { getCartItemCount, getPackCartItemCount } = useCart();
-    const bookCount = getCartItemCount();
+    const { cartItems, getPackCartItemCount } = useCart();
+    const bookCount = cartItems.length;
     const packCount = getPackCartItemCount();
     const cartCount = bookCount + packCount; // Total count: books + packs (1 item per pack)
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);

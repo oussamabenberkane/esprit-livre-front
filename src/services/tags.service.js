@@ -42,9 +42,23 @@ export const fetchCategories = async (limit = 10) => {
 };
 
 /**
- * Fetch main displays
- * @returns {Promise<Array>} Array of main display tags
+ * Fetch main displays ordered by their display position
+ * @returns {Promise<Array>} Array of main display tags, ordered
  */
 export const fetchMainDisplays = async () => {
-  return fetchTagsByType('MAIN_DISPLAY');
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/tags/main-display/ordered`, {
+      method: 'GET',
+      headers: getDefaultHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch main displays: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching main displays:', error);
+    throw error;
+  }
 };

@@ -11,7 +11,7 @@ const DELETE_THRESHOLD = -100;
 
 export default function FloatingCartBadge({ onGoToCart }) {
   const { t } = useTranslation();
-  const { cartItems, packCartItems, getCartItemCount, getPackCartItemCount } = useCart();
+  const { cartItems, packCartItems, getPackCartItemCount } = useCart();
 
   const [isVisible, setIsVisible] = useState(false);
   const [itemCount, setItemCount] = useState(0);
@@ -30,7 +30,7 @@ export default function FloatingCartBadge({ onGoToCart }) {
   const badgeOpacity = useTransform(dragX, [-180, -120, 0], [0.4, 0.85, 1]);
 
   useEffect(() => {
-    const bookCount = getCartItemCount();
+    const bookCount = cartItems.length;
     const packCount = getPackCartItemCount();
     const currentCount = bookCount + packCount;
 
@@ -59,7 +59,7 @@ export default function FloatingCartBadge({ onGoToCart }) {
     }
 
     previousCountRef.current = currentCount;
-  }, [cartItems, packCartItems, getCartItemCount, getPackCartItemCount]);
+  }, [cartItems, packCartItems, getPackCartItemCount]);
 
   const handleDismiss = useCallback(() => {
     setIsVisible(false);

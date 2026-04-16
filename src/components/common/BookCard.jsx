@@ -109,10 +109,8 @@ const BookCard = ({
                         className="absolute top-0 left-0 px-5 py-2 rounded-br-2xl text-fluid-tag font-bold tracking-wide text-white"
                         style={{
                             backgroundColor: badge.colorHex || '#6B7280',
-                            border: '1.5px solid rgba(255,255,255,0.45)',
-                            borderTop: 'none',
-                            borderLeft: 'none',
-                            textShadow: '0 1px 2px rgba(0,0,0,0.25)',
+                            textShadow: '0 1px 3px rgba(0,0,0,0.4)',
+                            letterSpacing: '0.04em',
                         }}
                     >
                         {getBadgeText()}
@@ -124,10 +122,8 @@ const BookCard = ({
                         className="absolute top-0 left-0 px-5 py-2 rounded-br-2xl text-fluid-tag font-bold tracking-wide text-white"
                         style={{
                             backgroundColor: '#2563eb',
-                            border: '1.5px solid rgba(255,255,255,0.45)',
-                            borderTop: 'none',
-                            borderLeft: 'none',
-                            textShadow: '0 1px 2px rgba(0,0,0,0.25)',
+                            textShadow: '0 1px 3px rgba(0,0,0,0.4)',
+                            letterSpacing: '0.04em',
                         }}
                     >
                         {t('bookCard.stockStatus.preorder')}

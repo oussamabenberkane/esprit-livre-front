@@ -106,8 +106,14 @@ const BookCard = ({
                 {/* Badge */}
                 {badge && isAvailable && (
                     <div
-                        className="absolute top-0 left-0 px-3 py-2 rounded-br-2xl text-fluid-tag font-semibold text-white"
-                        style={{ backgroundColor: badge.colorHex || '#6B7280' }}
+                        className="absolute top-0 left-0 px-5 py-2 rounded-br-2xl text-fluid-tag font-bold tracking-wide text-white"
+                        style={{
+                            backgroundColor: badge.colorHex || '#6B7280',
+                            border: '1.5px solid rgba(255,255,255,0.45)',
+                            borderTop: 'none',
+                            borderLeft: 'none',
+                            textShadow: '0 1px 2px rgba(0,0,0,0.25)',
+                        }}
                     >
                         {getBadgeText()}
                     </div>
@@ -115,8 +121,14 @@ const BookCard = ({
                 {/* Preorder Badge when stock is 0 */}
                 {!isAvailable && (
                     <div
-                        className="absolute top-0 left-0 px-3 py-2 rounded-br-2xl text-fluid-tag font-semibold text-white"
-                        style={{ backgroundColor: '#2563eb' }}
+                        className="absolute top-0 left-0 px-5 py-2 rounded-br-2xl text-fluid-tag font-bold tracking-wide text-white"
+                        style={{
+                            backgroundColor: '#2563eb',
+                            border: '1.5px solid rgba(255,255,255,0.45)',
+                            borderTop: 'none',
+                            borderLeft: 'none',
+                            textShadow: '0 1px 2px rgba(0,0,0,0.25)',
+                        }}
                     >
                         {t('bookCard.stockStatus.preorder')}
                     </div>

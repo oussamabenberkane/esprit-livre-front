@@ -84,7 +84,7 @@ const PackCardCompact = ({
                     </div>
 
                     {/* Pack badge — floating pill with icon, distinct from etiquette corner banners */}
-                    <div className="absolute top-2 right-2 flex items-center gap-1 bg-[#001a33] text-white px-2 py-1 rounded-full text-[0.6rem] sm:text-[0.65rem] font-semibold shadow-md">
+                    <div className="absolute bottom-2 right-2 flex items-center gap-1 bg-[#001a33] text-white px-2 py-1 rounded-full text-[0.6rem] sm:text-[0.65rem] font-semibold shadow-md">
                         <Package className="w-2.5 h-2.5 flex-shrink-0" />
                         <span>Pack · {bookCount} {bookCount <= 1 ? 'livre' : 'livres'}</span>
                     </div>

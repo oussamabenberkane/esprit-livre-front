@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Heart, ShoppingCart } from 'lucide-react';
@@ -226,13 +227,16 @@ const BookCard = ({
 
             </div>
 
-            {/* Login prompt for unauthenticated users */}
-            <LoginPromptPopup
-                isOpen={showLoginPrompt}
-                onClose={() => setShowLoginPrompt(false)}
-                onLoginClick={handleLoginFromPrompt}
-                position="top"
-            />
+            {/* Login prompt for unauthenticated users — portaled to body to escape stacking contexts */}
+            {showLoginPrompt && ReactDOM.createPortal(
+                <LoginPromptPopup
+                    isOpen={showLoginPrompt}
+                    onClose={() => setShowLoginPrompt(false)}
+                    onLoginClick={handleLoginFromPrompt}
+                    alwaysFixed
+                />,
+                document.body
+            )}
         </div>
     );
 };

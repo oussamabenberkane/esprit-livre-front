@@ -4,7 +4,7 @@ import { X, Gift, Package } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
-const LoginPromptPopup = ({ isOpen, onClose, onLoginClick, position = 'top' }) => {
+const LoginPromptPopup = ({ isOpen, onClose, onLoginClick, position = 'top', alwaysFixed = false }) => {
     const { t } = useTranslation();
     const [backdropActive, setBackdropActive] = useState(false);
 
@@ -48,7 +48,9 @@ const LoginPromptPopup = ({ isOpen, onClose, onLoginClick, position = 'top' }) =
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.92, y: 20 }}
                         transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                        className={`fixed sm:absolute z-50 bg-white rounded-2xl sm:rounded-xl shadow-2xl border border-neutral-200 overflow-hidden w-[calc(100vw-2rem)] max-w-[340px] sm:max-w-sm left-1/2 sm:left-auto -translate-x-1/2 sm:translate-x-0 top-24 sm:top-auto sm:right-[-8px] ${position === 'top' ? 'sm:bottom-full sm:mb-2' : 'sm:top-full sm:mt-[18px]'}`}
+                        className={alwaysFixed
+                            ? 'fixed z-[9999] bg-white rounded-2xl shadow-2xl border border-neutral-200 overflow-hidden w-[calc(100vw-2rem)] max-w-[340px] left-1/2 -translate-x-1/2 top-24'
+                            : `fixed sm:absolute z-50 bg-white rounded-2xl sm:rounded-xl shadow-2xl border border-neutral-200 overflow-hidden w-[calc(100vw-2rem)] max-w-[340px] sm:max-w-sm left-1/2 sm:left-auto -translate-x-1/2 sm:translate-x-0 top-24 sm:top-auto sm:right-[-8px] ${position === 'top' ? 'sm:bottom-full sm:mb-2' : 'sm:top-full sm:mt-[18px]'}`}
                         onClick={(e) => e.stopPropagation()}
                         onTouchEnd={(e) => e.stopPropagation()}
                     >

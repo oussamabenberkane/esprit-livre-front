@@ -106,11 +106,18 @@ const BookCard = ({
                 {/* Badge */}
                 {badge && isAvailable && (
                     <div
-                        className="absolute top-0 left-0 px-5 py-2 rounded-br-2xl text-fluid-tag font-bold tracking-wide text-white"
+                        className="absolute top-0 left-0 rounded-br-2xl text-white text-center flex items-center justify-center"
                         style={{
                             backgroundColor: badge.colorHex || '#6B7280',
-                            textShadow: '0 1px 3px rgba(0,0,0,0.4)',
-                            letterSpacing: '0.04em',
+                            minWidth: '5.5rem',
+                            padding: '0.32rem 0.6rem',
+                            fontSize: 'clamp(0.58rem, 0.85vw, 0.72rem)',
+                            fontWeight: 800,
+                            letterSpacing: '0.11em',
+                            textTransform: 'uppercase',
+                            textShadow: '0 1px 3px rgba(0,0,0,0.35)',
+                            boxShadow: '2px 2px 10px rgba(0,0,0,0.18)',
+                            lineHeight: 1.2,
                         }}
                     >
                         {getBadgeText()}
@@ -119,11 +126,18 @@ const BookCard = ({
                 {/* Preorder Badge when stock is 0 */}
                 {!isAvailable && (
                     <div
-                        className="absolute top-0 left-0 px-5 py-2 rounded-br-2xl text-fluid-tag font-bold tracking-wide text-white"
+                        className="absolute top-0 left-0 rounded-br-2xl text-white text-center flex items-center justify-center"
                         style={{
                             backgroundColor: '#2563eb',
-                            textShadow: '0 1px 3px rgba(0,0,0,0.4)',
-                            letterSpacing: '0.04em',
+                            minWidth: '5.5rem',
+                            padding: '0.32rem 0.6rem',
+                            fontSize: 'clamp(0.58rem, 0.85vw, 0.72rem)',
+                            fontWeight: 800,
+                            letterSpacing: '0.11em',
+                            textTransform: 'uppercase',
+                            textShadow: '0 1px 3px rgba(0,0,0,0.35)',
+                            boxShadow: '2px 2px 10px rgba(0,0,0,0.18)',
+                            lineHeight: 1.2,
                         }}
                     >
                         {t('bookCard.stockStatus.preorder')}

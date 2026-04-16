@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Eye, ShoppingCart } from 'lucide-react';
+import { Eye, ShoppingCart, Package } from 'lucide-react';
 import { getBookCoverUrl } from '../../utils/imageUtils';
 import PackBooksPopup from './PackBooksPopup';
 
@@ -83,12 +83,10 @@ const PackCardCompact = ({
                         <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
                     </div>
 
-                    {/* Pack badge — top left, matching BookCard badge position */}
-                    <div
-                        className="absolute top-0 left-0 px-3 py-2 rounded-br-2xl text-fluid-tag font-semibold text-white"
-                        style={{ backgroundColor: '#7C3AED' }}
-                    >
-                        Pack · {bookCount} {bookCount <= 1 ? 'livre' : 'livres'}
+                    {/* Pack badge — floating pill with icon, distinct from etiquette corner banners */}
+                    <div className="absolute top-2 left-2 flex items-center gap-1 bg-[#00417a] text-white px-2 py-1 rounded-full text-[0.6rem] sm:text-[0.65rem] font-semibold shadow-md">
+                        <Package className="w-2.5 h-2.5 flex-shrink-0" />
+                        <span>Pack · {bookCount} {bookCount <= 1 ? 'livre' : 'livres'}</span>
                     </div>
 
                     {/* Eye button — centered on image */}

@@ -7,9 +7,13 @@ import LanguageToggle from '../animations/LanguageToggle';
 import BottomSheet from './BottomSheet';
 import SearchSuggestions from './SearchSuggestions';
 import LoginPromptPopup from './LoginPromptPopup';
+import Logo from './Logo';
 import { fetchBookSuggestions } from '../../services/books.service';
 import { isAuthenticated, saveRedirectUrl } from '../../services/authService';
 import { useCart } from '../../contexts/CartContext';
+import { getUserOrders } from '../../services/order.service';
+
+const ACTIVE_ORDER_STATUSES = ['pending', 'confirmed', 'shipped'];
 
 // Simple Language Toggle for Mobile/Tablet (the one I created earlier)
 const SimpleLanguageToggle = () => {
@@ -48,16 +52,6 @@ const SignInButton = ({ onClick, className = "", highlight = false }) => {
         </button>
     );
 };
-
-// Logo — "ESPRIT" / "LIVRE" stacked wordmark
-const Logo = ({ onClick }) => (
-    <button onClick={onClick} className="text-left logo-btn">
-        <div className="flex flex-col leading-[1.05]" style={{ color: '#ffffff', letterSpacing: '0.12em' }}>
-            <span className="text-[15px] max-[767px]:text-[13px] font-light uppercase">Esprit</span>
-            <span className="text-[15px] max-[767px]:text-[13px] font-semibold uppercase">Livre</span>
-        </div>
-    </button>
-);
 
 // SearchBar Component
 const SearchBar = ({ placeholder = "Recherchez...", value, onChange, onFocus, onKeyDown, onSearchClick }) => {
@@ -114,6 +108,22 @@ const Navbar = ({
     const [highlightSignInButton, setHighlightSignInButton] = useState(false);
     const desktopUserButtonRef = useRef(null);
     const mobileUserButtonRef = useRef(null);
+
+    // Active orders count for badge
+    const [activeOrdersCount, setActiveOrdersCount] = useState(0);
+
+    useEffect(() => {
+        if (!isAuthenticated()) return;
+        getUserOrders(0, 100)
+            .then(response => {
+                const orders = response?.page?.content || [];
+                const count = orders.filter(o =>
+                    ACTIVE_ORDER_STATUSES.includes(o.status?.toLowerCase())
+                ).length;
+                setActiveOrdersCount(count);
+            })
+            .catch(() => {});
+    }, []);
 
     // Use translation if no custom placeholder is provided
     const placeholder = searchPlaceholder || t('navbar.searchPlaceholder');
@@ -323,7 +333,7 @@ const Navbar = ({
                     <div className="hidden md:flex flex-1"></div>
 
                     {/* Action Icons */}
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-5">
                         {/* Sign In Button - Desktop only, hidden when authenticated */}
                         {!isAuthenticated() && (
                             <SignInButton
@@ -349,8 +359,15 @@ const Navbar = ({
                         </div>
 
                         {/* Orders - Desktop only */}
-                        <button onClick={handleOrdersClick} className="hidden md:block" title="Mes commandes">
+                        <button onClick={handleOrdersClick} className="hidden md:block relative" title="Mes commandes">
                             <ShoppingBag className="w-6 h-6 text-white hover:opacity-80 transition-opacity" />
+                            {activeOrdersCount > 0 && (
+                                <div className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                                    <span className="text-xs text-white font-bold">
+                                        {activeOrdersCount > 9 ? '9+' : activeOrdersCount}
+                                    </span>
+                                </div>
+                            )}
                         </button>
 
                         {/* Cart - Always visible */}
@@ -429,7 +446,7 @@ const Navbar = ({
                         )}
                     </div>
 
-                    {/* Right side: Sign In, Profile, Cart */}
+                    {/* Right side: Sign In, Orders, Profile, Cart */}
                     <div className="flex items-center gap-2 flex-shrink-0">
                         {/* Sign In Button - Hidden when authenticated */}
                         {!isAuthenticated() && (
@@ -442,6 +459,18 @@ const Navbar = ({
                                 highlight={highlightSignInButton}
                             />
                         )}
+
+                        {/* Orders Icon - Tablet */}
+                        <button onClick={handleOrdersClick} className="relative flex-shrink-0" title="Mes commandes">
+                            <ShoppingBag className="w-6 h-6 text-white hover:opacity-80 transition-opacity" />
+                            {activeOrdersCount > 0 && (
+                                <div className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                                    <span className="text-xs text-white font-bold">
+                                        {activeOrdersCount > 9 ? '9+' : activeOrdersCount}
+                                    </span>
+                                </div>
+                            )}
+                        </button>
 
                         {/* User Profile Icon */}
                         <div className="relative flex-shrink-0" ref={mobileUserButtonRef} data-tour="navbar-user">
@@ -496,7 +525,7 @@ const Navbar = ({
                         <Logo onClick={handleLogoClick} />
                     </div>
 
-                    {/* Right side: Sign In, Profile, Cart */}
+                    {/* Right side: Sign In, Orders, Profile, Cart */}
                     <div className="flex items-center gap-2">
                         {/* Sign In Button - Hidden when authenticated */}
                         {!isAuthenticated() && (
@@ -509,6 +538,18 @@ const Navbar = ({
                                 highlight={highlightSignInButton}
                             />
                         )}
+
+                        {/* Orders Icon - Mobile */}
+                        <button onClick={handleOrdersClick} className="relative flex-shrink-0" title="Mes commandes">
+                            <ShoppingBag className="w-7 h-7 text-white hover:opacity-80 transition-opacity" />
+                            {activeOrdersCount > 0 && (
+                                <div className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                                    <span className="text-xs text-white font-bold">
+                                        {activeOrdersCount > 9 ? '9+' : activeOrdersCount}
+                                    </span>
+                                </div>
+                            )}
+                        </button>
 
                         {/* User Profile Icon */}
                         <div className="relative flex-shrink-0" ref={mobileUserButtonRef} data-tour="navbar-user">

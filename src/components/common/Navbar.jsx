@@ -348,11 +348,6 @@ const Navbar = ({
                             <SimpleLanguageToggle />
                         </div>
 
-                        {/* Packs - Desktop only */}
-                        <button onClick={handlePacksClick} className="hidden md:block" data-tour="navbar-packs">
-                            <Package className="w-6 h-6 text-white hover:opacity-80 transition-opacity" />
-                        </button>
-
                         {/* Orders - Desktop only */}
                         <button onClick={handleOrdersClick} className="hidden md:block" title="Mes commandes">
                             <ShoppingBag className="w-6 h-6 text-white hover:opacity-80 transition-opacity" />

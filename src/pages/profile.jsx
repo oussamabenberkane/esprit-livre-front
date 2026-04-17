@@ -29,6 +29,9 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [autoSaveStatus, setAutoSaveStatus] = useState('idle'); // 'idle' | 'pending' | 'saving' | 'saved' | 'error'
+  const debounceRef = useRef(null);
+  const isInitializedRef = useRef(false);
 
   // Tab state — synced with URL ?tab=
   const [activeTab, setActiveTab] = useState(() => {
@@ -155,6 +158,23 @@ export default function Profile() {
     fetchProfile();
   }, [navigate]);
 
+  // Mark form as initialized after data loads (prevents auto-save on initial render)
+  useEffect(() => {
+    if (!loading && userData) {
+      const t = setTimeout(() => { isInitializedRef.current = true; }, 200);
+      return () => clearTimeout(t);
+    }
+  }, [loading, userData]);
+
+  // Auto-save with debounce
+  useEffect(() => {
+    if (!isInitializedRef.current || isFirstLogin || !userData) return;
+    setAutoSaveStatus('pending');
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => handleSaveProfile(true), 1500);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [userData, homeAddress, shippingPreference, pickupProvider, stopDeskId]);
+
   // Click outside to close dropdowns
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -202,26 +222,30 @@ export default function Profile() {
   const handleEditPhone = () => setIsEditingPhone(!isEditingPhone);
   const handleLogout = () => { authLogout(); navigate('/'); };
 
-  const handleSaveProfile = async () => {
+  const handleSaveProfile = async (isAutoSave = false) => {
     if (!userData) return;
     setValidationErrors({});
     const validation = validateProfileData(userData, homeAddress, shippingPreference, pickupProvider);
     if (!validation.isValid) {
       setValidationErrors(validation.errors);
-      const fieldRefMap = {
-        firstName: firstNameRef, lastName: lastNameRef, email: emailRef,
-        phone: phoneRef, homeAddress: homeAddressRef, pickupProvider: pickupProviderRef,
-      };
-      const firstErrorRef = fieldRefMap[validation.firstErrorField];
-      if (firstErrorRef?.current) {
-        firstErrorRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        const inputEl = firstErrorRef.current.querySelector('input, textarea, button');
-        if (inputEl) setTimeout(() => inputEl.focus(), 500);
+      if (!isAutoSave) {
+        const fieldRefMap = {
+          firstName: firstNameRef, lastName: lastNameRef, email: emailRef,
+          phone: phoneRef, homeAddress: homeAddressRef, pickupProvider: pickupProviderRef,
+        };
+        const firstErrorRef = fieldRefMap[validation.firstErrorField];
+        if (firstErrorRef?.current) {
+          firstErrorRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          const inputEl = firstErrorRef.current.querySelector('input, textarea, button');
+          if (inputEl) setTimeout(() => inputEl.focus(), 500);
+        }
       }
+      if (isAutoSave) setAutoSaveStatus('idle');
       return;
     }
     try {
       setSaving(true);
+      if (isAutoSave) setAutoSaveStatus('saving');
       setError(null);
       const providerMap = { Yalidine: 'YALIDINE', ZRexpress: 'ZR' };
       const updateData = {
@@ -259,13 +283,17 @@ export default function Profile() {
           const redirectUrl = getAndClearRedirectUrl() || '/';
           navigate(redirectUrl, { replace: true, state: { profileCompleted: true } });
         }
-      } else {
+      } else if (!isAutoSave) {
         setShowSuccessMessage(true);
         setTimeout(() => setShowSuccessMessage(false), 3000);
+      } else {
+        setAutoSaveStatus('saved');
+        setTimeout(() => setAutoSaveStatus('idle'), 2500);
       }
     } catch (err) {
       setError(err.message || 'Failed to update profile');
       setSaving(false);
+      if (isAutoSave) setAutoSaveStatus('error');
     }
   };
 
@@ -863,26 +891,72 @@ export default function Profile() {
                     </div>
                   )}
 
-                  {/* Save button */}
-                  <div className="pt-2">
-                    <button
-                      onClick={handleSaveProfile}
-                      disabled={saving}
-                      className="w-full flex items-center justify-center gap-2 py-3.5 bg-[#00417a] hover:bg-[#003366] text-white rounded-2xl font-semibold text-sm sm:text-base shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.99]"
-                    >
-                      {saving ? (
-                        <>
-                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          <span>{t('profile.saving')}</span>
-                        </>
-                      ) : (
-                        <>
-                          <CheckCircle className="w-4 h-4" />
-                          <span>{t('profile.save')}</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
+                  {/* Save button (first-login only) / Auto-save status */}
+                  {isFirstLogin ? (
+                    <div className="pt-2">
+                      <button
+                        onClick={() => handleSaveProfile(false)}
+                        disabled={saving}
+                        className="w-full flex items-center justify-center gap-2 py-3.5 bg-[#00417a] hover:bg-[#003366] text-white rounded-2xl font-semibold text-sm sm:text-base shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.99]"
+                      >
+                        {saving ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            <span>{t('profile.saving')}</span>
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle className="w-4 h-4" />
+                            <span>{t('profile.save')}</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex justify-end pt-1 pb-2 h-8">
+                      <AnimatePresence mode="wait">
+                        {(autoSaveStatus === 'pending' || autoSaveStatus === 'saving') && (
+                          <motion.div
+                            key="saving"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="flex items-center gap-1.5 text-gray-400"
+                          >
+                            <div className="w-3 h-3 border-[1.5px] border-gray-300 border-t-gray-500 rounded-full animate-spin" />
+                            <span className="text-xs">{t('profile.saving', 'Sauvegarde...')}</span>
+                          </motion.div>
+                        )}
+                        {autoSaveStatus === 'saved' && (
+                          <motion.div
+                            key="saved"
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="flex items-center gap-1.5 text-emerald-500"
+                          >
+                            <CheckCircle className="w-3.5 h-3.5" />
+                            <span className="text-xs font-medium">{t('profile.saved', 'Sauvegardé')}</span>
+                          </motion.div>
+                        )}
+                        {autoSaveStatus === 'error' && (
+                          <motion.div
+                            key="error"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="flex items-center gap-1.5 text-red-400"
+                          >
+                            <AlertCircle className="w-3.5 h-3.5" />
+                            <span className="text-xs">{t('profile.saveError', 'Erreur de sauvegarde')}</span>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  )}
 
                 </div>
               )}

@@ -90,6 +90,7 @@
       "home": "Home",
       "books": "Books",
       "packs": "Packs",
+      "orders": "Orders",
       "favorites": "Favorites",
       "profile": "Profile"
     }
@@ -428,6 +429,11 @@
     }
   },
   "profile": {
+    "tabs": {
+      "information": "Information",
+      "orders": "Orders",
+      "favorites": "Favourites"
+    },
     "back": "Back",
     "memberSince": "Member since",
     "personalInfo": "Personal information",
@@ -491,6 +497,7 @@
     "startShopping": "Start shopping",
     "errorTitle": "Unable to Load Orders",
     "quantity": "Quantity",
+    "shippingCost": "Shipping cost",
     "status": {
       "pending": "Pending",
       "confirmed": "Confirmed",

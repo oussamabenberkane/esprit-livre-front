@@ -4,6 +4,7 @@ import { ChevronDown, X, MapPin, Building2, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getRelayPoints, getStopDeskById } from '../../services/relayPoints.service';
 import useDebounce from '../../hooks/useDebounce';
+import useIsDesktop from '../../hooks/useIsDesktop';
 
 /**
  * RelayPointSelect Component
@@ -27,6 +28,7 @@ const RelayPointSelect = ({
   error = false,
 }) => {
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -164,6 +166,64 @@ const RelayPointSelect = ({
     return (
       <div className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-400 text-fluid-small">
         {t('cart.selectWilayaFirst')}
+      </div>
+    );
+  }
+
+  // On mobile/tablet render a native select (non-searchable, uses OS picker)
+  if (!isDesktop) {
+    return (
+      <div>
+        <div className="relative">
+          <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
+          <select
+            value={value ?? ''}
+            onChange={(e) => {
+              const point = relayPoints.find((p) => p.id === e.target.value);
+              if (point) {
+                handleSelect(point);
+              } else {
+                onChange(null);
+                setSelectedPoint(null);
+              }
+            }}
+            disabled={disabled || loading}
+            className={`w-full pl-9 pr-4 py-3 text-fluid-small border-2 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 bg-white appearance-none ${
+              error
+                ? 'border-red-300 focus:ring-red-500'
+                : 'border-neutral-200 focus:ring-emerald-500 hover:border-neutral-300'
+            } ${disabled || loading ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+          >
+            <option value="">{loading ? t('common.loading') : t('cart.searchRelayPoint')}</option>
+            {relayPoints.map((point) => (
+              <option key={point.id} value={point.id}>{point.name}</option>
+            ))}
+          </select>
+        </div>
+        {selectedPoint && (
+          <motion.div
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-2 p-3 bg-emerald-50 border border-emerald-200 rounded-lg"
+          >
+            <div className="flex items-start gap-2">
+              <MapPin className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <div className="text-fluid-small font-medium text-emerald-900">{selectedPoint.name}</div>
+                <div className="text-fluid-xs text-emerald-700 mt-0.5">{selectedPoint.address}</div>
+                <div className="text-fluid-xs text-emerald-600 mt-0.5">{selectedPoint.commune}, {selectedPoint.wilaya}</div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+        {fetchError && (
+          <div className="mt-1 text-fluid-xs text-red-500">
+            {fetchError}{' '}
+            <button type="button" onClick={fetchRelayPoints} className="text-emerald-600 hover:underline">
+              {t('common.retry')}
+            </button>
+          </div>
+        )}
       </div>
     );
   }

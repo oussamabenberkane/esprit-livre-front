@@ -2,18 +2,19 @@ import { useState } from 'react';
 import { motion, AnimatePresence, useMotionValue } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Home, BookOpen, Heart, User, Package } from 'lucide-react';
+import { Home, BookOpen, Heart, User, Package, ShoppingBag } from 'lucide-react';
 
 export default function BottomSheet({ isOpen, onClose, LanguageToggle }) {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   const menuItems = [
-    { icon: Home, labelKey: 'bottomSheet.menu.home', path: '/' },
-    { icon: BookOpen, labelKey: 'bottomSheet.menu.books', path: '/allbooks' },
-    { icon: Package, labelKey: 'bottomSheet.menu.packs', path: '/packs' },
-    { icon: Heart, labelKey: 'bottomSheet.menu.favorites', path: '/favorites' },
-    { icon: User, labelKey: 'bottomSheet.menu.profile', path: '/profile' }
+    { icon: Home,        labelKey: 'bottomSheet.menu.home',      path: '/' },
+    { icon: BookOpen,    labelKey: 'bottomSheet.menu.books',     path: '/allbooks' },
+    { icon: Package,     labelKey: 'bottomSheet.menu.packs',     path: '/packs' },
+    { icon: ShoppingBag, labelKey: 'bottomSheet.menu.orders',    path: '/orders' },
+    { icon: Heart,       labelKey: 'bottomSheet.menu.favorites', path: '/favorites' },
+    { icon: User,        labelKey: 'bottomSheet.menu.profile',   path: '/profile' },
   ];
 
   const y = useMotionValue(0);

@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Search, ShoppingCart, Heart, User, Menu, Package } from 'lucide-react';
+import { Search, ShoppingCart, Heart, User, Menu, Package, ShoppingBag } from 'lucide-react';
 import LanguageToggle from '../animations/LanguageToggle';
 import BottomSheet from './BottomSheet';
 import SearchSuggestions from './SearchSuggestions';
@@ -193,6 +193,11 @@ const Navbar = ({
         navigate('/packs');
     };
 
+    // Orders click handler - navigate to orders page
+    const handleOrdersClick = () => {
+        navigate('/orders');
+    };
+
     // Handle search input change - fetch suggestions on every keystroke
     const handleSearchChange = (e) => {
         const query = e.target.value;
@@ -346,6 +351,11 @@ const Navbar = ({
                         {/* Packs - Desktop only */}
                         <button onClick={handlePacksClick} className="hidden md:block" data-tour="navbar-packs">
                             <Package className="w-6 h-6 text-white hover:opacity-80 transition-opacity" />
+                        </button>
+
+                        {/* Orders - Desktop only */}
+                        <button onClick={handleOrdersClick} className="hidden md:block" title="Mes commandes">
+                            <ShoppingBag className="w-6 h-6 text-white hover:opacity-80 transition-opacity" />
                         </button>
 
                         {/* Cart - Always visible */}

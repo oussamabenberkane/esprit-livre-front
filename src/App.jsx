@@ -16,12 +16,16 @@ import TestPage from './pages/TestPage.jsx';
 import NotFound404 from './pages/NotFound404.jsx';
 import { FavoritesProvider } from './contexts/FavoritesContext';
 import { CartProvider } from './contexts/CartContext';
+import { OnboardingProvider } from './contexts/OnboardingContext';
+import OnboardingCelebration from './components/onboarding/OnboardingCelebration';
+import OnboardingTour from './components/onboarding/OnboardingTour';
 
 function App() {
   return (
     <BrowserRouter>
       <FavoritesProvider>
         <CartProvider>
+          <OnboardingProvider>
           <div className="min-h-screen min-w-screen bg-gray-50">
           <Routes>
           {/* Home page as entry point - Accessible to both guests and authenticated users */}
@@ -68,6 +72,10 @@ function App() {
           <Route path="*" element={<NotFound404 />} />
         </Routes>
           </div>
+          {/* Onboarding overlays — rendered at root so they cover all pages */}
+          <OnboardingCelebration />
+          <OnboardingTour />
+          </OnboardingProvider>
         </CartProvider>
       </FavoritesProvider>
     </BrowserRouter>

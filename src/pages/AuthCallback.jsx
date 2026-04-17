@@ -81,6 +81,11 @@ const AuthCallback = () => {
         if (!userData.phone) {
           console.log('[AuthCallback] First-time user detected (no phone number), redirecting to profile...');
 
+          // Mark this session as needing the onboarding tour.
+          // The home page reads this flag after the user completes their
+          // profile and is redirected back to /.
+          sessionStorage.setItem('el_onboarding_pending', 'true');
+
           // Save the redirect URL again so we can use it after phone collection
           if (redirectUrl !== '/profile') {
             saveRedirectUrl(redirectUrl);

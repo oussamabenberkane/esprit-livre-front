@@ -564,5 +564,130 @@
   },
   "navigation": {
     "noItems": "No items to display"
+  },
+  "onboarding": {
+    "celebration": {
+      "title": "Welcome to Esprit Livre",
+      "titleWithName": "Welcome, {{name}}",
+      "subtitle": "Your literary journey starts here. Let's show you around.",
+      "startTour": "Start the tour",
+      "skip": "Skip, I'll explore on my own"
+    },
+    "tour": {
+      "back": "Back",
+      "next": "Next",
+      "finish": "Done",
+      "skipTour": "Skip tour"
+    },
+    "home": {
+      "welcome": {
+        "title": "Your home for books",
+        "desc": "Everything you need to find, buy, and enjoy books — all in one place. Here's a quick look around."
+      },
+      "search": {
+        "title": "Find any book instantly",
+        "desc": "Search by title, author, or category. Suggestions appear as you type."
+      },
+      "menu": {
+        "title": "Quick access menu",
+        "desc": "Tap the menu to browse categories, packs, your favorites, and your profile."
+      },
+      "language": {
+        "title": "Switch language",
+        "desc": "Toggle between French and English — the app adapts instantly."
+      },
+      "packs": {
+        "title": "Book bundles",
+        "desc": "Curated packs at exclusive bundle pricing. Save more when you buy together."
+      },
+      "cart": {
+        "title": "Your cart",
+        "desc": "Books you've added appear here. Ready to order at any time."
+      },
+      "favorites": {
+        "title": "Save for later",
+        "desc": "Heart a book to add it to your personal wishlist."
+      },
+      "user": {
+        "title": "Your profile",
+        "desc": "Access your account, track orders, and manage your preferences."
+      },
+      "hero": {
+        "title": "Curated highlights",
+        "desc": "Featured collections, exclusive offers, and staff picks — refreshed regularly."
+      },
+      "categories": {
+        "title": "Browse by category",
+        "desc": "Scroll through genres to discover books in your favourite subjects."
+      },
+      "books": {
+        "title": "Recommended for you",
+        "desc": "Curated carousels with new arrivals, bestsellers, and picks you'll love."
+      },
+      "authors": {
+        "title": "Top authors",
+        "desc": "Explore books by the authors readers love most."
+      },
+      "finish": {
+        "title": "You're all caught up",
+        "desc": "Now let's head to the catalog and see the full collection."
+      }
+    },
+    "allbooks": {
+      "welcome": {
+        "title": "The full catalog",
+        "desc": "Every book we carry, in one place. Let's walk through how to find exactly what you're looking for."
+      },
+      "filters": {
+        "title": "Powerful filters",
+        "desc": "Narrow down by price range, language, category, or author. Combine filters for precision results."
+      },
+      "tabs": {
+        "title": "Books & Packs",
+        "desc": "Switch between individual books and curated packs — bundles priced better than buying separately."
+      },
+      "grid": {
+        "title": "Browse and add to cart",
+        "desc": "Each card shows price, language, and availability. Add books directly to your cart without leaving the page."
+      },
+      "finish": {
+        "title": "Now let's set up your profile",
+        "desc": "One last step — fill in your delivery details so your first order can reach you."
+      }
+    },
+    "profile": {
+      "welcome": {
+        "title": "Your reading space",
+        "desc": "This is your profile. Keep it up to date so we can deliver your books."
+      },
+      "header": {
+        "title": "Your identity",
+        "desc": "Your name and member date. Your order history lives here too."
+      },
+      "orders": {
+        "title": "Track your orders",
+        "desc": "View current and past orders. Check delivery status in real time."
+      },
+      "favorites": {
+        "title": "Your wishlist",
+        "desc": "Books you've saved for later. One tap to move them to your cart."
+      },
+      "personalInfo": {
+        "title": "Personal information",
+        "desc": "Update your phone number and location — required for checkout."
+      },
+      "shipping": {
+        "title": "Delivery preference",
+        "desc": "Choose how you'd like to receive your books: home delivery or pickup point."
+      },
+      "save": {
+        "title": "Save your settings",
+        "desc": "Click here whenever you update your profile to save your changes."
+      },
+      "finish": {
+        "title": "You're all set",
+        "desc": "Your profile is ready. Start exploring Esprit Livre — your next great read awaits."
+      }
+    }
   }
 }

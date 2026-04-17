@@ -31,10 +31,11 @@ import useProgressiveRender from '../hooks/useProgressiveRender';
 import { useCart } from '../contexts/CartContext';
 import { isAuthenticated } from '../services/authService';
 import { getUserProfile } from '../services/user.service';
+import { useOnboarding } from '../contexts/OnboardingContext';
 
 
 // MainDisplayCarousel component for rendering individual carousels
-const MainDisplayCarousel = ({ display, onAddToCart, onAddPackToCart, onToggleFavorite, updateScrollState, t, i18n }) => {
+const MainDisplayCarousel = ({ display, onAddToCart, onAddPackToCart, onToggleFavorite, updateScrollState, t, i18n, isFirst }) => {
     const scrollRef = useRef(null);
 
     // Build interleaved items: books with packs mixed in
@@ -132,7 +133,7 @@ const MainDisplayCarousel = ({ display, onAddToCart, onAddPackToCart, onToggleFa
     if (!display.isLoading && interleavedItems.length === 0) return null;
 
     return (
-        <section className="w-full section-spacing">
+        <section className="w-full section-spacing" {...(isFirst ? { 'data-tour': 'books-section' } : {})}>
             <div className="container-main container-padding2xl-left-only">
                 {/* Header */}
                 <div className="flex justify-between items-center mb-fluid-sm pr-fluid-lg">
@@ -278,6 +279,7 @@ const HomePage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { addToCart, addPackToCart } = useCart();
+    const { startOnboarding } = useOnboarding();
 
     // Authenticated user state
     const [userName, setUserName] = useState('');
@@ -290,6 +292,30 @@ const HomePage = () => {
                 .catch(() => setUserName(''));
         }
     }, [loggedIn]);
+
+    // ── Onboarding trigger ───────────────────────────────────────────────────
+    // Fires once when a first-time user lands on the home page after completing
+    // their profile setup (/profile?firstLogin=true → save → back here).
+    // The sessionStorage flag is written by AuthCallback for users with no phone.
+    useEffect(() => {
+        const pending = sessionStorage.getItem('el_onboarding_pending') === 'true';
+        const fromProfile = !!location.state?.profileCompleted;
+
+        if (pending && fromProfile && loggedIn) {
+            // Clear the flag immediately to prevent re-triggering on re-renders
+            sessionStorage.removeItem('el_onboarding_pending');
+
+            // Slight delay so the page finishes painting before the overlay mounts
+            const timer = setTimeout(() => {
+                getUserProfile()
+                    .then((profile) => startOnboarding(profile.firstName || ''))
+                    .catch(() => startOnboarding(''));
+            }, 400);
+
+            return () => clearTimeout(timer);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // Hero carousel state (you already have this)
     const [currentSlide, setCurrentSlide] = React.useState(0);
@@ -861,7 +887,7 @@ const HomePage = () => {
                     )}
                 </AnimatePresence>
 
-                <section className="w-full mt-[-14px] max-w-[100vw]">
+                <section className="w-full mt-[-14px] max-w-[100vw]" data-tour="hero-carousel">
                     <HeroCarousel
                         slides={heroSlides}
                         className="shadow-lg"
@@ -891,7 +917,7 @@ const HomePage = () => {
                 {/* Main Content */}
 
 
-                <section className="w-full section-spacing">
+                <section className="w-full section-spacing" data-tour="categories-section">
                     {/* Categories Section */}
                     <div className="container-main container-padding2xl-left-only">
                         {/* Greeting Section */}
@@ -1045,7 +1071,7 @@ const HomePage = () => {
                         </div>
                     </section>
                 ) : (
-                    mainDisplays.map((display) => (
+                    mainDisplays.map((display, idx) => (
                         <MainDisplayCarousel
                             key={display.id}
                             display={display}
@@ -1055,11 +1081,12 @@ const HomePage = () => {
                             updateScrollState={updateMainDisplayScrollState}
                             t={t}
                             i18n={i18n}
+                            isFirst={idx === 0}
                         />
                     ))
                 )}
 
-                <section className="w-full section-spacing">
+                <section className="w-full section-spacing" data-tour="authors-section">
                     <div className="container-main container-padding2xl-left-only">
 
                         <div className="mb-fluid-md flex items-center justify-between pr-fluid-lg">

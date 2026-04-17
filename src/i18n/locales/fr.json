@@ -564,5 +564,130 @@
   },
   "navigation": {
     "noItems": "Aucun élément à afficher"
+  },
+  "onboarding": {
+    "celebration": {
+      "title": "Bienvenue sur Esprit Livre",
+      "titleWithName": "Bienvenue, {{name}}",
+      "subtitle": "Votre aventure littéraire commence ici. Laissez-nous vous guider.",
+      "startTour": "Commencer la visite",
+      "skip": "Passer, j'explore seul(e)"
+    },
+    "tour": {
+      "back": "Retour",
+      "next": "Suivant",
+      "finish": "Terminer",
+      "skipTour": "Passer la visite"
+    },
+    "home": {
+      "welcome": {
+        "title": "Votre maison du livre",
+        "desc": "Tout ce qu'il faut pour trouver, acheter et savourer des livres — au même endroit. Voici un tour rapide."
+      },
+      "search": {
+        "title": "Trouvez n'importe quel livre",
+        "desc": "Recherchez par titre, auteur ou catégorie. Des suggestions apparaissent au fil de la saisie."
+      },
+      "menu": {
+        "title": "Menu d'accès rapide",
+        "desc": "Appuyez sur le menu pour parcourir les catégories, packs, favoris et votre profil."
+      },
+      "language": {
+        "title": "Changer de langue",
+        "desc": "Basculez entre le français et l'anglais — l'application s'adapte instantanément."
+      },
+      "packs": {
+        "title": "Packs de livres",
+        "desc": "Des sélections à prix groupé. Économisez davantage en achetant ensemble."
+      },
+      "cart": {
+        "title": "Votre panier",
+        "desc": "Les livres ajoutés apparaissent ici. Prêt à commander à tout moment."
+      },
+      "favorites": {
+        "title": "Sauvegarder pour plus tard",
+        "desc": "Aimez un livre pour l'ajouter à votre liste de souhaits."
+      },
+      "user": {
+        "title": "Votre profil",
+        "desc": "Accédez à votre compte, suivez vos commandes et gérez vos préférences."
+      },
+      "hero": {
+        "title": "À la une",
+        "desc": "Collections vedettes, offres exclusives et coups de cœur — mis à jour régulièrement."
+      },
+      "categories": {
+        "title": "Parcourir par catégorie",
+        "desc": "Faites défiler les genres pour découvrir des livres dans vos sujets favoris."
+      },
+      "books": {
+        "title": "Recommandés pour vous",
+        "desc": "Des carrousels avec nouvelles parutions, meilleures ventes et coups de cœur."
+      },
+      "authors": {
+        "title": "Auteurs phares",
+        "desc": "Explorez les livres des auteurs les plus appréciés des lecteurs."
+      },
+      "finish": {
+        "title": "Visite terminée",
+        "desc": "Direction le catalogue — découvrons l'ensemble de notre collection."
+      }
+    },
+    "allbooks": {
+      "welcome": {
+        "title": "Le catalogue complet",
+        "desc": "Tous nos livres, au même endroit. Voyons comment trouver exactement ce que vous cherchez."
+      },
+      "filters": {
+        "title": "Filtres puissants",
+        "desc": "Affinez par prix, langue, catégorie ou auteur. Combinez les filtres pour des résultats précis."
+      },
+      "tabs": {
+        "title": "Livres & Packs",
+        "desc": "Basculez entre les livres individuels et les packs — des sélections au meilleur prix groupé."
+      },
+      "grid": {
+        "title": "Parcourez et ajoutez au panier",
+        "desc": "Chaque carte affiche le prix, la langue et la disponibilité. Ajoutez directement sans quitter la page."
+      },
+      "finish": {
+        "title": "Finalisez votre profil",
+        "desc": "Dernière étape — renseignez vos coordonnées de livraison pour que votre première commande vous parvienne."
+      }
+    },
+    "profile": {
+      "welcome": {
+        "title": "Votre espace lecteur",
+        "desc": "Voici votre profil. Gardez-le à jour pour que nous puissions livrer vos livres."
+      },
+      "header": {
+        "title": "Votre identité",
+        "desc": "Votre nom et votre date d'inscription. Votre historique de commandes se trouve ici."
+      },
+      "orders": {
+        "title": "Suivre vos commandes",
+        "desc": "Consultez vos commandes en cours et passées. Suivez la livraison en temps réel."
+      },
+      "favorites": {
+        "title": "Votre liste de souhaits",
+        "desc": "Les livres sauvegardés pour plus tard. Un clic pour les ajouter au panier."
+      },
+      "personalInfo": {
+        "title": "Informations personnelles",
+        "desc": "Mettez à jour votre numéro de téléphone et votre localisation — requis pour commander."
+      },
+      "shipping": {
+        "title": "Préférence de livraison",
+        "desc": "Choisissez comment recevoir vos livres : à domicile ou en point relais."
+      },
+      "save": {
+        "title": "Enregistrer vos paramètres",
+        "desc": "Cliquez ici après chaque modification pour sauvegarder votre profil."
+      },
+      "finish": {
+        "title": "Tout est prêt",
+        "desc": "Votre profil est configuré. Commencez à explorer Esprit Livre — votre prochaine lecture vous attend."
+      }
+    }
   }
 }

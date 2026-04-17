@@ -9,6 +9,7 @@ import Footer from '../components/common/Footer';
 import { getUserProfile, updateUserProfile } from '../services/user.service';
 import { isAuthenticated, logout as authLogout, getAndClearRedirectUrl } from '../services/authService';
 import { formatMemberSinceDate } from '../utils/dateUtils';
+import { useOnboarding } from '../contexts/OnboardingContext';
 import wilayaData from '../utils/wilayaData';
 import { validateProfileData } from '../utils/validation';
 import RelayPointSelect from '../components/common/RelayPointSelect';
@@ -17,6 +18,7 @@ export default function Profile() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { startProfileTour } = useOnboarding();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -55,6 +57,24 @@ export default function Profile() {
 
   // Scroll to top when page loads
   useScrollToTop();
+
+  // ── Profile tour trigger ─────────────────────────────────────────────────
+  // When the home tour ends it navigates here with ?tour=true.
+  // We wait until the page has fully loaded before starting so every
+  // data-tour element is in the DOM and getBoundingClientRect() is accurate.
+  useEffect(() => {
+    if (loading) return;
+    if (searchParams.get('tour') !== 'true') return;
+
+    // Remove the param from the URL without adding a history entry
+    const next = new URLSearchParams(searchParams);
+    next.delete('tour');
+    setSearchParams(next, { replace: true });
+
+    const timer = setTimeout(() => startProfileTour(), 500);
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading]);
 
   // Scroll to phone field and focus it for first-time users
   useEffect(() => {
@@ -438,7 +458,7 @@ export default function Profile() {
         </section>
 
         {/* Header - extends behind navbar spacer to fill rounded corner gap */}
-        <div className="bg-gradient-to-br from-[#00417a] via-[#00518f] to-[#0065a8] text-white pt-34 sm:pt-28 pb-20 sm:pb-24 px-4">
+        <div className="bg-gradient-to-br from-[#00417a] via-[#00518f] to-[#0065a8] text-white pt-34 sm:pt-28 pb-20 sm:pb-24 px-4" data-tour="profile-header">
           <div className="max-w-3xl mx-auto">
             {/* Back Button */}
             <button
@@ -543,6 +563,7 @@ export default function Profile() {
           <button
             onClick={navigateToOrders}
             className="group bg-white rounded-xl shadow-md p-4 sm:p-5 flex items-center gap-4 hover:shadow-lg transition-all text-left"
+            data-tour="profile-orders"
           >
             <div className="w-11 h-11 sm:w-12 sm:h-12 bg-[#00417a]/8 rounded-xl flex items-center justify-center flex-shrink-0">
               <Package className="w-5 h-5 sm:w-6 sm:h-6 text-[#00417a]" />
@@ -558,6 +579,7 @@ export default function Profile() {
           <button
             onClick={navigateToFavorites}
             className="group bg-white rounded-xl shadow-md p-4 sm:p-5 flex items-center gap-4 hover:shadow-lg transition-all text-left"
+            data-tour="profile-favorites-card"
           >
             <div className="w-11 h-11 sm:w-12 sm:h-12 bg-[#EE0027]/8 rounded-xl flex items-center justify-center flex-shrink-0">
               <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-[#EE0027]" />
@@ -586,7 +608,7 @@ export default function Profile() {
         </div>
 
         {/* Personal Information Card */}
-        <div className="bg-white rounded-xl shadow-md p-4 sm:p-6 mb-4">
+        <div className="bg-white rounded-xl shadow-md p-4 sm:p-6 mb-4" data-tour="profile-personal-info">
           <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">{t('profile.personalInfo')}</h2>
 
           {/* Read-only fields — 2-col grid on desktop */}
@@ -865,7 +887,7 @@ export default function Profile() {
         </div>
 
         {/* Shipping Preference Card */}
-        <div className="bg-white rounded-xl shadow-md p-4 sm:p-6 mb-4">
+        <div className="bg-white rounded-xl shadow-md p-4 sm:p-6 mb-4" data-tour="profile-shipping">
           <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">{t('profile.shippingPreference')}</h2>
 
           <div className="space-y-3">
@@ -1115,6 +1137,7 @@ export default function Profile() {
               onClick={handleSaveProfile}
               disabled={saving}
               className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-8 py-3 bg-[#00417a] hover:bg-[#003366] text-white rounded-xl shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base font-semibold min-h-[48px]"
+              data-tour="profile-save"
             >
               {saving ? (
                 <>

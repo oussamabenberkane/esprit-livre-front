@@ -15,6 +15,7 @@ import { fetchTopAuthors } from "../services/authors.service"
 import { useState, useEffect } from "react"
 import { useSearchParams, useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
+import { useOnboarding } from '../contexts/OnboardingContext'
 import { getBookCoverUrl } from '../utils/imageUtils'
 import useProgressiveRender from '../hooks/useProgressiveRender'
 import { useCart } from '../contexts/CartContext'
@@ -24,8 +25,9 @@ export default function AllBooks() {
     const { t } = useTranslation()
     const navigate = useNavigate()
     const { addToCart, addPackToCart } = useCart()
+    const { startAllBooksTour } = useOnboarding()
     const [currentPage, setCurrentPage] = useState(1)
-    const [searchParams] = useSearchParams()
+    const [searchParams, setSearchParams] = useSearchParams()
     const { savedFilters, saveFilters } = useFilterPersistence('allbooks_filters')
     const [initialFilters, setInitialFilters] = useState(null)
     const [appliedFilters, setAppliedFilters] = useState(null)
@@ -65,6 +67,17 @@ export default function AllBooks() {
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
+
+    // Trigger allbooks tour when redirected from onboarding (?tour=true)
+    useEffect(() => {
+        if (searchParams.get('tour') !== 'true') return;
+        // Remove param from URL without re-mounting
+        const next = new URLSearchParams(searchParams);
+        next.delete('tour');
+        setSearchParams(next, { replace: true });
+        // Brief delay so DOM is painted before measuring elements
+        setTimeout(() => startAllBooksTour(), 500);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     // Fetch filter data (categories and authors) on mount
     useEffect(() => {
@@ -325,7 +338,7 @@ export default function AllBooks() {
                     </div>
 
                     {/* Filters Section */}
-                    <div className="mb-fluid-md overflow-x-hidden">
+                    <div className="mb-fluid-md overflow-x-hidden" data-tour="allbooks-filters">
                         <FiltersSection
                             initialFilters={initialFilters}
                             onApplyFilters={handleApplyFilters}
@@ -335,7 +348,7 @@ export default function AllBooks() {
                     </div>
 
                     {/* Tabs + Pagination */}
-                    <div className="flex items-end justify-between flex-wrap gap-2 mb-fluid-md border-b border-gray-200">
+                    <div className="flex items-end justify-between flex-wrap gap-2 mb-fluid-md border-b border-gray-200" data-tour="allbooks-tabs">
                         {/* Left: Tabs */}
                         <div className="flex items-end">
                             <button
@@ -430,7 +443,7 @@ export default function AllBooks() {
 
                     {/* Books Tab Content */}
                     {activeTab === 'books' && (
-                    <section className="pb-fluid-xl">
+                    <section className="pb-fluid-xl" data-tour="allbooks-grid">
                         {/* Error State */}
                         {error && !isLoading && (
                             <div className="flex justify-center items-center py-20">

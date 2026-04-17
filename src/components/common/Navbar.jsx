@@ -295,7 +295,7 @@ const Navbar = ({
                     <Logo onClick={handleLogoClick} />
 
                     {/* Search Bar - Always visible but responsive width */}
-                    <div className="flex-1 md:flex-initial relative" ref={desktopSearchContainerRef}>
+                    <div className="flex-1 md:flex-initial relative" ref={desktopSearchContainerRef} data-tour="navbar-search">
                         <SearchBar
                             placeholder={placeholder}
                             value={searchQuery}
@@ -334,22 +334,22 @@ const Navbar = ({
 
                         {/* Language Toggle - Different components based on screen size */}
                         {/* Desktop: Use your actual LanguageToggle component */}
-                        <div className="hidden lg:block">
+                        <div className="hidden lg:block" data-tour="navbar-language">
                             <LanguageToggle />
                         </div>
 
                         {/* Tablet/Large Mobile: Use the simple toggle */}
-                        <div className="hidden md:block lg:hidden">
+                        <div className="hidden md:block lg:hidden" data-tour="navbar-language">
                             <SimpleLanguageToggle />
                         </div>
 
                         {/* Packs - Desktop only */}
-                        <button onClick={handlePacksClick} className="hidden md:block">
+                        <button onClick={handlePacksClick} className="hidden md:block" data-tour="navbar-packs">
                             <Package className="w-6 h-6 text-white hover:opacity-80 transition-opacity" />
                         </button>
 
                         {/* Cart - Always visible */}
-                        <button onClick={handleCartClick} className="relative">
+                        <button onClick={handleCartClick} className="relative" data-tour="navbar-cart">
                             <ShoppingCart className="w-5 h-5 md:w-6 md:h-6 text-white hover:opacity-80 transition-opacity" />
                             {cartCount > 0 && (
                                 <div className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
@@ -361,12 +361,12 @@ const Navbar = ({
                         </button>
 
                         {/* Favorites - Desktop only */}
-                        <button onClick={handleFavoritesClick} className="hidden md:block">
+                        <button onClick={handleFavoritesClick} className="hidden md:block" data-tour="navbar-favorites">
                             <Heart className="w-6 h-6 text-white hover:opacity-80 transition-opacity" />
                         </button>
 
                         {/* User Account - Desktop only */}
-                        <div className="hidden md:block relative" ref={desktopUserButtonRef}>
+                        <div className="hidden md:block relative" ref={desktopUserButtonRef} data-tour="navbar-user">
                             <button
                                 onClick={(e) => handleUserClick(e, false)}
                                 onMouseEnter={(e) => handleUserHover(e, false)}
@@ -395,6 +395,7 @@ const Navbar = ({
                         <button
                             onClick={() => setIsBottomSheetOpen(true)}
                             className="flex-shrink-0"
+                            data-tour="navbar-menu"
                         >
                             <Menu className="w-7 h-7 text-white hover:opacity-80 transition-opacity" />
                         </button>
@@ -404,7 +405,7 @@ const Navbar = ({
                     </div>
 
                     {/* Center: Search Bar */}
-                    <div className="flex-1 min-w-0 relative" ref={mobileSearchContainerRef}>
+                    <div className="flex-1 min-w-0 relative" ref={mobileSearchContainerRef} data-tour="navbar-search">
                         <SearchBar
                             placeholder={placeholder}
                             value={searchQuery}
@@ -438,7 +439,7 @@ const Navbar = ({
                         )}
 
                         {/* User Profile Icon */}
-                        <div className="relative flex-shrink-0" ref={mobileUserButtonRef}>
+                        <div className="relative flex-shrink-0" ref={mobileUserButtonRef} data-tour="navbar-user">
                             <button
                                 onClick={(e) => handleUserClick(e, true)}
                                 onTouchStart={(e) => {
@@ -457,7 +458,7 @@ const Navbar = ({
                         </div>
 
                         {/* Cart Icon */}
-                        <button onClick={handleCartClick} className="relative flex-shrink-0">
+                        <button onClick={handleCartClick} className="relative flex-shrink-0" data-tour="navbar-cart">
                             <ShoppingCart className="w-6 h-6 text-white hover:opacity-80 transition-opacity" />
                             {cartCount > 0 && (
                                 <div className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
@@ -481,6 +482,7 @@ const Navbar = ({
                         <button
                             onClick={() => setIsBottomSheetOpen(true)}
                             className="flex-shrink-0"
+                            data-tour="navbar-menu"
                         >
                             <Menu className="w-6 min-[360px]:w-8 h-6 min-[360px]:h-8 text-white hover:opacity-80 transition-opacity" />
                         </button>
@@ -504,7 +506,7 @@ const Navbar = ({
                         )}
 
                         {/* User Profile Icon */}
-                        <div className="relative flex-shrink-0" ref={mobileUserButtonRef}>
+                        <div className="relative flex-shrink-0" ref={mobileUserButtonRef} data-tour="navbar-user">
                             <button
                                 onClick={(e) => handleUserClick(e, true)}
                                 onTouchStart={(e) => {
@@ -523,7 +525,7 @@ const Navbar = ({
                         </div>
 
                         {/* Cart Icon */}
-                        <button onClick={handleCartClick} className="relative flex-shrink-0">
+                        <button onClick={handleCartClick} className="relative flex-shrink-0" data-tour="navbar-cart">
                             <ShoppingCart className="w-7 h-7 text-white hover:opacity-80 transition-opacity" />
                             {cartCount > 0 && (
                                 <div className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
@@ -537,7 +539,7 @@ const Navbar = ({
                 </div>
 
                 {/* Second Line: Search Bar */}
-                <div className="pb-2 relative" ref={mobileSearchContainerRef}>
+                <div className="pb-2 relative" ref={mobileSearchContainerRef} data-tour="navbar-search">
                     <div className="w-[100%]">
                         <SearchBar
                             placeholder={placeholder}

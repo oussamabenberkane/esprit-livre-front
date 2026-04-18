@@ -612,6 +612,10 @@
         "title": "Book bundles",
         "desc": "Curated packs at exclusive bundle pricing. Save more when you buy together."
       },
+      "orders": {
+        "title": "Your orders",
+        "desc": "Track active and past orders. See delivery status at a glance."
+      },
       "cart": {
         "title": "Your cart",
         "desc": "Books you've added appear here. Ready to order at any time."
@@ -672,29 +676,17 @@
         "title": "Your reading space",
         "desc": "This is your profile. Keep it up to date so we can deliver your books."
       },
-      "header": {
-        "title": "Your identity",
-        "desc": "Your name and member date. Your order history lives here too."
+      "information": {
+        "title": "Your information",
+        "desc": "Update your phone number, wilaya, city, and delivery preference. Changes save automatically."
       },
       "orders": {
-        "title": "Track your orders",
-        "desc": "View current and past orders. Check delivery status in real time."
+        "title": "Your orders",
+        "desc": "Track every order — current status, delivery updates, and full history."
       },
       "favorites": {
-        "title": "Your wishlist",
-        "desc": "Books you've saved for later. One tap to move them to your cart."
-      },
-      "personalInfo": {
-        "title": "Personal information",
-        "desc": "Update your phone number and location — required for checkout."
-      },
-      "shipping": {
-        "title": "Delivery preference",
-        "desc": "Choose how you'd like to receive your books: home delivery or pickup point."
-      },
-      "save": {
-        "title": "Save your settings",
-        "desc": "Click here whenever you update your profile to save your changes."
+        "title": "Your favorites",
+        "desc": "Books you've saved for later. One tap to move them straight to your cart."
       },
       "finish": {
         "title": "You're all set",

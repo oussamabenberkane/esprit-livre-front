@@ -612,6 +612,10 @@
         "title": "Packs de livres",
         "desc": "Des sélections à prix groupé. Économisez davantage en achetant ensemble."
       },
+      "orders": {
+        "title": "Vos commandes",
+        "desc": "Suivez vos commandes en cours et passées. Consultez l'état de la livraison en un coup d'œil."
+      },
       "cart": {
         "title": "Votre panier",
         "desc": "Les livres ajoutés apparaissent ici. Prêt à commander à tout moment."
@@ -672,29 +676,17 @@
         "title": "Votre espace lecteur",
         "desc": "Voici votre profil. Gardez-le à jour pour que nous puissions livrer vos livres."
       },
-      "header": {
-        "title": "Votre identité",
-        "desc": "Votre nom et votre date d'inscription. Votre historique de commandes se trouve ici."
+      "information": {
+        "title": "Vos informations",
+        "desc": "Mettez à jour votre téléphone, wilaya, ville et préférence de livraison. Les modifications sont sauvegardées automatiquement."
       },
       "orders": {
-        "title": "Suivre vos commandes",
-        "desc": "Consultez vos commandes en cours et passées. Suivez la livraison en temps réel."
+        "title": "Vos commandes",
+        "desc": "Suivez chaque commande — statut en cours, mises à jour de livraison et historique complet."
       },
       "favorites": {
-        "title": "Votre liste de souhaits",
-        "desc": "Les livres sauvegardés pour plus tard. Un clic pour les ajouter au panier."
-      },
-      "personalInfo": {
-        "title": "Informations personnelles",
-        "desc": "Mettez à jour votre numéro de téléphone et votre localisation — requis pour commander."
-      },
-      "shipping": {
-        "title": "Préférence de livraison",
-        "desc": "Choisissez comment recevoir vos livres : à domicile ou en point relais."
-      },
-      "save": {
-        "title": "Enregistrer vos paramètres",
-        "desc": "Cliquez ici après chaque modification pour sauvegarder votre profil."
+        "title": "Vos favoris",
+        "desc": "Les livres sauvegardés pour plus tard. Un clic pour les ajouter directement à votre panier."
       },
       "finish": {
         "title": "Tout est prêt",

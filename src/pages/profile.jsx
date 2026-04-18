@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-  ArrowLeft, Edit2, Heart, Package, LogOut, Home, MapPin,
+  ArrowLeft, Edit2, Heart, LogOut, Home, MapPin,
   ChevronDown, Truck, X, Search, CheckCircle, AlertCircle,
   Info, User, ShoppingBag,
 } from 'lucide-react';
@@ -15,9 +15,9 @@ import { isAuthenticated, logout as authLogout, getAndClearRedirectUrl } from '.
 import { formatMemberSinceDate } from '../utils/dateUtils';
 import wilayaData from '../utils/wilayaData';
 import { validateProfileData } from '../utils/validation';
-import RelayPointSelect from '../components/common/RelayPointSelect';
 import OrdersTab from '../components/profil/OrdersTab';
 import FavoritesTab from '../components/profil/FavoritesTab';
+import { useOnboarding } from '../contexts/OnboardingContext';
 
 const TABS = ['information', 'orders', 'favorites'];
 
@@ -83,7 +83,32 @@ export default function Profile() {
 
   const pickupProviders = ['Yalidine', 'ZRexpress'];
 
+  const { startProfileTour, isTourActive, steps, currentStep } = useOnboarding();
+
   useScrollToTop();
+
+  // Switch to the tab indicated by the active tour step
+  useEffect(() => {
+    if (!isTourActive) return;
+    const step = steps[currentStep];
+    if (step?.tabId) handleTabChange(step.tabId);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isTourActive, currentStep, steps]);
+
+  // Start profile tour when ?tour=true is in the URL
+  useEffect(() => {
+    if (searchParams.get('tour') === 'true') {
+      setSearchParams(prev => {
+        const next = new URLSearchParams(prev);
+        next.delete('tour');
+        return next;
+      }, { replace: true });
+      // Delay so the page has painted before measuring element positions
+      const timer = setTimeout(() => startProfileTour(), 500);
+      return () => clearTimeout(timer);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Scroll to phone for first-time users
   useEffect(() => {
@@ -408,7 +433,7 @@ export default function Profile() {
         </AnimatePresence>
 
         {/* ── Blue hero header ─────────────────────────────────── */}
-        <div className="bg-gradient-to-br from-[#00417a] via-[#00518f] to-[#0065a8] text-white pt-34 sm:pt-28 pb-7 px-4">
+        <div data-tour="profile-header" className="bg-gradient-to-br from-[#00417a] via-[#00518f] to-[#0065a8] text-white pt-34 sm:pt-28 pb-7 px-4">
           <div className="max-w-3xl mx-auto">
             {/* Back + Logout */}
             <div className="flex items-center justify-between mb-6 sm:mb-8">
@@ -448,7 +473,7 @@ export default function Profile() {
         </div>
 
         {/* ── Sticky tab bar ───────────────────────────────────── */}
-        <div className="sticky top-28 md:top-20 z-30 bg-white border-b border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
+        <div data-tour="profile-tabs" className="sticky top-28 md:top-20 z-30 bg-white border-b border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
           <div className="max-w-3xl mx-auto px-2 sm:px-4">
             <div className="flex">
               {tabs.map((tab) => {
@@ -457,6 +482,7 @@ export default function Profile() {
                 return (
                   <button
                     key={tab.id}
+                    data-tour={`profile-tab-${tab.id}`}
                     onClick={() => handleTabChange(tab.id)}
                     className={`relative flex items-center justify-center gap-2 flex-1 py-3.5 sm:py-4 text-xs sm:text-sm font-medium transition-colors ${
                       isActive ? 'text-[#00417a]' : 'text-gray-400 hover:text-gray-600'
@@ -483,7 +509,7 @@ export default function Profile() {
         </div>
 
         {/* ── Tab content ──────────────────────────────────────── */}
-        <div className="max-w-3xl mx-auto px-4 py-6 sm:py-8">
+        <div data-tour="profile-tab-content" className="max-w-3xl mx-auto px-4 py-6 sm:py-8">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}

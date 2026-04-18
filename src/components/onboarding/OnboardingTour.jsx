@@ -202,6 +202,8 @@ export default function OnboardingTour() {
         if (el) await scrollToEl(el);
       }
       updatePosition();
+      // Re-measure after tab-switch re-renders settle
+      updateTimerRef.current = setTimeout(updatePosition, 380);
     };
 
     run();

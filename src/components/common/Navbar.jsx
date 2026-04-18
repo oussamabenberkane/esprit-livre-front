@@ -359,7 +359,7 @@ const Navbar = ({
                         </div>
 
                         {/* Orders - Desktop only */}
-                        <button onClick={handleOrdersClick} className="hidden md:block relative" title="Mes commandes">
+                        <button onClick={handleOrdersClick} className="hidden md:block relative" data-tour="navbar-orders" title="Mes commandes">
                             <ShoppingBag className="w-6 h-6 text-white hover:opacity-80 transition-opacity" />
                             {activeOrdersCount > 0 && (
                                 <div className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
@@ -461,7 +461,7 @@ const Navbar = ({
                         )}
 
                         {/* Orders Icon - Tablet */}
-                        <button onClick={handleOrdersClick} className="relative flex-shrink-0" title="Mes commandes">
+                        <button onClick={handleOrdersClick} className="relative flex-shrink-0" data-tour="navbar-orders" title="Mes commandes">
                             <ShoppingBag className="w-6 h-6 text-white hover:opacity-80 transition-opacity" />
                             {activeOrdersCount > 0 && (
                                 <div className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
@@ -540,7 +540,7 @@ const Navbar = ({
                         )}
 
                         {/* Orders Icon - Mobile */}
-                        <button onClick={handleOrdersClick} className="relative flex-shrink-0" title="Mes commandes">
+                        <button onClick={handleOrdersClick} className="relative flex-shrink-0" data-tour="navbar-orders" title="Mes commandes">
                             <ShoppingBag className="w-7 h-7 text-white hover:opacity-80 transition-opacity" />
                             {activeOrdersCount > 0 && (
                                 <div className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">

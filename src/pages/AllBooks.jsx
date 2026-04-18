@@ -3,6 +3,7 @@ import Footer from "../components/common/Footer"
 import BookCard from "../components/common/BookCard"
 import BookCardSkeleton from "../components/common/skeletons/BookCardSkeleton"
 import PackCard from "../components/common/PackCard"
+import PackCardCompact from "../components/common/PackCardCompact"
 import PackCardSkeleton from "../components/common/skeletons/PackCardSkeleton"
 import PackBooksPopup from "../components/common/PackBooksPopup"
 import FiltersSection from "../components/allbooks/FiltersSection"
@@ -36,6 +37,7 @@ export default function AllBooks() {
     const [pageTitle, setPageTitle] = useState(null) // Dynamic page title
     const [searchContext, setSearchContext] = useState(null) // Store search context (type + name)
     const [activeTab, setActiveTab] = useState('books') // 'books' or 'packs'
+    const isUnifiedView = hasActiveFilters(appliedFilters)
 
     // API state
     const [books, setBooks] = useState([])
@@ -347,7 +349,8 @@ export default function AllBooks() {
                         />
                     </div>
 
-                    {/* Tabs + Pagination */}
+                    {/* Tabs + Pagination — hidden when a search/filter is active */}
+                    {!isUnifiedView && (
                     <div className="flex items-end justify-between flex-wrap gap-2 mb-fluid-md border-b border-gray-200" data-tour="allbooks-tabs">
                         {/* Left: Tabs */}
                         <div className="flex items-end">
@@ -404,9 +407,27 @@ export default function AllBooks() {
                             </div>
                         )}
                     </div>
+                    )}
+
+                    {/* Unified results header — shown instead of tabs when search/filter is active */}
+                    {isUnifiedView && (
+                    <div className="flex items-end justify-between flex-wrap gap-2 mb-fluid-md border-b border-gray-200 pb-2.5">
+                        <span className="text-fluid-small font-semibold font-['Poppins'] text-brand-blue">
+                            {t('allBooks.booksTitle', 'Livres')} &amp; {t('allBooks.packsTitle', 'Packs')}
+                        </span>
+                        {!isLoading && (
+                            <div className="text-fluid-small text-gray-600">
+                                {totalBooks} {t('allBooks.booksTitle', 'livres')}
+                                {!isLoadingPacks && packs.length > 0 && (
+                                    <span> · {packs.length} {t('allBooks.packsTitle', 'packs')}</span>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                    )}
 
                     {/* Packs Tab Content */}
-                    {activeTab === 'packs' && (
+                    {!isUnifiedView && activeTab === 'packs' && (
                         <section className="pb-fluid-xl">
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-fluid-md auto-rows-fr">
                                 {isLoadingPacks ? (
@@ -441,8 +462,8 @@ export default function AllBooks() {
                         </section>
                     )}
 
-                    {/* Books Tab Content */}
-                    {activeTab === 'books' && (
+                    {/* Books Tab Content / Unified Content */}
+                    {(isUnifiedView || activeTab === 'books') && (
                     <section className="pb-fluid-xl" data-tour="allbooks-grid">
                         {/* Error State */}
                         {error && !isLoading && (
@@ -464,6 +485,24 @@ export default function AllBooks() {
                         {/* Books Grid with Progressive Loading */}
                         {!error && (
                             <div className="flex flex-wrap gap-fluid-md justify-center">
+                                {/* Packs — rendered first in unified view using compact cards */}
+                                {isUnifiedView && !isLoadingPacks && packs.map((pack) => (
+                                    <div key={`pack-${pack.id}`} className="book-card-width animate-fade-in">
+                                        <PackCardCompact
+                                            id={pack.id}
+                                            title={pack.title}
+                                            originalPrice={pack.originalPrice}
+                                            packPrice={pack.packPrice}
+                                            books={pack.books}
+                                            onAddToCart={handlePackAddToCart}
+                                            onViewBooks={(packId) => {
+                                                const p = packs.find(x => x.id === packId)
+                                                if (p) handleViewAllBooks(p)
+                                            }}
+                                        />
+                                    </div>
+                                ))}
+
                                 {/* Render visible books progressively */}
                                 {visibleBooks.map((book, index) => {
                                     // Extract first ETIQUETTE tag for badge
@@ -556,7 +595,7 @@ export default function AllBooks() {
                     )}
 
                     {/* Bottom Navigation */}
-                    {activeTab === 'books' && (
+                    {(isUnifiedView || activeTab === 'books') && (
                     <div className="flex flex-col sm:flex-row justify-between items-center gap-4 py-fluid-lg border-t border-gray-200 text-fluid-small">
                         <div ></div>
 

@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { BookOpen } from 'lucide-react';
 import { useOnboarding } from '../../contexts/OnboardingContext';
+import Logo from '../common/Logo';
 
 // ── Page-flutter particles ────────────────────────────────────────────────────
 // Each particle is a small rectangle that drifts outward and upward like a
@@ -128,48 +129,16 @@ export default function OnboardingCelebration() {
 
             {/* Brand wordmark */}
             <motion.div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 10,
-                marginBottom: 16,
-              }}
+              style={{ marginBottom: 16 }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.72 }}
             >
-              <span
-                style={{
-                  fontFamily: "'Cormorant Garamond', Georgia, serif",
-                  fontSize: 18,
-                  color: 'rgba(255,255,255,0.84)',
-                  fontStyle: 'italic',
-                  fontWeight: 500,
-                }}
-              >
-                Esprit
-              </span>
-              <span
-                style={{
-                  width: 1,
-                  height: 16,
-                  background: 'rgba(255,255,255,0.18)',
-                  display: 'block',
-                  flexShrink: 0,
-                }}
+              <Logo
+                color="rgba(255,255,255,0.84)"
+                textClassName="text-[15px]"
+                align="center"
               />
-              <span
-                style={{
-                  fontSize: 11,
-                  color: 'rgba(255,255,255,0.52)',
-                  letterSpacing: '0.22em',
-                  textTransform: 'uppercase',
-                  fontWeight: 500,
-                }}
-              >
-                Livre
-              </span>
             </motion.div>
 
             {/* Heading */}

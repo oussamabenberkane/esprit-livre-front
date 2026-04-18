@@ -90,6 +90,7 @@
       "home": "Accueil",
       "books": "Livres",
       "packs": "Packs",
+      "orders": "Commandes",
       "favorites": "Favoris",
       "profile": "Profil"
     }
@@ -428,6 +429,11 @@
     }
   },
   "profile": {
+    "tabs": {
+      "information": "Informations",
+      "orders": "Commandes",
+      "favorites": "Favoris"
+    },
     "back": "Retour",
     "memberSince": "Membre depuis",
     "personalInfo": "Informations personnelles",
@@ -491,6 +497,7 @@
     "startShopping": "Commencer mes achats",
     "errorTitle": "Impossible de charger les commandes",
     "quantity": "Quantité",
+    "shippingCost": "Frais de livraison",
     "status": {
       "pending": "En attente",
       "confirmed": "Confirmée",

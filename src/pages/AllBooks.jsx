@@ -19,7 +19,7 @@ import { useOnboarding } from '../contexts/OnboardingContext'
 import { getBookCoverUrl } from '../utils/imageUtils'
 import useProgressiveRender from '../hooks/useProgressiveRender'
 import { useCart } from '../contexts/CartContext'
-import { useFilterPersistence, hasActiveFilters } from '../hooks/useFilterPersistence'
+import { useFilterPersistence, hasActiveFilters, hasPersistableFilters } from '../hooks/useFilterPersistence'
 
 export default function AllBooks() {
     const { t } = useTranslation()
@@ -308,8 +308,8 @@ export default function AllBooks() {
         setCurrentPage(1)
         // Update applied filters state
         setAppliedFilters(filters)
-        // Persist filters so they survive navigation (clear when back to defaults)
-        saveFilters(hasActiveFilters(filters) ? filters : null)
+        // Persist filters so they survive navigation (clear when back to defaults, never persist search text)
+        saveFilters(hasPersistableFilters(filters) ? filters : null)
         // Scroll to top when filters are applied
         window.scrollTo({ top: 0, behavior: 'smooth' })
     }

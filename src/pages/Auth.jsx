@@ -1,11 +1,14 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import GoogleAuthButton from '../components/buttons/GoogleAuthButton';
+import Logo from '../components/common/Logo';
 import { initiateGoogleLogin } from '../services/oauthService';
 
 export default function Auth() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -70,18 +73,13 @@ export default function Auth() {
                 />
               </svg>
             </div>
-            <div className="flex items-center justify-center gap-2.5 mb-2">
-                <span
-                    className="text-gray-900 font-semibold italic text-3xl leading-none tracking-wide"
-                    style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
-                >
-                    Esprit
-                </span>
-                <span className="w-px h-8 bg-[#d4a84b] opacity-70" aria-hidden="true" />
-                <span className="text-gray-900 font-medium text-lg leading-none tracking-[0.18em] uppercase">
-                    Livre
-                </span>
-            </div>
+            <Logo
+              onClick={() => navigate('/')}
+              color="#1e293b"
+              textClassName="text-[20px]"
+              align="center"
+              className="mb-2"
+            />
           </motion.div>
 
           {/* Title */}

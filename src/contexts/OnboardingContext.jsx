@@ -61,11 +61,12 @@ export const OnboardingProvider = ({ children }) => {
 
   /** Called from profile page when it detects ?tour=true in the URL. */
   const startProfileTour = useCallback(() => {
+    if (phase === 'complete' || phase === 'profile-tour') return;
     const visible = resolveVisibleSteps(profileTourSteps);
     setResolvedSteps(visible);
     setCurrentStep(0);
     setPhase('profile-tour');
-  }, []);
+  }, [phase]);
 
   /** Called when the user clicks "Done" on the finish screen. */
   const endOnboarding = useCallback(() => {

@@ -83,7 +83,7 @@ export default function Profile() {
 
   const pickupProviders = ['Yalidine', 'ZRexpress'];
 
-  const { startProfileTour, isTourActive, steps, currentStep } = useOnboarding();
+  const { startProfileTour, isTourActive, steps, currentStep, phase } = useOnboarding();
 
   useScrollToTop();
 
@@ -95,18 +95,21 @@ export default function Profile() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTourActive, currentStep, steps]);
 
-  // Start profile tour when ?tour=true is in the URL
+  // Start profile tour when ?tour=true is in the URL.
+  // Guard against re-firing when the user navigates back here after the tour
+  // is already complete (phase captured at mount time reflects context state).
   useEffect(() => {
-    if (searchParams.get('tour') === 'true') {
-      setSearchParams(prev => {
-        const next = new URLSearchParams(prev);
-        next.delete('tour');
-        return next;
-      }, { replace: true });
-      // Delay so the page has painted before measuring element positions
-      const timer = setTimeout(() => startProfileTour(), 500);
-      return () => clearTimeout(timer);
-    }
+    if (searchParams.get('tour') !== 'true') return;
+    if (phase === 'complete') return;
+
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev);
+      next.delete('tour');
+      return next;
+    }, { replace: true });
+
+    const timer = setTimeout(() => startProfileTour(), 500);
+    return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

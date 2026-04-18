@@ -297,22 +297,18 @@ const HomePage = () => {
     // Fires once when a first-time user lands on the home page after completing
     // their profile setup (/profile?firstLogin=true → save → back here).
     // The sessionStorage flag is written by AuthCallback for users with no phone.
+    //
+    // pendingOnboardingRef gates the actual start so we don't launch the
+    // celebration overlay while a cart or order-success popup is still visible.
+    const pendingOnboardingRef = useRef(false);
+
     useEffect(() => {
         const pending = sessionStorage.getItem('el_onboarding_pending') === 'true';
         const fromProfile = !!location.state?.profileCompleted;
 
         if (pending && fromProfile && loggedIn) {
-            // Clear the flag immediately to prevent re-triggering on re-renders
             sessionStorage.removeItem('el_onboarding_pending');
-
-            // Slight delay so the page finishes painting before the overlay mounts
-            const timer = setTimeout(() => {
-                getUserProfile()
-                    .then((profile) => startOnboarding(profile.firstName || ''))
-                    .catch(() => startOnboarding(''));
-            }, 400);
-
-            return () => clearTimeout(timer);
+            pendingOnboardingRef.current = true;
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -329,6 +325,21 @@ const HomePage = () => {
     const [showOrderSuccess, setShowOrderSuccess] = useState(false);
     const [orderSuccessMessage, setOrderSuccessMessage] = useState('');
     const [orderUniqueId, setOrderUniqueId] = useState('');
+
+    // Launch onboarding only after any cart / order popup has been dismissed.
+    useEffect(() => {
+        if (!pendingOnboardingRef.current) return;
+        if (showCartPopup || showOrderSuccess) return;
+
+        pendingOnboardingRef.current = false;
+        const timer = setTimeout(() => {
+            getUserProfile()
+                .then((profile) => startOnboarding(profile.firstName || ''))
+                .catch(() => startOnboarding(''));
+        }, 400);
+        return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [showCartPopup, showOrderSuccess]);
 
     // Navigation handler for categories
     const handleCategoryClick = (categoryId, categoryName) => {

@@ -13,13 +13,6 @@
 
 export const homeTourSteps = [
   {
-    id: 'welcome',
-    selector: null,
-    placement: 'center',
-    titleKey: 'onboarding.home.welcome.title',
-    descKey: 'onboarding.home.welcome.desc',
-  },
-  {
     id: 'search',
     selector: '[data-tour="navbar-search"]',
     placement: 'bottom',
@@ -75,99 +68,9 @@ export const homeTourSteps = [
     titleKey: 'onboarding.home.user.title',
     descKey: 'onboarding.home.user.desc',
   },
-  {
-    id: 'hero',
-    selector: '[data-tour="hero-carousel"]',
-    placement: 'bottom',
-    titleKey: 'onboarding.home.hero.title',
-    descKey: 'onboarding.home.hero.desc',
-    scrollIntoView: true,
-  },
-  {
-    id: 'categories',
-    selector: '[data-tour="categories-section"]',
-    placement: 'bottom',
-    titleKey: 'onboarding.home.categories.title',
-    descKey: 'onboarding.home.categories.desc',
-    scrollIntoView: true,
-  },
-  {
-    id: 'books',
-    selector: '[data-tour="books-section"]',
-    placement: 'bottom',
-    titleKey: 'onboarding.home.books.title',
-    descKey: 'onboarding.home.books.desc',
-    scrollIntoView: true,
-  },
-  {
-    id: 'authors',
-    selector: '[data-tour="authors-section"]',
-    placement: 'bottom',
-    titleKey: 'onboarding.home.authors.title',
-    descKey: 'onboarding.home.authors.desc',
-    scrollIntoView: true,
-  },
-  {
-    id: 'finish',
-    selector: null,
-    placement: 'center',
-    titleKey: 'onboarding.home.finish.title',
-    descKey: 'onboarding.home.finish.desc',
-    isFinish: true,
-  },
-];
-
-export const allbooksTourSteps = [
-  {
-    id: 'allbooks-welcome',
-    selector: null,
-    placement: 'center',
-    titleKey: 'onboarding.allbooks.welcome.title',
-    descKey: 'onboarding.allbooks.welcome.desc',
-  },
-  {
-    id: 'allbooks-filters',
-    selector: '[data-tour="allbooks-filters"]',
-    placement: 'bottom',
-    titleKey: 'onboarding.allbooks.filters.title',
-    descKey: 'onboarding.allbooks.filters.desc',
-    scrollIntoView: true,
-  },
-  {
-    id: 'allbooks-tabs',
-    selector: '[data-tour="allbooks-tabs"]',
-    placement: 'bottom',
-    titleKey: 'onboarding.allbooks.tabs.title',
-    descKey: 'onboarding.allbooks.tabs.desc',
-    scrollIntoView: true,
-  },
-  {
-    id: 'allbooks-grid',
-    selector: '[data-tour="allbooks-grid"]',
-    placement: 'top',
-    titleKey: 'onboarding.allbooks.grid.title',
-    descKey: 'onboarding.allbooks.grid.desc',
-    scrollIntoView: true,
-    skipIfHidden: true,
-  },
-  {
-    id: 'allbooks-finish',
-    selector: null,
-    placement: 'center',
-    titleKey: 'onboarding.allbooks.finish.title',
-    descKey: 'onboarding.allbooks.finish.desc',
-    isFinish: true,
-  },
 ];
 
 export const profileTourSteps = [
-  {
-    id: 'profile-welcome',
-    selector: null,
-    placement: 'center',
-    titleKey: 'onboarding.profile.welcome.title',
-    descKey: 'onboarding.profile.welcome.desc',
-  },
   {
     id: 'profile-header',
     selector: '[data-tour="profile-header"]',
@@ -215,13 +118,5 @@ export const profileTourSteps = [
     titleKey: 'onboarding.profile.save.title',
     descKey: 'onboarding.profile.save.desc',
     scrollIntoView: true,
-  },
-  {
-    id: 'profile-finish',
-    selector: null,
-    placement: 'center',
-    titleKey: 'onboarding.profile.finish.title',
-    descKey: 'onboarding.profile.finish.desc',
-    isFinish: true,
   },
 ];

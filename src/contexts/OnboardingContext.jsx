@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { homeTourSteps, allbooksTourSteps, profileTourSteps } from '../components/onboarding/tourSteps';
+import { homeTourSteps, profileTourSteps } from '../components/onboarding/tourSteps';
 
 const OnboardingContext = createContext(null);
 
@@ -32,10 +32,9 @@ export const OnboardingProvider = ({ children }) => {
    *   'idle'                  — onboarding not active
    *   'celebration'           — welcome animation showing
    *   'home-tour'             — spotlight tour on the home page
-   *   'transition-to-allbooks'— home tour done, navigating to /allbooks?tour=true
-   *   'allbooks-tour'         — spotlight tour on the all-books page
-   *   'transition-to-profile' — allbooks tour done (or skipped), navigating to /profile?tour=true
+   *   'transition-to-profile' — home tour done, navigating to /profile?tour=true
    *   'profile-tour'          — spotlight tour on the profile page
+   *   'finish'                — finish screen showing (tour fully walked)
    *   'complete'              — fully finished or skipped
    */
   const [phase, setPhase] = useState('idle');
@@ -60,24 +59,18 @@ export const OnboardingProvider = ({ children }) => {
     setPhase('home-tour');
   }, []);
 
-  /**
-   * Called from AllBooks page when it detects ?tour=true in the URL.
-   */
-  const startAllBooksTour = useCallback(() => {
-    const visible = resolveVisibleSteps(allbooksTourSteps);
-    setResolvedSteps(visible);
-    setCurrentStep(0);
-    setPhase('allbooks-tour');
-  }, []);
-
-  /**
-   * Called from profile page when it detects ?tour=true in the URL.
-   */
+  /** Called from profile page when it detects ?tour=true in the URL. */
   const startProfileTour = useCallback(() => {
     const visible = resolveVisibleSteps(profileTourSteps);
     setResolvedSteps(visible);
     setCurrentStep(0);
     setPhase('profile-tour');
+  }, []);
+
+  /** Called when the user clicks "Done" on the finish screen. */
+  const endOnboarding = useCallback(() => {
+    sessionStorage.removeItem('el_onboarding_pending');
+    setPhase('complete');
   }, []);
 
   // ── Step navigation ──────────────────────────────────────────────────────────
@@ -86,13 +79,10 @@ export const OnboardingProvider = ({ children }) => {
     const next = currentStep + 1;
     if (next >= resolvedSteps.length) {
       if (phase === 'home-tour') {
-        setPhase('transition-to-allbooks');
-      } else if (phase === 'allbooks-tour') {
         setPhase('transition-to-profile');
       } else {
-        // Profile tour finished — clear the flag and mark complete.
-        sessionStorage.removeItem('el_onboarding_pending');
-        setPhase('complete');
+        // Profile tour finished — show finish screen.
+        setPhase('finish');
       }
     } else {
       setCurrentStep(next);
@@ -103,16 +93,9 @@ export const OnboardingProvider = ({ children }) => {
     setCurrentStep((s) => Math.max(0, s - 1));
   }, []);
 
-  /**
-   * Skipping from any phase before profile still redirects through allbooks
-   * then to profile, so the user completes setup.
-   * Skipping the profile tour marks onboarding as complete.
-   */
+  /** Skipping from any phase goes directly to complete (no finish screen). */
   const skipTour = useCallback(() => {
     if (phase === 'home-tour' || phase === 'celebration') {
-      // Skip home → jump straight to allbooks tour
-      setPhase('transition-to-allbooks');
-    } else if (phase === 'allbooks-tour') {
       setPhase('transition-to-profile');
     } else {
       sessionStorage.removeItem('el_onboarding_pending');
@@ -133,10 +116,10 @@ export const OnboardingProvider = ({ children }) => {
 
   // ── Derived flags ────────────────────────────────────────────────────────────
 
-  const isCelebrationActive     = phase === 'celebration';
-  const isTourActive            = phase === 'home-tour' || phase === 'allbooks-tour' || phase === 'profile-tour';
-  const isTransitioningToAllBooks = phase === 'transition-to-allbooks';
-  const isTransitioningToProfile  = phase === 'transition-to-profile';
+  const isCelebrationActive      = phase === 'celebration';
+  const isTourActive             = phase === 'home-tour' || phase === 'profile-tour';
+  const isTransitioningToProfile = phase === 'transition-to-profile';
+  const isFinishActive           = phase === 'finish';
 
   return (
     <OnboardingContext.Provider
@@ -147,15 +130,15 @@ export const OnboardingProvider = ({ children }) => {
         userName,
         isCelebrationActive,
         isTourActive,
-        isTransitioningToAllBooks,
         isTransitioningToProfile,
+        isFinishActive,
         startOnboarding,
         startHomeTour,
-        startAllBooksTour,
         startProfileTour,
         nextStep,
         prevStep,
         skipTour,
+        endOnboarding,
       }}
     >
       {children}

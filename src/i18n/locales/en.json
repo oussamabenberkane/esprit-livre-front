@@ -573,6 +573,11 @@
       "startTour": "Start the tour",
       "skip": "Skip, I'll explore on my own"
     },
+    "finish": {
+      "title": "You're all set",
+      "subtitle": "Your profile is ready. Start exploring Esprit Livre — your next great read awaits.",
+      "done": "Start exploring"
+    },
     "tour": {
       "back": "Back",
       "next": "Next",

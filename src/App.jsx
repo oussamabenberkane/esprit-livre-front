@@ -19,6 +19,7 @@ import { CartProvider } from './contexts/CartContext';
 import { OnboardingProvider } from './contexts/OnboardingContext';
 import OnboardingCelebration from './components/onboarding/OnboardingCelebration';
 import OnboardingTour from './components/onboarding/OnboardingTour';
+import OnboardingFinish from './components/onboarding/OnboardingFinish';
 
 function App() {
   return (
@@ -75,6 +76,7 @@ function App() {
           {/* Onboarding overlays — rendered at root so they cover all pages */}
           <OnboardingCelebration />
           <OnboardingTour />
+          <OnboardingFinish />
           </OnboardingProvider>
         </CartProvider>
       </FavoritesProvider>

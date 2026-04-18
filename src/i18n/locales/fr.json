@@ -573,6 +573,11 @@
       "startTour": "Commencer la visite",
       "skip": "Passer, j'explore seul(e)"
     },
+    "finish": {
+      "title": "Tout est prêt",
+      "subtitle": "Votre profil est configuré. Explorez Esprit Livre — votre prochaine lecture vous attend.",
+      "done": "Commencer à explorer"
+    },
     "tour": {
       "back": "Retour",
       "next": "Suivant",

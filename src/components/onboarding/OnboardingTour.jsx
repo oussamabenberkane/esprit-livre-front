@@ -124,7 +124,6 @@ export default function OnboardingTour() {
   const navigate = useNavigate();
   const {
     isTourActive,
-    isTransitioningToAllBooks,
     isTransitioningToProfile,
     steps,
     currentStep,
@@ -146,12 +145,7 @@ export default function OnboardingTour() {
 
   const step = steps[currentStep];
 
-  // ── Navigate to allbooks tour when home tour finishes / is skipped ──────────
-  useEffect(() => {
-    if (isTransitioningToAllBooks) navigate('/allbooks?tour=true');
-  }, [isTransitioningToAllBooks, navigate]);
-
-  // ── Navigate to profile tour when allbooks tour finishes / is skipped ───────
+  // ── Navigate to profile tour when home tour finishes / is skipped ───────────
   useEffect(() => {
     if (isTransitioningToProfile) navigate('/profile?tour=true');
   }, [isTransitioningToProfile, navigate]);

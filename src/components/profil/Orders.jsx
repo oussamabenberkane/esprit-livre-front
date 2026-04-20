@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Package, Calendar, Eye, PackageOpen, CheckCircle, X } from 'lucide-react';
@@ -238,6 +238,11 @@ export default function Orders() {
   // Scroll to top when page loads
   useScrollToTop();
 
+  const handleDismissLinkedOrders = useCallback(() => {
+    setShowLinkedOrdersSuccess(false);
+    navigate('/');
+  }, [navigate]);
+
   // Check for linked orders success state from navigation
   useEffect(() => {
     if (location.state?.linkedOrdersSuccess) {
@@ -250,13 +255,10 @@ export default function Orders() {
       // Clear the navigation state
       window.history.replaceState({}, document.title);
 
-      // Auto-hide success message after 8 seconds
-      const timer = setTimeout(() => {
-        setShowLinkedOrdersSuccess(false);
-      }, 8000);
-
+      const timer = setTimeout(handleDismissLinkedOrders, 3000);
       return () => clearTimeout(timer);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]);
 
   // Fetch orders on component mount
@@ -357,7 +359,7 @@ export default function Orders() {
                     )}
                   </div>
                   <button
-                    onClick={() => setShowLinkedOrdersSuccess(false)}
+                    onClick={handleDismissLinkedOrders}
                     className="flex-shrink-0 text-emerald-600 hover:text-emerald-800 transition-colors"
                   >
                     <X className="w-5 h-5" />

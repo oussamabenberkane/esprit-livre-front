@@ -91,11 +91,21 @@ export const getCurrentUser = async () => {
     },
   });
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch user profile');
+  if (response.ok) {
+    return response.json();
   }
 
-  return response.json();
+  // 409 = user already exists in the DB — fetch their profile instead
+  if (response.status === 409) {
+    const profileResponse = await fetch(`${API_BASE_URL}/api/app-users/profile`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (profileResponse.ok) {
+      return profileResponse.json();
+    }
+  }
+
+  throw new Error('Failed to fetch user profile');
 };
 
 /**

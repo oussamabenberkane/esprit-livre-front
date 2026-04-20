@@ -295,20 +295,22 @@ const HomePage = () => {
 
     // ── Onboarding trigger ───────────────────────────────────────────────────
     // Fires once when a first-time user lands on the home page after completing
-    // their profile setup (/profile?firstLogin=true → save → back here).
-    // The sessionStorage flag is written by AuthCallback for users with no phone.
-    //
-    // pendingOnboardingRef gates the actual start so we don't launch the
-    // celebration overlay while a cart or order-success popup is still visible.
-    const pendingOnboardingRef = useRef(false);
-
+    // their profile setup. Works for both cases:
+    //   - no linked orders: profile → home (direct)
+    //   - linked orders:    profile → /orders → home (indirect)
+    // The flag is set to 'profile_saved' by profile.jsx on save, replacing the
+    // initial 'true' written by AuthCallback, so we know profile was completed.
     useEffect(() => {
-        const pending = sessionStorage.getItem('el_onboarding_pending') === 'true';
-        const fromProfile = !!location.state?.profileCompleted;
+        const pending = sessionStorage.getItem('el_onboarding_pending') === 'profile_saved';
 
-        if (pending && fromProfile && loggedIn) {
+        if (pending && loggedIn) {
             sessionStorage.removeItem('el_onboarding_pending');
-            pendingOnboardingRef.current = true;
+            const timer = setTimeout(() => {
+                getUserProfile()
+                    .then((profile) => startOnboarding(profile.firstName || ''))
+                    .catch(() => startOnboarding(''));
+            }, 400);
+            return () => clearTimeout(timer);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -325,21 +327,6 @@ const HomePage = () => {
     const [showOrderSuccess, setShowOrderSuccess] = useState(false);
     const [orderSuccessMessage, setOrderSuccessMessage] = useState('');
     const [orderUniqueId, setOrderUniqueId] = useState('');
-
-    // Launch onboarding only after any cart / order popup has been dismissed.
-    useEffect(() => {
-        if (!pendingOnboardingRef.current) return;
-        if (showCartPopup || showOrderSuccess) return;
-
-        pendingOnboardingRef.current = false;
-        const timer = setTimeout(() => {
-            getUserProfile()
-                .then((profile) => startOnboarding(profile.firstName || ''))
-                .catch(() => startOnboarding(''));
-        }, 400);
-        return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [showCartPopup, showOrderSuccess]);
 
     // Navigation handler for categories
     const handleCategoryClick = (categoryId, categoryName) => {

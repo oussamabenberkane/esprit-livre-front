@@ -301,6 +301,7 @@ export default function Profile() {
       setShowFirstLoginBanner(false);
       setSaving(false);
       if (isFirstLogin && updateResponse) {
+        sessionStorage.setItem('el_onboarding_pending', 'profile_saved');
         const { linkedOrdersCount = 0, updatedOrdersCount = 0 } = updateResponse;
         if (linkedOrdersCount > 0) {
           navigate('/orders', {

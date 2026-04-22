@@ -447,10 +447,7 @@ export default function Profile() {
         </AnimatePresence>
 
         {/* ── Blue hero header ─────────────────────────────────── */}
-        <div
-          data-tour="profile-header"
-          className={`bg-gradient-to-br from-[#00417a] via-[#00518f] to-[#0065a8] text-white pt-34 sm:pt-28 px-4 ${activeTab === null ? 'min-h-[100dvh] pb-8' : 'pb-7'}`}
-        >
+        <div data-tour="profile-header" className="bg-gradient-to-br from-[#00417a] via-[#00518f] to-[#0065a8] text-white pt-34 sm:pt-28 pb-7 px-4">
           <div className="max-w-3xl mx-auto">
             {/* Back + Logout */}
             <div className="flex items-center justify-between mb-6 sm:mb-8">
@@ -459,7 +456,7 @@ export default function Profile() {
                 className="flex items-center gap-1.5 text-white/60 hover:text-white transition-colors text-xs sm:text-sm"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span>{activeTab !== null ? t('profile.back') : t('profile.back')}</span>
+                <span>{t('profile.back')}</span>
               </button>
               <button
                 onClick={handleLogout}
@@ -486,51 +483,6 @@ export default function Profile() {
                 </p>
               </div>
             </div>
-
-            {/* ── Hero menu buttons — embedded in the blue area ── */}
-            {activeTab === null && (
-              <div className="mt-7 space-y-2.5" data-tour="profile-tabs">
-                {[
-                  {
-                    id: 'information',
-                    label: t('profile.tabs.information', 'Informations'),
-                    icon: User,
-                    desc: t('profile.menu.infoDesc', 'Vos données personnelles et préférences'),
-                  },
-                  {
-                    id: 'favorites',
-                    label: t('profile.tabs.favorites', 'Favoris'),
-                    icon: Heart,
-                    desc: t('profile.menu.favDesc', 'Vos livres sauvegardés'),
-                  },
-                  {
-                    id: 'orders',
-                    label: t('profile.tabs.orders', 'Commandes'),
-                    icon: ShoppingBag,
-                    desc: t('profile.menu.ordersDesc', 'Historique de vos achats'),
-                  },
-                ].map((item, i) => (
-                  <motion.button
-                    key={item.id}
-                    data-tour={`profile-tab-${item.id}`}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.07, duration: 0.28, ease: 'easeOut' }}
-                    onClick={() => handleTabChange(item.id)}
-                    className="w-full bg-white/10 hover:bg-white/18 active:bg-white/25 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-4 sm:px-5 sm:py-5 flex items-center gap-4 active:scale-[0.99] transition-all text-left group"
-                  >
-                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0">
-                      <item.icon className="w-5 h-5 text-white" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white text-sm sm:text-base">{item.label}</p>
-                      <p className="text-white/50 text-xs mt-0.5 leading-relaxed">{item.desc}</p>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-white/40 group-hover:text-white/80 transition-colors flex-shrink-0" />
-                  </motion.button>
-                ))}
-              </div>
-            )}
           </div>
         </div>
 
@@ -557,6 +509,69 @@ export default function Profile() {
                   </button>
                 );
               })}
+            </div>
+          </div>
+        )}
+
+        {/* ── Menu buttons (default view, below header) ─────────── */}
+        {activeTab === null && (
+          <div className="max-w-3xl mx-auto px-4 py-6 sm:py-8">
+            <div className="space-y-3" data-tour="profile-tabs">
+              {[
+                {
+                  id: 'information',
+                  label: t('profile.tabs.information', 'Informations'),
+                  icon: User,
+                  desc: t('profile.menu.infoDesc', 'Vos données personnelles et préférences'),
+                  color: '#00417a',
+                  bg: '#dbeafe',
+                },
+                {
+                  id: 'favorites',
+                  label: t('profile.tabs.favorites', 'Favoris'),
+                  icon: Heart,
+                  desc: t('profile.menu.favDesc', 'Vos livres sauvegardés'),
+                  color: '#EE0027',
+                  bg: '#fee2e2',
+                },
+                {
+                  id: 'orders',
+                  label: t('profile.tabs.orders', 'Commandes'),
+                  icon: ShoppingBag,
+                  desc: t('profile.menu.ordersDesc', 'Historique de vos achats'),
+                  color: '#0369a1',
+                  bg: '#e0f2fe',
+                },
+              ].map((item, i) => (
+                <motion.button
+                  key={item.id}
+                  data-tour={`profile-tab-${item.id}`}
+                  initial={{ opacity: 0, x: -16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.08, duration: 0.3, ease: 'easeOut' }}
+                  onClick={() => handleTabChange(item.id)}
+                  className="w-full bg-white rounded-2xl overflow-hidden flex items-stretch shadow-sm hover:shadow-md active:scale-[0.99] transition-all text-left group"
+                >
+                  {/* Colored left accent bar */}
+                  <div className="w-1 flex-shrink-0" style={{ backgroundColor: item.color }} />
+                  <div className="flex items-center gap-4 flex-1 px-4 py-4 sm:px-5 sm:py-5">
+                    <div
+                      className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-110"
+                      style={{ backgroundColor: item.bg }}
+                    >
+                      <item.icon className="w-6 h-6" style={{ color: item.color }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-gray-900 text-sm sm:text-base">{item.label}</p>
+                      <p className="text-xs text-gray-400 mt-0.5 leading-relaxed">{item.desc}</p>
+                    </div>
+                    <ChevronRight
+                      className="w-5 h-5 flex-shrink-0 transition-all duration-200 group-hover:translate-x-1"
+                      style={{ color: item.color }}
+                    />
+                  </div>
+                </motion.button>
+              ))}
             </div>
           </div>
         )}

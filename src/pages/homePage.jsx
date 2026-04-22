@@ -325,6 +325,7 @@ const HomePage = () => {
 
     // Order success state
     const [showOrderSuccess, setShowOrderSuccess] = useState(false);
+    const [orderSuccessTitle, setOrderSuccessTitle] = useState('');
     const [orderSuccessMessage, setOrderSuccessMessage] = useState('');
     const [orderUniqueId, setOrderUniqueId] = useState('');
 
@@ -804,6 +805,7 @@ const HomePage = () => {
     useEffect(() => {
         if (location.state?.orderSuccess) {
             setShowOrderSuccess(true);
+            setOrderSuccessTitle(t('cart.orderSuccessTitle'));
             setOrderSuccessMessage(location.state.message);
             setOrderUniqueId(location.state.orderUniqueId);
 
@@ -821,6 +823,7 @@ const HomePage = () => {
         // Check for profile completed state (first-time user with no linked orders)
         if (location.state?.profileCompleted) {
             setShowOrderSuccess(true);
+            setOrderSuccessTitle(t('homePage.profileCompletedTitle'));
             setOrderSuccessMessage(t('homePage.profileCompleted'));
             setOrderUniqueId('');
 
@@ -862,7 +865,7 @@ const HomePage = () => {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <h3 className="text-emerald-900 font-bold text-sm xs:text-base md:text-fluid-h3 mb-1 leading-tight">
-                                            {t('cart.orderSuccessTitle') || 'Order Placed Successfully!'}
+                                            {orderSuccessTitle || t('cart.orderSuccessTitle')}
                                         </h3>
                                         <p className="text-emerald-800 text-xs xs:text-sm md:text-fluid-small mb-2 leading-relaxed break-words">
                                             {orderSuccessMessage}

@@ -449,7 +449,7 @@ export default function Profile() {
         {/* ── Blue hero header ─────────────────────────────────── */}
         <div
           data-tour="profile-header"
-          className={`bg-gradient-to-br from-[#00417a] via-[#00518f] to-[#0065a8] text-white pt-34 sm:pt-28 px-4 ${activeTab === null ? 'pb-8' : 'pb-7'}`}
+          className={`bg-gradient-to-br from-[#00417a] via-[#00518f] to-[#0065a8] text-white pt-34 sm:pt-28 px-4 ${activeTab === null ? 'min-h-[100dvh] pb-8' : 'pb-7'}`}
         >
           <div className="max-w-3xl mx-auto">
             {/* Back + Logout */}

@@ -1,6 +1,6 @@
 // User Profile API Service
 import { API_BASE_URL, getDefaultHeaders } from './apiConfig';
-import { getAccessToken } from './authService';
+import { getAccessToken, getCurrentUser } from './authService';
 
 /**
  * Get authenticated headers with Bearer token
@@ -25,14 +25,35 @@ export const getUserProfile = async () => {
       headers: getAuthHeaders(),
     });
 
-    if (!response.ok) {
-      if (response.status === 401) {
-        throw new Error('Unauthorized - Please login again');
-      }
-      throw new Error(`Failed to fetch profile: ${response.statusText}`);
+    if (response.ok) {
+      return await response.json();
     }
 
-    return await response.json();
+    if (response.status === 401) {
+      throw new Error('Unauthorized - Please login again');
+    }
+
+    // Self-heal: the backend returns 400 error.usernotfound when the JWT is
+    // valid but the user row hasn't been synced into jhi_user yet. Only
+    // GET /api/account performs that sync (via UserService.syncUserWithIdP).
+    // Run it once, then retry the profile fetch.
+    if (response.status === 400) {
+      const body = await response.clone().json().catch(() => null);
+      if (body?.message === 'error.usernotfound') {
+        await getCurrentUser();
+        const retry = await fetch(`${API_BASE_URL}/api/app-users/profile`, {
+          method: 'GET',
+          headers: getAuthHeaders(),
+        });
+        if (retry.ok) return await retry.json();
+        if (retry.status === 401) {
+          throw new Error('Unauthorized - Please login again');
+        }
+        throw new Error(`Failed to fetch profile: ${retry.statusText}`);
+      }
+    }
+
+    throw new Error(`Failed to fetch profile: ${response.statusText}`);
   } catch (error) {
     console.error('Error fetching user profile:', error);
     throw error;

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { validateState, exchangeCodeForTokens } from '../services/oauthService';
-import { getAndClearRedirectUrl, getCurrentUser, saveRedirectUrl } from '../services/authService';
+import { getAndClearRedirectUrl, getCurrentUser, logout, saveRedirectUrl } from '../services/authService';
 
 /**
  * OAuth Callback Handler Component
@@ -110,6 +110,11 @@ const AuthCallback = () => {
           setError(err.message || 'Failed to complete sign-in. Please try again.');
         }
         setProcessing(false);
+
+        // Clear any tokens stored by exchangeCodeForTokens so the user isn't
+        // left in an "authenticated but not synced to jhi_user" state, which
+        // makes every /api/app-users/profile call 400 on subsequent pages.
+        logout();
 
         // Redirect to sign-in page after 3 seconds
         setTimeout(() => {

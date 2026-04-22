@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft, Edit2, Heart, LogOut, Home, MapPin,
-  ChevronDown, Truck, X, Search, CheckCircle, AlertCircle,
+  ChevronDown, ChevronRight, Truck, X, Search, CheckCircle, AlertCircle,
   Info, User, ShoppingBag,
 } from 'lucide-react';
 import { useScrollToTop } from '../hooks/useScrollToTop';
@@ -34,16 +34,20 @@ export default function Profile() {
   const isInitializedRef = useRef(false);
 
   // Tab state — synced with URL ?tab=
+  // null = show 3-button menu; a tab id = show that section
   const [activeTab, setActiveTab] = useState(() => {
     const tab = searchParams.get('tab');
-    return TABS.includes(tab) ? tab : 'information';
+    if (TABS.includes(tab)) return tab;
+    // On first login, go straight to information
+    if (searchParams.get('firstLogin') === 'true') return 'information';
+    return null;
   });
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setSearchParams(prev => {
       const next = new URLSearchParams(prev);
-      if (tab === 'information') {
+      if (!tab) {
         next.delete('tab');
       } else {
         next.set('tab', tab);
@@ -246,7 +250,13 @@ export default function Profile() {
   const getInitials = (name) =>
     name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
 
-  const handleBack = () => navigate(-1);
+  const handleBack = () => {
+    if (activeTab !== null) {
+      handleTabChange(null);
+    } else {
+      navigate(-1);
+    }
+  };
   const handleEditPhone = () => setIsEditingPhone(!isEditingPhone);
   const handleLogout = () => { authLogout(); navigate('/'); };
 
@@ -476,43 +486,78 @@ export default function Profile() {
           </div>
         </div>
 
-        {/* ── Sticky tab bar ───────────────────────────────────── */}
-        <div data-tour="profile-tabs" className="sticky top-28 md:top-20 z-30 bg-white border-b border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
-          <div className="max-w-3xl mx-auto px-2 sm:px-4">
-            <div className="flex">
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    data-tour={`profile-tab-${tab.id}`}
-                    onClick={() => handleTabChange(tab.id)}
-                    className={`relative flex items-center justify-center gap-2 flex-1 py-3.5 sm:py-4 text-xs sm:text-sm font-medium transition-colors ${
-                      isActive ? 'text-[#00417a]' : 'text-gray-400 hover:text-gray-600'
-                    }`}
-                  >
-                    <Icon
-                      className={`w-4 h-4 sm:w-[18px] sm:h-[18px] transition-transform duration-200 ${
-                        isActive ? 'scale-110' : ''
-                      }`}
-                    />
-                    <span className="hidden min-[360px]:inline">{tab.label}</span>
-                    {isActive && (
-                      <motion.div
-                        layoutId="active-tab-indicator"
-                        className="absolute bottom-0 left-3 right-3 h-0.5 bg-[#00417a] rounded-full"
-                        transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                      />
-                    )}
-                  </button>
-                );
-              })}
+        {/* ── Section label when inside a tab ─────────────────── */}
+        {activeTab !== null && (
+          <div data-tour="profile-tabs" className="bg-white border-b border-gray-100">
+            <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">
+              {tabs.map(tab => tab.id === activeTab ? (
+                <div key={tab.id} className="flex items-center gap-2">
+                  <tab.icon className="w-4 h-4 text-[#00417a]" />
+                  <span className="text-sm font-semibold text-[#00417a]">{tab.label}</span>
+                </div>
+              ) : null)}
             </div>
           </div>
-        </div>
+        )}
+
+        {/* ── Menu buttons (default view) ───────────────────── */}
+        {activeTab === null && (
+          <div className="max-w-3xl mx-auto px-4 py-6 sm:py-8">
+            <div className="space-y-3" data-tour="profile-tabs">
+              {[
+                {
+                  id: 'information',
+                  label: t('profile.tabs.information', 'Informations'),
+                  icon: User,
+                  desc: t('profile.menu.infoDesc', 'Vos données personnelles et préférences'),
+                  iconColor: '#00417a',
+                  iconBg: '#dbeafe',
+                },
+                {
+                  id: 'favorites',
+                  label: t('profile.tabs.favorites', 'Favoris'),
+                  icon: Heart,
+                  desc: t('profile.menu.favDesc', 'Vos livres sauvegardés'),
+                  iconColor: '#EE0027',
+                  iconBg: '#fee2e2',
+                },
+                {
+                  id: 'orders',
+                  label: t('profile.tabs.orders', 'Commandes'),
+                  icon: ShoppingBag,
+                  desc: t('profile.menu.ordersDesc', 'Historique de vos achats'),
+                  iconColor: '#0369a1',
+                  iconBg: '#e0f2fe',
+                },
+              ].map((item, i) => (
+                <motion.button
+                  key={item.id}
+                  data-tour={`profile-tab-${item.id}`}
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.07, duration: 0.28, ease: 'easeOut' }}
+                  onClick={() => handleTabChange(item.id)}
+                  className="w-full bg-white rounded-2xl border border-gray-100 shadow-sm px-4 py-4 sm:px-5 sm:py-5 flex items-center gap-4 hover:border-gray-200 hover:shadow-md active:scale-[0.99] transition-all text-left group"
+                >
+                  <div
+                    className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: item.iconBg }}
+                  >
+                    <item.icon className="w-5 h-5" style={{ color: item.iconColor }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-900 text-sm sm:text-base">{item.label}</p>
+                    <p className="text-xs text-gray-400 mt-0.5 leading-relaxed">{item.desc}</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-gray-500 transition-colors flex-shrink-0" />
+                </motion.button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* ── Tab content ──────────────────────────────────────── */}
+        {activeTab !== null && (
         <div data-tour="profile-tab-content" className="max-w-3xl mx-auto px-4 py-6 sm:py-8">
           <AnimatePresence mode="wait">
             <motion.div
@@ -994,6 +1039,7 @@ export default function Profile() {
             </motion.div>
           </AnimatePresence>
         </div>
+        )}
 
       </div>
       <Footer />

@@ -447,7 +447,10 @@ export default function Profile() {
         </AnimatePresence>
 
         {/* ── Blue hero header ─────────────────────────────────── */}
-        <div data-tour="profile-header" className="bg-gradient-to-br from-[#00417a] via-[#00518f] to-[#0065a8] text-white pt-34 sm:pt-28 pb-7 px-4">
+        <div
+          data-tour="profile-header"
+          className={`bg-gradient-to-br from-[#00417a] via-[#00518f] to-[#0065a8] text-white pt-34 sm:pt-28 px-4 ${activeTab === null ? 'pb-8' : 'pb-7'}`}
+        >
           <div className="max-w-3xl mx-auto">
             {/* Back + Logout */}
             <div className="flex items-center justify-between mb-6 sm:mb-8">
@@ -456,7 +459,7 @@ export default function Profile() {
                 className="flex items-center gap-1.5 text-white/60 hover:text-white transition-colors text-xs sm:text-sm"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span>{t('profile.back')}</span>
+                <span>{activeTab !== null ? t('profile.back') : t('profile.back')}</span>
               </button>
               <button
                 onClick={handleLogout}
@@ -483,75 +486,77 @@ export default function Profile() {
                 </p>
               </div>
             </div>
+
+            {/* ── Hero menu buttons — embedded in the blue area ── */}
+            {activeTab === null && (
+              <div className="mt-7 space-y-2.5" data-tour="profile-tabs">
+                {[
+                  {
+                    id: 'information',
+                    label: t('profile.tabs.information', 'Informations'),
+                    icon: User,
+                    desc: t('profile.menu.infoDesc', 'Vos données personnelles et préférences'),
+                  },
+                  {
+                    id: 'favorites',
+                    label: t('profile.tabs.favorites', 'Favoris'),
+                    icon: Heart,
+                    desc: t('profile.menu.favDesc', 'Vos livres sauvegardés'),
+                  },
+                  {
+                    id: 'orders',
+                    label: t('profile.tabs.orders', 'Commandes'),
+                    icon: ShoppingBag,
+                    desc: t('profile.menu.ordersDesc', 'Historique de vos achats'),
+                  },
+                ].map((item, i) => (
+                  <motion.button
+                    key={item.id}
+                    data-tour={`profile-tab-${item.id}`}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.07, duration: 0.28, ease: 'easeOut' }}
+                    onClick={() => handleTabChange(item.id)}
+                    className="w-full bg-white/10 hover:bg-white/18 active:bg-white/25 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-4 sm:px-5 sm:py-5 flex items-center gap-4 active:scale-[0.99] transition-all text-left group"
+                  >
+                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0">
+                      <item.icon className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-white text-sm sm:text-base">{item.label}</p>
+                      <p className="text-white/50 text-xs mt-0.5 leading-relaxed">{item.desc}</p>
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-white/40 group-hover:text-white/80 transition-colors flex-shrink-0" />
+                  </motion.button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* ── Section label when inside a tab ─────────────────── */}
+        {/* ── Sticky section nav when inside a tab ─────────────── */}
         {activeTab !== null && (
-          <div data-tour="profile-tabs" className="bg-white border-b border-gray-100">
-            <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">
-              {tabs.map(tab => tab.id === activeTab ? (
-                <div key={tab.id} className="flex items-center gap-2">
-                  <tab.icon className="w-4 h-4 text-[#00417a]" />
-                  <span className="text-sm font-semibold text-[#00417a]">{tab.label}</span>
-                </div>
-              ) : null)}
-            </div>
-          </div>
-        )}
-
-        {/* ── Menu buttons (default view) ───────────────────── */}
-        {activeTab === null && (
-          <div className="max-w-3xl mx-auto px-4 py-6 sm:py-8">
-            <div className="space-y-3" data-tour="profile-tabs">
-              {[
-                {
-                  id: 'information',
-                  label: t('profile.tabs.information', 'Informations'),
-                  icon: User,
-                  desc: t('profile.menu.infoDesc', 'Vos données personnelles et préférences'),
-                  iconColor: '#00417a',
-                  iconBg: '#dbeafe',
-                },
-                {
-                  id: 'favorites',
-                  label: t('profile.tabs.favorites', 'Favoris'),
-                  icon: Heart,
-                  desc: t('profile.menu.favDesc', 'Vos livres sauvegardés'),
-                  iconColor: '#EE0027',
-                  iconBg: '#fee2e2',
-                },
-                {
-                  id: 'orders',
-                  label: t('profile.tabs.orders', 'Commandes'),
-                  icon: ShoppingBag,
-                  desc: t('profile.menu.ordersDesc', 'Historique de vos achats'),
-                  iconColor: '#0369a1',
-                  iconBg: '#e0f2fe',
-                },
-              ].map((item, i) => (
-                <motion.button
-                  key={item.id}
-                  data-tour={`profile-tab-${item.id}`}
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.07, duration: 0.28, ease: 'easeOut' }}
-                  onClick={() => handleTabChange(item.id)}
-                  className="w-full bg-white rounded-2xl border border-gray-100 shadow-sm px-4 py-4 sm:px-5 sm:py-5 flex items-center gap-4 hover:border-gray-200 hover:shadow-md active:scale-[0.99] transition-all text-left group"
-                >
-                  <div
-                    className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
-                    style={{ backgroundColor: item.iconBg }}
+          <div data-tour="profile-tabs" className="sticky top-28 md:top-20 z-30 bg-white border-b border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+            <div className="max-w-3xl mx-auto px-4 py-2.5 flex items-center gap-2 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+              {tabs.map(tab => {
+                const Icon = tab.icon;
+                const isActive = tab.id === activeTab;
+                return (
+                  <button
+                    key={tab.id}
+                    data-tour={`profile-tab-${tab.id}`}
+                    onClick={() => handleTabChange(tab.id)}
+                    className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap flex-shrink-0 ${
+                      isActive
+                        ? 'bg-[#00417a] text-white shadow-sm'
+                        : 'text-gray-400 hover:text-gray-700 hover:bg-gray-100'
+                    }`}
                   >
-                    <item.icon className="w-5 h-5" style={{ color: item.iconColor }} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-900 text-sm sm:text-base">{item.label}</p>
-                    <p className="text-xs text-gray-400 mt-0.5 leading-relaxed">{item.desc}</p>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-gray-500 transition-colors flex-shrink-0" />
-                </motion.button>
-              ))}
+                    <Icon className="w-3.5 h-3.5" />
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}

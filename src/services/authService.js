@@ -77,9 +77,10 @@ export const isAuthenticated = () => {
 
 /**
  * Get current user profile from backend
+ * @param {AbortSignal} signal - Optional AbortSignal for timeout/cancellation
  * @returns {Promise<Object>}
  */
-export const getCurrentUser = async () => {
+export const getCurrentUser = async (signal = null) => {
   const token = getAccessToken();
   if (!token) {
     throw new Error('Not authenticated');
@@ -89,6 +90,7 @@ export const getCurrentUser = async () => {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
+    signal,
   });
 
   if (response.ok) {
@@ -99,6 +101,7 @@ export const getCurrentUser = async () => {
   if (response.status === 409) {
     const profileResponse = await fetch(`${API_BASE_URL}/api/app-users/profile`, {
       headers: { 'Authorization': `Bearer ${token}` },
+      signal,
     });
     if (profileResponse.ok) {
       return profileResponse.json();

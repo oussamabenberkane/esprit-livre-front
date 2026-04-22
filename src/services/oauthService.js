@@ -112,9 +112,10 @@ export const validateState = (receivedState) => {
  * Exchange authorization code for tokens
  * @param {string} code - Authorization code from callback
  * @param {string} redirectUri - Same redirect URI used in authorization request
+ * @param {AbortSignal} signal - Optional AbortSignal for timeout/cancellation
  * @returns {Promise<{access_token: string, refresh_token: string, id_token: string}>}
  */
-export const exchangeCodeForTokens = async (code, redirectUri = null) => {
+export const exchangeCodeForTokens = async (code, redirectUri = null, signal = null) => {
   try {
     const codeVerifier = sessionStorage.getItem(CODE_VERIFIER_KEY);
 
@@ -137,6 +138,7 @@ export const exchangeCodeForTokens = async (code, redirectUri = null) => {
         client_id: KEYCLOAK_CLIENT_ID,
         code_verifier: codeVerifier,
       }),
+      signal,
     });
 
     if (!response.ok) {

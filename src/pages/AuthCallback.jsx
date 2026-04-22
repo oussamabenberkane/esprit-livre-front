@@ -14,6 +14,9 @@ const AuthCallback = () => {
   const [processing, setProcessing] = useState(true);
 
   useEffect(() => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(new Error('timeout')), 20000);
+
     const handleCallback = async () => {
       try {
         console.log('[AuthCallback] Starting OAuth callback handling...');
@@ -61,13 +64,13 @@ const AuthCallback = () => {
 
         // Exchange authorization code for tokens
         console.log('[AuthCallback] Exchanging authorization code for tokens...');
-        await exchangeCodeForTokens(code);
+        await exchangeCodeForTokens(code, null, controller.signal);
         console.log('[AuthCallback] Tokens successfully obtained');
 
         // Sync user with backend database by calling /api/account
         // This creates/updates the user record in the database
         console.log('[AuthCallback] Syncing user with backend database...');
-        const userData = await getCurrentUser();
+        const userData = await getCurrentUser(controller.signal);
         console.log('[AuthCallback] User synced successfully:', userData);
 
         // CRITICAL: Set a timestamp to prevent AuthPage from interfering
@@ -99,18 +102,30 @@ const AuthCallback = () => {
           navigate(redirectUrl, { replace: true });
         }
       } catch (err) {
-        console.error('OAuth callback error:', err);
-        setError(err.message || 'Failed to complete sign-in. Please try again.');
+        if (err.name === 'AbortError' || err.message === 'timeout') {
+          console.error('[AuthCallback] Sign-in timed out');
+          setError('Sign-in is taking too long. Please check your connection and try again.');
+        } else {
+          console.error('OAuth callback error:', err);
+          setError(err.message || 'Failed to complete sign-in. Please try again.');
+        }
         setProcessing(false);
 
         // Redirect to sign-in page after 3 seconds
         setTimeout(() => {
           navigate('/auth', { replace: true });
         }, 3000);
+      } finally {
+        clearTimeout(timeoutId);
       }
     };
 
     handleCallback();
+
+    return () => {
+      clearTimeout(timeoutId);
+      controller.abort();
+    };
   }, [searchParams, navigate]);
 
   return (

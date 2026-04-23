@@ -220,6 +220,7 @@ export default function Favorites() {
                       stockStatus={stockStatus}
                       language={book.language}
                       stock={book.stockQuantity}
+                      preorderDate={book.preorderDate}
                       onAddToCart={handleAddToCart}
                       onToggleFavorite={handleToggleFavorite}
                       isFavorited={true}

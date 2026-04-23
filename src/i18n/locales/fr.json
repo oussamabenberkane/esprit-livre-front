@@ -20,7 +20,8 @@
     "stockStatus": {
       "inStock": "en stock",
       "outOfStock": "rupture de stock",
-      "preorder": "Précommander"
+      "preorder": "Précommander",
+      "preorderDate": "pour le {{date}}"
     }
   },
   "allBooks": {

@@ -19,11 +19,23 @@ const BookCard = ({
     stockStatus = { available: true, text: "en stock" },
     language = null,
     stock,
+    preorderDate = null,
     onAddToCart,
     onToggleFavorite,
     isFavorited = false
 }) => {
     const { t, i18n } = useTranslation();
+
+    const formatPreorderDate = (dateStr) => {
+        if (!dateStr) return null;
+        const date = new Date(dateStr);
+        if (isNaN(date.getTime())) return null;
+        return new Intl.DateTimeFormat(i18n.language === 'fr' ? 'fr-DZ' : 'en-US', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+        }).format(date);
+    };
 
     // Get badge text based on current language
     const getBadgeText = () => {
@@ -186,19 +198,18 @@ const BookCard = ({
 
                     {/* Stock Status */}
                     <div className="text-fluid-small font-medium mb-auto">
-                        <span className={`inline-flex items-center ${(stock !== null && stock !== undefined && stock > 0)
-                            ? 'text-green-600'
-                            : 'text-blue-600'
-                            }`}>
-                            <span className={`w-2 h-2 rounded-full mr-1 ${(stock !== null && stock !== undefined && stock > 0)
-                                ? 'bg-green-600'
-                                : 'bg-blue-600'
-                                }`}></span>
+                        <span className="inline-flex items-center text-green-600">
+                            <span className="w-2 h-2 rounded-full mr-1 bg-green-600"></span>
                             {(stock !== null && stock !== undefined && stock > 0)
                                 ? t('bookCard.stockStatus.inStock')
                                 : t('bookCard.stockStatus.preorder')
                             }
                         </span>
+                        {!(stock !== null && stock !== undefined && stock > 0) && formatPreorderDate(preorderDate) && (
+                            <p className="text-gray-400 text-[0.65rem] mt-0.5 pl-3 leading-tight">
+                                {t('bookCard.stockStatus.preorderDate', { date: formatPreorderDate(preorderDate) })}
+                            </p>
+                        )}
                     </div>
 
                     {/* Price and Button Row */}

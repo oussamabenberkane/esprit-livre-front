@@ -204,6 +204,7 @@ const MainDisplayCarousel = ({ display, onAddToCart, onAddPackToCart, onToggleFa
                                         stockStatus={stockStatus}
                                         language={item.language}
                                         stock={item.stockQuantity}
+                                        preorderDate={item.preorderDate}
                                         onAddToCart={onAddToCart}
                                         onToggleFavorite={onToggleFavorite}
                                         isFavorited={item.isLikedByCurrentUser}

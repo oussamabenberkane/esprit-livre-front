@@ -535,6 +535,7 @@ export default function AllBooks() {
                                                 stockStatus={stockStatus}
                                                 language={book.language}
                                                 stock={book.stockQuantity}
+                                                preorderDate={book.preorderDate}
                                                 onAddToCart={handleAddToCart}
                                                 onToggleFavorite={handleToggleFavorite}
                                                 isFavorited={book.isLikedByCurrentUser}

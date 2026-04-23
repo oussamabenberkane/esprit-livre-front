@@ -278,7 +278,10 @@ export default function Orders() {
         const response = await getUserOrders(0, 100);
 
         if (response && response.page?.content) {
-          const allOrders = response.page.content.map(o => transformOrder(o, i18n.language));
+          const sorted = [...response.page.content].sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          );
+          const allOrders = sorted.map(o => transformOrder(o, i18n.language));
 
           // Separate current orders (pending, confirmed, shipped) from history (delivered, cancelled)
           const current = allOrders.filter(order =>

@@ -171,7 +171,10 @@ export default function OrdersTab() {
         setError(null);
         const response = await getUserOrders(0, 100);
         if (response?.page?.content) {
-          const all = response.page.content.map(o => transformOrder(o, i18n.language));
+          const sorted = [...response.page.content].sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          );
+          const all = sorted.map(o => transformOrder(o, i18n.language));
           setCurrentOrders(all.filter(o => ['pending', 'confirmed', 'shipped'].includes(o.status)));
           setOrderHistory(all.filter(o => ['delivered', 'cancelled'].includes(o.status)));
         } else {

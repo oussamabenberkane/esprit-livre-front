@@ -561,7 +561,11 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside, { passive: true });
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
   }, [openDropdown]);
 
   // Reactive shipping fee calculation
@@ -1271,9 +1275,12 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
                               ? 'border-red-500'
                               : openDropdown === 'provider' ? 'border-emerald-500 shadow-md' : 'border-neutral-200 hover:border-neutral-300'
                             }`}>
-                            <div
-                              className="flex items-center flex-1 min-w-0 h-11 px-3 cursor-pointer"
-                              onClick={() => {
+                            <button
+                              type="button"
+                              className="flex items-center flex-1 min-w-0 h-11 px-3 text-left"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
                                 setOpenDropdown(openDropdown === 'provider' ? null : 'provider');
                               }}
                             >
@@ -1281,7 +1288,7 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
                               <span className={`text-fluid-small truncate ${pickupProvider ? 'text-gray-700 font-medium' : 'text-gray-400'}`}>
                                 {pickupProvider || t('cart.selectProvider')}
                               </span>
-                            </div>
+                            </button>
                             <button
                               type="button"
                               onClick={(e) => {

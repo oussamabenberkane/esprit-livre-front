@@ -26,6 +26,15 @@ import { useCart } from '../contexts/CartContext';
 import { trackViewContent, trackAddToCart } from '../services/pixel.service';
 
 
+const computeSalePrice = (price, discountType, discountValue) => {
+    if (!price || !discountValue || !discountType) return null;
+    const p = parseFloat(price);
+    const d = parseFloat(discountValue);
+    if (isNaN(p) || isNaN(d)) return null;
+    if (discountType === 'PERCENTAGE') return Math.max(0, p * (1 - d / 100)).toFixed(2);
+    return Math.max(0, p - d).toFixed(2);
+};
+
 const BookDetails = () => {
     const { t } = useTranslation();
     const { addToCart, addPackToCart } = useCart();
@@ -492,13 +501,20 @@ const BookDetails = () => {
                                 {t('bookDetails.author')} {book.author.name}
                             </p>
                             <div className="flex items-center justify-center gap-3">
-                                <div>
-                                    <span className="font-['Poppins'] font-extrabold text-[#1c2d55] text-base">
-                                        {book.price}
-                                    </span>
-                                    <span className="font-['Poppins'] font-semibold text-[#1c2d55] text-sm ml-1">
-                                        DZD
-                                    </span>
+                                <div className="flex flex-col items-center">
+                                    {book.onSale && computeSalePrice(book.price, book.discountType, book.discountValue) && (
+                                        <span className="font-['Poppins'] text-gray-400 line-through text-xs">
+                                            {book.price} DZD
+                                        </span>
+                                    )}
+                                    <div>
+                                        <span className={`font-['Poppins'] font-extrabold text-base ${book.onSale ? 'text-orange-600' : 'text-[#1c2d55]'}`}>
+                                            {book.onSale ? (computeSalePrice(book.price, book.discountType, book.discountValue) || book.price) : book.price}
+                                        </span>
+                                        <span className="font-['Poppins'] font-semibold text-[#1c2d55] text-sm ml-1">
+                                            DZD
+                                        </span>
+                                    </div>
                                 </div>
                                 {book.language && (
                                     <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded flex-shrink-0">
@@ -608,13 +624,20 @@ const BookDetails = () => {
                                             {t('bookDetails.author')} {book.author.name}
                                         </p>
                                         <div className="flex items-center justify-between">
-                                            <div>
-                                                <span className="font-['Poppins'] font-extrabold text-[#1c2d55] text-fluid-medium">
-                                                    {book.price}
-                                                </span>
-                                                <span className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-vsmall ml-1">
-                                                    DZD
-                                                </span>
+                                            <div className="flex flex-col">
+                                                {book.onSale && computeSalePrice(book.price, book.discountType, book.discountValue) && (
+                                                    <span className="font-['Poppins'] text-gray-400 line-through text-xs">
+                                                        {book.price} DZD
+                                                    </span>
+                                                )}
+                                                <div>
+                                                    <span className={`font-['Poppins'] font-extrabold text-fluid-medium ${book.onSale ? 'text-orange-600' : 'text-[#1c2d55]'}`}>
+                                                        {book.onSale ? (computeSalePrice(book.price, book.discountType, book.discountValue) || book.price) : book.price}
+                                                    </span>
+                                                    <span className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-vsmall ml-1">
+                                                        DZD
+                                                    </span>
+                                                </div>
                                             </div>
                                             {book.language && (
                                                 <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded flex-shrink-0">
@@ -750,6 +773,9 @@ const BookDetails = () => {
                                                 stockStatus={stockStatus}
                                                 language={recommendedBook.language}
                                                 stock={recommendedBook.stockQuantity}
+                                                onSale={recommendedBook.onSale}
+                                                discountType={recommendedBook.discountType}
+                                                discountValue={recommendedBook.discountValue}
                                                 onAddToCart={handleAddToCart}
                                                 onToggleFavorite={handleToggleFavorite}
                                                 isFavorited={recommendedBook.isLikedByCurrentUser}

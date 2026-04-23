@@ -1,19 +1,4 @@
-- admin: Modify order: done
-- admin: wilaya 06 error when confirming: done
-- recommendation algorithms: done
-- packs in sections and research
-- badge book card longer and bigger text and bordered for contrast
-- backend: create and update order on admin doesn't create or update all fields
-- Rsearch/filter books: unify books and packs in same UI without click on tab / mettre en valeur les packs
-- admin:
-yalidine : auto rien faire, sinon prix + nos frais - frais yalidine
-ZR: prix + nos frais DONE
-- bug CTA acheter (while at it make it follow design)
-- Remove searchable selects on smaller devices
-- Heart (like reserved for users only)
-- When create account the first time, animation + tour
-- profile: options (favorites, j'aime, informations)
-- app.espritlivre.com -> 
-- Integration Pixel et test avec une publicite
-
-Email Service
+- app.espritlivre.com -> espritlivre.com: requires Lhadi action
+- Integration Pixel et test avec une publicite: urgent
+- Connect Email Service with abdelhadi's email: requires Lhadi action
+- Book and pack descriptions and titles markdown

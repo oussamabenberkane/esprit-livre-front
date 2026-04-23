@@ -129,32 +129,45 @@ const FilterDropdown = ({
           className={`flex items-center bg-gray-50 rounded-lg border-2 transition-all duration-200 ${isActive ? 'border-blue-500 shadow-md' : 'border-gray-200 hover:border-gray-300'
             }`}
         >
-          <div
-            className="flex items-center flex-1 h-11 px-3 cursor-text"
-            onClick={() => {
-              if (inputRef.current) {
-                inputRef.current.focus();
-              }
-              if (!isActive) {
-                onSetActiveDropdown(type);
-              }
-            }}
-          >
-            {searchable && <Search className="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" />}
-            <input
-              ref={inputRef}
-              type="text"
-              value={searchTerm}
-              onChange={(e) => {
-                onSearchTermChange(type, e.target.value);
+          {isMobile ? (
+            <div
+              className="flex items-center flex-1 h-11 px-3 cursor-pointer"
+              onClick={() => onToggleDropdown(type)}
+            >
+              <span className={`text-sm truncate ${selectedItems.length > 0 ? 'text-gray-700 font-medium' : 'text-gray-400'}`}>
+                {selectedItems.length > 0
+                  ? selectedItems.map(item => typeof item === 'object' ? item.name : item).join(', ')
+                  : placeholder}
+              </span>
+            </div>
+          ) : (
+            <div
+              className="flex items-center flex-1 h-11 px-3 cursor-text"
+              onClick={() => {
+                if (inputRef.current) {
+                  inputRef.current.focus();
+                }
+                if (!isActive) {
+                  onSetActiveDropdown(type);
+                }
               }}
-              onFocus={() => {
-                onSetActiveDropdown(type);
-              }}
-              placeholder={placeholder}
-              className="flex-1 bg-transparent border-0 outline-none text-sm text-gray-700 placeholder-gray-400 cursor-text"
-            />
-          </div>
+            >
+              {searchable && <Search className="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" />}
+              <input
+                ref={inputRef}
+                type="text"
+                value={searchTerm}
+                onChange={(e) => {
+                  onSearchTermChange(type, e.target.value);
+                }}
+                onFocus={() => {
+                  onSetActiveDropdown(type);
+                }}
+                placeholder={placeholder}
+                className="flex-1 bg-transparent border-0 outline-none text-sm text-gray-700 placeholder-gray-400 cursor-text"
+              />
+            </div>
+          )}
           <button
             type="button"
             onClick={(e) => {

@@ -2,6 +2,7 @@
   "navbar": {
     "searchPlaceholder": "Recherchez un livre...",
     "signIn": "Se connecter",
+    "promotions": "Promos",
     "language": {
       "fr": "FR",
       "en": "EN"
@@ -91,6 +92,7 @@
       "home": "Accueil",
       "books": "Livres",
       "packs": "Packs",
+      "promotions": "Promos",
       "orders": "Commandes",
       "favorites": "Favoris",
       "profile": "Profil"

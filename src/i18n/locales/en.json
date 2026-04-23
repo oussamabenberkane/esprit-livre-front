@@ -2,6 +2,7 @@
   "navbar": {
     "searchPlaceholder": "Search for a book...",
     "signIn": "Sign in",
+    "promotions": "Sales",
     "language": {
       "fr": "FR",
       "en": "EN"
@@ -91,6 +92,7 @@
       "home": "Home",
       "books": "Books",
       "packs": "Packs",
+      "promotions": "Sales",
       "orders": "Orders",
       "favorites": "Favorites",
       "profile": "Profile"

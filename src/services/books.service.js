@@ -92,6 +92,11 @@ export const fetchAllBooks = async (page = 0, size = 12, filters = {}) => {
       params.append('maxPrice', filters.maxPrice.toString());
     }
 
+    // Add onSale filter
+    if (filters.onSale === true) {
+      params.append('onSale', 'true');
+    }
+
     // Add language filters (if API supports it, otherwise filter client-side)
     if (filters.languages && filters.languages.length > 0) {
       // Map display names to API enum values

@@ -27,6 +27,7 @@ import Favorites from './components/profil/Favorites.jsx';
 import TeamPage from './pages/TeamPage';
 import ServiceClientPage from './pages/ServiceClientPage';
 import PacksPromotionnels from './pages/PacksPromotionnels.jsx';
+import SalePage from './pages/SalePage.jsx';
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
 import TestPage from './pages/TestPage.jsx';
 import NotFound404 from './pages/NotFound404.jsx';
@@ -61,6 +62,9 @@ function App() {
 
           {/* Promotional packs page */}
           <Route path="/packs" element={<PacksPromotionnels />} />
+
+          {/* Books on sale / promotions page */}
+          <Route path="/promotions" element={<SalePage />} />
 
           {/* Book details page with dynamic ID */}
           <Route path="/books/:id" element={<BookDetails />} />

@@ -213,8 +213,15 @@ function CartItem({ item, onUpdateQuantity, onRemove }) {
             </div>
             {/* Price */}
             <div className="text-right ml-2 flex flex-col items-end gap-1">
+              {item.onSale && item.originalPrice && item.originalPrice !== item.price && (
+                <span className="text-gray-400 text-xs line-through">
+                  {(item.originalPrice * item.quantity).toFixed(2)} DZD
+                </span>
+              )}
               <div>
-                <span className="text-black text-fluid-h3 font-bold">{item.price * item.quantity}</span>
+                <span className={`text-fluid-h3 font-bold ${item.onSale ? 'text-orange-600' : 'text-black'}`}>
+                  {(item.price * item.quantity).toFixed(2)}
+                </span>
                 <span className="text-fluid-medium font-semibold text-gray-600 ml-1">DZD</span>
               </div>
               {item.language && (

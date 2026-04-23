@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Search, ShoppingCart, Heart, User, Menu, Package, ShoppingBag } from 'lucide-react';
+import { Search, ShoppingCart, Heart, User, Menu, Package, ShoppingBag, Tag } from 'lucide-react';
 import LanguageToggle from '../animations/LanguageToggle';
 import BottomSheet from './BottomSheet';
 import SearchSuggestions from './SearchSuggestions';
@@ -203,6 +203,11 @@ const Navbar = ({
         navigate('/packs');
     };
 
+    // Promotions click handler
+    const handlePromotionsClick = () => {
+        navigate('/promotions');
+    };
+
     // Orders click handler - navigate to orders page
     const handleOrdersClick = () => {
         navigate('/orders');
@@ -357,6 +362,16 @@ const Navbar = ({
                         <div className="hidden md:block lg:hidden" data-tour="navbar-language">
                             <SimpleLanguageToggle />
                         </div>
+
+                        {/* Promotions - Desktop only */}
+                        <button
+                            onClick={handlePromotionsClick}
+                            className="hidden md:flex items-center gap-1.5 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white text-xs font-bold px-3 py-1.5 rounded-full transition-all duration-200 shadow-sm"
+                            title="Promotions"
+                        >
+                            <Tag className="w-3 h-3" />
+                            <span className="hidden lg:inline">{t('navbar.promotions', 'Promos')}</span>
+                        </button>
 
                         {/* Orders - Desktop only */}
                         <button onClick={handleOrdersClick} className="hidden md:block relative" data-tour="navbar-orders" title="Mes commandes">

@@ -10,6 +10,15 @@ import { isAuthenticated, saveRedirectUrl } from '../../services/authService';
 import LoginPromptPopup from './LoginPromptPopup';
 import InlineMarkdown from './InlineMarkdown';
 
+const computeSalePrice = (price, discountType, discountValue) => {
+    if (!price || !discountValue || !discountType) return price;
+    const p = parseFloat(price);
+    const d = parseFloat(discountValue);
+    if (isNaN(p) || isNaN(d)) return price;
+    if (discountType === 'PERCENTAGE') return Math.max(0, p * (1 - d / 100));
+    return Math.max(0, p - d);
+};
+
 const BookCard = ({
     id,
     title,
@@ -23,7 +32,10 @@ const BookCard = ({
     preorderDate = null,
     onAddToCart,
     onToggleFavorite,
-    isFavorited = false
+    isFavorited = false,
+    onSale = false,
+    discountType = null,
+    discountValue = null,
 }) => {
     const { t, i18n } = useTranslation();
 
@@ -37,6 +49,14 @@ const BookCard = ({
             year: 'numeric',
         }).format(date);
     };
+
+    const salePrice = onSale ? computeSalePrice(price, discountType, discountValue) : null;
+    const effectivePrice = salePrice !== null ? salePrice : price;
+    const discountLabel = onSale && discountValue
+        ? discountType === 'PERCENTAGE'
+            ? `-${discountValue}%`
+            : `-${discountValue} DZD`
+        : null;
 
     // Get badge text based on current language
     const getBadgeText = () => {
@@ -95,7 +115,6 @@ const BookCard = ({
     };
 
     const handleCardClick = () => {
-        // Navigate with both URL param and state for robustness
         navigate(`/books/${id}`, {
             state: {
                 book: {
@@ -107,7 +126,11 @@ const BookCard = ({
                     badge,
                     stockStatus,
                     language,
-                    stockQuantity: stock
+                    stockQuantity: stock,
+                    onSale,
+                    discountType,
+                    discountValue,
+                    salePrice: effectivePrice,
                 }
             }
         });
@@ -130,8 +153,28 @@ const BookCard = ({
 
 
                     </div>
-                    {/* Badge */}
-                    {badge && isAvailable && (
+                    {/* Sale Badge */}
+                    {onSale && isAvailable && discountLabel && (
+                        <div
+                            className="absolute top-0 left-0 rounded-br-2xl text-white text-center flex items-center justify-center"
+                            style={{
+                                background: 'linear-gradient(135deg, #f97316, #ef4444)',
+                                minWidth: '5.5rem',
+                                padding: '0.32rem 0.6rem',
+                                fontSize: 'clamp(0.58rem, 0.85vw, 0.72rem)',
+                                fontWeight: 800,
+                                letterSpacing: '0.08em',
+                                textTransform: 'uppercase',
+                                textShadow: '0 1px 3px rgba(0,0,0,0.35)',
+                                boxShadow: '2px 2px 10px rgba(0,0,0,0.18)',
+                                lineHeight: 1.2,
+                            }}
+                        >
+                            {discountLabel}
+                        </div>
+                    )}
+                    {/* Etiquette Badge (shown only when not on sale) */}
+                    {badge && isAvailable && !onSale && (
                         <div
                             className="absolute top-0 left-0 rounded-br-2xl text-white text-center flex items-center justify-center"
                             style={{
@@ -216,11 +259,17 @@ const BookCard = ({
                     {/* Price and Button Row */}
                     <div className="flex items-end justify-between mt-auto">
                         {/* Price */}
-                        <span className="text-fluid-price font-bold text-[#00417a]">
-                            {price} <span className="text-fluid-small font-bold">{t('bookCard.currency')}</span>
-                        </span>
-
-
+                        <div className="flex flex-col gap-0.5">
+                            {onSale && salePrice !== null && (
+                                <span className="text-[0.65rem] text-gray-400 line-through leading-none font-medium">
+                                    {price} {t('bookCard.currency')}
+                                </span>
+                            )}
+                            <span className={`text-fluid-price font-bold ${onSale ? 'text-orange-600' : 'text-[#00417a]'}`}>
+                                {onSale && salePrice !== null ? salePrice.toFixed(2) : price}{' '}
+                                <span className="text-fluid-small font-bold">{t('bookCard.currency')}</span>
+                            </span>
+                        </div>
                     </div>
 
 

@@ -144,6 +144,15 @@ export const cartStorage = {
  * @param {Array<{bookId: number, quantity: number, addedAt: number}>} cartItems
  * @returns {Promise<Array>} Array of books with quantity property
  */
+const computeEffectivePrice = (book) => {
+    if (!book.onSale || !book.discountValue || !book.discountType) return parseFloat(book.price) || 0;
+    const p = parseFloat(book.price);
+    const d = parseFloat(book.discountValue);
+    if (isNaN(p) || isNaN(d)) return p;
+    if (book.discountType === 'PERCENTAGE') return parseFloat(Math.max(0, p * (1 - d / 100)).toFixed(2));
+    return parseFloat(Math.max(0, p - d).toFixed(2));
+};
+
 export const hydrateCartItems = async (cartItems) => {
     if (!cartItems || cartItems.length === 0) {
         return [];
@@ -153,18 +162,21 @@ export const hydrateCartItems = async (cartItems) => {
         const bookIds = cartItems.map(item => item.bookId);
         const books = await getBooksByIds(bookIds);
 
-        // Merge book details with quantity
+        // Merge book details with quantity, using the effective (sale) price
         return cartItems.map(item => {
             const book = books.find(b => b.id === item.bookId);
             if (book) {
+                const effectivePrice = computeEffectivePrice(book);
                 return {
                     ...book,
+                    originalPrice: parseFloat(book.price) || 0,
+                    price: effectivePrice,
                     quantity: item.quantity,
                     addedAt: item.addedAt
                 };
             }
             return null;
-        }).filter(item => item !== null); // Filter out books that weren't found
+        }).filter(item => item !== null);
     } catch (error) {
         console.error('Error hydrating cart items:', error);
         throw error;

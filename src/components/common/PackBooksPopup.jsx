@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
 import { getLanguageCode } from '../../data/booksData';
+import InlineMarkdown from './InlineMarkdown';
+import MarkdownContent from './MarkdownContent';
 
 export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescription, books = [], isLoading = false }) {
     const { t } = useTranslation();
@@ -58,12 +60,12 @@ export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescrip
                         <div className="flex items-start justify-between gap-2 xs:gap-4">
                             <div className="flex-1 pr-6 xs:pr-8">
                                 <h2 className="font-['Poppins'] font-bold text-[#00417a] text-base xs:text-lg sm:text-xl md:text-2xl lg:text-3xl mb-1 xs:mb-2 leading-tight">
-                                    {packTitle}
+                                    <InlineMarkdown>{packTitle}</InlineMarkdown>
                                 </h2>
                                 {packDescription && (
-                                    <p className="text-gray-600 text-xs xs:text-sm sm:text-base line-clamp-2 mb-1 xs:mb-2">
-                                        {packDescription}
-                                    </p>
+                                    <div className="text-gray-600 text-xs xs:text-sm sm:text-base line-clamp-2 mb-1 xs:mb-2">
+                                        <MarkdownContent compact>{packDescription}</MarkdownContent>
+                                    </div>
                                 )}
                                 <div className="flex items-center gap-2 text-gray-500">
                                     <span className="text-xs xs:text-sm font-medium">

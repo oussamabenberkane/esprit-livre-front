@@ -8,6 +8,7 @@ import { getBookCoverUrl } from '../../utils/imageUtils';
 import { useFavorites } from '../../contexts/FavoritesContext';
 import { isAuthenticated, saveRedirectUrl } from '../../services/authService';
 import LoginPromptPopup from './LoginPromptPopup';
+import InlineMarkdown from './InlineMarkdown';
 
 const BookCard = ({
     id,
@@ -188,7 +189,7 @@ const BookCard = ({
                 <div className="px-fluid-sm mt-fluid-sm sm:px-fluid-sm pb-14 sm:pb-18 relative flex flex-col gap-fluid-xs sm:gap-fluid-xs md:gap-fluid-sm">
                     {/* Title */}
                     <h3 className="font-semibold text-[#00417a] leading-tight text-fluid-h3 line-clamp-2 hover:text-blue-600 transition-colors cursor-pointer">
-                        {title}
+                        <InlineMarkdown>{title}</InlineMarkdown>
                     </h3>
 
                     {/* Author */}

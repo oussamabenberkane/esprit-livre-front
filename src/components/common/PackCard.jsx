@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ShoppingCart, Eye } from 'lucide-react';
 import PackBooksPopup from './PackBooksPopup';
+import InlineMarkdown from './InlineMarkdown';
+import MarkdownContent from './MarkdownContent';
 
 const PackCard = ({
     id,
@@ -258,7 +260,7 @@ const PackCard = ({
 
                             {/* Title */}
                             <h3 className="text-fluid-h3 md:text-fluid-h2 font-bold text-[#00417a] leading-tight line-clamp-2">
-                                {title}
+                                <InlineMarkdown>{title}</InlineMarkdown>
                             </h3>
 
                             {/* Description with Unified Modal */}
@@ -269,13 +271,13 @@ const PackCard = ({
                                     onMouseEnter={handleMouseEnter}
                                     onMouseLeave={handleMouseLeave}
                                 >
-                                    <p
+                                    <div
                                         ref={descriptionRef}
                                         onClick={handleDescriptionClick}
                                         className={`text-fluid-h3 md:text-fluid-small lg:text-fluid-h3 text-gray-600 line-clamp-2 ${isDescriptionTruncated ? 'cursor-pointer' : ''}`}
                                     >
-                                        {description}
-                                    </p>
+                                        <MarkdownContent compact>{description}</MarkdownContent>
+                                    </div>
                                 </div>
                             )}
 
@@ -331,9 +333,9 @@ const PackCard = ({
                                                 </button>
                                             )}
                                         </div>
-                                        <p className="text-sm text-gray-700 leading-relaxed">
+                                        <MarkdownContent className="text-sm text-gray-700">
                                             {description}
-                                        </p>
+                                        </MarkdownContent>
                                     </div>
 
                                     {/* CSS Keyframes for animations */}

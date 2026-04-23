@@ -2,6 +2,8 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ShoppingCart, CheckCircle2, ChevronDown } from 'lucide-react';
+import InlineMarkdown from '../components/common/InlineMarkdown';
+import MarkdownContent from '../components/common/MarkdownContent';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import BookCard from '../components/common/BookCard';
@@ -22,8 +24,6 @@ import { getBookCoverUrl } from '../utils/imageUtils';
 import useProgressiveRender from '../hooks/useProgressiveRender';
 import { useCart } from '../contexts/CartContext';
 
-/** Turn literal "\n" (from JSON) into real newlines so whitespace-pre-line works */
-const formatDesc = (text) => text ? text.replace(/\\n/g, '\n') : '';
 
 const BookDetails = () => {
     const { t } = useTranslation();
@@ -481,7 +481,7 @@ const BookDetails = () => {
                         {/* Title + Author + Price under cover */}
                         <div className="text-center mb-fluid-md">
                             <h1 className="font-['Poppins'] font-bold text-[#1c2d55] text-fluid-h1to2 mb-fluid-xxs">
-                                {book.title}
+                                <InlineMarkdown>{book.title}</InlineMarkdown>
                             </h1>
                             <p className="font-['Poppins'] font-semibold text-[#626e82] text-sm mb-fluid-xs">
                                 {t('bookDetails.author')} {book.author.name}
@@ -511,9 +511,11 @@ const BookDetails = () => {
                                     <h3 className="font-['Poppins'] font-bold text-[#1c2d55] text-base mb-1.5">
                                         {t('bookDetails.descriptionTitle')}
                                     </h3>
-                                    <p className={`font-['Poppins'] font-normal text-[#1c2d55] text-sm leading-relaxed whitespace-pre-line ${showFullDescription ? '' : 'line-clamp-3'}`}>
-                                        {formatDesc(book.description)}
-                                    </p>
+                                    <div className={`font-['Poppins'] font-normal text-[#1c2d55] text-sm ${showFullDescription ? '' : 'line-clamp-3'}`}>
+                                        <MarkdownContent compact={!showFullDescription}>
+                                            {book.description}
+                                        </MarkdownContent>
+                                    </div>
                                     <button
                                         onClick={handleToggleDescription}
                                         className="font-['Poppins'] font-medium text-[#00417a] text-xs mt-1.5 inline-flex items-center gap-1 hover:underline"
@@ -595,7 +597,7 @@ const BookDetails = () => {
                                     {/* Title + Author + Price under cover */}
                                     <div className="mt-fluid-sm">
                                         <h1 className="font-['Poppins'] font-semibold text-[#1c2d55] text-fluid-h3 leading-tight mb-1">
-                                            {book.title}
+                                            <InlineMarkdown>{book.title}</InlineMarkdown>
                                         </h1>
                                         <p className="font-['Poppins'] font-normal text-[#626e82] text-fluid-small mb-fluid-xs">
                                             {t('bookDetails.author')} {book.author.name}
@@ -626,9 +628,11 @@ const BookDetails = () => {
                                             <h3 className="font-['Poppins'] font-bold text-[#1c2d55] text-fluid-h3 mb-fluid-xxs">
                                                 {t('bookDetails.descriptionTitle')}
                                             </h3>
-                                            <p className={`font-['Poppins'] font-normal text-[#1c2d55] text-fluid-small leading-relaxed whitespace-pre-line ${showFullDescription ? '' : 'line-clamp-4'}`}>
-                                                {formatDesc(book.description)}
-                                            </p>
+                                            <div className={`font-['Poppins'] font-normal text-[#1c2d55] text-fluid-small ${showFullDescription ? '' : 'line-clamp-4'}`}>
+                                                <MarkdownContent compact={!showFullDescription}>
+                                                    {book.description}
+                                                </MarkdownContent>
+                                            </div>
                                             <button
                                                 onClick={handleToggleDescription}
                                                 className="font-['Poppins'] font-medium text-[#00417a] text-fluid-vsmall mt-fluid-xxs inline-flex items-center gap-1 hover:underline"

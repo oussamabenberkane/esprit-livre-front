@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft, Edit2, Heart, LogOut, Home, MapPin,
-  ChevronDown, ChevronRight, Truck, X, Search, CheckCircle, AlertCircle,
+  ChevronDown, ChevronRight, Truck, X, CheckCircle, AlertCircle,
   Info, User, ShoppingBag, HelpCircle,
 } from 'lucide-react';
 import { useScrollToTop } from '../hooks/useScrollToTop';
@@ -71,11 +71,7 @@ export default function Profile() {
 
   // Dropdown states
   const [openDropdown, setOpenDropdown] = useState(null);
-  const [wilayaSearch, setWilayaSearch] = useState('');
-  const [citySearch, setCitySearch] = useState('');
   const dropdownRefs = useRef({});
-  const wilayaInputRef = useRef(null);
-  const cityInputRef = useRef(null);
 
   // Refs for scrolling to error fields
   const firstNameRef = useRef(null);
@@ -224,12 +220,6 @@ export default function Profile() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [openDropdown]);
-
-  const getFilteredWilayas = () =>
-    Object.keys(wilayaData).filter(w => w.toLowerCase().includes(wilayaSearch.toLowerCase()));
-
-  const getFilteredCities = () =>
-    availableCities.filter(c => c.toLowerCase().includes(citySearch.toLowerCase()));
 
   const handleWilayaSelect = (wilaya) => {
     setUserData({ ...userData, wilaya, city: '' });
@@ -689,62 +679,16 @@ export default function Profile() {
                         <label className="block text-[11px] text-gray-400 mb-1.5 font-medium uppercase tracking-wide">
                           {t('profile.wilaya')}
                         </label>
-                        <div className="relative" ref={el => dropdownRefs.current['wilaya'] = el}>
-                          <div className={`flex items-center bg-white rounded-lg border-2 transition-all duration-200 ${openDropdown === 'wilaya' ? 'border-[#00417a] shadow-sm' : 'border-gray-200 hover:border-gray-300'}`}>
-                            <div
-                              className="flex items-center flex-1 min-w-0 h-10 px-3 cursor-text"
-                              onClick={() => { wilayaInputRef.current?.focus(); if (openDropdown !== 'wilaya') setOpenDropdown('wilaya'); }}
-                            >
-                              <Search className="w-3.5 h-3.5 text-gray-400 mr-2 flex-shrink-0" />
-                              <input
-                                ref={wilayaInputRef}
-                                type="text"
-                                value={wilayaSearch}
-                                onChange={(e) => setWilayaSearch(e.target.value)}
-                                onFocus={() => setOpenDropdown('wilaya')}
-                                placeholder={userData.wilaya}
-                                className="flex-1 min-w-0 bg-transparent border-0 outline-none text-sm text-gray-700 placeholder-gray-700 font-medium cursor-text"
-                              />
-                            </div>
-                            <button
-                              type="button"
-                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpenDropdown(openDropdown === 'wilaya' ? null : 'wilaya'); }}
-                              className="h-10 px-3 hover:bg-gray-100 rounded-r-lg transition-colors flex items-center flex-shrink-0"
-                            >
-                              <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${openDropdown === 'wilaya' ? 'rotate-180' : ''}`} />
-                            </button>
-                          </div>
-                          <AnimatePresence>
-                            {openDropdown === 'wilaya' && (
-                              <motion.div
-                                initial={{ opacity: 0, y: -8 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -8 }}
-                                transition={{ duration: 0.15 }}
-                                className="absolute top-full left-0 right-0 z-50 mt-1.5"
-                              >
-                                <div className="bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
-                                  <div className="flex items-center justify-between px-3 py-2 bg-gray-50 border-b border-gray-100">
-                                    <span className="text-[11px] text-gray-400">{getFilteredWilayas().length} résultats</span>
-                                    <button onClick={() => setOpenDropdown(null)} className="text-gray-400 hover:text-gray-600"><X className="w-3.5 h-3.5" /></button>
-                                  </div>
-                                  <div className="max-h-52 overflow-y-auto">
-                                    {getFilteredWilayas().map(wilaya => (
-                                      <button
-                                        key={wilaya}
-                                        onClick={() => handleWilayaSelect(wilaya)}
-                                        className={`w-full text-left px-4 py-2.5 text-sm flex items-center gap-3 border-b border-gray-50 last:border-0 transition-colors ${userData.wilaya === wilaya ? 'bg-blue-50 text-[#00417a]' : 'text-gray-700 hover:bg-gray-50'}`}
-                                      >
-                                        <div className={`w-3 h-3 rounded-full border-2 flex-shrink-0 ${userData.wilaya === wilaya ? 'border-[#00417a] bg-[#00417a]' : 'border-gray-300'}`} />
-                                        <span className="font-medium">{wilaya}</span>
-                                      </button>
-                                    ))}
-                                  </div>
-                                </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </div>
+                        <select
+                          value={userData.wilaya || ''}
+                          onChange={(e) => handleWilayaSelect(e.target.value)}
+                          className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00417a] hover:border-gray-300 bg-white appearance-none text-sm text-gray-700 font-medium transition-all duration-200"
+                        >
+                          <option value="">Sélectionner une wilaya</option>
+                          {Object.keys(wilayaData).map(wilaya => (
+                            <option key={wilaya} value={wilaya}>{wilaya}</option>
+                          ))}
+                        </select>
                       </div>
 
                       {/* City */}
@@ -752,64 +696,19 @@ export default function Profile() {
                         <label className="block text-[11px] text-gray-400 mb-1.5 font-medium uppercase tracking-wide">
                           {t('profile.city')}
                         </label>
-                        <div className="relative" ref={el => dropdownRefs.current['city'] = el}>
-                          <div className={`flex items-center bg-white rounded-lg border-2 transition-all duration-200 ${openDropdown === 'city' ? 'border-[#00417a] shadow-sm' : 'border-gray-200 hover:border-gray-300'}`}>
-                            <div
-                              className="flex items-center flex-1 min-w-0 h-10 px-3 cursor-text"
-                              onClick={() => { cityInputRef.current?.focus(); if (openDropdown !== 'city') setOpenDropdown('city'); }}
-                            >
-                              <Search className="w-3.5 h-3.5 text-gray-400 mr-2 flex-shrink-0" />
-                              <input
-                                ref={cityInputRef}
-                                type="text"
-                                value={citySearch}
-                                onChange={(e) => setCitySearch(e.target.value)}
-                                onFocus={() => setOpenDropdown('city')}
-                                placeholder={userData.city || t('profile.cityPlaceholder')}
-                                className={`flex-1 min-w-0 bg-transparent border-0 outline-none text-sm cursor-text ${userData.city ? 'text-gray-700 placeholder-gray-700 font-medium' : 'text-gray-400 placeholder-gray-400'}`}
-                              />
-                            </div>
-                            <button
-                              type="button"
-                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpenDropdown(openDropdown === 'city' ? null : 'city'); }}
-                              className="h-10 px-3 hover:bg-gray-100 rounded-r-lg transition-colors flex items-center flex-shrink-0"
-                            >
-                              <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${openDropdown === 'city' ? 'rotate-180' : ''}`} />
-                            </button>
-                          </div>
-                          <AnimatePresence>
-                            {openDropdown === 'city' && (
-                              <motion.div
-                                initial={{ opacity: 0, y: -8 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -8 }}
-                                transition={{ duration: 0.15 }}
-                                className="absolute top-full left-0 right-0 z-50 mt-1.5"
-                              >
-                                <div className="bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
-                                  <div className="flex items-center justify-between px-3 py-2 bg-gray-50 border-b border-gray-100">
-                                    <span className="text-[11px] text-gray-400">{getFilteredCities().length} résultats</span>
-                                    <button onClick={() => setOpenDropdown(null)} className="text-gray-400 hover:text-gray-600"><X className="w-3.5 h-3.5" /></button>
-                                  </div>
-                                  <div className="max-h-52 overflow-y-auto">
-                                    {getFilteredCities().length > 0 ? getFilteredCities().map(city => (
-                                      <button
-                                        key={city}
-                                        onClick={() => handleCitySelect(city)}
-                                        className={`w-full text-left px-4 py-2.5 text-sm flex items-center gap-3 border-b border-gray-50 last:border-0 transition-colors ${userData.city === city ? 'bg-blue-50 text-[#00417a]' : 'text-gray-700 hover:bg-gray-50'}`}
-                                      >
-                                        <div className={`w-3 h-3 rounded-full border-2 flex-shrink-0 ${userData.city === city ? 'border-[#00417a] bg-[#00417a]' : 'border-gray-300'}`} />
-                                        <span className="font-medium">{city}</span>
-                                      </button>
-                                    )) : (
-                                      <div className="px-4 py-6 text-sm text-gray-400 text-center">Aucun résultat</div>
-                                    )}
-                                  </div>
-                                </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </div>
+                        <select
+                          value={userData.city || ''}
+                          onChange={(e) => handleCitySelect(e.target.value)}
+                          disabled={!userData.wilaya}
+                          className={`w-full px-3 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00417a] bg-white appearance-none text-sm transition-all duration-200 ${
+                            !userData.wilaya ? 'border-gray-200 cursor-not-allowed bg-gray-50 text-gray-400' : 'border-gray-200 hover:border-gray-300 text-gray-700 font-medium'
+                          }`}
+                        >
+                          <option value="">{userData.wilaya ? t('profile.cityPlaceholder') : 'Sélectionner une wilaya d\'abord'}</option>
+                          {availableCities.map(city => (
+                            <option key={city} value={city}>{city}</option>
+                          ))}
+                        </select>
                       </div>
                     </div>
                   </div>

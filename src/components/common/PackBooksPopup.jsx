@@ -129,7 +129,7 @@ export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescrip
                                         <div className="flex-1">
                                             {/* Title */}
                                             <h3 className="font-['Poppins'] font-semibold text-[#00417a] text-[9px] xs:text-[10px] sm:text-sm leading-tight line-clamp-2 group-hover:text-[#003460] transition-colors">
-                                                {book.title}
+                                                <InlineMarkdown>{book.title}</InlineMarkdown>
                                             </h3>
 
                                             {/* Author - tight spacing with title */}

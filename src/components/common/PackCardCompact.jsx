@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Eye, ShoppingCart, Package } from 'lucide-react';
 import { getBookCoverUrl } from '../../utils/imageUtils';
 import PackBooksPopup from './PackBooksPopup';
+import InlineMarkdown from './InlineMarkdown';
 
 const PackCardCompact = ({
     id,
@@ -103,7 +104,7 @@ const PackCardCompact = ({
                 <div className="px-fluid-sm mt-fluid-sm sm:px-fluid-sm pb-14 sm:pb-18 relative flex flex-col gap-fluid-xs sm:gap-fluid-xs md:gap-fluid-sm">
                     {/* Title */}
                     <h3 className="font-semibold text-[#00417a] leading-tight text-fluid-h3 line-clamp-2">
-                        {title}
+                        <InlineMarkdown>{title}</InlineMarkdown>
                     </h3>
 
                     {/* Book count subtitle */}

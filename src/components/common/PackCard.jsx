@@ -365,7 +365,7 @@ const PackCard = ({
                                         key={index}
                                         className="text-fluid-vsmall md:text-fluid-small bg-blue-50 text-[#00417a] px-3 py-1 rounded-md whitespace-nowrap flex-shrink-0 font-medium"
                                     >
-                                        {book.title}
+                                        <InlineMarkdown>{book.title}</InlineMarkdown>
                                     </span>
                                 ))}
                             </div>

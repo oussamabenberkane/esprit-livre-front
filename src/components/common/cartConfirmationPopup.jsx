@@ -6,6 +6,7 @@ import { getLanguageCode } from '../../data/booksData';
 import { useCart } from '../../contexts/CartContext';
 import { packCartStorage } from '../../services/cart.service';
 import { getBookCoverUrl } from '../../utils/imageUtils';
+import InlineMarkdown from './InlineMarkdown';
 import { playCartSound } from '../../utils/cartSound';
 
 export default function CartConfirmationPopup({
@@ -207,7 +208,7 @@ export default function CartConfirmationPopup({
                                             className="font-semibold text-gray-900 text-sm xs:text-fluid-lg mb-0.5 xs:mb-1 line-clamp-2 cursor-pointer hover:text-[#00417a] transition-colors"
                                             onClick={handleOpenDetails}
                                         >
-                                            {book.title}
+                                            <InlineMarkdown>{book.title}</InlineMarkdown>
                                         </h4>
                                         {!book.isPack ? (
                                             <p className="text-gray-600 text-[0.7rem] xs:text-sm mb-1.5 xs:mb-2">
@@ -227,7 +228,7 @@ export default function CartConfirmationPopup({
                                                                     key={index}
                                                                     className="text-[0.55rem] xs:text-fluid-vsmall md:text-fluid-small bg-blue-50 text-[#00417a] px-1.5 xs:px-3 py-0.5 xs:py-1 rounded-md whitespace-nowrap flex-shrink-0 font-medium"
                                                                 >
-                                                                    {packBook.title}
+                                                                    <InlineMarkdown>{packBook.title}</InlineMarkdown>
                                                                 </span>
                                                             ))}
                                                         </div>

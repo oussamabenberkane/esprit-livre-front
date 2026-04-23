@@ -94,15 +94,11 @@ export const OnboardingProvider = ({ children }) => {
     setCurrentStep((s) => Math.max(0, s - 1));
   }, []);
 
-  /** Skipping from any phase goes directly to complete (no finish screen). */
+  /** Skipping from any phase fully terminates the onboarding flow. */
   const skipTour = useCallback(() => {
-    if (phase === 'home-tour' || phase === 'celebration') {
-      setPhase('transition-to-profile');
-    } else {
-      sessionStorage.removeItem('el_onboarding_pending');
-      setPhase('complete');
-    }
-  }, [phase]);
+    sessionStorage.removeItem('el_onboarding_pending');
+    setPhase('complete');
+  }, []);
 
   // ── End tour on browser back/forward navigation ──────────────────────────────
   useEffect(() => {

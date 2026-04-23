@@ -271,11 +271,12 @@
     "createAccountButton": "Create my account"
   },
   "errors": {
-    "error.insufficientstock": "Some items in your cart have insufficient stock. Please update quantities and try again.",
+    "error.phonerequired": "A phone number is required to place your order. Please add one to your profile and try again.",
+    "error.invaliditem": "One or more items in your order are invalid. Please update your cart and try again.",
+    "error.emailexists": "This email address is already in use. Please use a different email.",
+    "error.tokenexpired": "Your session has expired. Please sign in again.",
     "error.validation": "Invalid data. Please check your information and try again.",
     "error.unauthorized": "You need to be logged in to perform that action. Please sign in and try again.",
-    "error.itemnotfound": "One or more items in your cart are no longer available. Please remove them and try again.",
-    "error.outofstock": "Some items in your cart are out of stock. Please remove them or adjust quantities.",
     "error.generic": "An error occurred. Please try again or contact customer support."
   },
   "customerService": {

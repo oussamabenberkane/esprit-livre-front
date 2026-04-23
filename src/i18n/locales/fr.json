@@ -271,11 +271,12 @@
     "createAccountButton": "Créer mon compte"
   },
   "errors": {
-    "error.insufficientstock": "Certains articles de votre panier ont un stock insuffisant. Veuillez mettre à jour les quantités et réessayer.",
+    "error.phonerequired": "Un numéro de téléphone est requis pour passer votre commande. Veuillez en ajouter un à votre profil et réessayer.",
+    "error.invaliditem": "Un ou plusieurs articles de votre commande sont invalides. Veuillez mettre à jour votre panier et réessayer.",
+    "error.emailexists": "Cette adresse email est déjà utilisée. Veuillez en utiliser une autre.",
+    "error.tokenexpired": "Votre session a expiré. Veuillez vous reconnecter.",
     "error.validation": "Données invalides. Veuillez vérifier vos informations et réessayer.",
     "error.unauthorized": "Vous devez être connecté pour faire cette action. Veuillez vous connecter et réessayer.",
-    "error.itemnotfound": "Un ou plusieurs articles de votre panier ne sont plus disponibles. Veuillez les retirer et réessayer.",
-    "error.outofstock": "Certains articles de votre panier sont en rupture de stock. Veuillez les retirer ou ajuster les quantités.",
     "error.generic": "Une erreur s'est produite. Veuillez réessayer ou contacter le service client."
   },
   "customerService": {

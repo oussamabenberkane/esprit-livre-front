@@ -73,13 +73,14 @@ export default function Auth() {
                 />
               </svg>
             </div>
-            <Logo
-              onClick={() => navigate('/')}
-              color="#1e293b"
-              textClassName="text-[20px]"
-              align="center"
-              className="mb-2"
-            />
+            <div className="flex justify-center">
+              <Logo
+                onClick={() => navigate('/')}
+                color="#1e293b"
+                textClassName="text-[20px]"
+                className="mb-2"
+              />
+            </div>
           </motion.div>
 
           {/* Title */}

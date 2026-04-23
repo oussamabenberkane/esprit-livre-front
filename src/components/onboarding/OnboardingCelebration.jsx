@@ -129,7 +129,7 @@ export default function OnboardingCelebration() {
 
             {/* Brand wordmark */}
             <motion.div
-              style={{ marginBottom: 16 }}
+              style={{ marginBottom: 16, display: 'flex', justifyContent: 'center' }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.72 }}
@@ -137,7 +137,7 @@ export default function OnboardingCelebration() {
               <Logo
                 color="rgba(255,255,255,0.84)"
                 textClassName="text-[15px]"
-                align="center"
+                align="left"
               />
             </motion.div>
 

@@ -437,6 +437,7 @@
       "favorites": "Favoris"
     },
     "back": "Retour",
+    "restartTour": "Revoir la visite guidée",
     "memberSince": "Membre depuis",
     "personalInfo": "Informations personnelles",
     "firstName": "Prénom",
@@ -680,15 +681,15 @@
       },
       "information": {
         "title": "Vos informations",
-        "desc": "Mettez à jour votre téléphone, wilaya, ville et préférence de livraison. Les modifications sont sauvegardées automatiquement."
+        "desc": "Vos infos pré-remplissent vos commandes — un achat plus rapide à chaque fois."
       },
       "orders": {
         "title": "Vos commandes",
-        "desc": "Suivez chaque commande — statut en cours, mises à jour de livraison et historique complet."
+        "desc": "Suivez vos commandes — celles en cours d'abord, les terminées ensuite."
       },
       "favorites": {
         "title": "Vos favoris",
-        "desc": "Les livres sauvegardés pour plus tard. Un clic pour les ajouter directement à votre panier."
+        "desc": "Vos livres sauvegardés, prêts à repasser au panier."
       },
       "finish": {
         "title": "Tout est prêt",

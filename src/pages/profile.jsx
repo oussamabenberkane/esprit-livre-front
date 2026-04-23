@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft, Edit2, Heart, LogOut, Home, MapPin,
   ChevronDown, ChevronRight, Truck, X, Search, CheckCircle, AlertCircle,
-  Info, User, ShoppingBag,
+  Info, User, ShoppingBag, HelpCircle,
 } from 'lucide-react';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -87,7 +87,12 @@ export default function Profile() {
 
   const pickupProviders = ['Yalidine', 'ZRexpress'];
 
-  const { startProfileTour, isTourActive, steps, currentStep, phase } = useOnboarding();
+  const { startProfileTour, startOnboarding, isTourActive, steps, currentStep, phase } = useOnboarding();
+
+  const handleRestartTour = () => {
+    startOnboarding(userData?.firstName || '');
+    navigate('/');
+  };
 
   useScrollToTop();
 
@@ -109,9 +114,11 @@ export default function Profile() {
     setSearchParams(prev => {
       const next = new URLSearchParams(prev);
       next.delete('tour');
+      next.delete('tab');
       return next;
     }, { replace: true });
 
+    setActiveTab(null);
     const timer = setTimeout(() => startProfileTour(), 500);
     return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -453,16 +460,16 @@ export default function Profile() {
             <div className="flex items-center justify-between mb-6 sm:mb-8">
               <button
                 onClick={handleBack}
-                className="flex items-center gap-1.5 text-white/60 hover:text-white transition-colors text-xs sm:text-sm"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 hover:border-white/25 backdrop-blur-sm text-white/80 hover:text-white transition-all text-xs sm:text-sm font-medium"
               >
-                <ArrowLeft className="w-4 h-4" />
+                <ArrowLeft className="w-3.5 h-3.5" />
                 <span>{t('profile.back')}</span>
               </button>
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-1.5 text-white/60 hover:text-white transition-colors text-xs sm:text-sm"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 hover:border-white/25 backdrop-blur-sm text-white/80 hover:text-white transition-all text-xs sm:text-sm font-medium"
               >
-                <LogOut className="w-3.5 h-3.5" />
+                <LogOut className="w-3.5 h-3.5 text-rose-300" />
                 <span>{t('profile.logout')}</span>
               </button>
             </div>
@@ -546,30 +553,23 @@ export default function Profile() {
                 <motion.button
                   key={item.id}
                   data-tour={`profile-tab-${item.id}`}
-                  initial={{ opacity: 0, x: -16 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.08, duration: 0.3, ease: 'easeOut' }}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.06, duration: 0.25, ease: 'easeOut' }}
                   onClick={() => handleTabChange(item.id)}
-                  className="w-full bg-white rounded-2xl overflow-hidden flex items-stretch shadow-sm hover:shadow-md active:scale-[0.99] transition-all text-left group"
+                  className="w-full bg-white rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-[0_2px_10px_rgba(15,23,42,0.05)] active:scale-[0.995] transition-all text-left group px-4 py-4 sm:px-5 sm:py-4 flex items-center gap-4"
                 >
-                  {/* Colored left accent bar */}
-                  <div className="w-1 flex-shrink-0" style={{ backgroundColor: item.color }} />
-                  <div className="flex items-center gap-4 flex-1 px-4 py-4 sm:px-5 sm:py-5">
-                    <div
-                      className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-110"
-                      style={{ backgroundColor: item.bg }}
-                    >
-                      <item.icon className="w-6 h-6" style={{ color: item.color }} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-bold text-gray-900 text-sm sm:text-base">{item.label}</p>
-                      <p className="text-xs text-gray-400 mt-0.5 leading-relaxed">{item.desc}</p>
-                    </div>
-                    <ChevronRight
-                      className="w-5 h-5 flex-shrink-0 transition-all duration-200 group-hover:translate-x-1"
-                      style={{ color: item.color }}
-                    />
+                  <div
+                    className="w-11 h-11 rounded-lg flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: item.bg }}
+                  >
+                    <item.icon className="w-5 h-5" style={{ color: item.color }} />
                   </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-900 text-sm sm:text-[15px] leading-snug">{item.label}</p>
+                    <p className="text-xs text-gray-400 mt-0.5 leading-relaxed">{item.desc}</p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 flex-shrink-0 text-gray-300 group-hover:text-gray-500 group-hover:translate-x-0.5 transition-all duration-200" />
                 </motion.button>
               ))}
             </div>
@@ -1060,6 +1060,17 @@ export default function Profile() {
           </AnimatePresence>
         </div>
         )}
+
+        {/* ── Replay onboarding tour ─────────────────────────────── */}
+        <div className="max-w-3xl mx-auto px-4 pb-8 pt-2 flex justify-center">
+          <button
+            onClick={handleRestartTour}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-medium text-gray-500 hover:text-[#00417a] bg-white border border-gray-100 hover:border-[#00417a]/30 hover:bg-blue-50/60 shadow-sm hover:shadow-md transition-all"
+          >
+            <HelpCircle className="w-3.5 h-3.5" />
+            <span>{t('profile.restartTour', 'Revoir la visite guidée')}</span>
+          </button>
+        </div>
 
       </div>
       <Footer />

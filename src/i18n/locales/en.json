@@ -437,6 +437,7 @@
       "favorites": "Favourites"
     },
     "back": "Back",
+    "restartTour": "Replay the guided tour",
     "memberSince": "Member since",
     "personalInfo": "Personal information",
     "firstName": "First name",
@@ -680,15 +681,15 @@
       },
       "information": {
         "title": "Your information",
-        "desc": "Update your phone number, wilaya, city, and delivery preference. Changes save automatically."
+        "desc": "These details auto-fill your next orders — faster checkout every time."
       },
       "orders": {
         "title": "Your orders",
-        "desc": "Track every order — current status, delivery updates, and full history."
+        "desc": "Track every order — pending ones first, completed below."
       },
       "favorites": {
         "title": "Your favorites",
-        "desc": "Books you've saved for later. One tap to move them straight to your cart."
+        "desc": "Saved books, ready to move back to your cart."
       },
       "finish": {
         "title": "You're all set",

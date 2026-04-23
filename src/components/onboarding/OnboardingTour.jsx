@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useLayoutEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -41,40 +41,33 @@ function scrollToEl(el) {
   return new Promise((r) => setTimeout(r, 520));
 }
 
+/** Numeric centered position. Avoids CSS transforms so framer-motion's
+ *  own animation transform cannot clobber our centering offset. */
+function centerStyle(vw, vh, cardH, TW) {
+  return {
+    position: 'fixed',
+    top:  Math.max(NAVBAR_H, Math.round((vh - cardH) / 2)),
+    left: Math.max(16, Math.round((vw - TW) / 2)),
+    width: TW,
+  };
+}
+
 /**
  * Computes fixed-position style for the tooltip card.
  * - Auto-flips when there is not enough space above/below.
  * - Falls back to centered modal for elements taller than 55 % of the viewport
  *   (e.g. the full books grid) so the tooltip is always reachable.
  * - Hard-clamps top/left to keep every pixel of the card on-screen.
+ * `cardH` is the measured card height (falls back to TOOLTIP_H_EST pre-mount).
  */
-function tooltipStyle(spotRect, placement, vw, vh) {
+function tooltipStyle(spotRect, placement, vw, vh, cardH) {
   const TW = Math.min(TOOLTIP_W, vw - 32);
 
-  // No spotlight / explicit center
-  if (!spotRect || placement === 'center') {
-    return {
-      position: 'fixed',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      width: TW,
-    };
-  }
-
-  // Very tall element — always center so the card remains accessible
-  if (spotRect.height > vh * 0.55) {
-    return {
-      position: 'fixed',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      width: TW,
-    };
-  }
+  if (!spotRect || placement === 'center') return centerStyle(vw, vh, cardH, TW);
+  if (spotRect.height > vh * 0.55)         return centerStyle(vw, vh, cardH, TW);
 
   const clampX = (x) => Math.max(16, Math.min(x, vw - TW - 16));
-  const clampY = (y) => Math.max(NAVBAR_H, Math.min(y, vh - TOOLTIP_H_EST - 16));
+  const clampY = (y) => Math.max(NAVBAR_H, Math.min(y, vh - cardH - 16));
   const midX   = clampX(spotRect.left + spotRect.width / 2 - TW / 2);
 
   let top, left;
@@ -82,32 +75,26 @@ function tooltipStyle(spotRect, placement, vw, vh) {
   if (placement === 'bottom') {
     top  = spotRect.bottom + TOOLTIP_GAP;
     left = midX;
-    if (top + TOOLTIP_H_EST > vh - 16) {
+    if (top + cardH > vh - 16) {
       // Try above
-      const topAbove = spotRect.top - TOOLTIP_H_EST - TOOLTIP_GAP;
+      const topAbove = spotRect.top - cardH - TOOLTIP_GAP;
       top = topAbove >= NAVBAR_H ? topAbove : clampY(top);
     }
   } else if (placement === 'top') {
-    top  = spotRect.top - TOOLTIP_H_EST - TOOLTIP_GAP;
+    top  = spotRect.top - cardH - TOOLTIP_GAP;
     left = midX;
     if (top < NAVBAR_H) {
       // Try below
       const topBelow = spotRect.bottom + TOOLTIP_GAP;
-      top = topBelow + TOOLTIP_H_EST <= vh - 16 ? topBelow : clampY(topBelow);
+      top = topBelow + cardH <= vh - 16 ? topBelow : clampY(topBelow);
     }
   } else if (placement === 'right') {
-    top  = spotRect.top + spotRect.height / 2 - TOOLTIP_H_EST / 2;
+    top  = spotRect.top + spotRect.height / 2 - cardH / 2;
     left = spotRect.right + TOOLTIP_GAP;
     if (left + TW > vw - 16) left = spotRect.left - TW - TOOLTIP_GAP;
     if (left < 16)           left = clampX(spotRect.left);
   } else {
-    return {
-      position: 'fixed',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      width: TW,
-    };
+    return centerStyle(vw, vh, cardH, TW);
   }
 
   // Hard clamp — guarantee the card never escapes the viewport
@@ -133,14 +120,12 @@ export default function OnboardingTour() {
   } = useOnboarding();
 
   const [spotRect,  setSpotRect]  = useState(null);
-  const [ttStyle,   setTtStyle]   = useState({
-    position: 'fixed',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: Math.min(TOOLTIP_W, window.innerWidth - 32),
-  });
+  const [ttStyle,   setTtStyle]   = useState(() =>
+    centerStyle(window.innerWidth, window.innerHeight, TOOLTIP_H_EST,
+                Math.min(TOOLTIP_W, window.innerWidth - 32)));
   const [vp,        setVp]        = useState({ w: window.innerWidth, h: window.innerHeight });
+  const [cardHeight, setCardHeight] = useState(TOOLTIP_H_EST);
+  const cardRef = useRef(null);
   const updateTimerRef = useRef(null);
 
   const step = steps[currentStep];
@@ -154,18 +139,15 @@ export default function OnboardingTour() {
   const updatePosition = useCallback(() => {
     if (!isTourActive || !step) return;
 
-    const TW = Math.min(TOOLTIP_W, window.innerWidth - 32);
-    const center = {
-      position: 'fixed',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      width: TW,
-    };
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const TW = Math.min(TOOLTIP_W, vw - 32);
+    const center = centerStyle(vw, vh, cardHeight, TW);
 
     if (!step.selector) {
       setSpotRect(null);
       setTtStyle(center);
+      setVp({ w: vw, h: vh });
       return;
     }
 
@@ -173,12 +155,11 @@ export default function OnboardingTour() {
     if (!el) {
       setSpotRect(null);
       setTtStyle(center);
+      setVp({ w: vw, h: vh });
       return;
     }
 
-    const r  = el.getBoundingClientRect();
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
+    const r = el.getBoundingClientRect();
 
     setSpotRect({
       left:   r.left   - SPOTLIGHT_PAD,
@@ -186,9 +167,16 @@ export default function OnboardingTour() {
       width:  r.width  + SPOTLIGHT_PAD * 2,
       height: r.height + SPOTLIGHT_PAD * 2,
     });
-    setTtStyle(tooltipStyle(r, step.placement || 'bottom', vw, vh));
+    setTtStyle(tooltipStyle(r, step.placement || 'bottom', vw, vh, cardHeight));
     setVp({ w: vw, h: vh });
-  }, [isTourActive, step]);
+  }, [isTourActive, step, cardHeight]);
+
+  // ── Measure actual card height so placement math reflects real size ──────────
+  useLayoutEffect(() => {
+    if (!isTourActive || !step || !cardRef.current) return;
+    const h = cardRef.current.offsetHeight;
+    if (h && Math.abs(h - cardHeight) > 2) setCardHeight(h);
+  });
 
   // ── Run position update on step change, with optional scroll ────────────────
   useEffect(() => {
@@ -227,10 +215,7 @@ export default function OnboardingTour() {
 
   // Clamp left at render time — guards against stale ttStyle from the previous
   // step leaking in while AnimatePresence waits for the exit animation.
-  const safeLeft =
-    typeof ttStyle.left === 'number'
-      ? Math.max(16, Math.min(ttStyle.left, vp.w - TW - 16))
-      : ttStyle.left;
+  const safeLeft = Math.max(16, Math.min(ttStyle.left, vp.w - TW - 16));
 
   if (!isTourActive || !step) return null;
 
@@ -297,6 +282,7 @@ export default function OnboardingTour() {
           transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
         >
           <div
+            ref={cardRef}
             style={{
               background: 'rgba(37, 90, 195, 0.95)',
               border: '1px solid rgba(255,255,255,0.12)',

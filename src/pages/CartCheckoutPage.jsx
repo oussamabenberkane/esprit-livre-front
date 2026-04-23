@@ -16,6 +16,7 @@ import { getUserProfile } from '../services/user.service';
 import { isAuthenticated, saveRedirectUrl } from '../services/authService';
 import { PROVIDER_API_TO_DISPLAY, PROVIDER_DISPLAY_TO_API } from '../constants/orderEnums';
 import wilayaData, { wilayaNumbers } from '../utils/wilayaData';
+import { trackInitiateCheckout, trackPurchase } from '../services/pixel.service';
 
 // Order Tracking Prompt Popup Component
 function OrderTrackingPrompt({ isOpen, onSignIn, onLater }) {
@@ -1515,7 +1516,11 @@ export default function CartCheckoutPage() {
   // Proceed to checkout
   const handleProceedToCheckout = () => {
     setShowCheckout(true);
-    // Smooth scroll to checkout section
+    const contentIds = [
+      ...cartBooks.map(b => String(b.id)),
+      ...cartPacks.map(p => `pack-${p.id}`),
+    ];
+    trackInitiateCheckout({ value: subtotal, numItems: allCartItems.length, contentIds });
     setTimeout(() => {
       document.getElementById('checkout-section')?.scrollIntoView({ behavior: 'smooth' });
     }, 100);
@@ -1549,6 +1554,20 @@ export default function CartCheckoutPage() {
       const createdOrder = await createOrder(orderPayload);
 
       console.log('Order created successfully:', createdOrder);
+
+      // Fire browser pixel Purchase (eventID deduplicates against CAPI)
+      const purchaseContentIds = [
+        ...cartBooks.map(b => String(b.id)),
+        ...cartPacks.map(p => `pack-${p.id}`),
+      ];
+      const purchaseNumItems = cartBooks.reduce((s, b) => s + b.quantity, 0) +
+        cartPacks.reduce((s, p) => s + p.quantity, 0);
+      trackPurchase({
+        orderId: createdOrder.uniqueId,
+        value: orderPayload.totalAmount,
+        numItems: purchaseNumItems,
+        contentIds: purchaseContentIds,
+      });
 
       // Clear both book and pack carts on success
       await clearCart();

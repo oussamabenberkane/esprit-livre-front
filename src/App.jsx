@@ -1,4 +1,20 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { initPixel, trackPageView } from './services/pixel.service';
+
+function PixelTracker() {
+  const location = useLocation();
+
+  useEffect(() => {
+    initPixel();
+  }, []);
+
+  useEffect(() => {
+    trackPageView();
+  }, [location.pathname]);
+
+  return null;
+}
 import HomePage from './pages/homePage';
 import AllBooks from './pages/AllBooks';
 import BookDetails from './pages/BookDetails';
@@ -24,6 +40,7 @@ import OnboardingFinish from './components/onboarding/OnboardingFinish';
 function App() {
   return (
     <BrowserRouter>
+      <PixelTracker />
       <FavoritesProvider>
         <CartProvider>
           <OnboardingProvider>

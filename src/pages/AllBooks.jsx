@@ -20,6 +20,7 @@ import { useOnboarding } from '../contexts/OnboardingContext'
 import { getBookCoverUrl } from '../utils/imageUtils'
 import useProgressiveRender from '../hooks/useProgressiveRender'
 import { useCart } from '../contexts/CartContext'
+import { trackSearch, trackAddToCart } from '../services/pixel.service'
 import { useFilterPersistence, hasActiveFilters, hasPersistableFilters } from '../hooks/useFilterPersistence'
 
 export default function AllBooks() {
@@ -237,13 +238,11 @@ export default function AllBooks() {
     }
 
     const handleAddToCart = async (bookId) => {
-        console.log(`Added book ${bookId} to cart`)
-
-        // Add to cart using CartContext
         await addToCart(bookId, 1)
 
         const book = books.find(b => b.id === bookId)
         if (book) {
+            trackAddToCart({ id: book.id, name: book.title, value: book.price, quantity: 1 })
             setSelectedBook(book)
             setShowCartPopup(true)
         }
@@ -262,6 +261,7 @@ export default function AllBooks() {
         if (pack) {
             try {
                 await addPackToCart(packId, 1)
+                trackAddToCart({ id: `pack-${pack.id}`, name: pack.title, value: pack.packPrice, quantity: 1 })
                 const packAsBook = {
                     id: pack.id,
                     title: pack.title,
@@ -305,8 +305,9 @@ export default function AllBooks() {
     }
 
     const handleApplyFilters = (filters) => {
-        console.log('Filters applied:', filters)
-        // Reset to page 1 when filters change
+        if (filters.search?.trim()) {
+            trackSearch(filters.search)
+        }
         setCurrentPage(1)
         // Update applied filters state
         setAppliedFilters(filters)

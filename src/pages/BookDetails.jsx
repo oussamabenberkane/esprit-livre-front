@@ -23,6 +23,7 @@ import { getRecommendedPacksForBook } from '../services/bookPackService';
 import { getBookCoverUrl } from '../utils/imageUtils';
 import useProgressiveRender from '../hooks/useProgressiveRender';
 import { useCart } from '../contexts/CartContext';
+import { trackViewContent, trackAddToCart } from '../services/pixel.service';
 
 
 const BookDetails = () => {
@@ -53,6 +54,13 @@ const BookDetails = () => {
 
                 if (foundBook) {
                     setBook(foundBook);
+                    const category = foundBook.tags?.find(t => t.type === 'CATEGORY')?.nameFr;
+                    trackViewContent({
+                        id: foundBook.id,
+                        name: foundBook.title,
+                        category,
+                        value: foundBook.price,
+                    });
                 } else {
                     setBook(null);
                 }
@@ -323,11 +331,10 @@ const BookDetails = () => {
     }, [visibleRecommendedPacks.length, packsLoading]);
 
     const handleAddToCart = async (bookId) => {
-        console.log(`Added book ${bookId} to cart`);
         const bookToAdd = recommendedBooks.find(b => b.id === bookId);
         if (bookToAdd) {
-            // Add to cart using CartContext
             await addToCart(bookId, 1);
+            trackAddToCart({ id: bookToAdd.id, name: bookToAdd.title, value: bookToAdd.price, quantity: 1 });
 
             setSelectedBook({
                 ...bookToAdd,
@@ -353,8 +360,8 @@ const BookDetails = () => {
         const pack = recommendedPacks.find(p => p.id === packId);
         if (pack) {
             try {
-                // Add pack to cart using context
                 await addPackToCart(packId, 1);
+                trackAddToCart({ id: `pack-${pack.id}`, name: pack.title, value: pack.packPrice, quantity: 1 });
 
                 // Convert pack to book-like format for the popup
                 const packAsBook = {
@@ -381,10 +388,8 @@ const BookDetails = () => {
     };
 
     const handleAddMainBookToCart = async () => {
-        console.log(`Added main book ${book.id} to cart`);
-
-        // Add to cart using CartContext
         await addToCart(book.id, 1);
+        trackAddToCart({ id: book.id, name: book.title, value: book.price, quantity: 1 });
 
         setSelectedBook({
             ...book,

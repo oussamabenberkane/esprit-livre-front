@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { validateState, exchangeCodeForTokens } from '../services/oauthService';
 import { getAndClearRedirectUrl, getCurrentUser, logout, saveRedirectUrl } from '../services/authService';
+import { trackCompleteRegistration } from '../services/pixel.service';
 
 /**
  * OAuth Callback Handler Component
@@ -82,6 +83,7 @@ const AuthCallback = () => {
 
         // Check if this is a first-time user (no phone number)
         if (!userData.phone) {
+          trackCompleteRegistration();
           console.log('[AuthCallback] First-time user detected (no phone number), redirecting to profile...');
 
           // Mark this session as needing the onboarding tour.

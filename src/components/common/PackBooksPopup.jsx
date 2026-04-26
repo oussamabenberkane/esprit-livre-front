@@ -6,7 +6,7 @@ import { getLanguageCode } from '../../data/booksData';
 import InlineMarkdown from './InlineMarkdown';
 import MarkdownContent from './MarkdownContent';
 
-export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescription, books = [], isLoading = false }) {
+export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescription, books = [], isLoading = false, pricingMode = 'STANDARD' }) {
     const { t } = useTranslation();
     const navigate = useNavigate();
 
@@ -139,7 +139,7 @@ export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescrip
                                         </div>
 
                                         {/* Price - separate section */}
-                                        {book.price && (
+                                        {pricingMode !== 'FLAT' && book.price && (
                                             <div className="flex items-baseline justify-between mt-1.5 xs:mt-2 pt-1 xs:pt-1.5 border-t border-gray-100">
                                                 <span className="font-['Poppins'] font-bold text-[#00417a] text-[10px] xs:text-xs sm:text-base">
                                                     {book.price}

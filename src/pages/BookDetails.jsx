@@ -884,6 +884,7 @@ const BookDetails = () => {
                                                 packPrice={pack.packPrice}
                                                 packImage={pack.packImage}
                                                 books={pack.books}
+                                                pricingMode={pack.pricingMode}
                                                 onAddToCart={handleAddPackToCart}
                                             />
                                         </div>

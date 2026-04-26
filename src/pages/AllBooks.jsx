@@ -448,6 +448,7 @@ export default function AllBooks() {
                                                 packPrice={pack.packPrice}
                                                 packImage={pack.packImage}
                                                 books={pack.books}
+                                                pricingMode={pack.pricingMode}
                                                 onAddToCart={handlePackAddToCart}
                                                 onViewAllBooks={() => handleViewAllBooks(pack)}
                                             />
@@ -495,6 +496,7 @@ export default function AllBooks() {
                                             originalPrice={pack.originalPrice}
                                             packPrice={pack.packPrice}
                                             books={pack.books}
+                                            pricingMode={pack.pricingMode}
                                             onAddToCart={handlePackAddToCart}
                                             onViewBooks={(packId) => {
                                                 const p = packs.find(x => x.id === packId)
@@ -753,6 +755,7 @@ export default function AllBooks() {
                 packTitle={selectedPackForPopup?.title}
                 packDescription={selectedPackForPopup?.description}
                 books={selectedPackForPopup?.books || []}
+                pricingMode={selectedPackForPopup?.pricingMode}
                 isLoading={isLoadingPopupBooks}
             />
 

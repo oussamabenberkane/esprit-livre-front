@@ -169,6 +169,7 @@ const MainDisplayCarousel = ({ display, onAddToCart, onAddPackToCart, onToggleFa
                                             originalPrice={item.originalPrice}
                                             packPrice={item.packPrice}
                                             books={item.books || []}
+                                            pricingMode={item.pricingMode}
                                             onAddToCart={onAddPackToCart}
                                         />
                                     </div>

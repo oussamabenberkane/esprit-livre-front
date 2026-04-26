@@ -13,6 +13,7 @@ const PackCard = ({
     packPrice,
     packImage,
     books = [],
+    pricingMode = 'STANDARD',
     onAddToCart,
     onViewAllBooks
 }) => {
@@ -245,7 +246,7 @@ const PackCard = ({
                         </button>
 
                         {/* Savings Badge */}
-                        {savings > 0 && (
+                        {pricingMode !== 'FLAT' && savings > 0 && (
                             <div className="absolute -top-1 -left-1 bg-red-500 text-white px-2.5 py-1 rounded-br-md rounded-tl-md text-fluid-small font-bold shadow-md z-10">
                                 -{savingsPercentage}%
                             </div>
@@ -382,7 +383,7 @@ const PackCard = ({
                                         {t('packCard.currency')}
                                     </span>
                                 </span>
-                                {originalPrice > packPrice && (
+                                {pricingMode !== 'FLAT' && originalPrice > packPrice && (
                                     <span className="text-fluid-vsmall md:text-fluid-small text-gray-400 line-through">
                                         {originalPrice}
                                     </span>
@@ -410,6 +411,7 @@ const PackCard = ({
                     packTitle={title}
                     packDescription={description}
                     books={books}
+                    pricingMode={pricingMode}
                 />
             )}
         </>

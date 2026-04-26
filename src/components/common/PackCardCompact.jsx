@@ -13,6 +13,7 @@ const PackCardCompact = ({
     books = [],
     onAddToCart,
     onViewBooks,
+    pricingMode = 'STANDARD',
 }) => {
     const { t } = useTranslation();
     const [showPopup, setShowPopup] = useState(false);
@@ -117,7 +118,7 @@ const PackCardCompact = ({
                         <span className="text-fluid-price font-bold text-[#00417a]">
                             {packPrice} <span className="text-fluid-small font-bold">{t('packCard.currency')}</span>
                         </span>
-                        {savings > 0 && (
+                        {pricingMode !== 'FLAT' && savings > 0 && (
                             <>
                                 <span className="text-fluid-vsmall text-gray-400 line-through">
                                     {originalPrice}
@@ -149,6 +150,7 @@ const PackCardCompact = ({
                     onClose={() => setShowPopup(false)}
                     packTitle={title}
                     books={books}
+                    pricingMode={pricingMode}
                 />
             )}
         </>

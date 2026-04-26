@@ -387,6 +387,7 @@ const PacksPromotionnels = () => {
                                             packPrice={pack.packPrice}
                                             packImage={pack.packImage}
                                             books={pack.books}
+                                            pricingMode={pack.pricingMode}
                                             onAddToCart={handleAddToCart}
                                             onViewAllBooks={() => handleViewAllBooks(pack)}
                                         />
@@ -584,6 +585,7 @@ const PacksPromotionnels = () => {
                     packTitle={selectedPackForPopup.title}
                     packDescription={selectedPackForPopup.description}
                     books={selectedPackForPopup.books}
+                    pricingMode={selectedPackForPopup.pricingMode}
                     isLoading={isLoadingPopupBooks}
                 />
             )}

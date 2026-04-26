@@ -4,12 +4,12 @@ const PackCardSkeleton = () => {
     return (
         <div className="bg-white rounded-lg shadow-md overflow-hidden w-full h-full flex flex-col animate-pulse">
             {/* Grid Layout: Left (Images) | Right (Details) */}
-            <div className="grid grid-cols-[auto_1fr] gap-fluid-xs md:gap-fluid-sm p-fluid-xs md:p-fluid-sm flex-1 overflow-hidden">
+            <div className="flex flex-col sm:grid sm:grid-cols-[auto_1fr] gap-3 sm:gap-fluid-xs md:gap-fluid-sm p-3 sm:p-fluid-xs md:p-fluid-sm flex-1 overflow-hidden">
 
                 {/* LEFT SECTION - Book Images Placeholder */}
-                <div className="relative" style={{ width: 'clamp(120px, 22vw, 160px)' }}>
+                <div className="relative self-start w-full sm:w-[clamp(120px,22vw,160px)]">
                     {/* Book Thumbnails Container */}
-                    <div className="rounded-md overflow-hidden bg-gray-200" style={{ aspectRatio: '2/3' }}>
+                    <div className="rounded-md overflow-hidden bg-gray-200 h-36 sm:h-auto sm:aspect-[2/3]">
                         <div className="grid grid-cols-2 gap-1 h-full">
                             {/* 4 thumbnail placeholders */}
                             {Array.from({ length: 4 }).map((_, index) => (
@@ -28,7 +28,7 @@ const PackCardSkeleton = () => {
                 </div>
 
                 {/* RIGHT SECTION - Pack Details Placeholder */}
-                <div className="flex flex-col justify-between gap-fluid-xxs min-w-0">
+                <div className="flex flex-col justify-between gap-fluid-xxs min-w-0 flex-1 sm:h-full">
 
                     {/* Title Placeholder - 2 lines */}
                     <div className="space-y-2">

@@ -226,12 +226,12 @@ const PackCard = ({
             {/* Pack Card */}
             <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-visible w-full h-full flex flex-col">
                 {/* Grid Layout: Left (Images) | Right (Details) */}
-                <div className="grid grid-cols-[auto_1fr] gap-fluid-xs md:gap-fluid-sm p-fluid-xs md:p-fluid-sm flex-1 overflow-hidden items-stretch">
+                <div className="flex flex-col sm:grid sm:grid-cols-[auto_1fr] gap-3 sm:gap-fluid-xs md:gap-fluid-sm p-3 sm:p-fluid-xs md:p-fluid-sm flex-1 overflow-hidden sm:items-stretch">
 
                     {/* LEFT SECTION - Book Images */}
-                    <div className="relative flex flex-col self-start" style={{ width: 'clamp(120px, 22vw, 160px)' }}>
+                    <div className="relative flex flex-col self-start w-full sm:w-[clamp(120px,22vw,160px)]">
                         {/* Book Thumbnails Container */}
-                        <div className="rounded-md overflow-hidden bg-gray-50" style={{ aspectRatio: '2/3' }}>
+                        <div className="rounded-md overflow-hidden bg-gray-50 h-36 sm:h-auto sm:aspect-[2/3]">
                             {renderBookThumbnails()}
                         </div>
 
@@ -253,7 +253,7 @@ const PackCard = ({
                     </div>
 
                     {/* RIGHT SECTION - Pack Details */}
-                    <div className="flex flex-col justify-between min-w-0 h-full">
+                    <div className="flex flex-col justify-between min-w-0 flex-1 sm:h-full">
 
                         {/* TOP GROUP - Title, Description, Books */}
                         <div className="flex flex-col gap-fluid-xxs">

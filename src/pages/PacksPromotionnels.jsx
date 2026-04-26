@@ -372,7 +372,7 @@ const PacksPromotionnels = () => {
 
                         {/* Packs Grid - Show skeletons while loading, then progressively render packs */}
                         {!error && (
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 auto-rows-fr">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 auto-rows-fr">
                                 {/* Render visible packs */}
                                 {visiblePacks.map((pack) => (
                                     <div

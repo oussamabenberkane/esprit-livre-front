@@ -86,7 +86,7 @@ export default function SalePage() {
       <Navbar />
 
       {/* ── Hero ── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#1a0a00] via-[#7c1a00] to-[#b83200] pt-24 pb-20 md:pt-32 md:pb-28">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#1a0a00] via-[#7c1a00] to-[#b83200] pt-36 pb-20 md:pt-32 md:pb-28">
         {/* Orbs */}
         <FloatingOrb style={{ width: 400, height: 400, top: -100, left: -80, background: 'rgba(251,146,60,0.25)' }} delay={0} />
         <FloatingOrb style={{ width: 300, height: 300, bottom: -60, right: 60, background: 'rgba(239,68,68,0.2)' }} delay={2} />

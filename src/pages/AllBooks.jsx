@@ -9,7 +9,7 @@ import PackBooksPopup from "../components/common/PackBooksPopup"
 import FiltersSection from "../components/allbooks/FiltersSection"
 import CartConfirmationPopup from "../components/common/cartConfirmationPopup"
 import FloatingCartBadge from "../components/common/FloatingCartBadge"
-import { fetchAllBooks, getBooksByIds } from "../services/books.service"
+import { fetchAllBooks } from "../services/books.service"
 import { getAllBookPacks } from "../services/bookPackService"
 import { fetchCategories } from "../services/tags.service"
 import { fetchTopAuthors } from "../services/authors.service"
@@ -53,7 +53,6 @@ export default function AllBooks() {
     const [isLoadingPacks, setIsLoadingPacks] = useState(true)
     const [showPackBooksPopup, setShowPackBooksPopup] = useState(false)
     const [selectedPackForPopup, setSelectedPackForPopup] = useState(null)
-    const [isLoadingPopupBooks, setIsLoadingPopupBooks] = useState(false)
 
     // Filter data state
     const [categories, setCategories] = useState([])
@@ -209,7 +208,8 @@ export default function AllBooks() {
                         author: book.author?.name || 'Unknown',
                         authorId: book.author?.id || null,
                         price: parseFloat(book.price) || 0,
-                        coverImage: getBookCoverUrl(book.id)
+                        coverImage: getBookCoverUrl(book.id),
+                        language: book.language
                     }))
                     const originalPrice = books.reduce((sum, book) => sum + book.price, 0)
                     return {
@@ -279,29 +279,9 @@ export default function AllBooks() {
         }
     }
 
-    const handleViewAllBooks = async (pack) => {
+    const handleViewAllBooks = (pack) => {
         setSelectedPackForPopup(pack)
         setShowPackBooksPopup(true)
-        setIsLoadingPopupBooks(true)
-        try {
-            const bookIds = pack.books.map(b => b.id)
-            const fullBooks = await getBooksByIds(bookIds)
-            setSelectedPackForPopup({
-                ...pack,
-                books: fullBooks.map(book => ({
-                    id: book.id,
-                    title: book.title,
-                    author: book.author?.name || 'Unknown',
-                    price: book.price,
-                    coverImage: getBookCoverUrl(book.id),
-                    language: book.language
-                }))
-            })
-        } catch (err) {
-            console.error('Error fetching book details:', err)
-        } finally {
-            setIsLoadingPopupBooks(false)
-        }
     }
 
     const handleApplyFilters = (filters) => {
@@ -756,7 +736,6 @@ export default function AllBooks() {
                 packDescription={selectedPackForPopup?.description}
                 books={selectedPackForPopup?.books || []}
                 pricingMode={selectedPackForPopup?.pricingMode}
-                isLoading={isLoadingPopupBooks}
             />
 
             {/* Cart Confirmation Popup - Single instance at page level */}

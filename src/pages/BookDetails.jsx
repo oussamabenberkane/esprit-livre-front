@@ -169,7 +169,8 @@ const BookDetails = () => {
                         title: b.title,
                         author: b.author?.name || 'Unknown',
                         price: parseFloat(b.price) || 0,
-                        coverImage: getBookCoverUrl(b.id)
+                        coverImage: getBookCoverUrl(b.id),
+                        language: b.language
                     }));
 
                     const originalPrice = books.reduce((sum, b) => sum + b.price, 0);

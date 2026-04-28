@@ -48,6 +48,15 @@ const handleResponse = async (response) => {
       throw error;
     }
 
+    // Handle account deactivated — redirect to dedicated page
+    if (response.status === 403 && data?.code === 'account_deactivated') {
+      window.location.href = '/account-deactivated';
+      const error = new Error('Account deactivated');
+      error.status = 403;
+      error.data = data;
+      throw error;
+    }
+
     // For other errors, throw immediately
     const error = new Error(data.message || data.title || 'API request failed');
     error.status = response.status;

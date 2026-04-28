@@ -699,5 +699,13 @@
         "desc": "Your profile is ready. Start exploring Esprit Livre — your next great read awaits."
       }
     }
+  },
+  "deactivated": {
+    "title": "Your account is temporarily suspended",
+    "subtitle": "Don't worry — this is most likely temporary.",
+    "description": "Our team is here to help clarify the situation and get things sorted. A quick message is all it takes to resolve this together.",
+    "contactSupport": "Contact support",
+    "backHome": "Back to home",
+    "contactNote": "Reference: your email address is your account identifier"
   }
 }

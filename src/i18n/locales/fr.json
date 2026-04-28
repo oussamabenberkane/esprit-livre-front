@@ -699,5 +699,13 @@
         "desc": "Votre profil est configuré. Commencez à explorer Esprit Livre — votre prochaine lecture vous attend."
       }
     }
+  },
+  "deactivated": {
+    "title": "Votre compte est temporairement suspendu",
+    "subtitle": "Ne vous inquiétez pas — c'est probablement temporaire.",
+    "description": "Notre équipe est disponible pour clarifier la situation et vous accompagner. Un simple message suffit pour qu'on règle ça ensemble.",
+    "contactSupport": "Contacter le support",
+    "backHome": "Retour à l'accueil",
+    "contactNote": "Référence : votre adresse email est votre identifiant de compte"
   }
 }

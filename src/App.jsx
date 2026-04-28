@@ -31,6 +31,7 @@ import SalePage from './pages/SalePage.jsx';
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
 import TestPage from './pages/TestPage.jsx';
 import NotFound404 from './pages/NotFound404.jsx';
+import AccountDeactivated from './pages/AccountDeactivated.jsx';
 import { FavoritesProvider } from './contexts/FavoritesContext';
 import { CartProvider } from './contexts/CartContext';
 import { OnboardingProvider } from './contexts/OnboardingContext';
@@ -89,6 +90,9 @@ function App() {
 
           {/* Test page for debugging */}
           <Route path="/test" element={<TestPage />} />
+
+          {/* Account deactivated */}
+          <Route path="/account-deactivated" element={<AccountDeactivated />} />
 
           {/* 404 Not Found - Catch all undefined routes */}
           <Route path="*" element={<NotFound404 />} />

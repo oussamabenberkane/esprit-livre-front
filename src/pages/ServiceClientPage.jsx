@@ -251,10 +251,10 @@ export default function ServiceClientPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
             {
-              href: 'mailto:contact@espritlivre.fr',
+              href: 'mailto:contact@espritlivre.com',
               icon: Mail,
               title: t('customerService.email'),
-              value: 'contact@espritlivre.fr',
+              value: 'contact@espritlivre.com',
               isLink: true,
               delay: 0.1,
             },

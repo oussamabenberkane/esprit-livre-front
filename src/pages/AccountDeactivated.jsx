@@ -100,7 +100,7 @@ export default function AccountDeactivated() {
             className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8"
           >
             <a
-              href="mailto:contact@espritlivre.fr"
+              href="mailto:contact@espritlivre.com"
               className="group flex items-center gap-2 px-6 py-3 bg-[var(--color-brand-blue)] text-white rounded-lg font-medium hover:bg-[var(--color-brand-blue-light)] transition-all duration-300 shadow-md hover:shadow-lg min-w-[220px] justify-center"
             >
               <Mail className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />

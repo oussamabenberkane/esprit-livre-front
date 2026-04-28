@@ -16,7 +16,7 @@ import { getUserProfile } from '../services/user.service';
 import { isAuthenticated, saveRedirectUrl } from '../services/authService';
 import { PROVIDER_API_TO_DISPLAY, PROVIDER_DISPLAY_TO_API } from '../constants/orderEnums';
 import wilayaData, { wilayaNumbers } from '../utils/wilayaData';
-import { trackInitiateCheckout, trackPurchase } from '../services/pixel.service';
+import { trackInitiateCheckout, trackPurchase, setPixelUserData } from '../services/pixel.service';
 
 // Order Tracking Prompt Popup Component
 function OrderTrackingPrompt({ isOpen, onSignIn, onLater }) {
@@ -491,6 +491,7 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
       try {
         setIsLoadingProfile(true);
         const profile = await getUserProfile();
+        setPixelUserData({ email: profile.email, phone: profile.phone, firstName: profile.firstName, lastName: profile.lastName });
 
         // Pre-populate form fields
         const fullName = `${profile.firstName || ''} ${profile.lastName || ''}`.trim();

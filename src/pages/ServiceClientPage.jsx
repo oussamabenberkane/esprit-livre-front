@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Mail, Phone, Clock, Send } from 'lucide-react';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
+import { trackContact } from '../services/pixel.service';
+import { API_BASE_URL } from '../services/apiConfig';
 
 const BRAND_BLUE = '#00417a';
 const EASE = [0.22, 1, 0.36, 1];
@@ -157,7 +159,7 @@ export default function ServiceClientPage() {
     setFormStatus('loading');
 
     try {
-      const response = await fetch('http://localhost:8080/api/contact', {
+      const response = await fetch(`${API_BASE_URL}/api/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -177,6 +179,7 @@ export default function ServiceClientPage() {
       const data = await response.json();
 
       if (response.ok && data.success) {
+        trackContact();
         setFormStatus('success');
         // Reset form on success
         setFormData({ name: '', email: '', subject: '', message: '' });

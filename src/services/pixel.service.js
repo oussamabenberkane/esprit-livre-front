@@ -1,5 +1,13 @@
 const PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID;
 
+async function sha256(str) {
+  const encoded = new TextEncoder().encode(str);
+  const buf = await crypto.subtle.digest('SHA-256', encoded);
+  return Array.from(new Uint8Array(buf))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
 export const initPixel = () => {
   if (!PIXEL_ID || typeof window === 'undefined' || window.fbq) return;
 
@@ -77,4 +85,20 @@ export const trackPurchase = ({ orderId, value, numItems, contentIds }) => {
 
 export const trackCompleteRegistration = () => {
   track('CompleteRegistration', { status: true });
+};
+
+export const trackContact = () => {
+  track('Contact');
+};
+
+// Re-calls fbq('init') with hashed PII for advanced matching.
+// Safe to call multiple times; Meta Pixel merges the user data.
+export const setPixelUserData = async ({ email, phone, firstName, lastName } = {}) => {
+  if (!window.fbq || !PIXEL_ID) return;
+  const ud = {};
+  if (email?.trim()) ud.em = await sha256(email.trim().toLowerCase());
+  if (phone?.trim()) ud.ph = await sha256(phone.replace(/\s+/g, '').toLowerCase());
+  if (firstName?.trim()) ud.fn = await sha256(firstName.trim().toLowerCase());
+  if (lastName?.trim()) ud.ln = await sha256(lastName.trim().toLowerCase());
+  if (Object.keys(ud).length > 0) window.fbq('init', PIXEL_ID, ud);
 };

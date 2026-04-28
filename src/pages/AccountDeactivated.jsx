@@ -46,16 +46,16 @@ export default function AccountDeactivated() {
       <Navbar />
       <div className="h-28 md:h-20" />
 
-      <main className="flex-grow flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+      <main className="flex-grow flex items-center justify-center px-4 py-10 sm:px-6 lg:px-8">
         <motion.div
-          className="max-w-2xl w-full"
+          className="max-w-3xl w-full"
           variants={stagger}
           initial="hidden"
           animate="visible"
         >
           {/* Card */}
           <div
-            className="bg-white rounded-3xl px-8 py-12 sm:px-12 text-center"
+            className="bg-white rounded-3xl px-6 py-10 sm:px-14 sm:py-14 text-center"
             style={{
               boxShadow:
                 '0 4px 48px rgba(0,65,122,0.09), 0 1px 4px rgba(0,65,122,0.05)',
@@ -64,19 +64,16 @@ export default function AccountDeactivated() {
             {/* Icon */}
             <motion.div variants={scalePop} className="mb-8 flex justify-center">
               <div className="relative inline-flex items-center justify-center">
-                {/* Animated pulse ring */}
                 <motion.div
                   className="absolute rounded-full"
                   style={{ width: 92, height: 92, backgroundColor: 'rgba(0,65,122,0.1)' }}
                   animate={{ scale: [1, 1.4, 1], opacity: [0.45, 0, 0.45] }}
                   transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut', delay: 0.6 }}
                 />
-                {/* Static ambient ring */}
                 <div
                   className="absolute rounded-full"
                   style={{ width: 80, height: 80, backgroundColor: 'rgba(0,65,122,0.07)' }}
                 />
-                {/* Icon circle */}
                 <div
                   className="relative flex items-center justify-center rounded-full"
                   style={{ width: 68, height: 68, backgroundColor: '#00417a' }}
@@ -106,7 +103,7 @@ export default function AccountDeactivated() {
             {/* Description */}
             <motion.p
               variants={fadeUp}
-              className="text-fluid-body text-gray-500 max-w-xs mx-auto mb-10 leading-relaxed"
+              className="text-fluid-body text-gray-500 max-w-md mx-auto mb-10 leading-relaxed"
             >
               {t('deactivated.description')}
             </motion.p>
@@ -114,34 +111,33 @@ export default function AccountDeactivated() {
             {/* CTAs */}
             <motion.div
               variants={fadeUp}
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8"
+              className="flex flex-col items-center gap-3 mb-8"
             >
+              {/* Primary CTA */}
               <a
                 href="mailto:contact@espritlivre.com"
-                className="group flex items-center gap-2 px-6 py-3 bg-[var(--color-brand-blue)] rounded-lg font-medium hover:bg-[var(--color-brand-blue-light)] transition-all duration-300 shadow-md hover:shadow-lg min-w-[220px] justify-center"
-                style={{ color: 'white' }}
+                className="group flex items-center justify-center gap-2.5 w-full sm:w-auto sm:min-w-[260px] px-8 py-3.5 bg-[var(--color-brand-blue)] text-white rounded-xl font-medium hover:bg-[var(--color-brand-blue-light)] transition-all duration-300 shadow-md hover:shadow-lg"
               >
-                <Mail className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                <Mail className="w-4.5 h-4.5 group-hover:scale-110 transition-transform duration-300" size={18} />
                 {t('deactivated.contactSupport')}
               </a>
 
+              {/* Secondary CTA — ghost/text style, clearly subordinate */}
               <button
                 onClick={() => navigate('/')}
-                className="group flex items-center gap-2 px-6 py-3 bg-white text-[var(--color-brand-blue)] border-2 border-[var(--color-brand-blue)] rounded-lg font-medium hover:bg-[var(--color-brand-blue)] hover:text-white transition-all duration-300 shadow-md hover:shadow-lg min-w-[220px] justify-center"
+                className="group inline-flex items-center justify-center gap-2 px-4 py-2 text-fluid-body text-gray-500 hover:text-[var(--color-brand-blue)] transition-colors duration-200 font-medium"
               >
-                <Home className="w-5 h-5 group-hover:scale-110 transition-all duration-300" />
+                <Home className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" size={16} />
                 {t('deactivated.backHome')}
               </button>
             </motion.div>
 
-            {/* Contact note */}
-            <motion.div
-              variants={fadeUp}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-fluid-small text-gray-400"
-              style={{ backgroundColor: '#f7f6f3', border: '1px solid #e9e4d9' }}
-            >
-              <Info className="w-3.5 h-3.5 shrink-0" />
-              <span>{t('deactivated.contactNote')}</span>
+            {/* Divider */}
+            <motion.div variants={fadeUp} className="border-t border-gray-100 pt-6">
+              <div className="inline-flex items-center gap-2 text-fluid-small text-gray-400">
+                <Info className="w-3.5 h-3.5 shrink-0 text-gray-300" />
+                <span>{t('deactivated.contactNote')}</span>
+              </div>
             </motion.div>
           </div>
         </motion.div>

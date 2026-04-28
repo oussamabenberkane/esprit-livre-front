@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { BookOpen, PauseCircle, Mail, Home, Info } from 'lucide-react';
+import { PauseCircle, Mail, Home, Info } from 'lucide-react';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import { logout } from '../services/authService';
@@ -54,17 +54,10 @@ export default function AccountDeactivated() {
               <div className="absolute w-36 h-36 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 opacity-60" />
               {/* Icon container */}
               <div className="relative w-28 h-28 rounded-full bg-white shadow-xl flex items-center justify-center ring-4 ring-blue-100">
-                {/* Book base */}
-                <BookOpen
-                  className="absolute text-[var(--color-brand-blue)] opacity-30"
-                  size={52}
-                  strokeWidth={1.4}
-                />
-                {/* Pause overlay */}
                 <PauseCircle
-                  className="relative text-[var(--color-brand-blue)]"
-                  size={36}
-                  strokeWidth={1.8}
+                  className="text-[var(--color-brand-blue)]"
+                  size={44}
+                  strokeWidth={1.6}
                 />
               </div>
             </div>
@@ -103,15 +96,15 @@ export default function AccountDeactivated() {
               href="mailto:contact@espritlivre.com"
               className="group flex items-center gap-2 px-6 py-3 bg-[var(--color-brand-blue)] text-white rounded-lg font-medium hover:bg-[var(--color-brand-blue-light)] transition-all duration-300 shadow-md hover:shadow-lg min-w-[220px] justify-center"
             >
-              <Mail className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+              <Mail className="w-5 h-5 text-white group-hover:scale-110 transition-transform duration-300" />
               {t('deactivated.contactSupport')}
             </a>
 
             <button
               onClick={() => navigate('/')}
-              className="group flex items-center gap-2 px-6 py-3 bg-white text-[var(--color-brand-blue)] border-2 border-[var(--color-brand-blue)] rounded-lg font-medium hover:bg-[var(--color-brand-blue)] hover:text-white transition-all duration-300 shadow-md hover:shadow-lg min-w-[220px] justify-center"
+              className="group flex items-center gap-2 px-6 py-3 bg-white text-[var(--color-brand-blue)] border-2 border-[var(--color-brand-blue)] rounded-lg font-medium hover:bg-[var(--color-brand-blue)] hover:text-white hover:border-[var(--color-brand-blue)] transition-all duration-300 shadow-md hover:shadow-lg min-w-[220px] justify-center"
             >
-              <Home className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+              <Home className="w-5 h-5 text-[var(--color-brand-blue)] group-hover:text-white group-hover:scale-110 transition-all duration-300" />
               {t('deactivated.backHome')}
             </button>
           </motion.div>

@@ -48,7 +48,7 @@ export default function AccountDeactivated() {
 
       <main className="flex-grow flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
         <motion.div
-          className="max-w-md w-full"
+          className="max-w-2xl w-full"
           variants={stagger}
           initial="hidden"
           animate="visible"
@@ -89,12 +89,7 @@ export default function AccountDeactivated() {
             {/* Title */}
             <motion.h1
               variants={fadeUp}
-              className="font-bold text-gray-900 mb-3 leading-snug"
-              style={{
-                fontSize: 'clamp(1.25rem, 3.5vw, 1.65rem)',
-                fontFamily: "'Cormorant Garamond', serif",
-                fontWeight: 700,
-              }}
+              className="text-fluid-h1 font-bold text-gray-900 mb-3 leading-snug"
             >
               {t('deactivated.title')}
             </motion.h1>
@@ -119,34 +114,21 @@ export default function AccountDeactivated() {
             {/* CTAs */}
             <motion.div
               variants={fadeUp}
-              className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-6"
+              className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8"
             >
-              {/*
-                Primary button: bg #00417a, text always white.
-                Both the base text-white and hover:text-white are explicit so
-                no inherited color can bleed through.
-              */}
               <a
                 href="mailto:contact@espritlivre.com"
-                className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white bg-[#00417a] hover:bg-[#0052a3] hover:text-white transition-all duration-200 hover:shadow-lg min-w-[200px] justify-center"
+                className="group flex items-center gap-2 px-6 py-3 bg-[var(--color-brand-blue)] text-white rounded-lg font-medium hover:bg-[var(--color-brand-blue-light)] hover:text-white transition-all duration-300 shadow-md hover:shadow-lg min-w-[220px] justify-center"
               >
-                {/* No color class on icon — inherits currentColor from parent text-white */}
-                <Mail className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <Mail className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
                 {t('deactivated.contactSupport')}
               </a>
 
-              {/*
-                Secondary button: base is transparent bg + blue text.
-                Hover flips to solid blue bg + white text.
-                Icon has NO explicit color class so it inherits currentColor
-                and flips automatically with the parent text color — this
-                fixes the "black icon on blue hover" bug from the old version.
-              */}
               <button
                 onClick={() => navigate('/')}
-                className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold border-2 border-[#00417a] text-[#00417a] bg-transparent hover:bg-[#00417a] hover:text-white transition-all duration-200 hover:shadow-lg min-w-[200px] justify-center"
+                className="group flex items-center gap-2 px-6 py-3 bg-white text-[var(--color-brand-blue)] border-2 border-[var(--color-brand-blue)] rounded-lg font-medium hover:bg-[var(--color-brand-blue)] hover:text-white transition-all duration-300 shadow-md hover:shadow-lg min-w-[220px] justify-center"
               >
-                <Home className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <Home className="w-5 h-5 group-hover:scale-110 transition-all duration-300" />
                 {t('deactivated.backHome')}
               </button>
             </motion.div>

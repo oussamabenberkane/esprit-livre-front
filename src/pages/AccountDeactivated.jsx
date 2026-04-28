@@ -118,7 +118,8 @@ export default function AccountDeactivated() {
             >
               <a
                 href="mailto:contact@espritlivre.com"
-                className="group flex items-center gap-2 px-6 py-3 bg-[var(--color-brand-blue)] text-white rounded-lg font-medium hover:bg-[var(--color-brand-blue-light)] hover:text-white transition-all duration-300 shadow-md hover:shadow-lg min-w-[220px] justify-center"
+                className="group flex items-center gap-2 px-6 py-3 bg-[var(--color-brand-blue)] rounded-lg font-medium hover:bg-[var(--color-brand-blue-light)] transition-all duration-300 shadow-md hover:shadow-lg min-w-[220px] justify-center"
+                style={{ color: 'white' }}
               >
                 <Mail className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
                 {t('deactivated.contactSupport')}

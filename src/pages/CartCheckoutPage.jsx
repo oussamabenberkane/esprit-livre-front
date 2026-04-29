@@ -603,7 +603,6 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
   const handleWilayaSelect = (wilaya) => {
     setFormData({ ...formData, wilaya, city: '' });
     setAvailableCities(wilayaData[wilaya] || []);
-    setWilayaSearch("");
     setOpenDropdown(null);
     // Clear wilaya validation error when selected
     setValidationErrors(prev => ({ ...prev, wilaya: '' }));

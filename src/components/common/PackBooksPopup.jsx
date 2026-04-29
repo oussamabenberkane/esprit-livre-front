@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { X, Lock } from 'lucide-react';
+import { X } from 'lucide-react';
 import { getLanguageCode } from '../../data/booksData';
 import InlineMarkdown from './InlineMarkdown';
 import MarkdownContent from './MarkdownContent';
@@ -9,8 +9,7 @@ import MarkdownContent from './MarkdownContent';
 export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescription, books = [], isLoading = false, pricingMode = 'STANDARD' }) {
     const { t } = useTranslation();
     const navigate = useNavigate();
-
-    const hasPackOnlyBooks = books.some(b => b.visibleInCatalog === false);
+    const [revealedBookId, setRevealedBookId] = useState(null);
 
     useEffect(() => {
         if (isOpen) {
@@ -29,8 +28,16 @@ export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescrip
         }
     }, [isOpen]);
 
+    // Reset revealed card when popup closes
+    useEffect(() => {
+        if (!isOpen) setRevealedBookId(null);
+    }, [isOpen]);
+
     const handleBookClick = (book) => {
-        if (book.visibleInCatalog === false) return;
+        if (book.visibleInCatalog === false) {
+            setRevealedBookId(prev => prev === book.id ? null : book.id);
+            return;
+        }
         navigate(`/books/${book.id}`);
     };
 
@@ -75,7 +82,10 @@ export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescrip
                     </div>
 
                     {/* Books Grid */}
-                    <div className="px-3 sm:px-6 md:px-8 py-4 sm:py-5 overflow-y-auto flex-1 custom-scrollbar">
+                    <div
+                        className="px-3 sm:px-6 md:px-8 py-4 sm:py-5 overflow-y-auto flex-1 custom-scrollbar"
+                        onClick={() => setRevealedBookId(null)}
+                    >
                         {isLoading ? (
                             <div className="flex flex-col items-center justify-center py-12">
                                 <div className="w-10 h-10 border-3 border-[#00417a]/20 border-t-[#00417a] rounded-full animate-spin mb-4"></div>
@@ -85,77 +95,45 @@ export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescrip
                             <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 xs:gap-3 sm:gap-4">
                                 {books.map((book, index) => {
                                     const isPackOnly = book.visibleInCatalog === false;
+                                    const isRevealed = revealedBookId === book.id;
+
                                     return (
                                         <div
                                             key={book.id || index}
-                                            onClick={() => handleBookClick(book)}
-                                            className={[
-                                                'bg-white rounded-lg border overflow-hidden flex flex-col transition-all duration-300',
-                                                isPackOnly
-                                                    ? 'border-amber-200/70 cursor-default'
-                                                    : 'border-gray-200/80 cursor-pointer group hover:border-[#00417a]/60 hover:shadow-md hover:-translate-y-1',
-                                            ].join(' ')}
+                                            onClick={(e) => { e.stopPropagation(); handleBookClick(book); }}
+                                            className="relative bg-white rounded-lg border border-gray-200/80 hover:border-[#00417a]/60 hover:shadow-md hover:-translate-y-1 transition-all duration-300 overflow-hidden group cursor-pointer flex flex-col"
                                         >
                                             {/* Cover */}
-                                            <div className="relative w-full aspect-[2/2.5] sm:aspect-[2/2.6] overflow-hidden">
+                                            <div className="relative w-full aspect-[2/2.5] sm:aspect-[2/2.6] bg-gray-100 overflow-hidden">
                                                 <img
                                                     src={book.coverImage}
                                                     alt={book.title}
-                                                    className={[
-                                                        'w-full h-full object-cover transition-transform duration-500 ease-out',
-                                                        isPackOnly ? 'saturate-[0.75]' : 'group-hover:scale-110',
-                                                    ].join(' ')}
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
                                                     onError={(e) => {
                                                         e.target.src = 'https://via.placeholder.com/300x400?text=No+Image';
                                                     }}
                                                 />
-
-                                                {/* Language badge */}
                                                 {book.language && (
                                                     <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 bg-blue-600/90 backdrop-blur-sm text-white text-[10px] font-semibold rounded shadow-sm">
                                                         {getLanguageCode(book.language)}
                                                     </div>
                                                 )}
-
-                                                {/* Pack-only overlay + badge */}
-                                                {isPackOnly && (
-                                                    <>
-                                                        <div className="absolute inset-0 bg-gradient-to-t from-amber-900/30 via-transparent to-transparent pointer-events-none" />
-                                                        <div className="absolute bottom-1.5 left-1.5 right-1.5 flex justify-center">
-                                                            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-50/95 border border-amber-300 text-amber-700 text-[8px] xs:text-[9px] sm:text-[10px] font-semibold shadow-sm backdrop-blur-sm leading-tight">
-                                                                <Lock className="w-2 h-2 xs:w-2.5 xs:h-2.5 flex-shrink-0" />
-                                                                {t('packBooksPopup.packOnlyBadge')}
-                                                            </span>
-                                                        </div>
-                                                    </>
-                                                )}
-
-                                                {/* Hover overlay for clickable books */}
-                                                {!isPackOnly && (
-                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                                                )}
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                                             </div>
 
                                             {/* Book Info */}
                                             <div className="p-1.5 xs:p-2 sm:p-2.5 flex flex-col flex-1">
                                                 <div className="flex-1">
-                                                    <h3 className={[
-                                                        'font-[\'Poppins\'] font-semibold text-[9px] xs:text-[10px] sm:text-sm leading-tight line-clamp-2 transition-colors',
-                                                        isPackOnly ? 'text-gray-500' : 'text-[#00417a] group-hover:text-[#003460]',
-                                                    ].join(' ')}>
+                                                    <h3 className="font-['Poppins'] font-semibold text-[#00417a] text-[9px] xs:text-[10px] sm:text-sm leading-tight line-clamp-2 group-hover:text-[#003460] transition-colors">
                                                         <InlineMarkdown>{book.title}</InlineMarkdown>
                                                     </h3>
-                                                    <p className="text-gray-400 text-[8px] xs:text-[9px] sm:text-xs line-clamp-1 mt-0.5">
+                                                    <p className="text-gray-600 text-[8px] xs:text-[9px] sm:text-xs line-clamp-1 mt-0.5">
                                                         {typeof book.author === 'object' ? book.author?.name : book.author}
                                                     </p>
                                                 </div>
-
                                                 {pricingMode !== 'FLAT' && book.price > 0 && (
                                                     <div className="flex items-baseline justify-between mt-1.5 xs:mt-2 pt-1 xs:pt-1.5 border-t border-gray-100">
-                                                        <span className={[
-                                                            'font-[\'Poppins\'] font-bold text-[10px] xs:text-xs sm:text-base',
-                                                            isPackOnly ? 'text-gray-400' : 'text-[#00417a]',
-                                                        ].join(' ')}>
+                                                        <span className="font-['Poppins'] font-bold text-[#00417a] text-[10px] xs:text-xs sm:text-base">
                                                             {book.price}
                                                             <span className="text-[8px] xs:text-[9px] sm:text-xs font-semibold ml-0.5 sm:ml-1">
                                                                 {t('packBooksPopup.currency')}
@@ -164,6 +142,35 @@ export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescrip
                                                     </div>
                                                 )}
                                             </div>
+
+                                            {/* Pack-only reveal overlay — appears only after clicking */}
+                                            {isPackOnly && (
+                                                <div className={`absolute inset-0 z-10 flex flex-col rounded-lg overflow-hidden transition-all duration-300 ${isRevealed ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+                                                    {/* Rich background */}
+                                                    <div className="absolute inset-0 bg-gradient-to-b from-[#00274d] via-[#00417a] to-[#002f5c]" />
+                                                    {/* Subtle grid texture */}
+                                                    <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'repeating-linear-gradient(0deg,white 0,white 1px,transparent 0,transparent 12px),repeating-linear-gradient(90deg,white 0,white 1px,transparent 0,transparent 12px)' }} />
+
+                                                    {/* Dismiss button */}
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); setRevealedBookId(null); }}
+                                                        className="absolute top-1.5 right-1.5 z-20 w-5 h-5 xs:w-6 xs:h-6 flex items-center justify-center rounded-full bg-white/15 hover:bg-white/30 transition-colors"
+                                                    >
+                                                        <X className="w-2.5 h-2.5 xs:w-3 xs:h-3 text-white" />
+                                                    </button>
+
+                                                    {/* Content */}
+                                                    <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-2 py-3 text-center gap-1.5">
+                                                        <span className="text-amber-300 text-sm xs:text-base leading-none">✦</span>
+                                                        <p className="font-['Poppins'] font-bold text-white text-[9px] xs:text-[10px] sm:text-xs leading-tight">
+                                                            {t('packBooksPopup.packOnlyTitle')}
+                                                        </p>
+                                                        <p className="text-white/70 text-[7px] xs:text-[8px] sm:text-[10px] leading-snug">
+                                                            {t('packBooksPopup.packOnlyMessage')}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                     );
                                 })}
@@ -176,12 +183,6 @@ export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescrip
                         <p className="text-center text-xs xs:text-sm text-gray-600">
                             {t('packBooksPopup.clickToViewDetails')}
                         </p>
-                        {hasPackOnlyBooks && (
-                            <p className="flex items-center justify-center gap-1.5 mt-1 text-center text-[10px] xs:text-xs text-amber-600">
-                                <Lock className="w-3 h-3 flex-shrink-0" />
-                                {t('packBooksPopup.packOnlyNote')}
-                            </p>
-                        )}
                     </div>
                 </div>
             </div>

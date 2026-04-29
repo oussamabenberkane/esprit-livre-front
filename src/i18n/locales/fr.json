@@ -541,8 +541,8 @@
     "currency": "DZD",
     "clickToViewDetails": "Cliquez sur un livre pour voir ses détails",
     "loading": "Chargement des livres...",
-    "packOnlyBadge": "Exclusif pack",
-    "packOnlyNote": "Certains livres sont disponibles uniquement dans ce pack"
+    "packOnlyTitle": "Exclusif à ce pack",
+    "packOnlyMessage": "Ce livre a été sélectionné pour aller avec les autres. Il est bien plus beau en bonne compagnie."
   },
   "404": {
     "title": "Page introuvable",

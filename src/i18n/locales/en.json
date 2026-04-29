@@ -541,8 +541,8 @@
     "currency": "DZD",
     "clickToViewDetails": "Click on a book to view its details",
     "loading": "Loading books...",
-    "packOnlyBadge": "Pack exclusive",
-    "packOnlyNote": "Some books are only available within this pack"
+    "packOnlyTitle": "Exclusive to this pack",
+    "packOnlyMessage": "This book was chosen to belong here. It shines brightest alongside the others."
   },
   "404": {
     "title": "Page not found",

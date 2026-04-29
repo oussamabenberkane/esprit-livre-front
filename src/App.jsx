@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { initPixel, trackPageView } from './services/pixel.service';
 
@@ -16,7 +16,7 @@ function PixelTracker() {
   return null;
 }
 import HomePage from './pages/homePage';
-import AllBooks from './pages/AllBooks';
+import Products from './pages/Products';
 import BookDetails from './pages/BookDetails';
 import CartCheckoutPage from './pages/CartCheckoutPage.jsx';
 import AuthPage from './pages/AuthPage.jsx';
@@ -26,7 +26,6 @@ import Orders from './components/profil/Orders.jsx';
 import Favorites from './components/profil/Favorites.jsx';
 import TeamPage from './pages/TeamPage';
 import ServiceClientPage from './pages/ServiceClientPage';
-import PacksPromotionnels from './pages/PacksPromotionnels.jsx';
 import SalePage from './pages/SalePage.jsx';
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
 import TestPage from './pages/TestPage.jsx';
@@ -58,11 +57,12 @@ function App() {
           {/* OAuth callback route */}
           <Route path="/auth/callback" element={<AuthCallback />} />
 
-          {/* All books catalog page */}
-          <Route path="/allbooks" element={<AllBooks />} />
+          {/* Products catalog page */}
+          <Route path="/products" element={<Products />} />
+          <Route path="/allbooks" element={<Navigate to="/products" replace />} />
 
-          {/* Promotional packs page */}
-          <Route path="/packs" element={<PacksPromotionnels />} />
+          {/* Packs redirect to products packs tab */}
+          <Route path="/packs" element={<Navigate to="/products?tab=packs" replace />} />
 
           {/* Books on sale / promotions page */}
           <Route path="/promotions" element={<SalePage />} />

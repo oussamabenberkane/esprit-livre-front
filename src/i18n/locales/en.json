@@ -540,7 +540,9 @@
     "close": "Close",
     "currency": "DZD",
     "clickToViewDetails": "Click on a book to view its details",
-    "loading": "Loading books..."
+    "loading": "Loading books...",
+    "packOnlyBadge": "Pack exclusive",
+    "packOnlyNote": "Some books are only available within this pack"
   },
   "404": {
     "title": "Page not found",

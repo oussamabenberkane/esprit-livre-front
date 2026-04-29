@@ -10,8 +10,8 @@ export default function BottomSheet({ isOpen, onClose, LanguageToggle }) {
 
   const menuItems = [
     { icon: Home,        labelKey: 'bottomSheet.menu.home',      path: '/' },
-    { icon: BookOpen,    labelKey: 'bottomSheet.menu.books',     path: '/allbooks' },
-    { icon: Package,     labelKey: 'bottomSheet.menu.packs',         path: '/packs' },
+    { icon: BookOpen,    labelKey: 'bottomSheet.menu.books',     path: '/products' },
+    { icon: Package,     labelKey: 'bottomSheet.menu.packs',         path: '/products?tab=packs' },
     { icon: Tag,         labelKey: 'bottomSheet.menu.promotions',    path: '/promotions' },
     { icon: ShoppingBag, labelKey: 'bottomSheet.menu.orders',    path: '/orders' },
     { icon: Heart,       labelKey: 'bottomSheet.menu.favorites', path: '/favorites' },

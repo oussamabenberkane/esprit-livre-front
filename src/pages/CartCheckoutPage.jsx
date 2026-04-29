@@ -1489,7 +1489,7 @@ export default function CartCheckoutPage() {
           <motion.button
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            onClick={() => navigate('/allbooks')}
+            onClick={() => navigate('/products')}
             className="inline-flex items-center gap-2 text-black text-xs md:text-sm hover:text-emerald-600 transition-colors mb-6"
           >
             <ArrowLeft className="w-5 h-5" />

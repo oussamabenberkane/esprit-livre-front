@@ -540,7 +540,9 @@
     "close": "Fermer",
     "currency": "DZD",
     "clickToViewDetails": "Cliquez sur un livre pour voir ses détails",
-    "loading": "Chargement des livres..."
+    "loading": "Chargement des livres...",
+    "packOnlyBadge": "Exclusif pack",
+    "packOnlyNote": "Certains livres sont disponibles uniquement dans ce pack"
   },
   "404": {
     "title": "Page introuvable",

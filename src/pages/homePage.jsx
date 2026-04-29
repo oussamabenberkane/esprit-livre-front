@@ -143,7 +143,7 @@ const MainDisplayCarousel = ({ display, onAddToCart, onAddPackToCart, onToggleFa
                             : (display.nameEn || display.nameFr || t('homePage.recommendedBooks'))
                         }
                     </h2>
-                    <SeeMore to="/allbooks" />
+                    <SeeMore to="/products" />
                 </div>
 
                 {/* Horizontal Scroll Container with negative margin */}
@@ -336,12 +336,12 @@ const HomePage = () => {
 
     // Navigation handler for categories
     const handleCategoryClick = (categoryId, categoryName) => {
-        navigate(`/allbooks?categoryId=${encodeURIComponent(categoryId)}&categoryName=${encodeURIComponent(categoryName)}`);
+        navigate(`/products?categoryId=${encodeURIComponent(categoryId)}&categoryName=${encodeURIComponent(categoryName)}`);
     };
 
     // Navigation handler for authors
     const handleAuthorClick = (authorId, authorName) => {
-        navigate(`/allbooks?authorId=${encodeURIComponent(authorId)}&authorName=${encodeURIComponent(authorName)}`);
+        navigate(`/products?authorId=${encodeURIComponent(authorId)}&authorName=${encodeURIComponent(authorName)}`);
     };
 
     // Add state for categories section
@@ -937,7 +937,7 @@ const HomePage = () => {
 
                             </div>
 
-                            <SeeMore to="/allbooks" />
+                            <SeeMore to="/products" />
 
                         </div>
                         <p className="font-['Poppins'] font-[550] text-[#00417a] text-fluid-small" >
@@ -1099,7 +1099,7 @@ const HomePage = () => {
                             <p className="font-['Poppins'] font-bold text-[#00417a] text-fluid-h2" >
                                 {t('homePage.featuredAuthors')}
                             </p>
-                            <SeeMore to="/allbooks" />
+                            <SeeMore to="/products" />
 
 
                         </div>

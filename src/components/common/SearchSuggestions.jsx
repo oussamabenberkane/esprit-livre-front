@@ -16,19 +16,19 @@ const SearchSuggestions = ({ suggestions, isLoading, query, onClose }) => {
         // Navigate based on suggestion type with ID and name
         if (suggestion.type === 'BOOK_TITLE') {
             // Search for the book title directly
-            navigate(`/allbooks?search=${encodeURIComponent(suggestion.suggestion)}&searchType=title`);
+            navigate(`/products?search=${encodeURIComponent(suggestion.suggestion)}&searchType=title`);
         } else if (suggestion.type === 'AUTHOR') {
             // Filter by author ID and pass name for display
-            navigate(`/allbooks?authorId=${suggestion.id}&authorName=${encodeURIComponent(suggestion.suggestion)}`);
+            navigate(`/products?authorId=${suggestion.id}&authorName=${encodeURIComponent(suggestion.suggestion)}`);
         } else if (suggestion.type === 'CATEGORY') {
             // Filter by category ID and pass name for display
-            navigate(`/allbooks?categoryId=${suggestion.id}&categoryName=${encodeURIComponent(suggestion.suggestion)}`);
+            navigate(`/products?categoryId=${suggestion.id}&categoryName=${encodeURIComponent(suggestion.suggestion)}`);
         }
         onClose();
     };
 
     const handleViewAll = () => {
-        navigate(`/allbooks?search=${encodeURIComponent(query)}`);
+        navigate(`/products?search=${encodeURIComponent(query)}`);
         onClose();
     };
 

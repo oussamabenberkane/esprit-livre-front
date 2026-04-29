@@ -222,7 +222,7 @@ export default function OrdersTab() {
         <h3 className="text-gray-700 font-semibold mb-1">{t('orders.emptyTitle')}</h3>
         <p className="text-gray-400 text-sm text-center max-w-xs mb-6 leading-relaxed">{t('orders.emptyMessage')}</p>
         <button
-          onClick={() => navigate('/allbooks')}
+          onClick={() => navigate('/products')}
           className="px-6 py-2.5 bg-[#00417a] text-white rounded-xl text-sm font-semibold hover:bg-[#003366] transition-colors shadow-sm"
         >
           {t('orders.startShopping')}

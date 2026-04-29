@@ -377,7 +377,7 @@ const PackOfferSlide = ({ pack, isActive }) => {
                             >
                                 <button
                                     type="button"
-                                    onClick={() => navigate('/packs')}
+                                    onClick={() => navigate('/products?tab=packs')}
                                     className="group inline-flex items-center gap-2 rounded-full bg-[#00417a] text-white font-semibold text-fluid-small px-5 py-2.5 sm:px-6 sm:py-3 shadow-[0_10px_24px_-8px_rgba(0,65,122,0.55)] hover:bg-[#003463] transition-all hover:shadow-[0_14px_30px_-10px_rgba(0,65,122,0.65)] hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#d4a84b] focus-visible:ring-offset-2 min-h-[44px]"
                                 >
                                     {t('homePage.hero.packOffer.cta')}

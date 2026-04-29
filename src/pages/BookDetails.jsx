@@ -7,7 +7,7 @@ import MarkdownContent from '../components/common/MarkdownContent';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import BookCard from '../components/common/BookCard';
-import PackCard from '../components/common/PackCard';
+import PackCardCompact from '../components/common/PackCardCompact';
 import PackBooksPopup from '../components/common/PackBooksPopup';
 import SlideScroll from '../components/buttons/SlideScroll';
 import PaginationDots from '../components/common/PaginationDots';
@@ -170,7 +170,8 @@ const BookDetails = () => {
                         author: b.author?.name || 'Unknown',
                         price: parseFloat(b.price) || 0,
                         coverImage: getBookCoverUrl(b.id),
-                        language: b.language
+                        language: b.language,
+                        visibleInCatalog: b.visibleInCatalog !== false
                     }));
 
                     const originalPrice = books.reduce((sum, b) => sum + b.price, 0);
@@ -731,7 +732,7 @@ const BookDetails = () => {
                                 {t('bookDetails.recommendations')}
                             </h2>
                             <div className="scale-[0.85] xs:scale-100 origin-right">
-                                <SeeMore to="/allbooks" />
+                                <SeeMore to="/products" />
                             </div>
                         </div>
 
@@ -858,7 +859,7 @@ const BookDetails = () => {
                                     {t('bookDetails.packRecommendations')}
                                 </h2>
                                 <div className="scale-[0.85] xs:scale-100 origin-right">
-                                    <SeeMore to="/packs" />
+                                    <SeeMore to="/products?tab=packs" />
                                 </div>
                             </div>
 
@@ -875,15 +876,13 @@ const BookDetails = () => {
                                     {visibleRecommendedPacks.map((pack) => (
                                         <div
                                             key={pack.id}
-                                            className="flex-shrink-0 snap-start w-[clamp(280px,85vw,400px)] sm:w-[clamp(320px,60vw,450px)] md:w-[clamp(360px,45vw,500px)]"
+                                            className="book-card-width snap-start"
                                         >
-                                            <PackCard
+                                            <PackCardCompact
                                                 id={pack.id}
                                                 title={pack.title}
-                                                description={pack.description}
                                                 originalPrice={pack.originalPrice}
                                                 packPrice={pack.packPrice}
-                                                packImage={pack.packImage}
                                                 books={pack.books}
                                                 pricingMode={pack.pricingMode}
                                                 onAddToCart={handleAddPackToCart}
@@ -899,7 +898,7 @@ const BookDetails = () => {
                                         return Array.from({ length: skeletonCount }).map((_, index) => (
                                             <div
                                                 key={`skeleton-${index}`}
-                                                className="flex-shrink-0 snap-start w-[clamp(280px,85vw,400px)] sm:w-[clamp(320px,60vw,450px)] md:w-[clamp(360px,45vw,500px)]"
+                                                className="book-card-width snap-start"
                                             >
                                                 <PackCardSkeleton />
                                             </div>

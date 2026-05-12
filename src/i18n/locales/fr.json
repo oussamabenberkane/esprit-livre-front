@@ -542,7 +542,9 @@
     "clickToViewDetails": "Cliquez sur un livre pour voir ses détails",
     "loading": "Chargement des livres...",
     "packOnlyTitle": "Exclusif à ce pack",
-    "packOnlyMessage": "Ce livre a été sélectionné pour aller avec les autres. Il est bien plus beau en bonne compagnie."
+    "packOnlyMessage": "Ce livre a été sélectionné pour aller avec les autres. Il est bien plus beau en bonne compagnie.",
+    "readMore": "Lire la suite",
+    "showLess": "Réduire"
   },
   "404": {
     "title": "Page introuvable",

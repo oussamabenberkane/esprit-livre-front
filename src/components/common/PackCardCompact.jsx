@@ -27,13 +27,17 @@ const PackCardCompact = ({
         if (onAddToCart) onAddToCart(id);
     };
 
-    const handleViewBooks = (e) => {
-        e.stopPropagation();
+    const openPopup = () => {
         if (onViewBooks) {
             onViewBooks(id);
         } else {
             setShowPopup(true);
         }
+    };
+
+    const handleViewBooks = (e) => {
+        e.stopPropagation();
+        openPopup();
     };
 
     // Build book thumbnails — 1x2 for 2 books, 2x2 for 3+
@@ -75,7 +79,7 @@ const PackCardCompact = ({
 
     return (
         <>
-            <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group w-full book-card-height flex flex-col relative">
+            <div onClick={openPopup} className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group w-full book-card-height flex flex-col relative cursor-pointer">
                 {/* Cover area — book thumbnail mosaic */}
                 <div className="relative w-full flex items-center justify-center">
                     <div className="relative book-image-height w-full overflow-hidden">

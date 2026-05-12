@@ -10,6 +10,8 @@ export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescrip
     const { t } = useTranslation();
     const navigate = useNavigate();
     const [revealedBookId, setRevealedBookId] = useState(null);
+    const [descExpanded, setDescExpanded] = useState(false);
+    const DESC_THRESHOLD = 200;
 
     useEffect(() => {
         if (isOpen) {
@@ -28,9 +30,12 @@ export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescrip
         }
     }, [isOpen]);
 
-    // Reset revealed card when popup closes
+    // Reset state when popup closes
     useEffect(() => {
-        if (!isOpen) setRevealedBookId(null);
+        if (!isOpen) {
+            setRevealedBookId(null);
+            setDescExpanded(false);
+        }
     }, [isOpen]);
 
     const handleBookClick = (book) => {
@@ -61,8 +66,18 @@ export default function PackBooksPopup({ isOpen, onClose, packTitle, packDescrip
                                     <InlineMarkdown>{packTitle}</InlineMarkdown>
                                 </h2>
                                 {packDescription && (
-                                    <div className="text-gray-600 text-xs xs:text-sm sm:text-base line-clamp-2 mb-1 xs:mb-2">
-                                        <MarkdownContent compact>{packDescription}</MarkdownContent>
+                                    <div className="mb-1 xs:mb-2">
+                                        <div className={`text-gray-600 text-xs xs:text-sm sm:text-base ${!descExpanded ? 'line-clamp-3' : ''}`}>
+                                            <MarkdownContent compact>{packDescription}</MarkdownContent>
+                                        </div>
+                                        {packDescription.length > DESC_THRESHOLD && (
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); setDescExpanded(p => !p); }}
+                                                className="text-[#00417a] text-xs xs:text-sm font-semibold hover:underline mt-0.5 focus:outline-none"
+                                            >
+                                                {descExpanded ? t('packBooksPopup.showLess') : t('packBooksPopup.readMore')}
+                                            </button>
+                                        )}
                                     </div>
                                 )}
                                 <div className="flex items-center gap-2 text-gray-500">

@@ -542,7 +542,9 @@
     "clickToViewDetails": "Click on a book to view its details",
     "loading": "Loading books...",
     "packOnlyTitle": "Exclusive to this pack",
-    "packOnlyMessage": "This book was chosen to belong here. It shines brightest alongside the others."
+    "packOnlyMessage": "This book was chosen to belong here. It shines brightest alongside the others.",
+    "readMore": "Read more",
+    "showLess": "Show less"
   },
   "404": {
     "title": "Page not found",

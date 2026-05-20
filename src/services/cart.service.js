@@ -332,7 +332,6 @@ export const hydratePackCartItems = async (packCartItems) => {
 
     try {
         const { getBookPackById } = await import('./bookPackService');
-        const { getBooksByIds } = await import('./books.service');
         const { getBookCoverUrl } = await import('../utils/imageUtils');
 
         // Fetch all packs in parallel
@@ -352,14 +351,6 @@ export const hydratePackCartItems = async (packCartItems) => {
                 if (!pack) return null;
 
                 try {
-                    // Extract book IDs from the pack
-                    const bookIds = (pack.books || []).map(book =>
-                        typeof book === 'object' ? book.id : book
-                    );
-
-                    // Fetch all books for this pack
-                    const booksDetails = await getBooksByIds(bookIds);
-
                     return {
                         id: pack.id,
                         title: pack.title,
@@ -367,13 +358,16 @@ export const hydratePackCartItems = async (packCartItems) => {
                         price: parseFloat(pack.price) || 0,
                         quantity: item.quantity,
                         addedAt: item.addedAt,
-                        books: booksDetails.map(book => ({
-                            id: book.id,
-                            title: book.title,
-                            author: book.author?.name || 'Unknown',
-                            price: parseFloat(book.price) || 0,
-                            coverImage: getBookCoverUrl(book.id)
-                        })),
+                        books: (pack.books || []).map(book => {
+                            const bookId = typeof book === 'object' ? book.id : book;
+                            return {
+                                id: bookId,
+                                title: book.title || '',
+                                author: book.author?.name || book.author || 'Unknown',
+                                price: parseFloat(book.price) || 0,
+                                coverImage: getBookCoverUrl(bookId)
+                            };
+                        }),
                         isPack: true
                     };
                 } catch (err) {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useSpring } from 'framer-motion';
 import { Calendar } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -14,19 +14,24 @@ export default function LegalLayout({ label, title, subtitle, lastUpdated, secti
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
+  // Store keys in a ref so the scroll listener never goes stale and
+  // the effect only runs once regardless of sections reference changes.
+  const keysRef = useRef(sections.map(s => s.key));
+
   useEffect(() => {
-    const observers = sections.map(({ key }) => {
-      const el = document.getElementById(`section-${key}`);
-      if (!el) return null;
-      const observer = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting) setActiveSection(key); },
-        { rootMargin: '-25% 0px -65% 0px', threshold: 0 }
-      );
-      observer.observe(el);
-      return observer;
-    });
-    return () => observers.forEach(o => o?.disconnect());
-  }, [sections]);
+    const handleScroll = () => {
+      const TRIGGER = window.innerHeight * 0.35;
+      let current = keysRef.current[0] ?? '';
+      for (const key of keysRef.current) {
+        const el = document.getElementById(`section-${key}`);
+        if (el && el.getBoundingClientRect().top <= TRIGGER) current = key;
+      }
+      setActiveSection(current);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const scrollToSection = (key) => {
     document.getElementById(`section-${key}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -63,12 +68,8 @@ export default function LegalLayout({ label, title, subtitle, lastUpdated, secti
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25, duration: 0.8, ease: EASE }}
-            className="font-semibold leading-tight mb-4"
-            style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: 'clamp(2.4rem, 5.5vw, 4.2rem)',
-              color: BRAND_BLUE,
-            }}
+            className="text-fluid-hero font-bold leading-tight mb-4"
+            style={{ color: BRAND_BLUE }}
           >
             {title}
           </motion.h1>
@@ -77,7 +78,7 @@ export default function LegalLayout({ label, title, subtitle, lastUpdated, secti
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
             transition={{ delay: 0.45, duration: 0.6, ease: 'easeOut' }}
-            className="mx-auto mb-5 h-px w-16 origin-center"
+            className="mx-auto mb-5 h-[2px] w-16 origin-center"
             style={{ background: `linear-gradient(to right, transparent, ${BRAND_BLUE}, transparent)` }}
           />
 
@@ -120,23 +121,23 @@ export default function LegalLayout({ label, title, subtitle, lastUpdated, secti
                 }}
               >
                 <Icon className="w-3 h-3" />
-                <span>{String(i + 1).padStart(2, '0')}</span>
+                <span className="whitespace-nowrap">{sections[i].title}</span>
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* Main layout */}
-      <div className="max-w-6xl mx-auto px-fluid-2xl pb-24 md:pb-32 pt-8 lg:pt-14">
-        <div className="lg:grid lg:gap-16" style={{ gridTemplateColumns: '220px 1fr' }}>
+      {/* Main layout — flex so sidebar sticky works naturally */}
+      <div className="max-w-7xl mx-auto px-fluid-2xl pb-24 md:pb-32 pt-8 lg:pt-14">
+        <div className="lg:flex lg:gap-12 xl:gap-16">
 
-          {/* Desktop sticky TOC */}
-          <aside className="hidden lg:block">
+          {/* Desktop sticky TOC — self-contained width, sticky just works in flex */}
+          <aside className="hidden lg:block w-56 xl:w-64 flex-shrink-0">
             <div className="sticky top-28">
               <p
-                className="text-xs font-semibold tracking-[0.22em] uppercase mb-5"
-                style={{ color: 'rgba(0,65,122,0.4)' }}
+                className="text-[11px] font-semibold tracking-[0.22em] uppercase mb-4 pb-3 border-b border-gray-100"
+                style={{ color: 'rgba(0,65,122,0.45)' }}
               >
                 {t('legal.onThisPage')}
               </p>
@@ -147,33 +148,32 @@ export default function LegalLayout({ label, title, subtitle, lastUpdated, secti
                     <button
                       key={key}
                       onClick={() => scrollToSection(key)}
-                      className="group w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200"
-                      style={{ backgroundColor: isActive ? 'rgba(0,65,122,0.06)' : 'transparent' }}
+                      className="w-full text-left flex items-center gap-3 pl-3 pr-2 py-2.5 rounded-r-lg transition-all duration-200 border-l-2"
+                      style={{
+                        borderLeftColor: isActive ? BRAND_BLUE : 'transparent',
+                        backgroundColor: isActive ? 'rgba(0,65,122,0.05)' : 'transparent',
+                      }}
                     >
                       <span
-                        className="text-[10px] font-mono font-bold flex-shrink-0 transition-colors duration-200 w-5"
+                        className="text-[10px] font-mono font-bold flex-shrink-0 w-4 transition-colors duration-200"
                         style={{ color: isActive ? BRAND_BLUE : '#d1d5db' }}
                       >
                         {String(i + 1).padStart(2, '0')}
                       </span>
                       <span
-                        className="text-fluid-small font-medium leading-snug transition-colors duration-200"
+                        className="text-[13px] font-medium leading-snug transition-colors duration-200"
                         style={{ color: isActive ? BRAND_BLUE : '#9ca3af' }}
                       >
                         {sections[i].title}
                       </span>
-                      <span
-                        className="ml-auto w-1.5 h-1.5 rounded-full flex-shrink-0 transition-all duration-300"
-                        style={{ backgroundColor: isActive ? BRAND_BLUE : 'transparent' }}
-                      />
                     </button>
                   );
                 })}
               </nav>
 
               {lastUpdated && (
-                <div className="mt-8 pt-6 border-t border-gray-100">
-                  <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                <div className="mt-8 pt-5 border-t border-gray-100">
+                  <div className="flex items-center gap-1.5 text-[11px] text-gray-400">
                     <Calendar className="w-3 h-3 flex-shrink-0" />
                     <span>{lastUpdated}</span>
                   </div>
@@ -183,70 +183,61 @@ export default function LegalLayout({ label, title, subtitle, lastUpdated, secti
           </aside>
 
           {/* Content */}
-          <main className="min-w-0">
-            <div className="space-y-0">
-              {sections.map(({ key, icon: Icon, title: sectionTitle, content }, i) => (
-                <motion.section
-                  key={key}
-                  id={`section-${key}`}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-60px' }}
-                  transition={{ duration: 0.55, delay: i * 0.04, ease: EASE }}
-                  className="scroll-mt-32 py-10 lg:py-12"
-                  style={{
-                    borderBottom: i < sections.length - 1 ? '1px solid rgba(0,0,0,0.06)' : 'none',
-                  }}
-                >
-                  {/* Section header */}
-                  <div className="flex items-start gap-4 mb-6">
-                    <div
-                      className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center mt-0.5"
-                      style={{ backgroundColor: 'rgba(0,65,122,0.07)' }}
-                    >
-                      <Icon className="w-[18px] h-[18px]" style={{ color: BRAND_BLUE }} />
-                    </div>
-                    <div>
-                      <span
-                        className="block text-[10px] font-mono font-bold tracking-widest mb-1"
-                        style={{ color: 'rgba(0,65,122,0.3)' }}
-                      >
-                        {String(i + 1).padStart(2, '0')}
-                      </span>
-                      <h2
-                        className="leading-tight"
-                        style={{
-                          fontFamily: "'Cormorant Garamond', serif",
-                          fontSize: 'clamp(1.45rem, 2.8vw, 2.1rem)',
-                          fontWeight: 600,
-                          color: BRAND_BLUE,
-                        }}
-                      >
-                        {sectionTitle}
-                      </h2>
-                    </div>
-                  </div>
-
-                  {/* Section body with left accent */}
+          <main className="flex-1 min-w-0">
+            {sections.map(({ key, icon: Icon, title: sectionTitle, content }, i) => (
+              <motion.section
+                key={key}
+                id={`section-${key}`}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.55, delay: i * 0.04, ease: EASE }}
+                className="scroll-mt-32 py-10 lg:py-12"
+                style={{ borderBottom: i < sections.length - 1 ? '1px solid rgba(0,0,0,0.06)' : 'none' }}
+              >
+                {/* Section header */}
+                <div className="flex items-start gap-4 mb-6">
                   <div
-                    className="pl-14"
-                    style={{ borderLeft: '2px solid rgba(0,65,122,0.09)', paddingLeft: '3.5rem' }}
+                    className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center mt-0.5"
+                    style={{ backgroundColor: 'rgba(0,65,122,0.07)' }}
                   >
-                    {Array.isArray(content) ? (
-                      <div className="space-y-3">
-                        {content.map((line, j) => (
-                          <p key={j} className="text-fluid-body text-gray-600 leading-relaxed">
-                            {line}
-                          </p>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-fluid-body text-gray-600 leading-relaxed">{content}</p>
-                    )}
+                    <Icon className="w-[18px] h-[18px]" style={{ color: BRAND_BLUE }} />
                   </div>
-                </motion.section>
-              ))}
-            </div>
+                  <div>
+                    <span
+                      className="block text-[10px] font-mono font-bold tracking-widest mb-1"
+                      style={{ color: 'rgba(0,65,122,0.3)' }}
+                    >
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <h2
+                      className="text-fluid-h1to2 font-bold leading-tight"
+                      style={{ color: BRAND_BLUE }}
+                    >
+                      {sectionTitle}
+                    </h2>
+                  </div>
+                </div>
+
+                {/* Body with left accent */}
+                <div
+                  className="ml-14"
+                  style={{ borderLeft: '2px solid rgba(0,65,122,0.09)', paddingLeft: '1.5rem' }}
+                >
+                  {Array.isArray(content) ? (
+                    <div className="space-y-3">
+                      {content.map((line, j) => (
+                        <p key={j} className="text-fluid-body text-gray-600 leading-relaxed">
+                          {line}
+                        </p>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-fluid-body text-gray-600 leading-relaxed">{content}</p>
+                  )}
+                </div>
+              </motion.section>
+            ))}
           </main>
         </div>
       </div>

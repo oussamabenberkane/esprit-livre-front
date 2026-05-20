@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Package, Calendar, Eye, PackageOpen, CheckCircle, X } from 'lucide-react';
+import InlineMarkdown from '../common/InlineMarkdown';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useScrollToTop } from '../../hooks/useScrollToTop';
 import Navbar from '../common/Navbar';
@@ -180,7 +181,7 @@ function OrderCard({ order }) {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <h4 className="text-sm text-gray-800 line-clamp-1">{item.title}</h4>
+                  <h4 className="text-sm text-gray-800 line-clamp-1"><InlineMarkdown>{item.title}</InlineMarkdown></h4>
                   {item.type === 'pack' && (
                     <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded whitespace-nowrap">
                       Pack

@@ -460,7 +460,7 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
   const [availableCities, setAvailableCities] = useState([]);
   const [shippingPreference, setShippingPreference] = useState("home"); // "home" or "pickup"
   const [homeAddress, setHomeAddress] = useState("");
-  const [pickupProvider, setPickupProvider] = useState("ZRexpress"); // Default to ZR Express (always required)
+  const [pickupProvider, setPickupProvider] = useState("Yalidine");
 
   // Relay point state
   const [stopDeskId, setStopDeskId] = useState(null);
@@ -477,7 +477,7 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
   const [openDropdown, setOpenDropdown] = useState(null);
   const dropdownRefs = useRef({});
 
-  const pickupProviders = ["Yalidine", "ZRexpress"];
+  const pickupProviders = ["Yalidine"];
 
   // Load profile data on mount if user is authenticated
   useEffect(() => {
@@ -507,20 +507,17 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
         if (profile.defaultShippingMethod === 'HOME_DELIVERY') {
           setShippingPreference('home');
           setHomeAddress(profile.streetAddress || '');
-          // Home delivery forces ZRexpress
-          setPickupProvider('ZRexpress');
+          setPickupProvider('Yalidine');
         } else if (profile.defaultShippingMethod === 'SHIPPING_PROVIDER') {
           setShippingPreference('pickup');
-          // For pickup, set provider from profile or default to ZRexpress
           if (profile.defaultShippingProvider) {
             const displayProvider = PROVIDER_API_TO_DISPLAY[profile.defaultShippingProvider];
-            setPickupProvider(displayProvider || 'ZRexpress');
+            setPickupProvider(displayProvider || 'Yalidine');
           }
         } else {
-          // No shipping method in profile - set provider from profile or default
           if (profile.defaultShippingProvider) {
             const displayProvider = PROVIDER_API_TO_DISPLAY[profile.defaultShippingProvider];
-            setPickupProvider(displayProvider || 'ZRexpress');
+            setPickupProvider(displayProvider || 'Yalidine');
           }
         }
 
@@ -849,7 +846,7 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
               type="button"
               onClick={() => {
                 setShippingPreference("home");
-                setPickupProvider("ZRexpress");
+                setPickupProvider("Yalidine");
                 setStopDeskId(null);
               }}
               className={`flex items-center justify-center gap-1 sm:gap-1 py-2 px-2.5 sm:px-4 rounded-xl text-[11px] sm:text-fluid-small font-normal sm:font-semibold transition-all duration-200 whitespace-nowrap ${
@@ -865,7 +862,7 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
               type="button"
               onClick={() => {
                 setShippingPreference("pickup");
-                setPickupProvider("ZRexpress");
+                setPickupProvider("Yalidine");
               }}
               className={`flex items-center justify-center gap-1 sm:gap-1 py-2 px-2.5 sm:px-4 rounded-xl text-[11px] sm:text-fluid-small font-normal sm:font-semibold transition-all duration-200 whitespace-nowrap ${
                 shippingPreference === "pickup"

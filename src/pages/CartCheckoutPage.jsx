@@ -6,6 +6,7 @@ import { ArrowLeft, Minus, Plus, Trash2, ExternalLink, ShoppingBag, ChevronDown,
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import PackBooksPopup from '../components/common/PackBooksPopup';
+import InlineMarkdown from '../components/common/InlineMarkdown';
 import RelayPointSelect from '../components/common/RelayPointSelect';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 import { getLanguageCode, getFullLanguageName } from '../data/booksData';
@@ -209,7 +210,7 @@ function CartItem({ item, onUpdateQuantity, onRemove }) {
         <div>
           <div className="flex flex-row justify-between">
             <div className="flex flex-col gap-1">
-              <h1 className="font-[550] text-fluid-h3 mb-fluid-small">{item.title}</h1>
+              <h1 className="font-[550] text-fluid-h3 mb-fluid-small"><InlineMarkdown>{item.title}</InlineMarkdown></h1>
             </div>
             {/* Price */}
             <div className="text-right ml-2 flex flex-col items-end gap-1">
@@ -324,7 +325,7 @@ function PackItem({ item, onUpdateQuantity, onRemove, onViewBooks }) {
         <div>
           <div className="flex flex-row justify-between">
             <div className="flex flex-col gap-1">
-              <h1 className="font-[550] text-fluid-h3 mb-fluid-small">{item.title}</h1>
+              <h1 className="font-[550] text-fluid-h3 mb-fluid-small"><InlineMarkdown>{item.title}</InlineMarkdown></h1>
             </div>
             {/* Price */}
             <div className="text-right ml-2 flex flex-col items-end gap-1">

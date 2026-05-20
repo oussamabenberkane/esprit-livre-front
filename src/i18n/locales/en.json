@@ -85,7 +85,9 @@
       "title": "Customer Service",
       "link": "Go to Customer Service Page"
     },
-    "copyright": "© {{year}} All rights reserved"
+    "copyright": "© {{year}} All rights reserved",
+    "legal": "Policy & Terms",
+    "mentions": "Legal Notice"
   },
   "bottomSheet": {
     "menu": {
@@ -566,6 +568,8 @@
     "feature2": "Save your favorite reads",
     "feature3": "Fast and secure checkout",
     "termsText": "By continuing, you agree to our Terms of Service and Privacy Policy",
+    "termsTextPre": "By continuing, you agree to our ",
+    "termsTextLink": "Terms of Service and Privacy Policy",
     "errorFallback": "Failed to start authentication process. Please try again."
   },
   "aria": {
@@ -701,6 +705,65 @@
       "finish": {
         "title": "You're all set",
         "desc": "Your profile is ready. Start exploring Esprit Livre — your next great read awaits."
+      }
+    }
+  },
+  "mentionsLegales": {
+    "label": "Legal Information",
+    "title": "Legal Notice",
+    "subtitle": "In accordance with applicable legal obligations, here is the information relating to the publisher and hosting of espritlivre.com.",
+    "sections": {
+      "editor": {
+        "title": "Site Publisher",
+        "lines": [
+          "Company name: EspritLivre",
+          "Registered address: Béjaïa ville, Béjaïa, Algeria",
+          "Website: espritlivre.com"
+        ]
+      },
+      "hosting": {
+        "title": "Hosting",
+        "lines": [
+          "Website hosted by Vercel Inc., 340 Pine Street, Suite 900, San Francisco, CA 94104, USA (vercel.com).",
+          "User data (orders, personal information) is stored on servers located in Algeria, in compliance with applicable Algerian personal data protection legislation (Law 18-07)."
+        ]
+      },
+      "ip": {
+        "title": "Intellectual Property",
+        "lines": [
+          "All content on this site (text, images, logos, graphic elements) is the exclusive property of EspritLivre or its partners.",
+          "Any reproduction, distribution or use without prior authorization is strictly prohibited."
+        ]
+      },
+      "contact": {
+        "title": "Contact",
+        "lines": [
+          "For any questions regarding these legal notices or the site in general, you may contact us:",
+          "Email: contact@espritlivre.com"
+        ]
+      }
+    }
+  },
+  "politique": {
+    "label": "Legal Information",
+    "title": "Policy & Terms",
+    "subtitle": "Transparency and trust — everything you need to know about Esprit Livre.",
+    "sections": {
+      "privacy": {
+        "title": "Privacy Policy",
+        "body": "Esprit Livre is committed to protecting the confidentiality of your personal data. Information collected during your order (first name, last name, address, phone number) is used solely for processing and delivering your order. Your data is never sold or shared with third parties for commercial purposes. You may request the modification or deletion of your data at any time by contacting us directly."
+      },
+      "returns": {
+        "title": "Return & Refund Policy",
+        "body": "Your satisfaction is our priority. You may refuse delivery at the time of receipt if you are not satisfied. Returns are accepted unconditionally — if for any reason you wish to return your order, contact us and we will find a solution together. In case of an issue related to the carrier or delivery, please contact us immediately."
+      },
+      "terms": {
+        "title": "General Terms of Sale",
+        "body": "By placing an order on espritlivre.com you accept these general terms of sale. Esprit Livre is an online bookstore based in Algeria. Depending on the products ordered, a confirmation by phone or message may be made before shipment. Prices displayed on the site are in Algerian Dinars (DZD). Esprit Livre reserves the right to modify prices and product availability at any time without notice. In the event of out-of-stock, the customer will be contacted for a refund or replacement."
+      },
+      "delivery": {
+        "title": "Delivery Policy",
+        "body": "Esprit Livre delivers throughout Algeria via partner delivery services. Delivery times are generally 1 to 4 business days depending on your wilaya. Payment is made upon delivery — you only pay upon receipt of your order. Delivery fees are the customer's responsibility and are calculated based on your wilaya. In case of absence during delivery, the courier will contact you to arrange a new delivery. Esprit Livre cannot be held responsible for delays caused by the carrier or exceptional circumstances beyond our control."
       }
     }
   },

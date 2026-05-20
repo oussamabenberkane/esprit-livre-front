@@ -25,6 +25,8 @@ import Profile from './pages/profile.jsx';
 import Orders from './components/profil/Orders.jsx';
 import Favorites from './components/profil/Favorites.jsx';
 import TeamPage from './pages/TeamPage';
+import PolitiquePage from './pages/PolitiquePage';
+import MentionsLegalesPage from './pages/MentionsLegalesPage';
 import ServiceClientPage from './pages/ServiceClientPage';
 import SalePage from './pages/SalePage.jsx';
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
@@ -87,6 +89,12 @@ function App() {
 
           {/* Service Client page */}
           <Route path="/service-client" element={<ServiceClientPage />} />
+
+          {/* Legal / Politique page */}
+          <Route path="/politique" element={<PolitiquePage />} />
+
+          {/* Mentions légales */}
+          <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
 
           {/* Test page for debugging */}
           <Route path="/test" element={<TestPage />} />

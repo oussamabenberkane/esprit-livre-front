@@ -103,6 +103,22 @@ export default function Footer() {
                 <div className="mt-12 pt-8 border-t border-gray-200 text-center">
                     <p className="text-gray-500 text-sm">
                         {t('footer.copyright', { year: new Date().getFullYear() })}
+                        {' · '}
+                        <Link
+                            to="/politique"
+                            onClick={handleLinkClick}
+                            className="hover:text-[#1E40AF] transition-colors underline underline-offset-2"
+                        >
+                            {t('footer.legal')}
+                        </Link>
+                        {' · '}
+                        <Link
+                            to="/mentions-legales"
+                            onClick={handleLinkClick}
+                            className="hover:text-[#1E40AF] transition-colors underline underline-offset-2"
+                        >
+                            {t('footer.mentions')}
+                        </Link>
                     </p>
                 </div>
             </div>

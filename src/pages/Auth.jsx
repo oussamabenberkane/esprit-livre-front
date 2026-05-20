@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import GoogleAuthButton from '../components/buttons/GoogleAuthButton';
 import Logo from '../components/common/Logo';
 import { initiateGoogleLogin } from '../services/oauthService';
@@ -160,7 +160,10 @@ export default function Auth() {
           transition={{ delay: 0.5, duration: 0.4 }}
           className="text-center text-gray-500 text-xs mt-6"
         >
-          {t('auth.termsText')}
+          {t('auth.termsTextPre')}
+          <Link to="/politique" className="underline underline-offset-2 hover:text-[#00417a] transition-colors">
+            {t('auth.termsTextLink')}
+          </Link>
         </motion.p>
       </motion.div>
     </div>

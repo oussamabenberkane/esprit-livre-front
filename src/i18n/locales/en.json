@@ -708,6 +708,10 @@
       }
     }
   },
+  "legal": {
+    "onThisPage": "On this page",
+    "updatedAt": "Last updated: {{date}}"
+  },
   "mentionsLegales": {
     "label": "Legal Information",
     "title": "Legal Notice",

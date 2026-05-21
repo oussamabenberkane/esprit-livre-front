@@ -124,12 +124,14 @@ export const fetchAllBooks = async (page = 0, size = 12, filters = {}) => {
 
     // Return paginated response with content and metadata
     if (data && data.content && Array.isArray(data.content)) {
+      // Spring Boot 3.x nests pagination info under data.page; older versions expose it at root
+      const pageInfo = data.page || data;
       return {
         books: data.content,
-        totalElements: data.totalElements || 0,
-        totalPages: data.totalPages || 0,
-        currentPage: data.number || 0,
-        size: data.size || size
+        totalElements: pageInfo.totalElements || 0,
+        totalPages: pageInfo.totalPages || 0,
+        currentPage: pageInfo.number || 0,
+        size: pageInfo.size || size
       };
     }
 
@@ -365,12 +367,14 @@ export const fetchLikedBooks = async (page = 0, size = 20, filters = {}) => {
 
     // Return paginated response with content and metadata
     if (data && data.content && Array.isArray(data.content)) {
+      // Spring Boot 3.x nests pagination info under data.page; older versions expose it at root
+      const pageInfo = data.page || data;
       return {
         books: data.content,
-        totalElements: data.totalElements || 0,
-        totalPages: data.totalPages || 0,
-        currentPage: data.number || 0,
-        size: data.size || size
+        totalElements: pageInfo.totalElements || 0,
+        totalPages: pageInfo.totalPages || 0,
+        currentPage: pageInfo.number || 0,
+        size: pageInfo.size || size
       };
     }
 

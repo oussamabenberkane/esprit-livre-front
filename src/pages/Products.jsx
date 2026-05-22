@@ -141,6 +141,7 @@ export default function Products() {
                 filters.search = decodeURIComponent(search)
                 context = { type: searchType || 'general', name: decodeURIComponent(search) }
                 setPageTitle(t('allBooks.resultsFor', { query: decodeURIComponent(search) }))
+                trackSearch(decodeURIComponent(search))
             }
 
             setSearchContext(context)

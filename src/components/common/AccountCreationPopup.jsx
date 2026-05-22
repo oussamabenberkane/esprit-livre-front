@@ -5,18 +5,6 @@ import { X, Package, Heart, Tag, Star } from 'lucide-react';
 import { isAuthenticated } from '../../services/authService';
 import { initiateGoogleLogin } from '../../services/oauthService';
 
-const DELAY_MS = 30 * 60 * 1000; // 30 minutes
-const FIRST_VISIT_KEY = 'el_first_visit';
-
-const msUntilOpen = () => {
-  let firstVisit = Number(sessionStorage.getItem(FIRST_VISIT_KEY));
-  if (!firstVisit) {
-    firstVisit = Date.now();
-    sessionStorage.setItem(FIRST_VISIT_KEY, String(firstVisit));
-  }
-  return Math.max(0, DELAY_MS - (Date.now() - firstVisit));
-};
-
 const BENEFITS = [
   { icon: Package, key: 'orders',    color: '#3b82f6', bg: '#eff6ff' },
   { icon: Heart,   key: 'wishlist',  color: '#ef4444', bg: '#fef2f2' },
@@ -31,8 +19,7 @@ export default function AccountCreationPopup() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      const delay = msUntilOpen();
-      const timer = setTimeout(() => setOpen(true), delay);
+      const timer = setTimeout(() => setOpen(true), 1800);
       return () => clearTimeout(timer);
     }
   }, []);

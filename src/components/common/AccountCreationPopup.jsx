@@ -43,7 +43,9 @@ export default function AccountCreationPopup() {
     };
   }, [tryOpen]);
 
-  const handleClose = () => {
+  const handleClose = () => setOpen(false);
+
+  const handleDismiss = () => {
     snooze();
     setOpen(false);
   };
@@ -195,7 +197,7 @@ export default function AccountCreationPopup() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.68 }}
-                  onClick={handleClose}
+                  onClick={handleDismiss}
                   className="w-full text-center text-gray-400 hover:text-gray-500 text-[0.75rem] sm:text-[0.82rem] py-1 transition-colors"
                 >
                   {t('accountPopup.dismiss')}

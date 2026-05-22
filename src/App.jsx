@@ -1,6 +1,32 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { initPixel, trackPageView } from './services/pixel.service';
+import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
+import { FavoritesProvider } from './contexts/FavoritesContext';
+import { CartProvider } from './contexts/CartContext';
+import { OnboardingProvider } from './contexts/OnboardingContext';
+import OnboardingCelebration from './components/onboarding/OnboardingCelebration';
+import OnboardingTour from './components/onboarding/OnboardingTour';
+import OnboardingFinish from './components/onboarding/OnboardingFinish';
+import AccountCreationPopup from './components/common/AccountCreationPopup';
+
+const HomePage = lazy(() => import('./pages/homePage'));
+const Products = lazy(() => import('./pages/Products'));
+const BookDetails = lazy(() => import('./pages/BookDetails'));
+const CartCheckoutPage = lazy(() => import('./pages/CartCheckoutPage.jsx'));
+const AuthPage = lazy(() => import('./pages/AuthPage.jsx'));
+const AuthCallback = lazy(() => import('./pages/AuthCallback.jsx'));
+const Profile = lazy(() => import('./pages/profile.jsx'));
+const Orders = lazy(() => import('./components/profil/Orders.jsx'));
+const Favorites = lazy(() => import('./components/profil/Favorites.jsx'));
+const TeamPage = lazy(() => import('./pages/TeamPage'));
+const PolitiquePage = lazy(() => import('./pages/PolitiquePage'));
+const MentionsLegalesPage = lazy(() => import('./pages/MentionsLegalesPage'));
+const ServiceClientPage = lazy(() => import('./pages/ServiceClientPage'));
+const SalePage = lazy(() => import('./pages/SalePage.jsx'));
+const TestPage = lazy(() => import('./pages/TestPage.jsx'));
+const NotFound404 = lazy(() => import('./pages/NotFound404.jsx'));
+const AccountDeactivated = lazy(() => import('./pages/AccountDeactivated.jsx'));
 
 function PixelTracker() {
   const location = useLocation();
@@ -15,31 +41,6 @@ function PixelTracker() {
 
   return null;
 }
-import HomePage from './pages/homePage';
-import Products from './pages/Products';
-import BookDetails from './pages/BookDetails';
-import CartCheckoutPage from './pages/CartCheckoutPage.jsx';
-import AuthPage from './pages/AuthPage.jsx';
-import AuthCallback from './pages/AuthCallback.jsx';
-import Profile from './pages/profile.jsx';
-import Orders from './components/profil/Orders.jsx';
-import Favorites from './components/profil/Favorites.jsx';
-import TeamPage from './pages/TeamPage';
-import PolitiquePage from './pages/PolitiquePage';
-import MentionsLegalesPage from './pages/MentionsLegalesPage';
-import ServiceClientPage from './pages/ServiceClientPage';
-import SalePage from './pages/SalePage.jsx';
-import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
-import TestPage from './pages/TestPage.jsx';
-import NotFound404 from './pages/NotFound404.jsx';
-import AccountDeactivated from './pages/AccountDeactivated.jsx';
-import { FavoritesProvider } from './contexts/FavoritesContext';
-import { CartProvider } from './contexts/CartContext';
-import { OnboardingProvider } from './contexts/OnboardingContext';
-import OnboardingCelebration from './components/onboarding/OnboardingCelebration';
-import OnboardingTour from './components/onboarding/OnboardingTour';
-import OnboardingFinish from './components/onboarding/OnboardingFinish';
-import AccountCreationPopup from './components/common/AccountCreationPopup';
 
 function App() {
   return (
@@ -49,6 +50,7 @@ function App() {
         <CartProvider>
           <OnboardingProvider>
           <div className="min-h-screen min-w-screen bg-gray-50">
+          <Suspense fallback={null}>
           <Routes>
           {/* Home page as entry point - Accessible to both guests and authenticated users */}
           <Route path="/" element={<HomePage />} />
@@ -106,6 +108,7 @@ function App() {
           {/* 404 Not Found - Catch all undefined routes */}
           <Route path="*" element={<NotFound404 />} />
         </Routes>
+          </Suspense>
           </div>
           {/* Onboarding overlays — rendered at root so they cover all pages */}
           <OnboardingCelebration />

@@ -18,8 +18,11 @@ export default function AccountCreationPopup() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated()) {
-      const timer = setTimeout(() => setOpen(true), 1800);
+    if (!isAuthenticated() && !localStorage.getItem('el_popup_seen')) {
+      const timer = setTimeout(() => {
+        setOpen(true);
+        localStorage.setItem('el_popup_seen', '1');
+      }, 1800);
       return () => clearTimeout(timer);
     }
   }, []);

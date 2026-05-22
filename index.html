@@ -1,10 +1,77 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>espritlivre</title>
+    <title>Esprit Livre — Librairie en ligne en Algérie</title>
+
+    <!-- SEO -->
+    <meta name="description" content="Esprit Livre, votre librairie en ligne en Algérie. Livres neufs livrés en 1 à 4 jours ouvrables partout en Algérie. Paiement à la livraison." />
+    <link rel="canonical" href="https://espritlivre.com/" />
+
+    <!-- Performance: preconnect for Google Fonts (loaded via CSS @import) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Esprit Livre" />
+    <meta property="og:title" content="Esprit Livre — Librairie en ligne en Algérie" />
+    <meta property="og:description" content="Commandez des livres neufs livrés en 1 à 4 jours ouvrables partout en Algérie. Paiement à la livraison." />
+    <meta property="og:url" content="https://espritlivre.com/" />
+    <meta property="og:locale" content="fr_DZ" />
+    <meta property="og:image" content="https://espritlivre.com/og-default.jpg" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Esprit Livre — Librairie en ligne en Algérie" />
+    <meta name="twitter:description" content="Commandez des livres neufs livrés partout en Algérie. Paiement à la livraison." />
+    <meta name="twitter:image" content="https://espritlivre.com/og-default.jpg" />
+
+    <!-- Structured Data: Organization + WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "name": "Esprit Livre",
+      "url": "https://espritlivre.com",
+      "logo": "https://espritlivre.com/favicon.svg",
+      "description": "Librairie en ligne algérienne — livres neufs livrés partout en Algérie en 1 à 4 jours ouvrables, paiement à la livraison.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Béjaïa",
+        "addressRegion": "Béjaïa",
+        "addressCountry": "DZ"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "contact@espritlivre.com",
+        "contactType": "customer service",
+        "availableLanguage": ["French", "Arabic"]
+      },
+      "sameAs": ["https://instagram.com/espritlivre"]
+    },
+    {
+      "@type": "WebSite",
+      "name": "Esprit Livre",
+      "url": "https://espritlivre.com",
+      "inLanguage": "fr-DZ",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://espritlivre.com/products?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+  ]
+}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
     <script type="text/javascript">
       (function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -12,9 +79,5 @@
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
       })(window, document, "clarity", "script", "wir45q7ucg");
     </script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

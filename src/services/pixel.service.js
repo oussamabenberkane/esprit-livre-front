@@ -1,4 +1,5 @@
 const PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID;
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 async function sha256(str) {
   const encoded = new TextEncoder().encode(str);
@@ -31,15 +32,31 @@ export const trackPageView = () => {
   window.fbq('track', 'PageView');
 };
 
-export const trackViewContent = ({ id, name, category, value }) => {
-  track('ViewContent', {
-    content_ids: [String(id)],
-    content_type: 'product',
-    content_name: name,
-    ...(category && { content_category: category }),
-    value: parseFloat(value) || 0,
-    currency: 'DZD',
-  });
+export const trackViewContent = ({ id, name, category, value, contentType = 'product' }) => {
+  const eventId = crypto.randomUUID();
+  track(
+    'ViewContent',
+    {
+      content_ids: [String(id)],
+      content_type: contentType,
+      content_name: name,
+      ...(category && { content_category: category }),
+      value: parseFloat(value) || 0,
+      currency: 'DZD',
+    },
+    { eventID: eventId },
+  );
+  fetch(`${API_BASE_URL}/api/pixel/view-content`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      eventId,
+      contentId: String(id),
+      contentType,
+      value: parseFloat(value) || 0,
+      eventSourceUrl: window.location.href,
+    }),
+  }).catch(() => {});
 };
 
 export const trackSearch = (searchString) => {

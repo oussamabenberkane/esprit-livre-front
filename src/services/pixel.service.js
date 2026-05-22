@@ -29,7 +29,13 @@ const track = (event, params = {}, options = {}) => {
 
 export const trackPageView = () => {
   if (!window.fbq) return;
+  const eventId = crypto.randomUUID();
   window.fbq('track', 'PageView');
+  fetch(`${API_BASE_URL}/api/pixel/page-view`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ eventId, eventSourceUrl: window.location.href }),
+  }).catch(() => {});
 };
 
 export const trackViewContent = ({ id, name, category, value, contentType = 'product' }) => {
@@ -61,28 +67,67 @@ export const trackViewContent = ({ id, name, category, value, contentType = 'pro
 
 export const trackSearch = (searchString) => {
   if (!searchString?.trim()) return;
-  track('Search', { search_string: searchString.trim() });
+  const eventId = crypto.randomUUID();
+  track('Search', { search_string: searchString.trim() }, { eventID: eventId });
+  fetch(`${API_BASE_URL}/api/pixel/search`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ eventId, searchString: searchString.trim(), eventSourceUrl: window.location.href }),
+  }).catch(() => {});
 };
 
 export const trackAddToCart = ({ id, name, value, quantity = 1 }) => {
-  track('AddToCart', {
-    content_ids: [String(id)],
-    content_type: 'product',
-    content_name: name,
-    value: parseFloat(value) || 0,
-    currency: 'DZD',
-    num_items: quantity,
-  });
+  const eventId = crypto.randomUUID();
+  track(
+    'AddToCart',
+    {
+      content_ids: [String(id)],
+      content_type: 'product',
+      content_name: name,
+      value: parseFloat(value) || 0,
+      currency: 'DZD',
+      num_items: quantity,
+    },
+    { eventID: eventId },
+  );
+  fetch(`${API_BASE_URL}/api/pixel/add-to-cart`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      eventId,
+      contentId: String(id),
+      contentType: 'product',
+      value: parseFloat(value) || 0,
+      numItems: quantity,
+      eventSourceUrl: window.location.href,
+    }),
+  }).catch(() => {});
 };
 
 export const trackInitiateCheckout = ({ value, numItems, contentIds }) => {
-  track('InitiateCheckout', {
-    value: parseFloat(value) || 0,
-    currency: 'DZD',
-    num_items: numItems,
-    content_ids: contentIds.map(String),
-    content_type: 'product',
-  });
+  const eventId = crypto.randomUUID();
+  track(
+    'InitiateCheckout',
+    {
+      value: parseFloat(value) || 0,
+      currency: 'DZD',
+      num_items: numItems,
+      content_ids: contentIds.map(String),
+      content_type: 'product',
+    },
+    { eventID: eventId },
+  );
+  fetch(`${API_BASE_URL}/api/pixel/initiate-checkout`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      eventId,
+      value: parseFloat(value) || 0,
+      numItems,
+      contentIds: contentIds.map(String),
+      eventSourceUrl: window.location.href,
+    }),
+  }).catch(() => {});
 };
 
 // orderId is used as eventID to deduplicate against the CAPI Purchase event
@@ -101,11 +146,23 @@ export const trackPurchase = ({ orderId, value, numItems, contentIds }) => {
 };
 
 export const trackCompleteRegistration = () => {
-  track('CompleteRegistration', { status: true });
+  const eventId = crypto.randomUUID();
+  track('CompleteRegistration', { status: true }, { eventID: eventId });
+  fetch(`${API_BASE_URL}/api/pixel/complete-registration`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ eventId, eventSourceUrl: window.location.href }),
+  }).catch(() => {});
 };
 
 export const trackContact = () => {
-  track('Contact');
+  const eventId = crypto.randomUUID();
+  track('Contact', {}, { eventID: eventId });
+  fetch(`${API_BASE_URL}/api/pixel/contact`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ eventId, eventSourceUrl: window.location.href }),
+  }).catch(() => {});
 };
 
 // Re-calls fbq('init') with hashed PII for advanced matching.

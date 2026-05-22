@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { Mail, Linkedin, Github, Instagram, BookOpen, Heart, Users, Sparkles, ExternalLink } from 'lucide-react';
 import { useState } from 'react';
@@ -77,6 +78,15 @@ export default function TeamPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <Helmet>
+        <title>Notre équipe | Esprit Livre</title>
+        <meta name="description" content="Découvrez l'équipe derrière Esprit Livre, la librairie en ligne algérienne fondée à Béjaïa." />
+        <link rel="canonical" href="https://espritlivre.com/team" />
+        <meta property="og:title" content="Notre équipe | Esprit Livre" />
+        <meta property="og:description" content="Découvrez l'équipe derrière Esprit Livre, la librairie en ligne algérienne fondée à Béjaïa." />
+        <meta property="og:url" content="https://espritlivre.com/team" />
+        <meta property="og:type" content="website" />
+      </Helmet>
       <Navbar />
 
       {/* ── Hero ── */}

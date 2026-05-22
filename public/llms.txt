@@ -1,0 +1,23 @@
+# Esprit Livre
+
+> Librairie en ligne en Algérie — livres neufs livrés en 1 à 4 jours ouvrables partout en Algérie, paiement à la livraison.
+
+Esprit Livre est une librairie en ligne algérienne fondée à Béjaïa par Abdelhadi Talantikit. La librairie propose des livres neufs en français et en arabe, avec livraison gratuite pour toute commande supérieure à 7 000 DA et retours acceptés dans les 3 jours suivant la réception.
+
+Modes de paiement acceptés : paiement à la livraison (cash), carte CIB, carte el-dhahabia.
+
+## Catalogue
+
+- [Tous les livres](https://espritlivre.com/products)
+- [Promotions & réductions](https://espritlivre.com/promotions)
+
+## Informations
+
+- [Service Client & FAQ](https://espritlivre.com/service-client)
+- [Notre équipe](https://espritlivre.com/team)
+- [Politique de confidentialité](https://espritlivre.com/politique)
+- [Mentions légales](https://espritlivre.com/mentions-legales)
+
+## Contact
+
+Email : contact@espritlivre.com

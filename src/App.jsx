@@ -1,14 +1,15 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { lazy, Suspense, useEffect } from 'react';
+import { HelmetProvider } from 'react-helmet-async';
 import { initPixel, trackPageView } from './services/pixel.service';
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
 import { FavoritesProvider } from './contexts/FavoritesContext';
 import { CartProvider } from './contexts/CartContext';
 import { OnboardingProvider } from './contexts/OnboardingContext';
-import OnboardingCelebration from './components/onboarding/OnboardingCelebration';
-import OnboardingTour from './components/onboarding/OnboardingTour';
-import OnboardingFinish from './components/onboarding/OnboardingFinish';
-import AccountCreationPopup from './components/common/AccountCreationPopup';
+const OnboardingCelebration = lazy(() => import('./components/onboarding/OnboardingCelebration'));
+const OnboardingTour = lazy(() => import('./components/onboarding/OnboardingTour'));
+const OnboardingFinish = lazy(() => import('./components/onboarding/OnboardingFinish'));
+const AccountCreationPopup = lazy(() => import('./components/common/AccountCreationPopup'));
 
 const HomePage = lazy(() => import('./pages/homePage'));
 const Products = lazy(() => import('./pages/Products'));
@@ -44,6 +45,7 @@ function PixelTracker() {
 
 function App() {
   return (
+    <HelmetProvider>
     <BrowserRouter>
       <PixelTracker />
       <FavoritesProvider>
@@ -120,6 +122,7 @@ function App() {
         </CartProvider>
       </FavoritesProvider>
     </BrowserRouter>
+    </HelmetProvider>
   );
 }
 

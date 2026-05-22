@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -847,6 +848,15 @@ const HomePage = () => {
     return (
 
         <main className="w-full max-w-[100vw] overflow-x-hidden">
+            <Helmet>
+              <title>Esprit Livre — Librairie en ligne en Algérie</title>
+              <meta name="description" content="Librairie en ligne algérienne. Livres neufs livrés en 1 à 4 jours ouvrables partout en Algérie. Paiement à la livraison." />
+              <link rel="canonical" href="https://espritlivre.com/" />
+              <meta property="og:title" content="Esprit Livre — Librairie en ligne en Algérie" />
+              <meta property="og:description" content="Librairie en ligne algérienne. Livres neufs livrés en 1 à 4 jours ouvrables partout en Algérie. Paiement à la livraison." />
+              <meta property="og:url" content="https://espritlivre.com/" />
+              <meta property="og:type" content="website" />
+            </Helmet>
             <div className="min-h-screen bg-white">
                 {/* Navigation Bar */}
                 <section className="w-full max-w-[100vw] overflow-x-hidden"><Navbar /></section>
@@ -930,9 +940,7 @@ const HomePage = () => {
                         <div className="flex items-center justify-between pr-fluid-lg">
                             <div>
                                 <h1 className="font-['Poppins'] font-bold text-[#00417a] text-fluid-h1to2 mb-0">
-                                    {loggedIn && userName
-                                        ? t('homePage.greetingAuth', { name: userName })
-                                        : t('homePage.greeting')}
+                                    Librairie en ligne en Algérie
                                 </h1>
 
                             </div>

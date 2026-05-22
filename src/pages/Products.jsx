@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async'
 import Navbar from "../components/common/Navbar"
 import Footer from "../components/common/Footer"
 import BookCard from "../components/common/BookCard"
@@ -302,6 +303,15 @@ export default function Products() {
 
     return (
         <main className="w-full max-w-[100vw] overflow-x-hidden">
+            <Helmet>
+              <title>Catalogue de livres | Esprit Livre</title>
+              <meta name="description" content="Parcourez notre catalogue de livres neufs en français et en arabe, livrés partout en Algérie. Romans, développement personnel, jeunesse et plus." />
+              <link rel="canonical" href="https://espritlivre.com/products" />
+              <meta property="og:title" content="Catalogue de livres | Esprit Livre" />
+              <meta property="og:description" content="Parcourez notre catalogue de livres neufs en français et en arabe, livrés partout en Algérie." />
+              <meta property="og:url" content="https://espritlivre.com/products" />
+              <meta property="og:type" content="website" />
+            </Helmet>
             <div className="min-h-screen bg-white">
                 {/* Navigation Bar */}
                 <section className="w-full max-w-[100vw] overflow-x-hidden"><Navbar /></section>

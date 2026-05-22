@@ -18,13 +18,15 @@ export default function AccountCreationPopup() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated() && !localStorage.getItem('el_popup_seen')) {
-      const timer = setTimeout(() => {
+    if (sessionStorage.getItem('popup_shown')) return;
+
+    const timer = setTimeout(() => {
+      if (!isAuthenticated()) {
         setOpen(true);
-        localStorage.setItem('el_popup_seen', '1');
-      }, 1800);
-      return () => clearTimeout(timer);
-    }
+        sessionStorage.setItem('popup_shown', '1');
+      }
+    }, 1800);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -85,7 +87,7 @@ export default function AccountCreationPopup() {
                 {/* Close */}
                 <button
                   onClick={() => setOpen(false)}
-                  className="absolute top-4 right-4 w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/60 hover:text-white transition-all z-10"
+                  className="absolute top-2 right-2 min-w-[44px] min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/60 hover:text-white transition-all z-10"
                   aria-label="Fermer"
                 >
                   <X className="w-3.5 h-3.5" />

@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { Helmet } from 'react-helmet-async';
 import { Building2, Server, Copyright, Mail } from 'lucide-react';
 import LegalLayout from '../components/common/LegalLayout';
 
@@ -15,12 +16,22 @@ export default function MentionsLegalesPage() {
   }));
 
   return (
-    <LegalLayout
-      label={t('mentionsLegales.label')}
-      title={t('mentionsLegales.title')}
-      subtitle={t('mentionsLegales.subtitle')}
-      lastUpdated={t('legal.updatedAt', { date: 'Mai 2025' })}
-      sections={sections}
-    />
+    <>
+      <Helmet>
+        <title>Mentions légales | Esprit Livre</title>
+        <meta name="description" content="Mentions légales de la librairie en ligne Esprit Livre." />
+        <link rel="canonical" href="https://espritlivre.com/mentions-legales" />
+        <meta property="og:title" content="Mentions légales | Esprit Livre" />
+        <meta property="og:url" content="https://espritlivre.com/mentions-legales" />
+        <meta property="og:type" content="website" />
+      </Helmet>
+      <LegalLayout
+        label={t('mentionsLegales.label')}
+        title={t('mentionsLegales.title')}
+        subtitle={t('mentionsLegales.subtitle')}
+        lastUpdated={t('legal.updatedAt', { date: 'Mai 2025' })}
+        sections={sections}
+      />
+    </>
   );
 }

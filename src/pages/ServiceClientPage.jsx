@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Mail, Phone, Clock, Send } from 'lucide-react';
@@ -199,6 +200,15 @@ export default function ServiceClientPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <Helmet>
+        <title>Service client &amp; FAQ | Esprit Livre</title>
+        <meta name="description" content="Questions fréquentes, délais de livraison, retours, paiement et contact. Esprit Livre livre partout en Algérie en 1 à 4 jours ouvrables." />
+        <link rel="canonical" href="https://espritlivre.com/service-client" />
+        <meta property="og:title" content="Service client & FAQ | Esprit Livre" />
+        <meta property="og:description" content="Questions fréquentes sur la livraison, les retours et le paiement." />
+        <meta property="og:url" content="https://espritlivre.com/service-client" />
+        <meta property="og:type" content="website" />
+      </Helmet>
       <Navbar />
 
       {/* ── Hero ── */}

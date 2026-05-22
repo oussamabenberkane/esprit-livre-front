@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ShoppingCart, CheckCircle2, ChevronDown } from 'lucide-react';
@@ -341,6 +342,67 @@ const BookDetails = () => {
         }
     }, [visibleRecommendedPacks.length, packsLoading]);
 
+    useEffect(() => {
+        if (!book) return;
+
+        const salePrice = book.onSale
+            ? computeSalePrice(book.price, book.discountType, book.discountValue)
+            : null;
+        const price = salePrice ?? book.price;
+        const availability = book.stockQuantity > 0
+            ? 'https://schema.org/InStock'
+            : 'https://schema.org/PreOrder';
+        const category = book.tags?.find(t => t.type === 'CATEGORY')?.nameFr || 'Livres';
+
+        const schema = {
+            '@context': 'https://schema.org',
+            '@type': 'Book',
+            name: book.title,
+            author: { '@type': 'Person', name: book.author?.name || book.author || '' },
+            url: `https://espritlivre.com/books/${book.id}`,
+            image: `https://api.espritlivre.com/api/books/${book.id}/cover`,
+            inLanguage: book.language || 'fr',
+            genre: category,
+            description: book.description || '',
+            offers: {
+                '@type': 'Offer',
+                url: `https://espritlivre.com/books/${book.id}`,
+                price: String(price),
+                priceCurrency: 'DZD',
+                availability,
+                seller: {
+                    '@type': 'BookStore',
+                    '@id': 'https://espritlivre.com/#organization',
+                    name: 'Esprit Livre',
+                },
+                shippingDetails: {
+                    '@type': 'OfferShippingDetails',
+                    shippingRate: { '@type': 'MonetaryAmount', value: '0', currency: 'DZD' },
+                    deliveryTime: {
+                        '@type': 'ShippingDeliveryTime',
+                        transitTime: { '@type': 'QuantitativeValue', minValue: 1, maxValue: 4, unitCode: 'DAY' },
+                    },
+                    shippingDestination: { '@type': 'DefinedRegion', addressCountry: 'DZ' },
+                },
+            },
+        };
+
+        const scriptId = 'schema-book-detail';
+        let el = document.getElementById(scriptId);
+        if (!el) {
+            el = document.createElement('script');
+            el.type = 'application/ld+json';
+            el.id = scriptId;
+            document.head.appendChild(el);
+        }
+        el.textContent = JSON.stringify(schema);
+
+        return () => {
+            const existing = document.getElementById(scriptId);
+            if (existing) existing.remove();
+        };
+    }, [book]);
+
     const handleAddToCart = async (bookId) => {
         const bookToAdd = recommendedBooks.find(b => b.id === bookId);
         if (bookToAdd) {
@@ -464,6 +526,18 @@ const BookDetails = () => {
 
     return (
         <main className="w-full max-w-[100vw] overflow-x-hidden">
+            {book && (
+                <Helmet>
+                    <title>{`${book.title}${book.author?.name ? ` — ${book.author.name}` : ''} | Esprit Livre`}</title>
+                    <meta name="description" content={book.description ? book.description.slice(0, 155) : `Acheter "${book.title}" sur Esprit Livre. Livraison partout en Algérie en 1 à 4 jours ouvrables.`} />
+                    <link rel="canonical" href={`https://espritlivre.com/books/${book.id}`} />
+                    <meta property="og:title" content={`${book.title} | Esprit Livre`} />
+                    <meta property="og:description" content={book.description ? book.description.slice(0, 155) : `Acheter "${book.title}" sur Esprit Livre.`} />
+                    <meta property="og:url" content={`https://espritlivre.com/books/${book.id}`} />
+                    <meta property="og:type" content="book" />
+                    <meta property="og:image" content={`https://api.espritlivre.com/api/books/${book.id}/cover`} />
+                </Helmet>
+            )}
             <div className="min-h-screen bg-white">
                 {/* Navbar */}
                 <Navbar />

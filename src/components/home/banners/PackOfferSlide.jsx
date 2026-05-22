@@ -190,7 +190,8 @@ const FannedBooks = ({ books = [] }) => {
                                     src={book?.coverImage}
                                     alt=""
                                     className="w-full h-full object-cover"
-                                    loading="lazy"
+                                    loading="eager"
+                                    fetchPriority="high"
                                     draggable={false}
                                 />
                             )}

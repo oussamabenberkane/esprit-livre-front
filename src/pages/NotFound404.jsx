@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { Home, Search, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -29,6 +30,11 @@ const NotFound404 = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100">
+      <Helmet>
+        <title>Page introuvable | Esprit Livre</title>
+        <meta name="description" content="Cette page n'existe pas. Retournez au catalogue Esprit Livre." />
+        <link rel="canonical" href="https://espritlivre.com/404" />
+      </Helmet>
       <Navbar />
 
       {/* Responsive spacing for navbar - taller on mobile due to two-line layout */}

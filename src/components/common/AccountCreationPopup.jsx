@@ -80,11 +80,11 @@ export default function AccountCreationPopup() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.88, y: 24 }}
               transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full max-w-[360px] rounded-3xl overflow-hidden shadow-2xl pointer-events-auto"
+              className="relative w-full max-w-[360px] sm:max-w-[500px] rounded-3xl overflow-hidden shadow-2xl pointer-events-auto"
               onClick={(e) => e.stopPropagation()}
             >
               {/* ── Header (navy) ──────────────────────────────── */}
-              <div className="relative bg-[#00417a] px-6 pt-7 pb-8 overflow-hidden">
+              <div className="relative bg-[#00417a] px-6 pt-7 pb-8 sm:px-9 sm:pt-9 sm:pb-10 overflow-hidden">
 
                 {/* Decorative rings */}
                 <span className="absolute -top-10 -right-10 w-44 h-44 rounded-full border border-white/10 block" />
@@ -106,23 +106,24 @@ export default function AccountCreationPopup() {
                   <X className="w-3.5 h-3.5" />
                 </button>
 
-                {/* Book icon */}
-                <motion.div
-                  initial={{ scale: 0, rotate: -15 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ delay: 0.18, type: 'spring', stiffness: 220, damping: 18 }}
-                  className="w-12 h-12 rounded-2xl bg-white/[0.12] backdrop-blur-sm flex items-center justify-center mb-4 border border-white/10"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                  </svg>
-                </motion.div>
+                {/* STAMP badge — slams in like the SWAP reference */}
+                <div className="mb-4 sm:mb-5">
+                  <motion.div
+                    initial={{ scale: 0, rotate: -20, opacity: 0 }}
+                    animate={{ scale: 1, rotate: 6, opacity: 1 }}
+                    transition={{ delay: 0.12, type: 'spring', stiffness: 520, damping: 13, mass: 0.55 }}
+                    className="inline-block bg-white text-[#00417a] font-black uppercase tracking-tight leading-none rounded-xl px-4 py-2 sm:px-5 sm:py-2.5 text-[2rem] sm:text-[2.6rem] shadow-lg"
+                    style={{ originX: 0.5, originY: 0.5 }}
+                  >
+                    {t('accountPopup.badge')}
+                  </motion.div>
+                </div>
 
                 <motion.h2
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.22, duration: 0.3 }}
-                  className="text-white font-bold text-[1.15rem] leading-snug mb-2 pr-6"
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: 0.28 }}
+                  className="text-white font-bold text-[1.1rem] sm:text-[1.35rem] leading-snug mb-2 sm:mb-3 pr-6"
                 >
                   {t('accountPopup.title')}
                 </motion.h2>
@@ -130,37 +131,37 @@ export default function AccountCreationPopup() {
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.28, duration: 0.3 }}
-                  className="text-white/65 text-[0.8rem] leading-relaxed"
+                  transition={{ delay: 0.38, duration: 0.28 }}
+                  className="text-white/65 text-[0.8rem] sm:text-[0.9rem] leading-relaxed"
                 >
                   {t('accountPopup.subtitle')}
                 </motion.p>
               </div>
 
               {/* ── Body (white) ──────────────────────────────── */}
-              <div className="bg-white rounded-t-3xl -mt-4 relative z-10 px-5 pt-5 pb-5">
+              <div className="bg-white rounded-t-3xl -mt-4 relative z-10 px-5 pt-5 pb-5 sm:px-8 sm:pt-6 sm:pb-7">
 
                 {/* Benefits 2×2 */}
-                <div className="grid grid-cols-2 gap-2.5 mb-4">
+                <div className="grid grid-cols-2 gap-2.5 sm:gap-3 mb-4 sm:mb-5">
                   {BENEFITS.map(({ icon: Icon, key, color, bg }, i) => (
                     <motion.div
                       key={key}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.32 + i * 0.06 }}
-                      className="rounded-2xl p-3.5"
+                      className="rounded-2xl p-3.5 sm:p-5"
                       style={{ backgroundColor: bg }}
                     >
                       <div
-                        className="w-7 h-7 rounded-xl flex items-center justify-center mb-2"
+                        className="w-7 h-7 sm:w-9 sm:h-9 rounded-xl sm:rounded-2xl flex items-center justify-center mb-2 sm:mb-3"
                         style={{ backgroundColor: color + '22' }}
                       >
-                        <Icon className="w-3.5 h-3.5" style={{ color }} strokeWidth={2.2} />
+                        <Icon className="w-3.5 h-3.5 sm:w-5 sm:h-5" style={{ color }} strokeWidth={2.2} />
                       </div>
-                      <p className="text-[#00417a] font-semibold text-[0.72rem] leading-tight mb-0.5">
+                      <p className="text-[#00417a] font-semibold text-[0.72rem] sm:text-[0.85rem] leading-tight mb-0.5">
                         {t(`accountPopup.benefit.${key}.title`)}
                       </p>
-                      <p className="text-gray-400 text-[0.68rem] leading-snug">
+                      <p className="text-gray-400 text-[0.68rem] sm:text-[0.78rem] leading-snug">
                         {t(`accountPopup.benefit.${key}.desc`)}
                       </p>
                     </motion.div>
@@ -176,7 +177,7 @@ export default function AccountCreationPopup() {
                   whileTap={{ scale: 0.97 }}
                   onClick={handleSignIn}
                   disabled={loading}
-                  className="w-full flex items-center justify-center gap-2.5 bg-[#16A34A] hover:bg-[#15803d] disabled:opacity-60 text-white py-3.5 rounded-2xl font-semibold text-sm transition-colors mb-2.5 shadow-lg"
+                  className="w-full flex items-center justify-center gap-2.5 bg-[#16A34A] hover:bg-[#15803d] disabled:opacity-60 text-white py-3.5 sm:py-4 rounded-2xl font-semibold text-sm sm:text-base transition-colors mb-2.5 sm:mb-3 shadow-lg"
                   style={{ boxShadow: '0 4px 18px rgba(22,163,74,0.28)' }}
                 >
                   {/* White Google icon */}
@@ -195,7 +196,7 @@ export default function AccountCreationPopup() {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.68 }}
                   onClick={handleClose}
-                  className="w-full text-center text-gray-400 hover:text-gray-500 text-[0.75rem] py-1 transition-colors"
+                  className="w-full text-center text-gray-400 hover:text-gray-500 text-[0.75rem] sm:text-[0.82rem] py-1 transition-colors"
                 >
                   {t('accountPopup.dismiss')}
                 </motion.button>

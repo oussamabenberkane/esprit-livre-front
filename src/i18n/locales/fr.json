@@ -780,6 +780,7 @@
     "contactNote": "Référence : votre adresse email est votre identifiant de compte"
   },
   "accountPopup": {
+    "badge": "GRATUIT !",
     "title": "Votre bibliothèque personnelle vous attend",
     "subtitle": "Rejoignez Esprit Livre et profitez d'une expérience de lecture sur mesure.",
     "cta": "Continuer avec Google",

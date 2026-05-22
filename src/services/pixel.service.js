@@ -1,5 +1,5 @@
 const PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID;
-const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 async function sha256(str) {
   const encoded = new TextEncoder().encode(str);

@@ -39,6 +39,7 @@ import { OnboardingProvider } from './contexts/OnboardingContext';
 import OnboardingCelebration from './components/onboarding/OnboardingCelebration';
 import OnboardingTour from './components/onboarding/OnboardingTour';
 import OnboardingFinish from './components/onboarding/OnboardingFinish';
+import AccountCreationPopup from './components/common/AccountCreationPopup';
 
 function App() {
   return (
@@ -110,6 +111,8 @@ function App() {
           <OnboardingCelebration />
           <OnboardingTour />
           <OnboardingFinish />
+          {/* Account creation prompt for non-authenticated visitors */}
+          <AccountCreationPopup />
           </OnboardingProvider>
         </CartProvider>
       </FavoritesProvider>

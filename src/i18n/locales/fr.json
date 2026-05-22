@@ -778,5 +778,29 @@
     "contactSupport": "Contacter le support",
     "backHome": "Retour à l'accueil",
     "contactNote": "Référence : votre adresse email est votre identifiant de compte"
+  },
+  "accountPopup": {
+    "title": "Votre bibliothèque personnelle vous attend",
+    "subtitle": "Rejoignez Esprit Livre et profitez d'une expérience de lecture sur mesure.",
+    "cta": "Continuer avec Google",
+    "dismiss": "Peut-être plus tard",
+    "benefit": {
+      "orders": {
+        "title": "Suivi de commandes",
+        "desc": "Chaque colis en temps réel"
+      },
+      "wishlist": {
+        "title": "Liste de souhaits",
+        "desc": "Sauvegardez vos coups de cœur"
+      },
+      "discounts": {
+        "title": "Remises exclusives",
+        "desc": "Offres réservées aux membres"
+      },
+      "points": {
+        "title": "Points fidélité",
+        "desc": "Gagnez à chaque achat"
+      }
+    }
   }
 }

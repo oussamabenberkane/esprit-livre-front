@@ -778,5 +778,29 @@
     "contactSupport": "Contact support",
     "backHome": "Back to home",
     "contactNote": "Reference: your email address is your account identifier"
+  },
+  "accountPopup": {
+    "title": "Your personal library awaits",
+    "subtitle": "Join Esprit Livre and enjoy a tailored reading experience.",
+    "cta": "Continue with Google",
+    "dismiss": "Maybe later",
+    "benefit": {
+      "orders": {
+        "title": "Order tracking",
+        "desc": "Every parcel in real time"
+      },
+      "wishlist": {
+        "title": "Wishlist",
+        "desc": "Save your favourites"
+      },
+      "discounts": {
+        "title": "Exclusive discounts",
+        "desc": "Deals for members only"
+      },
+      "points": {
+        "title": "Loyalty points",
+        "desc": "Earn points with every purchase"
+      }
+    }
   }
 }

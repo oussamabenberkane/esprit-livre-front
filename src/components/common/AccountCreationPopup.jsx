@@ -1,9 +1,21 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Package, Heart, Tag, Star } from 'lucide-react';
+import { X, Package, Heart, Tag, Star } from 'lucide-react';
 import { isAuthenticated } from '../../services/authService';
 import { initiateGoogleLogin } from '../../services/oauthService';
+
+const DELAY_MS = 30 * 60 * 1000; // 30 minutes
+const FIRST_VISIT_KEY = 'el_first_visit';
+
+const msUntilOpen = () => {
+  let firstVisit = Number(sessionStorage.getItem(FIRST_VISIT_KEY));
+  if (!firstVisit) {
+    firstVisit = Date.now();
+    sessionStorage.setItem(FIRST_VISIT_KEY, String(firstVisit));
+  }
+  return Math.max(0, DELAY_MS - (Date.now() - firstVisit));
+};
 
 const BENEFITS = [
   { icon: Package, key: 'orders',    color: '#3b82f6', bg: '#eff6ff' },
@@ -19,7 +31,8 @@ export default function AccountCreationPopup() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      const timer = setTimeout(() => setOpen(true), 1800);
+      const delay = msUntilOpen();
+      const timer = setTimeout(() => setOpen(true), delay);
       return () => clearTimeout(timer);
     }
   }, []);
@@ -78,6 +91,15 @@ export default function AccountCreationPopup() {
                   className="absolute inset-0 block opacity-30"
                   style={{ background: 'radial-gradient(ellipse 180% 120% at 80% -10%, #0ea5e920 0%, transparent 70%)' }}
                 />
+
+                {/* Close */}
+                <button
+                  onClick={() => setOpen(false)}
+                  className="absolute top-4 right-4 w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/60 hover:text-white transition-all z-10"
+                  aria-label="Fermer"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
 
                 {/* STAMP badge */}
                 <div className="mb-4 sm:mb-5">

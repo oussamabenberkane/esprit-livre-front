@@ -1,6 +1,15 @@
 const PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID;
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
+function getCookie(name) {
+  const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+function metaCookies() {
+  return { fbc: getCookie('_fbc'), fbp: getCookie('_fbp') };
+}
+
 async function sha256(str) {
   const encoded = new TextEncoder().encode(str);
   const buf = await crypto.subtle.digest('SHA-256', encoded);
@@ -30,11 +39,12 @@ const track = (event, params = {}, options = {}) => {
 export const trackPageView = () => {
   if (!window.fbq) return;
   const eventId = crypto.randomUUID();
-  window.fbq('track', 'PageView');
+  track('PageView', {}, { eventID: eventId });
   fetch(`${API_BASE_URL}/api/pixel/page-view`, {
     method: 'POST',
+    keepalive: true,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ eventId, eventSourceUrl: window.location.href }),
+    body: JSON.stringify({ eventId, eventSourceUrl: window.location.href, ...metaCookies() }),
   }).catch(() => {});
 };
 
@@ -54,6 +64,7 @@ export const trackViewContent = ({ id, name, category, value, contentType = 'pro
   );
   fetch(`${API_BASE_URL}/api/pixel/view-content`, {
     method: 'POST',
+    keepalive: true,
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       eventId,
@@ -61,6 +72,7 @@ export const trackViewContent = ({ id, name, category, value, contentType = 'pro
       contentType,
       value: parseFloat(value) || 0,
       eventSourceUrl: window.location.href,
+      ...metaCookies(),
     }),
   }).catch(() => {});
 };
@@ -71,8 +83,9 @@ export const trackSearch = (searchString) => {
   track('Search', { search_string: searchString.trim() }, { eventID: eventId });
   fetch(`${API_BASE_URL}/api/pixel/search`, {
     method: 'POST',
+    keepalive: true,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ eventId, searchString: searchString.trim(), eventSourceUrl: window.location.href }),
+    body: JSON.stringify({ eventId, searchString: searchString.trim(), eventSourceUrl: window.location.href, ...metaCookies() }),
   }).catch(() => {});
 };
 
@@ -92,6 +105,7 @@ export const trackAddToCart = ({ id, name, value, quantity = 1 }) => {
   );
   fetch(`${API_BASE_URL}/api/pixel/add-to-cart`, {
     method: 'POST',
+    keepalive: true,
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       eventId,
@@ -100,6 +114,7 @@ export const trackAddToCart = ({ id, name, value, quantity = 1 }) => {
       value: parseFloat(value) || 0,
       numItems: quantity,
       eventSourceUrl: window.location.href,
+      ...metaCookies(),
     }),
   }).catch(() => {});
 };
@@ -119,6 +134,7 @@ export const trackInitiateCheckout = ({ value, numItems, contentIds }) => {
   );
   fetch(`${API_BASE_URL}/api/pixel/initiate-checkout`, {
     method: 'POST',
+    keepalive: true,
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       eventId,
@@ -126,6 +142,7 @@ export const trackInitiateCheckout = ({ value, numItems, contentIds }) => {
       numItems,
       contentIds: contentIds.map(String),
       eventSourceUrl: window.location.href,
+      ...metaCookies(),
     }),
   }).catch(() => {});
 };
@@ -150,8 +167,9 @@ export const trackCompleteRegistration = () => {
   track('CompleteRegistration', { status: true }, { eventID: eventId });
   fetch(`${API_BASE_URL}/api/pixel/complete-registration`, {
     method: 'POST',
+    keepalive: true,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ eventId, eventSourceUrl: window.location.href }),
+    body: JSON.stringify({ eventId, eventSourceUrl: window.location.href, ...metaCookies() }),
   }).catch(() => {});
 };
 
@@ -160,8 +178,9 @@ export const trackContact = () => {
   track('Contact', {}, { eventID: eventId });
   fetch(`${API_BASE_URL}/api/pixel/contact`, {
     method: 'POST',
+    keepalive: true,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ eventId, eventSourceUrl: window.location.href }),
+    body: JSON.stringify({ eventId, eventSourceUrl: window.location.href, ...metaCookies() }),
   }).catch(() => {});
 };
 

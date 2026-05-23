@@ -34,7 +34,7 @@ export default function TeamPage() {
       key: 'oussama',
       name: t('team.members.oussama.name'),
       role: t('team.members.oussama.role'),
-      image: '/assets/team/ouss.jpg',
+      image: '/assets/team/ouss.jpeg',
       description: t('team.members.oussama.description'),
       favoriteBook: {
         title: t('team.members.oussama.favoriteBook.title'),

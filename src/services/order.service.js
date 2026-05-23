@@ -2,6 +2,7 @@
 import { API_BASE_URL, getDefaultHeaders } from './apiConfig';
 import { getAccessToken } from './authService';
 import { OrderItemType, ShippingMethod, PROVIDER_DISPLAY_TO_API } from '../constants/orderEnums';
+import { getOrderOrigin } from '../utils/orderOrigin';
 
 /**
  * Get authenticated headers with Bearer token (optional for guest checkout)
@@ -156,7 +157,8 @@ export const buildOrderPayload = (formData, cartBooks, cartPacks, shippingCost =
     shippingProvider: shippingProvider,  // Always include provider
     totalAmount: subtotal + shippingCost,
     shippingCost: shippingCost,
-    orderItems: orderItems
+    orderItems: orderItems,
+    orderOrigin: getOrderOrigin(),
   };
 
   // Add streetAddress only if HOME_DELIVERY

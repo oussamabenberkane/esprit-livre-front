@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { lazy, Suspense, useEffect } from 'react';
 import { HelmetProvider } from 'react-helmet-async';
 import { initPixel, trackPageView } from './services/pixel.service';
+import { captureOrderOrigin } from './utils/orderOrigin';
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
 import { FavoritesProvider } from './contexts/FavoritesContext';
 import { CartProvider } from './contexts/CartContext';
@@ -34,6 +35,7 @@ function PixelTracker() {
 
   useEffect(() => {
     initPixel();
+    captureOrderOrigin();
   }, []);
 
   useEffect(() => {

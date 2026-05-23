@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 import { X, Package, Heart, Tag, Star } from 'lucide-react';
 import { isAuthenticated } from '../../services/authService';
 import { initiateGoogleLogin } from '../../services/oauthService';
@@ -12,22 +13,32 @@ const BENEFITS = [
   { icon: Star,    key: 'points',    color: '#f59e0b', bg: '#fffbeb' },
 ];
 
+const REMIND_KEY = 'popup_remind_at';
+const FIVE_HOURS = 5 * 60 * 60 * 1000;
+
 export default function AccountCreationPopup() {
   const { t } = useTranslation();
+  const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if (pathname !== '/') return;
     if (sessionStorage.getItem('popup_shown')) return;
+
+    const remindAt = localStorage.getItem(REMIND_KEY);
+    if (remindAt) {
+      if (Date.now() < Number(remindAt)) return;
+      localStorage.removeItem(REMIND_KEY);
+    }
 
     const timer = setTimeout(() => {
       if (!isAuthenticated()) {
         setOpen(true);
-        sessionStorage.setItem('popup_shown', '1');
       }
     }, 1800);
     return () => clearTimeout(timer);
-  }, []);
+  }, [pathname]);
 
   useEffect(() => {
     const onAuthChange = ({ detail }) => {
@@ -36,6 +47,16 @@ export default function AccountCreationPopup() {
     window.addEventListener('authStateChanged', onAuthChange);
     return () => window.removeEventListener('authStateChanged', onAuthChange);
   }, []);
+
+  const handleClose = () => {
+    setOpen(false);
+    sessionStorage.setItem('popup_shown', '1');
+  };
+
+  const handleRemindLater = () => {
+    setOpen(false);
+    localStorage.setItem(REMIND_KEY, String(Date.now() + FIVE_HOURS));
+  };
 
   const handleSignIn = async () => {
     setLoading(true);
@@ -86,7 +107,7 @@ export default function AccountCreationPopup() {
 
                 {/* Close */}
                 <button
-                  onClick={() => setOpen(false)}
+                  onClick={handleClose}
                   className="absolute top-2 right-2 min-w-[44px] min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/60 hover:text-white transition-all z-10"
                   aria-label="Fermer"
                 >
@@ -174,6 +195,17 @@ export default function AccountCreationPopup() {
                     <path d="M10 3.977c1.468 0 2.786.505 3.823 1.496l2.868-2.869C14.96.991 12.695 0 10 0 6.091 0 2.709 2.241 1.064 5.509l3.34 2.591C5.19 5.736 7.396 3.977 10 3.977z" fill="white" fillOpacity=".9"/>
                   </svg>
                   {loading ? t('auth.connecting') : t('accountPopup.cta')}
+                </motion.button>
+
+                {/* Remind me later */}
+                <motion.button
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.7 }}
+                  onClick={handleRemindLater}
+                  className="w-full mt-3 text-center text-[0.78rem] sm:text-[0.82rem] text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {t('accountPopup.remindLater')}
                 </motion.button>
               </div>
             </motion.div>

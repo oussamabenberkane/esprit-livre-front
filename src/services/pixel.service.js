@@ -10,6 +10,17 @@ function metaCookies() {
   return { fbc: getCookie('_fbc'), fbp: getCookie('_fbp') };
 }
 
+// Exposed so non-pixel flows (e.g. order creation) can forward the cookies to CAPI.
+export const getMetaCookies = () => metaCookies();
+
+// Meta requires phone as digits only, with country code, no "+"/symbols/leading zero.
+// Local Algerian numbers (0XXXXXXXXX) become 213XXXXXXXXX.
+function normalizePhone(phone) {
+  let digits = String(phone).replace(/\D/g, '');
+  if (digits.startsWith('0') && digits.length === 10) digits = '213' + digits.slice(1);
+  return digits;
+}
+
 async function sha256(str) {
   const encoded = new TextEncoder().encode(str);
   const buf = await crypto.subtle.digest('SHA-256', encoded);
@@ -190,7 +201,7 @@ export const setPixelUserData = async ({ email, phone, firstName, lastName } = {
   if (!window.fbq || !PIXEL_ID) return;
   const ud = {};
   if (email?.trim()) ud.em = await sha256(email.trim().toLowerCase());
-  if (phone?.trim()) ud.ph = await sha256(phone.replace(/\s+/g, '').toLowerCase());
+  if (phone?.trim()) ud.ph = await sha256(normalizePhone(phone));
   if (firstName?.trim()) ud.fn = await sha256(firstName.trim().toLowerCase());
   if (lastName?.trim()) ud.ln = await sha256(lastName.trim().toLowerCase());
   if (Object.keys(ud).length > 0) window.fbq('init', PIXEL_ID, ud);

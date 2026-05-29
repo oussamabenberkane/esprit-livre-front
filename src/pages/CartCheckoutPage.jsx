@@ -17,7 +17,7 @@ import { getUserProfile } from '../services/user.service';
 import { isAuthenticated, saveRedirectUrl } from '../services/authService';
 import { PROVIDER_API_TO_DISPLAY, PROVIDER_DISPLAY_TO_API } from '../constants/orderEnums';
 import wilayaData, { wilayaNumbers } from '../utils/wilayaData';
-import { trackInitiateCheckout, trackPurchase, setPixelUserData } from '../services/pixel.service';
+import { trackInitiateCheckout, trackPurchase, setPixelUserData, getMetaCookies } from '../services/pixel.service';
 
 // Order Tracking Prompt Popup Component
 function OrderTrackingPrompt({ isOpen, onSignIn, onLater }) {
@@ -1289,8 +1289,10 @@ export default function CartCheckoutPage() {
       // Use the calculated fee passed from CheckoutForm, fall back to fixed fee
       const resolvedShippingFee = formData.shippingFee ?? shippingFee;
 
-      // Build order payload using the service helper
-      const orderPayload = buildOrderPayload(formData, cartBooks, cartPacks, resolvedShippingFee);
+      // Build order payload using the service helper.
+      // Forward the Meta Pixel cookies so the server-side CAPI Purchase event
+      // carries fbc/fbp for attribution and dedup against the browser pixel.
+      const orderPayload = { ...buildOrderPayload(formData, cartBooks, cartPacks, resolvedShippingFee), ...getMetaCookies() };
 
       // Log payload for debugging (remove in production)
       console.log('Submitting order:', orderPayload);

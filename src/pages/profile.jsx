@@ -81,7 +81,7 @@ export default function Profile() {
   const homeAddressRef = useRef(null);
   const pickupProviderRef = useRef(null);
 
-  const pickupProviders = ['Yalidine', 'ZRexpress'];
+  const pickupProviders = ['Yalidine'];
 
   const { startProfileTour, startOnboarding, isTourActive, steps, currentStep, phase } = useOnboarding();
 

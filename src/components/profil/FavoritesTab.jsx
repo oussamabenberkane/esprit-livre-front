@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { trackAddToCart } from '../../services/pixel.service';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Heart, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -43,6 +44,7 @@ export default function FavoritesTab() {
     await addToCart(bookId, 1);
     const book = favoriteBooks.find(b => b.id === bookId);
     if (book) {
+      trackAddToCart({ id: book.id, name: book.title, value: book.price, quantity: 1 });
       setSelectedBook(book);
       setShowCartPopup(true);
     }
@@ -88,7 +90,7 @@ export default function FavoritesTab() {
         <h3 className="text-gray-700 font-semibold mb-1">{t('favorites.emptyTitle')}</h3>
         <p className="text-gray-400 text-sm text-center max-w-xs mb-6 leading-relaxed">{t('favorites.emptyMessage')}</p>
         <button
-          onClick={() => navigate('/allbooks')}
+          onClick={() => navigate('/products')}
           className="px-6 py-2.5 bg-[#EE0027] text-white rounded-xl text-sm font-semibold hover:bg-[#d4183d] transition-colors shadow-sm"
         >
           {t('favorites.discoverBooks')}

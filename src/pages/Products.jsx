@@ -1,15 +1,15 @@
+import { Helmet } from 'react-helmet-async'
 import Navbar from "../components/common/Navbar"
 import Footer from "../components/common/Footer"
 import BookCard from "../components/common/BookCard"
 import BookCardSkeleton from "../components/common/skeletons/BookCardSkeleton"
-import PackCard from "../components/common/PackCard"
 import PackCardCompact from "../components/common/PackCardCompact"
 import PackCardSkeleton from "../components/common/skeletons/PackCardSkeleton"
 import PackBooksPopup from "../components/common/PackBooksPopup"
 import FiltersSection from "../components/allbooks/FiltersSection"
 import CartConfirmationPopup from "../components/common/cartConfirmationPopup"
 import FloatingCartBadge from "../components/common/FloatingCartBadge"
-import { fetchAllBooks, getBooksByIds } from "../services/books.service"
+import { fetchAllBooks } from "../services/books.service"
 import { getAllBookPacks } from "../services/bookPackService"
 import { fetchCategories } from "../services/tags.service"
 import { fetchTopAuthors } from "../services/authors.service"
@@ -24,7 +24,7 @@ import { useCart } from '../contexts/CartContext'
 import { trackSearch, trackAddToCart } from '../services/pixel.service'
 import { useFilterPersistence, hasActiveFilters, hasPersistableFilters } from '../hooks/useFilterPersistence'
 
-export default function AllBooks() {
+export default function Products() {
     const { t } = useTranslation()
     const navigate = useNavigate()
     const { addToCart, addPackToCart } = useCart()
@@ -54,7 +54,6 @@ export default function AllBooks() {
     const [isLoadingPacks, setIsLoadingPacks] = useState(true)
     const [showPackBooksPopup, setShowPackBooksPopup] = useState(false)
     const [selectedPackForPopup, setSelectedPackForPopup] = useState(null)
-    const [isLoadingPopupBooks, setIsLoadingPopupBooks] = useState(false)
 
     // Filter data state
     const [categories, setCategories] = useState([])
@@ -103,6 +102,9 @@ export default function AllBooks() {
 
     // Extract filters from URL params on mount
     useEffect(() => {
+        const tab = searchParams.get('tab')
+        if (tab === 'packs' || tab === 'books') setActiveTab(tab)
+
         const categoryId = searchParams.get('categoryId')
         const categoryName = searchParams.get('categoryName')
         const authorId = searchParams.get('authorId')
@@ -139,6 +141,7 @@ export default function AllBooks() {
                 filters.search = decodeURIComponent(search)
                 context = { type: searchType || 'general', name: decodeURIComponent(search) }
                 setPageTitle(t('allBooks.resultsFor', { query: decodeURIComponent(search) }))
+                trackSearch(decodeURIComponent(search))
             }
 
             setSearchContext(context)
@@ -209,7 +212,9 @@ export default function AllBooks() {
                         author: book.author?.name || 'Unknown',
                         authorId: book.author?.id || null,
                         price: parseFloat(book.price) || 0,
-                        coverImage: getBookCoverUrl(book.id)
+                        coverImage: getBookCoverUrl(book.id),
+                        language: book.language,
+                        visibleInCatalog: book.visibleInCatalog !== false
                     }))
                     const originalPrice = books.reduce((sum, book) => sum + book.price, 0)
                     return {
@@ -288,29 +293,9 @@ export default function AllBooks() {
         }
     }
 
-    const handleViewAllBooks = async (pack) => {
+    const handleViewAllBooks = (pack) => {
         setSelectedPackForPopup(pack)
         setShowPackBooksPopup(true)
-        setIsLoadingPopupBooks(true)
-        try {
-            const bookIds = pack.books.map(b => b.id)
-            const fullBooks = await getBooksByIds(bookIds)
-            setSelectedPackForPopup({
-                ...pack,
-                books: fullBooks.map(book => ({
-                    id: book.id,
-                    title: book.title,
-                    author: book.author?.name || 'Unknown',
-                    price: book.price,
-                    coverImage: getBookCoverUrl(book.id),
-                    language: book.language
-                }))
-            })
-        } catch (err) {
-            console.error('Error fetching book details:', err)
-        } finally {
-            setIsLoadingPopupBooks(false)
-        }
     }
 
     const handleApplyFilters = (filters) => {
@@ -328,6 +313,15 @@ export default function AllBooks() {
 
     return (
         <main className="w-full max-w-[100vw] overflow-x-hidden">
+            <Helmet>
+              <title>Catalogue de livres | Esprit Livre</title>
+              <meta name="description" content="Parcourez notre catalogue de livres neufs en français et en arabe, livrés partout en Algérie. Romans, développement personnel, jeunesse et plus." />
+              <link rel="canonical" href="https://espritlivre.com/products" />
+              <meta property="og:title" content="Catalogue de livres | Esprit Livre" />
+              <meta property="og:description" content="Parcourez notre catalogue de livres neufs en français et en arabe, livrés partout en Algérie." />
+              <meta property="og:url" content="https://espritlivre.com/products" />
+              <meta property="og:type" content="website" />
+            </Helmet>
             <div className="min-h-screen bg-white">
                 {/* Navigation Bar */}
                 <section className="w-full max-w-[100vw] overflow-x-hidden"><Navbar /></section>
@@ -439,31 +433,33 @@ export default function AllBooks() {
                     {/* Packs Tab Content */}
                     {!isUnifiedView && activeTab === 'packs' && (
                         <section className="pb-fluid-xl">
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-fluid-md auto-rows-fr">
+                            <div className="flex flex-wrap gap-fluid-md justify-center">
                                 {isLoadingPacks ? (
                                     Array.from({ length: 4 }).map((_, index) => (
-                                        <div key={`pack-skeleton-${index}`} className="h-full">
+                                        <div key={`pack-skeleton-${index}`} className="book-card-width">
                                             <PackCardSkeleton />
                                         </div>
                                     ))
                                 ) : packs.length > 0 ? (
                                     packs.map((pack) => (
-                                        <div key={`pack-${pack.id}`} className="h-full animate-fade-in">
-                                            <PackCard
+                                        <div key={`pack-${pack.id}`} className="book-card-width animate-fade-in">
+                                            <PackCardCompact
                                                 id={pack.id}
                                                 title={pack.title}
-                                                description={pack.description}
                                                 originalPrice={pack.originalPrice}
                                                 packPrice={pack.packPrice}
-                                                packImage={pack.packImage}
                                                 books={pack.books}
+                                                pricingMode={pack.pricingMode}
                                                 onAddToCart={handlePackAddToCart}
-                                                onViewAllBooks={() => handleViewAllBooks(pack)}
+                                                onViewBooks={(packId) => {
+                                                    const p = packs.find(x => x.id === packId)
+                                                    if (p) handleViewAllBooks(p)
+                                                }}
                                             />
                                         </div>
                                     ))
                                 ) : (
-                                    <div className="col-span-full text-center text-gray-500 py-20">
+                                    <div className="w-full text-center text-gray-500 py-20">
                                         <div className="text-6xl mb-4">📦</div>
                                         <p className="text-xl font-medium">{t('allBooks.noPacksFound', 'Aucun pack trouvé')}</p>
                                     </div>
@@ -504,6 +500,7 @@ export default function AllBooks() {
                                             originalPrice={pack.originalPrice}
                                             packPrice={pack.packPrice}
                                             books={pack.books}
+                                            pricingMode={pack.pricingMode}
                                             onAddToCart={handlePackAddToCart}
                                             onViewBooks={(packId) => {
                                                 const p = packs.find(x => x.id === packId)
@@ -747,7 +744,7 @@ export default function AllBooks() {
                 packTitle={selectedPackForPopup?.title}
                 packDescription={selectedPackForPopup?.description}
                 books={selectedPackForPopup?.books || []}
-                isLoading={isLoadingPopupBooks}
+                pricingMode={selectedPackForPopup?.pricingMode}
             />
 
             {/* Cart Confirmation Popup - Single instance at page level */}

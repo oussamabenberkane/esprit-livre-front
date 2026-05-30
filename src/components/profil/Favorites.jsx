@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { trackAddToCart } from '../../services/pixel.service';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Heart } from 'lucide-react';
@@ -95,11 +96,11 @@ export default function Favorites() {
   const handleAddToCart = async (bookId) => {
     console.log(`Added book ${bookId} to cart`);
 
-    // Add to cart using CartContext
     await addToCart(bookId, 1);
 
     const book = favoriteBooks.find(b => b.id === bookId);
     if (book) {
+      trackAddToCart({ id: book.id, name: book.title, value: book.price, quantity: 1 });
       setSelectedBook(book);
       setShowCartPopup(true);
     }
@@ -243,7 +244,7 @@ export default function Favorites() {
                 {t('favorites.emptyMessage')}
               </p>
               <button
-                onClick={() => navigate('/allbooks')}
+                onClick={() => navigate('/products')}
                 className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
               >
                 {t('favorites.discoverBooks')}

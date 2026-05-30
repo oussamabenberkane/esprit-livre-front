@@ -12,7 +12,7 @@ const CollectionSlide = ({ isActive }) => {
 
     const handleClick = (e) => {
         e.preventDefault();
-        navigate('/allbooks');
+        navigate('/products');
     };
 
     const rmInitial = prefersReducedMotion ? { opacity: 1, y: 0, scale: 1 } : undefined;
@@ -55,7 +55,7 @@ const CollectionSlide = ({ isActive }) => {
             {/* Centered frosted content panel */}
             <div className="relative h-full w-full flex items-center justify-center px-4 sm:px-6">
                 <motion.a
-                    href="/allbooks"
+                    href="/products"
                     onClick={handleClick}
                     initial={rmInitial ?? { opacity: 0, y: 18, scale: 0.98 }}
                     animate={

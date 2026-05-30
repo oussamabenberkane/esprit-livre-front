@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Facebook, Instagram, Twitter } from 'lucide-react';
+import { Instagram } from 'lucide-react';
 
 export default function Footer() {
     const { t } = useTranslation();
@@ -21,25 +21,13 @@ export default function Footer() {
                         </h3>
                         <div className="flex justify-center gap-6">
                             <a
-                                href="#"
-                                className="text-[#1E40AF] hover:text-blue-700 transition-colors"
-                                aria-label="Facebook"
-                            >
-                                <Facebook size={32} strokeWidth={1.5} />
-                            </a>
-                            <a
-                                href="#"
+                                href="https://www.instagram.com/espritlivre"
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className="text-[#1E40AF] hover:text-blue-700 transition-colors"
                                 aria-label="Instagram"
                             >
                                 <Instagram size={32} strokeWidth={1.5} />
-                            </a>
-                            <a
-                                href="#"
-                                className="text-[#1E40AF] hover:text-blue-700 transition-colors"
-                                aria-label="Twitter"
-                            >
-                                <Twitter size={32} strokeWidth={1.5} />
                             </a>
                         </div>
                     </div>
@@ -49,26 +37,68 @@ export default function Footer() {
                         <h3 className="text-fluid-h3 font-semibold text-gray-800 mb-4">
                             {t('footer.whoAreWe.title')}
                         </h3>
-                        <Link
-                            to="/team"
-                            onClick={handleLinkClick}
-                            className="inline-flex items-center gap-2 justify-center"
-                        >
-                            <h3 className="text-fluid-small text-[#1E40AF] hover:text-blue-700 transition-colors font-medium">{t('footer.whoAreWe.team')}</h3>
-                            <svg
-                                className="w-5 h-5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
+                        <div className="flex flex-col items-center gap-3">
+                            <Link
+                                to="/team"
+                                onClick={handleLinkClick}
+                                className="inline-flex items-center gap-2 justify-center"
                             >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                                />
-                            </svg>
-                        </Link>
+                                <h3 className="text-fluid-small text-[#1E40AF] hover:text-blue-700 transition-colors font-medium">{t('footer.whoAreWe.team')}</h3>
+                                <svg
+                                    className="w-5 h-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                                    />
+                                </svg>
+                            </Link>
+                            <Link
+                                to="/products"
+                                onClick={handleLinkClick}
+                                className="inline-flex items-center gap-2 justify-center"
+                            >
+                                <h3 className="text-fluid-small text-[#1E40AF] hover:text-blue-700 transition-colors font-medium">Catalogue</h3>
+                                <svg
+                                    className="w-5 h-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                                    />
+                                </svg>
+                            </Link>
+                            <Link
+                                to="/promotions"
+                                onClick={handleLinkClick}
+                                className="inline-flex items-center gap-2 justify-center"
+                            >
+                                <h3 className="text-fluid-small text-[#1E40AF] hover:text-blue-700 transition-colors font-medium">Promotions</h3>
+                                <svg
+                                    className="w-5 h-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                                    />
+                                </svg>
+                            </Link>
+                        </div>
                     </div>
 
                     {/* Customer Service Section */}
@@ -103,6 +133,22 @@ export default function Footer() {
                 <div className="mt-12 pt-8 border-t border-gray-200 text-center">
                     <p className="text-gray-500 text-sm">
                         {t('footer.copyright', { year: new Date().getFullYear() })}
+                        {' · '}
+                        <Link
+                            to="/politique"
+                            onClick={handleLinkClick}
+                            className="hover:text-[#1E40AF] transition-colors underline underline-offset-2"
+                        >
+                            {t('footer.legal')}
+                        </Link>
+                        {' · '}
+                        <Link
+                            to="/mentions-legales"
+                            onClick={handleLinkClick}
+                            className="hover:text-[#1E40AF] transition-colors underline underline-offset-2"
+                        >
+                            {t('footer.mentions')}
+                        </Link>
                     </p>
                 </div>
             </div>

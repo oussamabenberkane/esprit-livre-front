@@ -1,9 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Mail, Phone, Clock, Send } from 'lucide-react';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
+import { trackContact } from '../services/pixel.service';
+import { API_BASE_URL } from '../services/apiConfig';
 
 const BRAND_BLUE = '#00417a';
 const EASE = [0.22, 1, 0.36, 1];
@@ -157,7 +160,7 @@ export default function ServiceClientPage() {
     setFormStatus('loading');
 
     try {
-      const response = await fetch('http://localhost:8080/api/contact', {
+      const response = await fetch(`${API_BASE_URL}/api/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -177,6 +180,7 @@ export default function ServiceClientPage() {
       const data = await response.json();
 
       if (response.ok && data.success) {
+        trackContact();
         setFormStatus('success');
         // Reset form on success
         setFormData({ name: '', email: '', subject: '', message: '' });
@@ -196,6 +200,15 @@ export default function ServiceClientPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <Helmet>
+        <title>Service client &amp; FAQ | Esprit Livre</title>
+        <meta name="description" content="Questions fréquentes, délais de livraison, retours, paiement et contact. Esprit Livre livre partout en Algérie en 1 à 4 jours ouvrables." />
+        <link rel="canonical" href="https://espritlivre.com/service-client" />
+        <meta property="og:title" content="Service client & FAQ | Esprit Livre" />
+        <meta property="og:description" content="Questions fréquentes sur la livraison, les retours et le paiement." />
+        <meta property="og:url" content="https://espritlivre.com/service-client" />
+        <meta property="og:type" content="website" />
+      </Helmet>
       <Navbar />
 
       {/* ── Hero ── */}
@@ -251,10 +264,10 @@ export default function ServiceClientPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
             {
-              href: 'mailto:contact@espritlivre.fr',
+              href: 'mailto:contact@espritlivre.com',
               icon: Mail,
               title: t('customerService.email'),
-              value: 'contact@espritlivre.fr',
+              value: 'contact@espritlivre.com',
               isLink: true,
               delay: 0.1,
             },

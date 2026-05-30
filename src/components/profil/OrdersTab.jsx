@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Package, Calendar, Eye, ShoppingBag } from 'lucide-react';
+import InlineMarkdown from '../common/InlineMarkdown';
 import { getUserOrders } from '../../services/order.service';
 import { isAuthenticated } from '../../services/authService';
 import { getBookCoverUrl } from '../../utils/imageUtils';
@@ -114,7 +115,7 @@ function OrderCard({ order }) {
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-800 line-clamp-2 leading-snug">{item.title}</p>
+                <p className="text-sm font-medium text-gray-800 line-clamp-2 leading-snug"><InlineMarkdown>{item.title}</InlineMarkdown></p>
                 {item.author && <p className="text-[11px] text-gray-400 mt-0.5">{item.author}</p>}
                 <div className="flex items-center gap-3 mt-1">
                   <span className="text-[11px] text-gray-500">×{item.quantity}</span>
@@ -222,7 +223,7 @@ export default function OrdersTab() {
         <h3 className="text-gray-700 font-semibold mb-1">{t('orders.emptyTitle')}</h3>
         <p className="text-gray-400 text-sm text-center max-w-xs mb-6 leading-relaxed">{t('orders.emptyMessage')}</p>
         <button
-          onClick={() => navigate('/allbooks')}
+          onClick={() => navigate('/products')}
           className="px-6 py-2.5 bg-[#00417a] text-white rounded-xl text-sm font-semibold hover:bg-[#003366] transition-colors shadow-sm"
         >
           {t('orders.startShopping')}

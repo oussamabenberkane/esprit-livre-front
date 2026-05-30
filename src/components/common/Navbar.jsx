@@ -198,9 +198,8 @@ const Navbar = ({
         navigate('/');
     };
 
-    // Default packs click handler - navigate to packs page
     const handlePacksClick = () => {
-        navigate('/packs');
+        navigate('/products?tab=packs');
     };
 
     // Promotions click handler
@@ -256,8 +255,7 @@ const Navbar = ({
     // Handle Enter key to perform search
     const handleSearchSubmit = () => {
         if (searchQuery && searchQuery.trim().length > 0) {
-            // Navigate to AllBooks page with search parameter
-            navigate(`/allbooks?search=${encodeURIComponent(searchQuery.trim())}`);
+            navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
             // Close suggestions
             setShowSuggestions(false);
         }

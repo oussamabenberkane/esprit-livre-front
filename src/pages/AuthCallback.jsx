@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { validateState, exchangeCodeForTokens } from '../services/oauthService';
 import { getAndClearRedirectUrl, getCurrentUser, logout, saveRedirectUrl } from '../services/authService';
-import { trackCompleteRegistration } from '../services/pixel.service';
+import { trackCompleteRegistration, setPixelUserData } from '../services/pixel.service';
 
 /**
  * OAuth Callback Handler Component
@@ -73,6 +73,7 @@ const AuthCallback = () => {
         console.log('[AuthCallback] Syncing user with backend database...');
         const userData = await getCurrentUser(controller.signal);
         console.log('[AuthCallback] User synced successfully:', userData);
+        setPixelUserData({ email: userData.email, phone: userData.phone, firstName: userData.firstName, lastName: userData.lastName });
 
         // CRITICAL: Set a timestamp to prevent AuthPage from interfering
         // This works reliably even with StrictMode double-invocation

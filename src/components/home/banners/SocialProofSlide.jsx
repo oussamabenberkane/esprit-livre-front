@@ -177,7 +177,8 @@ const SocialProofSlide = ({ isActive }) => {
                         <div className="mt-4 sm:mt-5 grid grid-cols-3 gap-2 sm:gap-6 max-w-lg mx-auto md:mx-0 border-t border-[#00417a]/10 pt-3 sm:pt-4">
                             <Stat
                                 icon={Users}
-                                target={3286}
+                                target={10000}
+                                suffix="+"
                                 label={t('homePage.hero.socialProof.stat1Label')}
                                 active={isActive}
                                 delay={0.35}
@@ -185,7 +186,7 @@ const SocialProofSlide = ({ isActive }) => {
                             />
                             <Stat
                                 icon={Truck}
-                                target={6185}
+                                target={16185}
                                 label={t('homePage.hero.socialProof.stat2Label')}
                                 active={isActive}
                                 delay={0.45}

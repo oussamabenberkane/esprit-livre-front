@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { trackAddToCart } from '../services/pixel.service';
+import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
 import { Flame, Tag, ChevronDown, BookOpen, Sparkles, Percent } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -83,6 +85,15 @@ export default function SalePage() {
 
   return (
     <div className="min-h-screen bg-[#fafaf8] font-sans">
+      <Helmet>
+        <title>Promotions &amp; Réductions | Esprit Livre</title>
+        <meta name="description" content="Livres en promotion — réductions exclusives sur une sélection de titres. Livraison partout en Algérie, paiement à la livraison." />
+        <link rel="canonical" href="https://espritlivre.com/promotions" />
+        <meta property="og:title" content="Promotions & Réductions | Esprit Livre" />
+        <meta property="og:description" content="Livres en promotion — réductions exclusives sur une sélection de titres." />
+        <meta property="og:url" content="https://espritlivre.com/promotions" />
+        <meta property="og:type" content="website" />
+      </Helmet>
       <Navbar />
 
       {/* ── Hero ── */}
@@ -279,7 +290,7 @@ export default function SalePage() {
                       onSale={book.onSale}
                       discountType={book.discountType}
                       discountValue={book.discountValue}
-                      onAddToCart={(id) => addToCart(id, 1)}
+                      onAddToCart={(id) => { addToCart(id, 1); trackAddToCart({ id: book.id, name: book.title, value: book.price, quantity: 1 }); }}
                     />
                   </motion.div>
                 ))}

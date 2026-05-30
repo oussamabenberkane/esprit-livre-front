@@ -85,7 +85,9 @@
       "title": "Service clients",
       "link": "Accéder à la page Service Client"
     },
-    "copyright": "© {{year}} Tous droits réservés"
+    "copyright": "© {{year}} Tous droits réservés",
+    "legal": "Politique & Conditions",
+    "mentions": "Mentions légales"
   },
   "bottomSheet": {
     "menu": {
@@ -147,10 +149,10 @@
       },
       "socialProof": {
         "eyebrow": "Ils nous font déjà confiance",
-        "title": "3 000+ lecteurs,",
+        "title": "10 000+ lecteurs,",
         "titleAccent": "une même passion.",
         "subtitle": "D'Alger à Tamanrasset, une même librairie.",
-        "stat1Label": "lecteurs servis",
+        "stat1Label": "lecteurs",
         "stat2Label": "commandes livrées",
         "stat3Label": "authentiques",
         "cta": "Rejoindre la communauté",
@@ -540,7 +542,11 @@
     "close": "Fermer",
     "currency": "DZD",
     "clickToViewDetails": "Cliquez sur un livre pour voir ses détails",
-    "loading": "Chargement des livres..."
+    "loading": "Chargement des livres...",
+    "packOnlyTitle": "Exclusif à ce pack",
+    "packOnlyMessage": "Ce livre a été sélectionné pour aller avec les autres. Il est bien plus beau en bonne compagnie.",
+    "readMore": "Lire la suite",
+    "showLess": "Réduire"
   },
   "404": {
     "title": "Page introuvable",
@@ -562,6 +568,8 @@
     "feature2": "Sauvegardez vos lectures préférées",
     "feature3": "Paiement rapide et sécurisé",
     "termsText": "En continuant, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialité",
+    "termsTextPre": "En continuant, vous acceptez nos ",
+    "termsTextLink": "Conditions d'utilisation et notre Politique de confidentialité",
     "errorFallback": "Échec du démarrage du processus d'authentification. Veuillez réessayer."
   },
   "aria": {
@@ -697,6 +705,102 @@
       "finish": {
         "title": "Tout est prêt",
         "desc": "Votre profil est configuré. Commencez à explorer Esprit Livre — votre prochaine lecture vous attend."
+      }
+    }
+  },
+  "legal": {
+    "onThisPage": "Sur cette page",
+    "updatedAt": "Dernière mise à jour : {{date}}"
+  },
+  "mentionsLegales": {
+    "label": "Informations légales",
+    "title": "Mentions légales",
+    "subtitle": "Conformément aux obligations légales en vigueur, voici les informations relatives à l'éditeur et à l'hébergement du site espritlivre.com.",
+    "sections": {
+      "editor": {
+        "title": "Éditeur du site",
+        "lines": [
+          "Raison sociale : EspritLivre",
+          "Siège social : Béjaïa ville, Béjaïa, Algérie",
+          "Site web : espritlivre.com"
+        ]
+      },
+      "hosting": {
+        "title": "Hébergement",
+        "lines": [
+          "Site web hébergé par Vercel Inc., 340 Pine Street, Suite 900, San Francisco, CA 94104, États-Unis (vercel.com).",
+          "Les données des utilisateurs (commandes, informations personnelles) sont stockées sur des serveurs situés en Algérie, conformément à la législation algérienne en vigueur relative à la protection des données personnelles (loi 18-07)."
+        ]
+      },
+      "ip": {
+        "title": "Propriété intellectuelle",
+        "lines": [
+          "L'ensemble du contenu de ce site (textes, images, logos, éléments graphiques) est la propriété exclusive d'EspritLivre ou de ses partenaires.",
+          "Toute reproduction, distribution ou utilisation sans autorisation préalable est strictement interdite."
+        ]
+      },
+      "contact": {
+        "title": "Contact",
+        "lines": [
+          "Pour toute question relative aux présentes mentions légales ou au site en général, vous pouvez nous contacter :",
+          "Email : contact@espritlivre.com"
+        ]
+      }
+    }
+  },
+  "politique": {
+    "label": "Informations légales",
+    "title": "Politique & Conditions",
+    "subtitle": "Transparence et confiance — tout ce que vous devez savoir sur Esprit Livre.",
+    "sections": {
+      "privacy": {
+        "title": "Politique de confidentialité",
+        "body": "Esprit Livre s'engage à protéger la confidentialité de vos données personnelles. Les informations collectées lors de votre commande (nom, prénom, adresse, numéro de téléphone) sont utilisées uniquement pour le traitement et la livraison de votre commande. Vos données ne sont jamais vendues ni partagées avec des tiers à des fins commerciales. Vous pouvez à tout moment demander la modification ou la suppression de vos données en nous contactant directement."
+      },
+      "returns": {
+        "title": "Politique de retour et remboursement",
+        "body": "Votre satisfaction est notre priorité. Vous pouvez refuser la livraison au moment de la réception si vous n'êtes pas satisfait. Les retours sont acceptés sans condition — si pour une raison quelconque vous souhaitez retourner votre commande, contactez-nous et nous trouverons une solution ensemble. En cas de problème lié au transporteur ou à la livraison, contactez-nous immédiatement."
+      },
+      "terms": {
+        "title": "Conditions générales de vente",
+        "body": "En passant commande sur espritlivre.com vous acceptez les présentes conditions générales de vente. Esprit Livre est une librairie en ligne basée en Algérie. Selon les produits commandés, une confirmation par téléphone ou message peut être effectuée avant expédition. Les prix affichés sur le site sont en dinars algériens (DZD). Esprit Livre se réserve le droit de modifier les prix et la disponibilité des produits à tout moment sans préavis. En cas de rupture de stock, le client sera contacté pour un remboursement ou un remplacement."
+      },
+      "delivery": {
+        "title": "Politique de livraison",
+        "body": "Esprit Livre livre partout en Algérie via des services de livraison partenaires. Les délais de livraison sont généralement de 1 à 4 jours ouvrables selon votre wilaya. Le paiement s'effectue à la livraison — vous payez uniquement à la réception de votre commande. Les frais de livraison sont à la charge du client et sont calculés selon votre wilaya. En cas d'absence lors de la livraison, le livreur vous contactera pour convenir d'un nouveau passage. Esprit Livre ne peut être tenu responsable des retards causés par le transporteur ou des circonstances exceptionnelles indépendantes de notre volonté."
+      }
+    }
+  },
+  "deactivated": {
+    "title": "Votre compte est temporairement suspendu",
+    "subtitle": "Ne vous inquiétez pas — c'est probablement temporaire.",
+    "description": "Notre équipe est disponible pour clarifier la situation et vous accompagner. Un simple message suffit pour qu'on règle ça ensemble.",
+    "contactSupport": "Contacter le support",
+    "backHome": "Retour à l'accueil",
+    "contactNote": "Référence : votre adresse email est votre identifiant de compte"
+  },
+  "accountPopup": {
+    "badge": "GRATUIT !",
+    "title": "Votre bibliothèque personnelle vous attend",
+    "subtitle": "Rejoignez Esprit Livre et profitez d'une expérience de lecture sur mesure.",
+    "cta": "Continuer avec Google",
+    "remindLater": "Me le rappeler dans 5h",
+    "benefit": {
+      "orders": {
+        "title": "Suivi de commandes",
+        "desc": "Chaque colis en temps réel"
+      },
+      "wishlist": {
+        "title": "Liste de souhaits",
+        "desc": "Sauvegardez vos coups de cœur"
+      },
+      "discounts": {
+        "title": "Remises exclusives",
+        "desc": "Offres réservées aux membres"
+      },
+      "points": {
+        "title": "Points fidélité",
+        "desc": "Gagnez à chaque achat"
       }
     }
   }

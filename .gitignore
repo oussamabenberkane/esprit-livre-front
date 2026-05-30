@@ -26,9 +26,7 @@ dist-ssr
 .history/
 
 # Environment variables
-.env
-.env.local
-.env.*.local
+.env*
 
 .claude/
 

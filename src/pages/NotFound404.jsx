@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { Home, Search, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -29,6 +30,11 @@ const NotFound404 = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100">
+      <Helmet>
+        <title>Page introuvable | Esprit Livre</title>
+        <meta name="description" content="Cette page n'existe pas. Retournez au catalogue Esprit Livre." />
+        <link rel="canonical" href="https://espritlivre.com/404" />
+      </Helmet>
       <Navbar />
 
       {/* Responsive spacing for navbar - taller on mobile due to two-line layout */}
@@ -86,7 +92,7 @@ const NotFound404 = () => {
 
             {/* Browse Books Button */}
             <button
-              onClick={() => navigate('/allbooks')}
+              onClick={() => navigate('/products')}
               className="group flex items-center gap-2 px-6 py-3 bg-white text-[var(--color-brand-blue)] border-2 border-[var(--color-brand-blue)] rounded-lg font-medium hover:bg-[var(--color-brand-blue)] hover:text-white transition-all duration-300 shadow-md hover:shadow-lg min-w-[200px] justify-center"
             >
               <Search className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
@@ -104,7 +110,7 @@ const NotFound404 = () => {
             </p>
             <div className="flex flex-wrap gap-4 justify-center text-fluid-small">
               <button
-                onClick={() => navigate('/packs')}
+                onClick={() => navigate('/products?tab=packs')}
                 className="text-[var(--color-brand-blue)] hover:underline hover:text-[var(--color-brand-blue-light)] transition-colors"
               >
                 {t('404.promotionalPacks')}

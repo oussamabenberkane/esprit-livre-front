@@ -28,6 +28,7 @@ import { fetchBooksByMainDisplay } from '../services/books.service';
 import { fetchTopAuthors } from '../services/authors.service';
 import { getBookCoverUrl } from '../utils/imageUtils';
 import useProgressiveRender from '../hooks/useProgressiveRender';
+import useScrollRestoration from '../hooks/useScrollRestoration';
 import { useCart } from '../contexts/CartContext';
 import { isAuthenticated } from '../services/authService';
 import { getUserProfile } from '../services/user.service';
@@ -356,6 +357,16 @@ const HomePage = () => {
     const [currentAuthorIndex, setCurrentAuthorIndex] = useState(0);
     const [authors, setAuthors] = useState([]);
     const [authorsLoading, setAuthorsLoading] = useState(true);
+
+    // Restore scroll on back-nav once async sections have reached final height.
+    // Without this, iOS Safari / Android Chrome clamp the restored position to 0
+    // because the document is still skeleton-short when the browser tries.
+    const scrollReady =
+        !categoriesLoading &&
+        !authorsLoading &&
+        !mainDisplaysLoading &&
+        mainDisplays.every((d) => !d.isLoading);
+    useScrollRestoration(scrollReady);
 
     const authorsScrollRef = useRef(null);
     const [canScrollAuthorsLeft, setCanScrollAuthorsLeft] = useState(false);

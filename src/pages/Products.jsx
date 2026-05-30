@@ -19,6 +19,7 @@ import { useTranslation } from "react-i18next"
 import { useOnboarding } from '../contexts/OnboardingContext'
 import { getBookCoverUrl } from '../utils/imageUtils'
 import useProgressiveRender from '../hooks/useProgressiveRender'
+import useScrollRestoration from '../hooks/useScrollRestoration'
 import { useCart } from '../contexts/CartContext'
 import { trackSearch, trackAddToCart } from '../services/pixel.service'
 import { useFilterPersistence, hasActiveFilters, hasPersistableFilters } from '../hooks/useFilterPersistence'
@@ -46,7 +47,7 @@ export default function Products() {
     const [totalPages, setTotalPages] = useState(0)
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState(null)
-    const booksPerPage = 12
+    const booksPerPage = 30
 
     // Packs state
     const [packs, setPacks] = useState([])
@@ -65,10 +66,9 @@ export default function Products() {
         60 // 60ms delay between each book appearing
     )
 
-    // Scroll to top when component mounts or params change
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
+    // Restore scroll on back-nav once books have loaded; scroll to top on
+    // forward navigation. Replaces the previous unconditional scrollTo(0,0).
+    useScrollRestoration(!isLoading);
 
     // Trigger allbooks tour when redirected from onboarding (?tour=true)
     useEffect(() => {
@@ -240,6 +240,15 @@ export default function Products() {
 
     const handleSeeMore = () => {
         setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+    }
+
+    // iOS Safari drops synchronous scrollTo issued from a tap handler when the
+    // same handler queues a re-render (setCurrentPage → refetch → skeleton swap
+    // cancels any in-flight smooth animation). Deferring one frame lets React
+    // commit first, and using instant scroll avoids the cancellation entirely.
+    const goToPage = (pageOrUpdater) => {
+        setCurrentPage(pageOrUpdater)
+        requestAnimationFrame(() => window.scrollTo(0, 0))
     }
 
     const handleAddToCart = async (bookId) => {
@@ -606,10 +615,7 @@ export default function Products() {
                             <div className="flex items-center gap-2">
                                 {/* Previous Button */}
                                 <button
-                                    onClick={() => {
-                                        setCurrentPage(prev => Math.max(1, prev - 1))
-                                        window.scrollTo({ top: 0, behavior: 'smooth' })
-                                    }}
+                                    onClick={() => goToPage(prev => Math.max(1, prev - 1))}
                                     disabled={currentPage === 1}
                                     className={`flex items-center justify-center w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 ${
                                         currentPage === 1
@@ -634,10 +640,7 @@ export default function Products() {
                                         pageNumbers.push(
                                             <button
                                                 key={1}
-                                                onClick={() => {
-                                                    setCurrentPage(1)
-                                                    window.scrollTo({ top: 0, behavior: 'smooth' })
-                                                }}
+                                                onClick={() => goToPage(1)}
                                                 className={`min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                                                     currentPage === 1
                                                         ? "bg-blue-600 text-white shadow-md"
@@ -665,10 +668,7 @@ export default function Products() {
                                             pageNumbers.push(
                                                 <button
                                                     key={i}
-                                                    onClick={() => {
-                                                        setCurrentPage(i)
-                                                        window.scrollTo({ top: 0, behavior: 'smooth' })
-                                                    }}
+                                                    onClick={() => goToPage(i)}
                                                     className={`min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                                                         currentPage === i
                                                             ? "bg-blue-600 text-white shadow-md"
@@ -694,10 +694,7 @@ export default function Products() {
                                             pageNumbers.push(
                                                 <button
                                                     key={totalPages}
-                                                    onClick={() => {
-                                                        setCurrentPage(totalPages)
-                                                        window.scrollTo({ top: 0, behavior: 'smooth' })
-                                                    }}
+                                                    onClick={() => goToPage(totalPages)}
                                                     className={`min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                                                         currentPage === totalPages
                                                             ? "bg-blue-600 text-white shadow-md"
@@ -715,10 +712,7 @@ export default function Products() {
 
                                 {/* Next Button */}
                                 <button
-                                    onClick={() => {
-                                        setCurrentPage(prev => Math.min(totalPages, prev + 1))
-                                        window.scrollTo({ top: 0, behavior: 'smooth' })
-                                    }}
+                                    onClick={() => goToPage(prev => Math.min(totalPages, prev + 1))}
                                     disabled={currentPage === totalPages}
                                     className={`flex items-center justify-center w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 ${
                                         currentPage === totalPages

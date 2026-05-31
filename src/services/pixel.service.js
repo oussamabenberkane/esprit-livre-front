@@ -1,9 +1,12 @@
 const PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID;
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
+// Read cookie value WITHOUT decodeURIComponent: Meta's fbevents.js stores _fbc/_fbp
+// in canonical form (fb.1.<ts>.<fbclid>) and any decoding here can mutate the fbclid
+// (e.g. '+' → ' '), triggering Meta's "modified fbclid in fbc" diagnostic.
 function getCookie(name) {
   const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
-  return match ? decodeURIComponent(match[1]) : null;
+  return match ? match[1] : null;
 }
 
 function metaCookies() {

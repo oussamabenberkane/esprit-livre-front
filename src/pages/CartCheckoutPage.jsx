@@ -15,7 +15,7 @@ import { getBookCoverUrl } from '../utils/imageUtils';
 import { buildOrderPayload, createOrder, calculateDeliveryFee } from '../services/order.service';
 import { getUserProfile } from '../services/user.service';
 import { isAuthenticated, saveRedirectUrl } from '../services/authService';
-import { PROVIDER_API_TO_DISPLAY, PROVIDER_DISPLAY_TO_API } from '../constants/orderEnums';
+import { PROVIDER_API_TO_DISPLAY, PROVIDER_DISPLAY_TO_API, getAvailableProviders, isZrAvailableForWilaya } from '../constants/orderEnums';
 import wilayaData, { wilayaNumbers } from '../utils/wilayaData';
 import { trackInitiateCheckout, trackPurchase, setPixelUserData, getMetaCookies } from '../services/pixel.service';
 
@@ -478,7 +478,15 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
   const [openDropdown, setOpenDropdown] = useState(null);
   const dropdownRefs = useRef({});
 
-  const pickupProviders = ["Yalidine"];
+  const pickupProviders = getAvailableProviders(formData.wilaya);
+
+  // If the chosen wilaya is not served by ZRexpress, fall back to Yalidine.
+  useEffect(() => {
+    if (pickupProvider === 'ZRexpress' && !isZrAvailableForWilaya(formData.wilaya)) {
+      setPickupProvider('Yalidine');
+      setStopDeskId(null);
+    }
+  }, [formData.wilaya, pickupProvider]);
 
   // Load profile data on mount if user is authenticated
   useEffect(() => {
@@ -610,7 +618,6 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
 
   const handleCitySelect = (city) => {
     setFormData({ ...formData, city });
-    setCitySearch("");
     setOpenDropdown(null);
     // Clear city validation error when selected
     setValidationErrors(prev => ({ ...prev, city: '' }));

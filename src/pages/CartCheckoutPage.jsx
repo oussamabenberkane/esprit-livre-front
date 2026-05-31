@@ -461,7 +461,7 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
   const [availableCities, setAvailableCities] = useState([]);
   const [shippingPreference, setShippingPreference] = useState("home"); // "home" or "pickup"
   const [homeAddress, setHomeAddress] = useState("");
-  const [pickupProvider, setPickupProvider] = useState("Yalidine");
+  const [pickupProvider, setPickupProvider] = useState("ZRexpress");
 
   // Relay point state
   const [stopDeskId, setStopDeskId] = useState(null);
@@ -480,13 +480,18 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
 
   const pickupProviders = getAvailableProviders(formData.wilaya);
 
-  // If the chosen wilaya is not served by ZRexpress, fall back to Yalidine.
+  // Carrier policy by wilaya:
+  // - Home delivery: implicitly ZRexpress where ZR serves the wilaya, otherwise Yalidine.
+  // - Pickup (relay): user-chosen, but fall back to Yalidine if ZR doesn't serve the wilaya.
   useEffect(() => {
-    if (pickupProvider === 'ZRexpress' && !isZrAvailableForWilaya(formData.wilaya)) {
+    const zrServed = isZrAvailableForWilaya(formData.wilaya);
+    if (shippingPreference === 'home') {
+      setPickupProvider(zrServed ? 'ZRexpress' : 'Yalidine');
+    } else if (pickupProvider === 'ZRexpress' && !zrServed) {
       setPickupProvider('Yalidine');
       setStopDeskId(null);
     }
-  }, [formData.wilaya, pickupProvider]);
+  }, [shippingPreference, formData.wilaya, pickupProvider]);
 
   // Load profile data on mount if user is authenticated
   useEffect(() => {
@@ -516,7 +521,7 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
         if (profile.defaultShippingMethod === 'HOME_DELIVERY') {
           setShippingPreference('home');
           setHomeAddress(profile.streetAddress || '');
-          setPickupProvider('Yalidine');
+          setPickupProvider('ZRexpress');
         } else if (profile.defaultShippingMethod === 'SHIPPING_PROVIDER') {
           setShippingPreference('pickup');
           if (profile.defaultShippingProvider) {
@@ -854,7 +859,7 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
               type="button"
               onClick={() => {
                 setShippingPreference("home");
-                setPickupProvider("Yalidine");
+                setPickupProvider("ZRexpress");
                 setStopDeskId(null);
               }}
               className={`flex items-center justify-center gap-1 sm:gap-1 py-2 px-2.5 sm:px-4 rounded-xl text-[11px] sm:text-fluid-small font-normal sm:font-semibold transition-all duration-200 whitespace-nowrap ${

@@ -1309,11 +1309,12 @@ export default function CartCheckoutPage() {
       // Build order payload using the service helper.
       // Forward the Meta Pixel cookies + page URL so the server-side CAPI Purchase
       // event carries fbc/fbp and a matching event_source_url for attribution and
-      // dedup against the browser pixel.
+      // dedup against the browser pixel. Use origin+pathname (not href) to avoid
+      // forwarding any incidental query-string params (e.g. tracking blobs, PII) to Meta.
       const orderPayload = {
         ...buildOrderPayload(formData, cartBooks, cartPacks, resolvedShippingFee),
         ...getMetaCookies(),
-        eventSourceUrl: window.location.href,
+        eventSourceUrl: window.location.origin + window.location.pathname,
       };
 
       // Log payload for debugging (remove in production)

@@ -140,7 +140,7 @@ const RelayPointSelect = ({
   });
 
   const handleSelect = (point) => {
-    onChange(point.id);
+    onChange(point.id, point);
     setSelectedPoint(point);
     setIsOpen(false);
     setSearchQuery('');

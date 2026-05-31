@@ -1098,10 +1098,15 @@ function CheckoutForm({ onSubmit, isSubmitting = false, cartBooks = [], cartPack
                         </label>
                         <RelayPointSelect
                           value={stopDeskId}
-                          onChange={(id) => {
+                          onChange={(id, point) => {
                             setStopDeskId(id);
                             if (id) {
                               setValidationErrors(prev => ({ ...prev, relayPoint: '' }));
+                              // Use the selected relay point's commune so the ZR fee resolves
+                              // to the real commune-level rate (origin wilaya has no wilaya rate).
+                              if (point?.commune) {
+                                setFormData(prev => ({ ...prev, city: point.commune }));
+                              }
                             }
                           }}
                           provider={PROVIDER_DISPLAY_TO_API[pickupProvider]}

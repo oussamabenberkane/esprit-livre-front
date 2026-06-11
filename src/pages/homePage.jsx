@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { trackAddToCart } from '../services/pixel.service';
+import { trackCardAddToCart } from '../services/pixel.service';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -653,7 +653,7 @@ const HomePage = () => {
         }
 
         if (foundBook) {
-            trackAddToCart({ id: foundBook.id, name: foundBook.title, value: foundBook.price, quantity: 1 });
+            trackCardAddToCart({ id: foundBook.id, name: foundBook.title, value: foundBook.price, quantity: 1 });
             setSelectedBook(foundBook);
             setShowCartPopup(true);
         }
@@ -669,7 +669,7 @@ const HomePage = () => {
         }
 
         if (foundPack) {
-            trackAddToCart({ id: `pack-${foundPack.id}`, name: foundPack.title, value: foundPack.packPrice, quantity: 1 });
+            trackCardAddToCart({ id: `pack-${foundPack.id}`, name: foundPack.title, value: foundPack.packPrice, quantity: 1 });
             const packAsBook = {
                 id: foundPack.id,
                 title: foundPack.title,

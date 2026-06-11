@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { trackAddToCart } from '../../services/pixel.service';
+import { trackCardAddToCart } from '../../services/pixel.service';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Heart } from 'lucide-react';
@@ -100,7 +100,7 @@ export default function Favorites() {
 
     const book = favoriteBooks.find(b => b.id === bookId);
     if (book) {
-      trackAddToCart({ id: book.id, name: book.title, value: book.price, quantity: 1 });
+      trackCardAddToCart({ id: book.id, name: book.title, value: book.price, quantity: 1 });
       setSelectedBook(book);
       setShowCartPopup(true);
     }

@@ -38,9 +38,11 @@ function PixelTracker() {
     captureOrderOrigin();
   }, []);
 
+  // Query-string changes (search, tabs) are virtual page views too — without
+  // them repeated searches inflate the Search/PageView ratio Meta monitors.
   useEffect(() => {
     trackPageView();
-  }, [location.pathname]);
+  }, [location.pathname, location.search]);
 
   return null;
 }

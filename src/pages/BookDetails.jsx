@@ -24,7 +24,7 @@ import { getRecommendedPacksForBook } from '../services/bookPackService';
 import { getBookCoverUrl } from '../utils/imageUtils';
 import useProgressiveRender from '../hooks/useProgressiveRender';
 import { useCart } from '../contexts/CartContext';
-import { trackViewContent, trackAddToCart } from '../services/pixel.service';
+import { trackViewContent, trackAddToCart, trackCardAddToCart } from '../services/pixel.service';
 
 
 const computeSalePrice = (price, discountType, discountValue) => {
@@ -407,7 +407,7 @@ const BookDetails = () => {
         const bookToAdd = recommendedBooks.find(b => b.id === bookId);
         if (bookToAdd) {
             await addToCart(bookId, 1);
-            trackAddToCart({ id: bookToAdd.id, name: bookToAdd.title, value: bookToAdd.price, quantity: 1 });
+            trackCardAddToCart({ id: bookToAdd.id, name: bookToAdd.title, value: bookToAdd.price, quantity: 1 });
 
             setSelectedBook({
                 ...bookToAdd,
@@ -434,7 +434,7 @@ const BookDetails = () => {
         if (pack) {
             try {
                 await addPackToCart(packId, 1);
-                trackAddToCart({ id: `pack-${pack.id}`, name: pack.title, value: pack.packPrice, quantity: 1 });
+                trackCardAddToCart({ id: `pack-${pack.id}`, name: pack.title, value: pack.packPrice, quantity: 1 });
 
                 // Convert pack to book-like format for the popup
                 const packAsBook = {

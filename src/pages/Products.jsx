@@ -13,7 +13,7 @@ import { fetchAllBooks } from "../services/books.service"
 import { getAllBookPacks } from "../services/bookPackService"
 import { fetchCategories } from "../services/tags.service"
 import { fetchTopAuthors } from "../services/authors.service"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useSearchParams, useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { useOnboarding } from '../contexts/OnboardingContext'
@@ -21,7 +21,7 @@ import { getBookCoverUrl } from '../utils/imageUtils'
 import useProgressiveRender from '../hooks/useProgressiveRender'
 import useScrollRestoration from '../hooks/useScrollRestoration'
 import { useCart } from '../contexts/CartContext'
-import { trackSearch, trackAddToCart } from '../services/pixel.service'
+import { trackSearch, trackCardAddToCart } from '../services/pixel.service'
 import { useFilterPersistence, hasActiveFilters, hasPersistableFilters } from '../hooks/useFilterPersistence'
 
 export default function Products() {
@@ -100,6 +100,11 @@ export default function Products() {
         loadFilterData()
     }, [])
 
+    // Last search term sent to the pixel — the URL-params effect below re-runs
+    // on any param or language change, and re-applying filters re-submits the
+    // same text; only a genuinely new term should fire a Search event.
+    const lastTrackedSearch = useRef(null)
+
     // Extract filters from URL params on mount
     useEffect(() => {
         const tab = searchParams.get('tab')
@@ -141,7 +146,10 @@ export default function Products() {
                 filters.search = decodeURIComponent(search)
                 context = { type: searchType || 'general', name: decodeURIComponent(search) }
                 setPageTitle(t('allBooks.resultsFor', { query: decodeURIComponent(search) }))
-                trackSearch(decodeURIComponent(search))
+                if (decodeURIComponent(search) !== lastTrackedSearch.current) {
+                    lastTrackedSearch.current = decodeURIComponent(search)
+                    trackSearch(decodeURIComponent(search))
+                }
             }
 
             setSearchContext(context)
@@ -256,7 +264,7 @@ export default function Products() {
 
         const book = books.find(b => b.id === bookId)
         if (book) {
-            trackAddToCart({ id: book.id, name: book.title, value: book.price, quantity: 1 })
+            trackCardAddToCart({ id: book.id, name: book.title, value: book.price, quantity: 1 })
             setSelectedBook(book)
             setShowCartPopup(true)
         }
@@ -275,7 +283,7 @@ export default function Products() {
         if (pack) {
             try {
                 await addPackToCart(packId, 1)
-                trackAddToCart({ id: `pack-${pack.id}`, name: pack.title, value: pack.packPrice, quantity: 1 })
+                trackCardAddToCart({ id: `pack-${pack.id}`, name: pack.title, value: pack.packPrice, quantity: 1 })
                 const packAsBook = {
                     id: pack.id,
                     title: pack.title,
@@ -299,8 +307,10 @@ export default function Products() {
     }
 
     const handleApplyFilters = (filters) => {
-        if (filters.search?.trim()) {
-            trackSearch(filters.search)
+        const searchTerm = filters.search?.trim()
+        if (searchTerm && searchTerm !== lastTrackedSearch.current) {
+            lastTrackedSearch.current = searchTerm
+            trackSearch(searchTerm)
         }
         setCurrentPage(1)
         // Update applied filters state

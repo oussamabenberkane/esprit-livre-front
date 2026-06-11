@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { trackAddToCart } from '../services/pixel.service';
+import { trackCardAddToCart } from '../services/pixel.service';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
 import { Flame, Tag, ChevronDown, BookOpen, Sparkles, Percent } from 'lucide-react';
@@ -290,7 +290,7 @@ export default function SalePage() {
                       onSale={book.onSale}
                       discountType={book.discountType}
                       discountValue={book.discountValue}
-                      onAddToCart={(id) => { addToCart(id, 1); trackAddToCart({ id: book.id, name: book.title, value: book.price, quantity: 1 }); }}
+                      onAddToCart={(id) => { addToCart(id, 1); trackCardAddToCart({ id: book.id, name: book.title, value: book.price, quantity: 1 }); }}
                     />
                   </motion.div>
                 ))}

@@ -1,4 +1,6 @@
 // API Configuration
+import { getVisitorId } from '../utils/visitorId';
+
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
 // Keycloak/OAuth Configuration
@@ -12,4 +14,5 @@ export const KEYCLOAK_CLIENT_SECRET = import.meta.env.VITE_KEYCLOAK_CLIENT_SECRE
  */
 export const getDefaultHeaders = () => ({
   'Content-Type': 'application/json',
+  'X-Visitor-Id': getVisitorId(),
 });

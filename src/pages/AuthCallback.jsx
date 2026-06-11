@@ -73,7 +73,9 @@ const AuthCallback = () => {
         console.log('[AuthCallback] Syncing user with backend database...');
         const userData = await getCurrentUser(controller.signal);
         console.log('[AuthCallback] User synced successfully:', userData);
-        setPixelUserData({ email: userData.email, phone: userData.phone, firstName: userData.firstName, lastName: userData.lastName });
+        // Await so the hashed identity is in place before trackCompleteRegistration
+        // below relays to CAPI (fills em/fn/ln on the server event).
+        await setPixelUserData({ email: userData.email, phone: userData.phone, firstName: userData.firstName, lastName: userData.lastName });
 
         // CRITICAL: Set a timestamp to prevent AuthPage from interfering
         // This works reliably even with StrictMode double-invocation

@@ -17,7 +17,7 @@ import { getUserProfile } from '../services/user.service';
 import { isAuthenticated, saveRedirectUrl } from '../services/authService';
 import { PROVIDER_API_TO_DISPLAY, PROVIDER_DISPLAY_TO_API, getAvailableProviders, isZrAvailableForWilaya } from '../constants/orderEnums';
 import wilayaData, { wilayaNumbers } from '../utils/wilayaData';
-import { trackInitiateCheckout, trackPurchase, setPixelUserData, getMetaCookies } from '../services/pixel.service';
+import { trackInitiateCheckout, trackPurchase, setPixelUserData, getOrderTrackingFields } from '../services/pixel.service';
 
 // Order Tracking Prompt Popup Component
 function OrderTrackingPrompt({ isOpen, onSignIn, onLater }) {
@@ -1306,14 +1306,26 @@ export default function CartCheckoutPage() {
       // Use the calculated fee passed from CheckoutForm, fall back to fixed fee
       const resolvedShippingFee = formData.shippingFee ?? shippingFee;
 
+      // Feed the COD form identity to the pixel before Purchase fires so the
+      // browser event carries advanced matching for guests too (the CAPI event
+      // gets the same PII from the order itself).
+      const [formFirstName, ...formLastNameParts] = (formData.fullName || '').trim().split(/\s+/);
+      await setPixelUserData({
+        email: formData.email,
+        phone: formData.phone,
+        firstName: formFirstName,
+        lastName: formLastNameParts.join(' '),
+      });
+
       // Build order payload using the service helper.
-      // Forward the Meta Pixel cookies + page URL so the server-side CAPI Purchase
-      // event carries fbc/fbp and a matching event_source_url for attribution and
-      // dedup against the browser pixel. Use origin+pathname (not href) to avoid
-      // forwarding any incidental query-string params (e.g. tracking blobs, PII) to Meta.
+      // Forward the Meta Pixel cookies + external_id + page URL so the server-side
+      // CAPI Purchase event carries fbc/fbp/external_id and a matching
+      // event_source_url for attribution and dedup against the browser pixel. Use
+      // origin+pathname (not href) to avoid forwarding any incidental query-string
+      // params (e.g. tracking blobs, PII) to Meta.
       const orderPayload = {
         ...buildOrderPayload(formData, cartBooks, cartPacks, resolvedShippingFee),
-        ...getMetaCookies(),
+        ...(await getOrderTrackingFields()),
         eventSourceUrl: window.location.origin + window.location.pathname,
       };
 

@@ -1,6 +1,6 @@
 // Books API Service - Unified service for all book-related API calls
 import { API_BASE_URL, getDefaultHeaders } from './apiConfig';
-import { getAccessToken } from './authService';
+import { getAccessToken, getValidAccessToken } from './authService';
 
 /**
  * Get authenticated headers with Bearer token
@@ -12,6 +12,19 @@ const getAuthHeaders = () => {
     ...getDefaultHeaders(),
     'Authorization': `Bearer ${token}`,
   };
+};
+
+/**
+ * Headers for public endpoints, with Bearer token attached only when a
+ * non-expired one exists. Lets the backend attribute searches to logged-in
+ * users without ever risking a 401 on public browsing.
+ * @returns {Object} Headers, possibly with Authorization
+ */
+const getOptionalAuthHeaders = () => {
+  const token = getValidAccessToken();
+  return token
+    ? { ...getDefaultHeaders(), 'Authorization': `Bearer ${token}` }
+    : getDefaultHeaders();
 };
 
 /**
@@ -113,7 +126,7 @@ export const fetchAllBooks = async (page = 0, size = 12, filters = {}) => {
 
     const response = await fetch(`${API_BASE_URL}/api/books?${params.toString()}`, {
       method: 'GET',
-      headers: getDefaultHeaders(),
+      headers: getOptionalAuthHeaders(),
     });
 
     if (!response.ok) {

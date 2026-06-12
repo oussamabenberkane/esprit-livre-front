@@ -68,6 +68,26 @@ export const getIdToken = () => {
 };
 
 /**
+ * Get the stored access token only if it has not expired (with a small clock
+ * buffer). Use this when optionally attaching auth to PUBLIC endpoints: an
+ * expired token would turn a public 200 into a 401 and break browsing.
+ * @returns {string|null}
+ */
+export const getValidAccessToken = () => {
+  const token = getAccessToken();
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+    if (payload.exp && payload.exp * 1000 > Date.now() + 10_000) {
+      return token;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+};
+
+/**
  * Check if user is authenticated
  * @returns {boolean}
  */
